@@ -1,0 +1,929 @@
+
+<!-- saved from url=(0066)http://azrael.digipen.edu/~mmead/www/Courses/CS170/IO-Intro-1.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./Simple I_O_files/new.css">
+<title>Simple I/O</title>
+</head>
+
+<body>  
+<center><h1>Overview of Formatted Input/Output</h1></center>
+
+<!--
+<blockquote>
+<i>
+"The road to hell is paved with global variables"</i> -- Steve McConnell
+</blockquote>
+-->
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Overview of Formatted Output
+</p>
+
+Basics:
+<ul>
+<li>The standard way of displaying output in C++ is through <tt>cout</tt>.
+</li><li>Much like <tt>printf</tt> in C, <tt>cout</tt> is one of the most complex things in C++. 
+</li><li>Also like <tt>printf</tt>, <tt>cout</tt> is not part of the language. It is part of the C++ standard library (in the <tt><b>std</b></tt> namespace).
+</li><li>However, unlike <tt>printf</tt>, <tt>cout</tt> is not a function. It is an <i>object</i>. (For now, think of it as kind
+	of a <tt><b>struct</b></tt>.)
+</li><li>As a <tt><b>struct</b></tt>, <tt>cout</tt> has many members that you can access. 
+	<ul>
+		<li>Some of the members are variables of built-in data types (<tt><b>int</b></tt>, <tt><b>bool</b></tt>, etc.)
+		</li><li>Some members are functions (or more exact, <i>pointers to functions</i>)
+	</li></ul>
+</li></ul>
+
+To use <tt>cout</tt>, you must include the appropriate header file:
+
+<blockquote><pre><b>#include</b> &lt;iostream&gt; <font color="#003399"><i>// No .h extension</i></font>
+</pre></blockquote>
+
+The <tt>iostream</tt> header actually contains definitions for two types: <tt>istream</tt> and <tt>ostream</tt>.
+<ul>
+<li><tt>istream</tt> is an input stream (for reading input)
+</li><li><tt>ostream</tt> is an output stream (for writing output)
+</li><li><tt>cout</tt> is of type <tt>ostream</tt>, since it's purpose is for outputting.
+</li><li>The standard input object is <tt>cin</tt>, and it's used for reading input.
+</li></ul>
+
+The stream objects use special operators to perform their "magic". The <tt>ostream</tt> object uses
+the <i>insertion operator</i> or casually called the <i>output operator</i>:
+
+<blockquote><pre>std::cout &lt;&lt; 15;    <font color="#003399"><i>// output the integer 15</i></font>
+std::cout &lt;&lt; 3.14;  <font color="#003399"><i>// output the double 3.14</i></font>
+std::cout &lt;&lt; <font color="#9933CC">"foo"</font>; <font color="#003399"><i>// output the NUL terminated string foo</i></font>
+</pre></blockquote>
+
+Output:
+<blockquote><pre>153.14foo
+</pre></blockquote>
+
+Broken down into its parts (tokens):
+<blockquote><pre>namespace   scope-resolution-operator   object   insertion-operator   value   statement-terminator
+   std               ::                  cout           &lt;&lt;             15             ;
+</pre></blockquote>
+
+You can chain the operations together in a single statement:
+<blockquote><pre>  <font color="#003399"><i>// All in one statement</i></font>
+std::cout &lt;&lt; 15 &lt;&lt; 3.14 &lt;&lt; <font color="#9933CC">"foo"</font>;
+</pre></blockquote>
+
+Obvious questions:
+<ul>
+<li>Since we don't specify the type (like <tt>printf</tt>'s <tt>%</tt> type specifiers), how
+	does <tt>cout</tt> know what type to print?
+</li><li>What happens if <tt>cout</tt> doesn't know how to print a certain type? (Maybe a user-defined type like <tt><b>struct TIME</b></tt>). For example:
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>struct</b> TIME 
+{
+  <b>int</b> hours;
+  <b>int</b> minutes;
+  <b>int</b> seconds;
+};
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>struct TIME</b> t1 = {9, 45, 30};
+
+printf("%<font color="red"><b>XXX</b></font>", t1); <font color="#003399"><i>// What format specifier is <font color="red"><b>XXX</b></font>? (Hint: There is none.)</i></font>
+std::cout &lt;&lt; t1;    <font color="#003399"><i>// Does this work? What will be printed?</i></font>
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+
+</li></ul>
+
+
+<tt><b></b></tt>
+
+<blockquote><pre></pre></blockquote>
+
+
+<tt><b></b></tt>
+
+<blockquote><pre></pre></blockquote>
+
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Comparing <tt><b>printf</b></tt> with <tt><b>cout</b></tt>
+</p>
+
+Given these three variables:
+
+<blockquote><pre><b>int</b> i = 42;
+<b>float</b> f = 1.23456789F;
+<b>double</b> d = 3.1415926535897932384626433832795;
+</pre></blockquote>
+
+Using the defaults:
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th><tt>printf</tt></th><th><tt>cout</tt></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>printf(<font color="#9933CC">"i is |%i|\n"</font>, i);
+printf(<font color="#9933CC">"f is |%f|\n"</font>, f);
+printf(<font color="#9933CC">"d is |%f|\n"</font>, d);
+
+<b>Output:</b>
+i is |42|
+f is |1.234568|
+d is |3.141593|
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>std::cout &lt;&lt; <font color="#9933CC">"i is |"</font> &lt;&lt; i &lt;&lt; <font color="#9933CC">"|"</font> &lt;&lt; std::endl;
+std::cout &lt;&lt; <font color="#9933CC">"f is |"</font> &lt;&lt; f &lt;&lt; <font color="#9933CC">"|"</font> &lt;&lt; std::endl;
+std::cout &lt;&lt; <font color="#9933CC">"d is |"</font> &lt;&lt; d &lt;&lt; <font color="#9933CC">"|"</font> &lt;&lt; std::endl;
+
+<b>Output:</b>
+i is |42|
+f is |1.23457|
+d is |3.14159|
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+When printing floating-point values:
+<ul>
+<li>The default for <tt>printf</tt> is 6 <i>digits to the right of the decimal</i>. (<tt>1.0</tt> will print as <tt>1.000000</tt>)
+</li><li>The default for <tt>cout</tt> is 6 <i>significant digits</i>. (<tt>1.0</tt> will print as <tt>1</tt>)
+</li><li>These are not the same thing.
+<p>
+Another example:
+
+</p><blockquote><pre><b>double</b> d1 = 3.141;
+<b>double</b> d2 = 1234.5678;
+<b>double</b> d3 = 123456.987;
+
+printf(<font color="#9933CC">"d1 is |%f|\n"</font>, d1);
+std::cout &lt;&lt; <font color="#9933CC">"d1 is |"</font> &lt;&lt; d1 &lt;&lt; <font color="#9933CC">"|"</font> &lt;&lt; std::endl;
+
+printf(<font color="#9933CC">"d2 is |%f|\n"</font>, d2);
+std::cout &lt;&lt; <font color="#9933CC">"d2 is |"</font> &lt;&lt; d2 &lt;&lt; <font color="#9933CC">"|"</font> &lt;&lt; std::endl;
+
+printf(<font color="#9933CC">"d3 is |%f|\n"</font>, d3);
+std::cout &lt;&lt; <font color="#9933CC">"d3 is |"</font> &lt;&lt; d3 &lt;&lt; <font color="#9933CC">"|"</font> &lt;&lt; std::endl;
+</pre></blockquote>
+
+<b>Output:</b>
+<blockquote><pre>d1 is |3.141000|
+d1 is |3.141|
+d2 is |1234.567800|
+d2 is |1234.57|
+d3 is |123456.987000|
+d3 is |123457|
+</pre></blockquote>
+</li></ul>
+
+<ul>
+  <li>There is a minor difference between <tt>std::endl</tt> and using the newline
+  character: (<tt>\n</tt>). Using <tt>std::endl</tt> will flush the buffer after printing
+  the newline. Using just the newline won't. Flushing the buffer guarantees that all characters
+  will be output, regardless of whether or not the program crashes. There is a performance 
+  issue when flushing every write. However, if you're writing to the screen, then you already
+  don't care about performance. (The performance will be more about the speed of the video than any
+  flushing that might occur.)
+  In non-interactive situations (read: writing to a file), there may be a need to suppress any
+  unnecessary flushing.</li>
+</ul>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Changing the default precision
+</p>
+
+Use the <i>precision</i> member to change the number of significant digits displayed for floating-point values.
+
+<blockquote><pre>cout.precision(<i>value</i>);
+</pre></blockquote>
+
+All of the subsequent floating-point values will be displayed to <i>value</i> significant digits.
+<p>
+Example:
+</p><p>
+		
+</p><blockquote><pre><b>float</b> f = 123.4567F;
+<b>double</b> d = 3.1415926535897932384626433832795;
+
+  <font color="#003399"><i>// Modified precision (3, 6, 9, 12, etc.)</i></font>
+<b>for</b> (<b>int</b> i = 3; i &lt;= 21; i += 3)
+{
+  std::cout &lt;&lt; <font color="#9933CC">"precision is "</font> &lt;&lt; i &lt;&lt; std::endl;
+  <font color="red"><b>std::cout.precision(i);</b></font>
+  std::cout &lt;&lt; <font color="#9933CC">"f is |"</font> &lt;&lt; f &lt;&lt; <font color="#9933CC">"|"</font> &lt;&lt; std::endl;
+  std::cout &lt;&lt; <font color="#9933CC">"d is |"</font> &lt;&lt; d &lt;&lt; <font color="#9933CC">"|"</font> &lt;&lt; std::endl;
+  std::cout &lt;&lt; std::endl;
+}
+</pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th>GNU g++</th><th>Microsoft</th><th>Borland</th><th>Clang</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>precision is 3
+f is |123|
+d is |3.14|
+
+precision is 6
+f is |123.457|
+d is |3.14159|
+
+precision is 9
+f is |123.456703|
+d is |3.14159265|
+
+precision is 12
+f is |123.456703186|
+d is |3.14159265359|
+
+precision is 15
+f is |123.456703186035|
+d is |3.14159265358979|
+
+precision is 18
+f is |123.456703186035156|
+d is |3.14159265358979312|
+
+precision is 21
+f is |123.45670318603515625|
+d is |3.141592653589793116|
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>precision is 3
+f is |123|
+d is |3.14|
+
+precision is 6
+f is |123.457|
+d is |3.14159|
+
+precision is 9
+f is |123.456703|
+d is |3.14159265|
+
+precision is 12
+f is |123.456703186|
+d is |3.14159265359|
+
+precision is 15
+f is |123.456703186035|
+d is |3.14159265358979|
+
+precision is 18
+f is |123.45670318603516|
+d is |3.1415926535897931|
+
+precision is 21
+f is |123.45670318603516|
+d is |3.1415926535897931|
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>precision is 3
+f is |123|
+d is |3.14|
+
+precision is 6
+f is |123.457|
+d is |3.14159|
+
+precision is 9
+f is |123.456703|
+d is |3.14159265|
+
+precision is 12
+f is |123.456703186|
+d is |3.14159265359|
+
+precision is 15
+f is |123.456703186035|
+d is |3.14159265358979|
+
+precision is 18
+f is |123.456703186035156|
+d is |3.14159265358979312|
+
+precision is 21
+f is |123.4567031860351562|
+d is |3.141592653589793116|
+</pre></blockquote>
+
+</td><td>
+<blockquote><pre>precision is 3
+f is |123|
+d is |3.14|
+
+precision is 6
+f is |123.457|
+d is |3.14159|
+
+precision is 9
+f is |123.456703|
+d is |3.14159265|
+
+precision is 12
+f is |123.456703186|
+d is |3.14159265359|
+
+precision is 15
+f is |123.456703186035|
+d is |3.14159265358979|
+
+precision is 18
+f is |123.456703186035156|
+d is |3.14159265358979312|
+
+precision is 21
+f is |123.45670318603515625|
+d is |3.141592653589793116|
+</pre></blockquote>
+
+
+</td></tr></tbody></table>
+</blockquote>
+
+
+
+<blockquote><pre></pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Changing the field width
+</p>
+
+Use the <b>width</b> member of the <tt>cout</tt> object to modify the width:
+
+<blockquote><pre>cout.width(<i>value</i>);
+</pre></blockquote>
+
+The next value displayed will require at least <i>value</i> characters in the output. (Like <tt>printf</tt>, if the
+size of <i>value</i> is smaller than the number of characters required to display the value, the output will not
+be truncated.)
+<p>
+
+Unlike <i>precision</i>, the new width specification will only be applied to the next output operation before being reset. (Meaning that
+it will only apply to one <tt>&lt;&lt;</tt> operation.)
+</p><p>
+
+Default right justified:
+
+</p><blockquote><pre><b>int</b> i = 42;
+<b>float</b> f = 1.23456789F;
+<b>double</b> d = 3.141592653589793238426433832795;
+</pre></blockquote>
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th><tt>printf</tt></th><th><tt>cout</tt></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>  <font color="#003399"><i>// Set the width (default right justified)</i></font>
+printf(<font color="#9933CC">"i is |%12i|\n"</font>, i);
+printf(<font color="#9933CC">"f is |%12f|\n"</font>, f);
+printf(<font color="#9933CC">"d is |%12f|\n"</font>, d);
+printf(<font color="#9933CC">"\n"</font>);
+
+<b>Output:</b>
+i is |          42|
+f is |    1.234568|
+d is |    3.141593|
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>  <font color="#003399"><i>// Set the width (default right justified)</i></font>
+std::cout &lt;&lt; <font color="#9933CC">"i is |"</font>;
+<font color="red"><b>std::cout.width(12);</b></font>
+std::cout &lt;&lt; i;
+std::cout &lt;&lt; <font color="#9933CC">"|"</font> &lt;&lt; std::endl;
+
+std::cout &lt;&lt; <font color="#9933CC">"f is |"</font>;
+<font color="red"><b>std::cout.width(12);</b></font>
+std::cout &lt;&lt; f;
+std::cout &lt;&lt; <font color="#9933CC">"|"</font> &lt;&lt; std::endl;
+
+std::cout &lt;&lt; <font color="#9933CC">"d is |"</font>;
+<font color="red"><b>std::cout.width(12);</b></font>
+std::cout &lt;&lt; d;
+std::cout &lt;&lt; <font color="#9933CC">"|"</font> &lt;&lt; std::endl;
+
+<b>Output:</b>
+i is |          42|
+f is |     1.23457|
+d is |     3.14159|
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+
+Another example:
+<p>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>  <font color="#003399"><i>// Set width to 10</i></font>
+std::cout &lt;&lt; <font color="#9933CC">"|"</font>;
+<font color="red"><b>std::cout.width(10);</b></font>
+std::cout &lt;&lt; <font color="#9933CC">"setw(10)"</font>;
+std::cout &lt;&lt; <font color="#9933CC">"|"</font> &lt;&lt; std::endl;
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>  <font color="#003399"><i>// Set width to 15</i></font>
+std::cout &lt;&lt; <font color="#9933CC">"|"</font>;
+<font color="red"><b>std::cout.width(15);</b></font>
+std::cout &lt;&lt; <font color="#9933CC">"setw(15)"</font>;
+std::cout &lt;&lt; <font color="#9933CC">"|"</font> &lt;&lt; std::endl;
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>  <font color="#003399"><i>// Set width to 20</i></font>
+std::cout &lt;&lt; <font color="#9933CC">"|"</font>;
+<font color="red"><b>std::cout.width(20);</b></font>
+std::cout &lt;&lt; <font color="#9933CC">"setw(20)"</font>;
+std::cout &lt;&lt; <font color="#9933CC">"|"</font> &lt;&lt; std::endl;
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+Output:
+</p><blockquote><pre>|  setw(10)|
+|       setw(15)|
+|            setw(20)|
+</pre></blockquote>
+
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Padding with characters other than a space
+</p>
+
+Use the <i>fill</i> member of the <tt>cout</tt> object to modify the fill character:
+
+<blockquote><pre>cout.fill(<i>fill-char</i>);
+</pre></blockquote>
+
+Any padding that is added will use <i>fill-char</i> instead of the default space.
+<p>
+Executing this once before using <tt>cout</tt>:
+
+</p><blockquote><pre>std::cout.fill(<font color="#9933CC">'*'</font>);
+</pre></blockquote>
+
+This will output something different:
+
+<p>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>  <font color="#003399"><i>// Set width to 10</i></font>
+std::cout &lt;&lt; <font color="#9933CC">"|"</font>;
+std::cout.width(10);
+std::cout &lt;&lt; <font color="#9933CC">"setw(10)"</font>;
+std::cout &lt;&lt; <font color="#9933CC">"|"</font> &lt;&lt; std::endl;
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>  <font color="#003399"><i>// Set width to 15</i></font>
+std::cout &lt;&lt; <font color="#9933CC">"|"</font>;
+std::cout.width(15);
+std::cout &lt;&lt; <font color="#9933CC">"setw(15)"</font>;
+std::cout &lt;&lt; <font color="#9933CC">"|"</font> &lt;&lt; std::endl;
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>  <font color="#003399"><i>// Set width to 20</i></font>
+std::cout &lt;&lt; <font color="#9933CC">"|"</font>;
+std::cout.width(20);
+std::cout &lt;&lt; <font color="#9933CC">"setw(20)"</font>;
+std::cout &lt;&lt; <font color="#9933CC">"|"</font> &lt;&lt; std::endl;
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+</p><blockquote><pre>Output:
+|**setw(10)|
+|*******setw(15)|
+|************setw(20)|
+</pre></blockquote>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<a name="SETF">
+</a><p class="SectionHeader"><a name="SETF">Using <tt><b>setf</b></tt> for More Control
+</a>
+</p>
+
+The <i>setf</i> member controls many aspects of the format.
+
+<center>
+<blockquote>
+<p class="technote">Refer to tables 17.1 and 17.2 in the textbook for more information.
+  These notes just scratch the surface of all of the functionality is provides.
+</p>
+</blockquote>
+</center>
+
+Examples:
+<p>
+
+</p><blockquote><pre><b>double</b> cost = 22.5; <font color="#003399"><i>// $22.50</i></font>
+<b>bool</b> flag = <b>true</b>;
+
+  <font color="#003399"><i>// Default formatting for floating point: <font color="blue"><b>cost is 22.5</b></font></i></font>
+std::cout &lt;&lt; <font color="#9933CC">"cost is "</font> &lt;&lt; cost &lt;&lt; std::endl;
+
+  <font color="#003399"><i>// Show trailing zeros: <font color="blue"><b>cost is 22.5000</b></font></i></font>
+<font color="red"><b>std::cout.setf(std::ios_base::showpoint);</b></font>
+std::cout &lt;&lt; <font color="#9933CC">"cost is "</font> &lt;&lt; cost &lt;&lt; std::endl;
+
+  <font color="#003399"><i>// Only 4 significant digits: <font color="blue"><b>cost is 22.50</b></font> (trailing zeros still in effect)</i></font>
+std::cout.precision(4);
+std::cout &lt;&lt; <font color="#9933CC">"cost is "</font> &lt;&lt; cost &lt;&lt; std::endl;
+
+  <font color="#003399"><i>// Fixed-point, 2 digits to the right: <font color="blue"><b>cost is 22.50</b></font></i></font>
+<font color="red"><b>std::cout.setf(std::ios_base::fixed, std::ios::floatfield);</b></font>
+std::cout.precision(2);
+std::cout &lt;&lt; <font color="#9933CC">"cost is "</font> &lt;&lt; cost &lt;&lt; std::endl;
+
+  <font color="#003399"><i>// Default formatting for boolean: <font color="blue"><b>flag is 1</b></font></i></font>
+std::cout &lt;&lt; <font color="#9933CC">"flag is "</font> &lt;&lt; flag &lt;&lt; std::endl;
+
+  <font color="#003399"><i>// Display true/false instead of 1/0: <font color="blue"><b>flag is true</b></font></i></font>
+<font color="red"><b>std::cout.setf(std::ios_base::boolalpha);</b></font>
+std::cout &lt;&lt; <font color="#9933CC">"flag is "</font> &lt;&lt; flag &lt;&lt; std::endl;
+</pre></blockquote>
+
+Outupt:
+<blockquote><pre>cost is 22.5
+cost is 22.5000
+cost is 22.50
+cost is 22.50
+flag is 1
+flag is true
+</pre></blockquote>
+
+
+
+
+<blockquote><pre></pre></blockquote>
+
+
+
+<blockquote><pre></pre></blockquote>
+
+
+
+<blockquote><pre></pre></blockquote>
+
+
+<h3>Changing justification</h3>
+
+<blockquote><pre></pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th><tt>printf</tt></th><th><tt>cout</tt></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>  <font color="#003399"><i>// Set the width, left justified</i></font>
+printf(<font color="#9933CC">"i is |%-12i|\n"</font>, i);
+
+<b>Output:</b>
+i is |42          |
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>  <font color="#003399"><i>// Set the width, left justified</i></font>
+std::cout &lt;&lt; <font color="#9933CC">"i is |"</font>;
+std::cout.width(12);
+<font color="red"><b>std::cout.setf(std::ios_base::left, std::ios_base::adjustfield);</b></font>
+std::cout &lt;&lt; i;
+std::cout &lt;&lt; <font color="#9933CC">"|"</font> &lt;&lt; std::endl;
+std::cout.width(12);
+
+<b>Output:</b>
+i is |42          |
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<h3>Comments:</h3>
+<ul>
+	<li>What's the meaning of: <tt>std::ios_base::showpoint</tt>?
+	</li><li>What is the signature of the <tt>setf</tt> function?
+		<ol>
+		<li>One parameter: &nbsp;&nbsp;<tt>std::cout.setf(std::ios_base::showpoint);</tt>
+		</li><li>Two parameters: <tt>std::cout.setf(std::ios_base::left, std::ios_base::adjustfield);</tt>
+    </li></ol>
+  </li><li><a href="http://www.cplusplus.com/reference/iostream/ios_base/fmtflags/">More information</a> on <tt>setf</tt> and flags.
+  </li><li>There is also a function called <i>unset</i> which is kind of the opposite of <i>setf</i>:
+    <blockquote><pre>std::unset(ios_base::boolalpha);</pre></blockquote>
+    The above would turn off the <i>boolalpha</i> flag that was set by <i>setf</i>.</li>
+</ul>	
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Manipulators
+</p>
+
+Manipulators can be a more convenient way of formatting output. To use them, you must include
+another file:
+
+<blockquote><pre><b>#include</b> &lt;iomanip&gt; <font color="#003399"><i>// No .h extension</i></font>
+</pre></blockquote>
+
+They work much the way some of the members work, including <tt>setf</tt>. In fact, they are just conveniences
+that call <i>setf</i> and <i>unset</i> behind the scenes.
+<p>
+
+Examples:
+
+</p><blockquote><pre><b>int</b> i = 42;
+<b>float</b> f = 1.23456789F;
+<b>double</b> d = 3.141592653589793238426433832795;
+
+std::cout &lt;&lt; std::setprecision(3) &lt;&lt; <font color="#9933CC">" f is |"</font> &lt;&lt; std::setw(6) &lt;&lt; f &lt;&lt; <font color="#9933CC">"|\n"</font>;
+std::cout &lt;&lt; std::setprecision(5) &lt;&lt; <font color="#9933CC">" d is |"</font> &lt;&lt; std::setw(8) &lt;&lt; d &lt;&lt; <font color="#9933CC">"|\n"</font>;
+</pre></blockquote>
+
+Output:
+<blockquote><pre> f is |  1.23|
+ d is |  3.1416|
+</pre></blockquote>
+
+
+This long statement can be written in different ways:
+<blockquote><pre>  <font color="#003399"><i>// One statement</i></font>
+std::cout &lt;&lt; std::setprecision(5) &lt;&lt; <font color="#9933CC">" d is |"</font> &lt;&lt; std::setw(8) &lt;&lt; d &lt;&lt; <font color="#9933CC">"|\n"</font>;
+</pre></blockquote>
+
+
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>  <font color="#003399"><i>// Individual statements</i></font>
+std::cout &lt;&lt; std::setprecision(5);
+std::cout &lt;&lt; <font color="#9933CC">" d is |"</font>;
+std::cout &lt;&lt; std::setw(8);
+std::cout &lt;&lt; d;
+std::cout &lt;&lt; <font color="#9933CC">"|\n"</font>;
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>  <font color="#003399"><i>// One statement on several lines</i></font>
+std::cout &lt;&lt; std::setprecision(5)
+          &lt;&lt; <font color="#9933CC">" d is |"</font> 
+          &lt;&lt; std::setw(8) 
+          &lt;&lt; d 
+          &lt;&lt; <font color="#9933CC">"|\n"</font>;
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>  <font color="#003399"><i>// Unacceptable formatting</i></font>
+std::cout &lt;&lt; std::setprecision(5)
+      &lt;&lt; 
+  <font color="#9933CC">" d is |"</font> &lt;&lt; std::
+      setw(8)  &lt;&lt; 
+    d 
+  &lt;&lt; <font color="#9933CC">"|\n"</font>;
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+
+More examples:
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>  <font color="#003399"><i>// One statement across several lines</i></font>
+std::cout &lt;&lt; std::setprecision(5)
+          &lt;&lt; <font color="#9933CC">" d is |"</font> 
+          &lt;&lt; std::setfill(<font color="#9933CC">'-'</font>)
+          &lt;&lt; std::left
+          &lt;&lt; std::fixed
+          &lt;&lt; std::setw(10) 
+          &lt;&lt; d 
+          &lt;&lt; <font color="#9933CC">"|\n"</font>;
+          
+          
+<b>Output:</b>
+ d is |3.14159---|
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>  <font color="#003399"><i>// One statement across several lines</i></font>
+std::cout &lt;&lt; std::hex
+          &lt;&lt; std::uppercase
+          &lt;&lt; <font color="#9933CC">" i is |"</font> 
+          &lt;&lt; std::setfill(<font color="#9933CC">'#'</font>)
+          &lt;&lt; std::left
+          &lt;&lt; std::setw(10) 
+          &lt;&lt; std::showbase 
+          &lt;&lt; i 
+          &lt;&lt; <font color="#9933CC">"|\n"</font>;
+
+<b>Output:</b>
+ i is |0X2A######|
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+Some of the standard manipulators are shown in table 17.3 in the textbook.
+<p>
+<a href="http://www.cplusplus.com/reference/iostream/manipulators/">More information</a> on manipulators.
+</p><p>
+	
+
+
+
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><p class="SectionHeader">Overview of Input
+</p>
+
+Basics:
+<ul>
+<li>The standard way of reading input in C++ is through <tt>cin</tt>.
+</li><li><tt>cin</tt> is kind of like <tt>scanf</tt> in C, although it's probably a little easier to use.
+</li><li>Also like <tt>cout</tt>, <tt>cin</tt> is not part of the language. It is part of the C++ standard library (in the <tt><b>std</b></tt> namespace).
+</li><li>Like <tt>cout</tt>, <tt>cin</tt> is an object.
+</li><li><tt>cin</tt> is of type <tt>istream</tt>, since it's purpose is for input.
+</li></ul>
+
+To use <tt>cin</tt>, you must include the appropriate header file (same one used for <tt>cout</tt>)
+
+<blockquote><pre><b>#include</b> &lt;iostream&gt; <font color="#003399"><i>// No .h extension</i></font>
+</pre></blockquote>
+
+Example:
+<blockquote><pre><b>int</b> i;
+<b>float</b> f;
+<b>double</b> d;
+<b>char</b> s[10];
+
+  <font color="#003399"><i>// Prompt user and read input</i></font>
+std::cout &lt;&lt; <font color="#9933CC">"Enter an int: "</font>;
+std::cin &gt;&gt; i;
+
+std::cout &lt;&lt; <font color="#9933CC">"Enter a float: "</font>;
+std::cin &gt;&gt; f;
+
+std::cout &lt;&lt; <font color="#9933CC">"Enter a double: "</font>;
+std::cin &gt;&gt; d;
+
+std::cout &lt;&lt; <font color="#9933CC">"Enter a string: "</font>;
+std::cin &gt;&gt; s;
+
+  <font color="#003399"><i>// Display the input</i></font>
+std::cout &lt;&lt; i &lt;&lt; std::endl;
+std::cout &lt;&lt; f &lt;&lt; std::endl;
+std::cout &lt;&lt; d &lt;&lt; std::endl;
+std::cout &lt;&lt; s &lt;&lt; std::endl;
+</pre></blockquote>
+
+Sample runs:
+
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>Enter an int: <font color="red"><b>45</b></font>
+Enter a float: <font color="red"><b>3.14</b></font>
+Enter a double: <font color="red"><b>3.18888889</b></font>
+Enter a string: <font color="red"><b>digipen</b></font>
+45
+3.14
+3.18889
+digipen
+</pre></blockquote>
+</td>
+<td>
+<pre>Enter an int: <font color="red"><b>10</b></font>
+Enter a float: <font color="red"><b>23.45</b></font>
+Enter a double: <font color="red"><b>.8798</b></font>
+Enter a string: <font color="red"><b>Supercalifragilistic</b></font>
+10
+23.45
+0.879761
+Supercalifragilistic
+</pre>
+</td>
+<td>
+<blockquote><pre>Enter an int: <font color="red"><b>10</b></font>
+Enter a float: <font color="red"><b>23.45</b></font>
+Enter a double: <font color="red"><b>.87987898</b></font>
+Enter a string: <font color="red"><b>Supercalifragilisticexpialidocious</b></font>
+1869177711
+1.72236e+22
+7.8795e+199
+Supercalifragilisticexpialidocious
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+Notes:
+<ul>
+<li><tt>cin</tt> can interpret the input based on the type.
+</li><li>Like <tt>scanf</tt>, there is no protection when reading strings into character arrays.
+</li><li>Like <tt>cout</tt>, you can chain all of the input into one statement:
+<blockquote><pre>  <font color="#003399"><i>// Prompt user and read input</i></font>
+std::cout &lt;&lt; <font color="#9933CC">"Enter an int, float, double, string: "</font>;
+std::cin &gt;&gt; i &gt;&gt; f &gt;&gt; d &gt;&gt; s;
+</pre></blockquote>
+</li><li><a href="http://www.cplusplus.com/reference/iostream/istream/">More information</a>
+
+
+</li></ul>
+
+<blockquote><pre></pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+<tt><b></b></tt>
+
+
+
+
+
+
+
+<blockquote><pre></pre></blockquote>
+
+
+
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<tt><b></b></tt>
+
+<blockquote><pre></pre></blockquote>
+
+
+</body></html>

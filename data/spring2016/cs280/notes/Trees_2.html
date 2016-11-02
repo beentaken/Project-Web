@@ -1,0 +1,903 @@
+
+<!-- saved from url=(0063)http://azrael.digipen.edu/~mmead/www/Courses/CS280/Trees-2.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./Trees_1_files/new.css">
+<title>CS 280 - Trees-2</title>
+</head>
+
+<body>  
+<div style="displayx: none">
+
+<center><h1>Trees (Part 2)</h1></center>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Balanced Binary Search Trees
+</p>
+
+
+Rotating nodes (review)
+
+<ul>
+<li>The primary operation used in balancing BSTs is the rotate operation. 
+</li><li>The idea is to rotate the tree around a particular node's position. (Pivot point)
+</li><li>There are two types of rotations: left and right.
+</li><li>Promoting a node is the same as rotating around the node's parent. (There is no direction, promotion is unambiguous.)
+</li><li>Note an important property of rotation: after the rotation, the sort order is preserved. This is important, because the resulting tree must
+still be a BST.
+</li></ul>
+
+<p>
+Rotate right around the root, <b>S</b>. (Same as promoting <b>M</b>)
+</p><p>
+
+<img src="./Trees_1_files/RotateRight-1.gif">
+</p><p>
+
+Rotate left twice around the root. First around <b>1</b>, then around  <b>3</b>. 
+(Same as promoting <b>3</b> and then <b>6</b>)
+</p><p>
+<img src="./Trees_1_files/RotateLeft-1.gif">
+</p><p>
+
+</p><p>
+Using the <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS280/Trees.html#TreeDefinitions">defintions</a> from before. <b>Note the parameter to each function.</b>
+</p><p>
+
+</p><blockquote>
+<table cellpadding="5" border="0">
+<tbody><tr><th>Rotating a tree right</th><th>Rotating a tree left</th></tr>
+<tr><td>
+<pre><b>void</b> RotateRight(Tree &amp;tree)
+{
+  Tree temp = tree;
+  tree = tree-&gt;left;
+  temp-&gt;left = tree-&gt;right;      &nbsp;
+  tree-&gt;right = temp;
+}
+</pre>
+</td>
+
+<td>
+<pre><b>void</b> RotateLeft(Tree &amp;tree)
+{
+  Tree temp = tree;
+  tree = tree-&gt;right;
+  temp-&gt;right = tree-&gt;left;
+  tree-&gt;left = temp;
+}
+</pre>
+</td></tr>
+</tbody></table>
+</blockquote>
+
+Follow the four lines of code in this example.
+
+<blockquote><pre>1. temp = Tree;              // temp ===&gt; S
+2. tree = temp-&gt;left;        // Tree ===&gt; M
+3. temp-&gt;left = tree-&gt;right; // temp-&gt;left ===&gt; P
+4. tree-&gt;right = temp;       // tree-&gt;right ===&gt; S
+</pre></blockquote>
+
+<br><br>
+
+
+<blockquote><pre><img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/Rotate-12.gif">
+</pre></blockquote>
+
+<blockquote><pre><img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/Rotate-34.gif">
+</pre></blockquote>
+
+Adjusting the diagram:
+
+<blockquote><pre><img src="./Trees_1_files/Rotate-Final.gif">
+</pre></blockquote>
+
+</div>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">A Simple Balanced Tree
+</p>
+
+One type of balanced tree is the AVL tree. (Two Russian Mathematicians, Adel'son-Vel'skii and Landis). 
+<ul>
+<li>An AVL tree is essentially a balanced binary search tree (BST).
+</li><li>The insert and delete operations are more complicated (need to maintain the balanced property).
+</li><li>Still, fairly simple to understand and implement.
+</li><li>Worst case for searching is now <i>O(lg N)</i>, which is very good.
+</li></ul>
+
+This next example shows how you can traverse back up the tree without having a pointer to your
+parent and without using recursion. (You could use recursion to achieve the same effect, of course.)
+
+<h3>Pseudocode for Insertion:</h3>
+
+<ol>
+<li>Insert the item into the tree using the same algorithm for BSTs. Call this new node <i>x</i>.
+<ul>
+<li>While traversing the tree looking for the appropriate insertion point for <i>x</i>, push the 
+  visited nodes onto a stack. (Actually, you are pushing pointers to the nodes.) It is not necessary 
+  to push the node onto the stack.
+</li></ul>
+</li><li>Check if there are more nodes on the stack.
+<ol type="A">
+<li>If the stack is empty, the algorithm is complete and the tree is balanced.
+</li><li>If any nodes remain on the stack, go to step 3.
+</li></ol>
+</li><li>Remove the top node pointer from the stack and call it <i>y</i>. 
+</li><li>Check the height of the <b>left</b> and <b>right</b> subtrees of <i>y</i>.
+<ol type="A">
+<li>If they are equal or differ by no more than 1 (hence, balanced), go to step 2.
+</li><li>If they differ by more than 1, perform a rotation on one or two nodes as described below.
+After the rotation(s), the algorithm is complete and the tree is balanced.
+</li></ol>
+</li></ol>
+
+<h3>Pseudocode for Balancing:</h3>
+
+<ol>
+<li>Check the height of the <b>left</b> and <b>right</b> subtree of <i>y</i> to find which 
+  is greater.
+<ul>
+<li>This psuedocode will assume that the <b>right</b> subtree is greater. (The algorithm is 
+  symmetric, so you should be able to modify it slightly for the case when the height of 
+  the <b>left</b> subtree is greater.)
+</li></ul>
+</li><li>For clarity, we refer to the <b>right</b> child of <i>y</i> as <i>u</i>. We'll refer 
+  to the <b>left</b> child of <i>u</i> as <i>v</i>, and the <b>right</b> child of 
+  <i>u</i> as <i>w</i>. 
+  </li><li>Determine the height of the subtree rooted at <i>v</i> and the height of the subtree 
+    rooted at <i>w</i>.
+<ol type="A">
+<li>If <i>h(v)</i> is greater, perform a <b>right</b> rotation about <i>u</i> and a 
+  <b>left</b> rotation about <i>y</i>.
+</li><li>&nbsp;&nbsp;&nbsp;&nbsp;Else perform a <b>left</b> rotation about <i>y</i>. (This handles 
+  the case when <i>h(v)</i> and <i>h(w)</i> are equal. 	The reason for this is that it is 
+  probably more efficient to do a single rotation, rather than a double rotation, when possible.)
+</li></ol>
+</li><li>The tree is now balanced after an insertion.
+</li></ol>
+
+<h3>Removal:</h3>
+<blockquote>
+Removing an element is very similar to the insertion algorithm. While we are searching for 
+the node to delete, we are pushing the visited nodes onto a stack. The only difference is 
+that at step 4b above, we modify it to say this:
+<ul>
+<li>If they differ by more than 1, perform a rotation on one or two nodes as described below.
+After the rotation(s), <b>goto to step 2 (in the insertion pseudocode).</b>
+</li></ul>
+</blockquote>
+
+
+
+
+
+<hr width="90%">
+<p>
+
+</p><h2>Example:</h2>
+
+<table border="0" cellspacing="15">
+<tbody><tr align="center">
+<th>Given this tree:</th><th width="50"></th><th>After inserting 7</th><th width="50"></th><th>On the stack</th>
+</tr>
+<tr>
+<td valign="top"><img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/AVL-1.gif"></td><td></td><td><img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/AVL-2.gif"></td><td></td><td>8<br>9<br>5<br></td>
+</tr>
+</tbody></table>
+
+<br><br>
+
+<table border="0" cellspacing="15">
+<tbody><tr><th>Balanced subtrees</th><th width="50"></th><th>Balanced subtrees</th><th width="50"></th><th>Unbalanced subtrees</th>
+</tr>
+<tr>
+<td valign="top"><img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/AVL-3.gif"></td><td></td><td><img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/AVL-4.gif"></td><td></td><td><img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/AVL-5.gif"></td>
+</tr>
+</tbody></table>
+
+<p>
+Since <i>h(v)</i> is greater than <i>h(w)</i>, perform a right rotation about <i>u</i> (promote <i>v</i>)
+and a left rotation about <i>y</i> (promote <i>v</i> again):
+</p><p>
+<img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/AVL-6.gif">
+</p><p>
+<img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/AVL-7.gif">
+</p><p>
+
+<br>
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS280/AVL-delete-example.html">Example of deleting</a> from an AVL tree that requires multiple rotations.
+<br><br>
+
+</p><p class="technote">
+<b>Self Check:</b> Draw the AVL tree at each step as you insert these values: <b>5 2 9 8 12 15 17 19 25</b> (as letters: <b>EBIHLQSY</b>)
+</p>
+
+<!--
+<p class="technote">
+Instead of inserting the value 7 into the tree, insert the value 15. Trace the algorithm with this value
+and draw the resulting tree. Also, given the source code and pseudocode on this page, implement the
+insertion operation for an AVL tree. 
+</p>
+-->
+
+Partial implementation examples: 
+<p>
+
+</p><pre class="sourcecode"><code>
+<font color="#003399"><i>// Client calls this instead of InsertItem</i></font>
+<b>void</b> InsertAVLItem(Tree &amp;tree, <b>int</b> Data)
+{
+  stack&lt;Tree *&gt; nodes;
+  InsertAVLItem2(tree, Data, nodes);
+}
+
+<font color="#003399"><i>// Auxiliary function with the stack of visited nodes</i></font>
+<b>void</b> InsertAVLItem2(Tree &amp;tree, <b>int</b> Data, stack&lt;Tree*&gt;&amp; nodes)
+{
+  <b>if</b> (tree == 0)
+  {
+    tree = MakeNode(Data);
+    BalanceAVLTree(nodes); <font color="#003399"><i>// Balance it now</i></font>
+  }
+  <b>else</b> <b>if</b> (Data &lt; tree-&gt;data)
+  {
+    nodes.push(&amp;tree); <font color="#003399"><i>// save visited node</i></font>
+    InsertAVLItem2(tree-&gt;left, Data, nodes);
+  }
+  <b>else</b> <b>if</b> (Data &gt; tree-&gt;data)
+  {
+    nodes.push(&amp;tree); <font color="#003399"><i>// save visited node</i></font>
+    InsertAVLItem2(tree-&gt;right, Data, nodes);
+  }
+  <b>else</b>
+    cout &lt;&lt; <font color="#9933CC">"Error, duplicate item"</font> &lt;&lt; endl;
+}
+
+<b>void</b> BalanceAVLTree(stack&lt;Tree *&gt;&amp; nodes)
+{
+  <b>while</b> (!nodes.empty())
+  {
+    Tree *node = nodes.top();
+    nodes.pop();
+
+    <font color="#003399"><i>// implement algorithm using functions that</i></font>
+    <font color="#003399"><i>// are already defined (Height, RotateLeft, RotateRight)</i></font>
+
+}</code></pre>
+
+
+<!--
+Driver code to help you practice implementing these trees:
+<ul>
+<li><a href="driver-AVLBST.cpp.html">BST and AVL</a>
+<li><a href="driver-AVLBST-inheritance.cpp.html">BST and AVL using inheritance</a>
+</ul>
+
+Using this node structure:
+<blockquote><pre>
+<b>struct</b> BinTreeNode
+{
+  BinTreeNode *left;
+  BinTreeNode *right;
+  <b>int</b> data;
+};
+
+<b>typedef</b> BinTreeNode* BinTree;
+</pre></blockquote>
+
+A sample public interface:
+
+<blockquote>
+<table border=0>
+<tr valign="top">
+<td>
+<pre>
+BSTree(<b>void</b>);
+<b>virtual</b> ~BSTree();
+<b>virtual</b> <b>void</b> insert(<b>int</b> value) <b>throw</b>(BSTException);
+<b>virtual</b> <b>void</b> remove(<b>int</b> value);
+<b>void</b> clear(<b>void</b>);
+<b>bool</b> find(<b>int</b> value) <b>const</b>;
+<b>bool</b> empty(<b>void</b>) <b>const</b>;
+<b>unsigned</b> <b>int</b> size(<b>void</b>) <b>const</b>;
+<b>int</b> height(<b>void</b>) <b>const</b>;
+<b>const</b> BinTree root(<b>void</b>) <b>const</b>;
+</pre>
+</td>
+<td width="20"></td>
+<td>
+<pre>
+AVLTree(<b>void</b>);
+<b>virtual</b> ~AVLTree();
+<b>virtual</b> <b>void</b> insert(<b>int</b> value) <b>throw</b>(BSTException);
+<b>virtual</b> <b>void</b> remove(<b>int</b> value);
+</pre>
+</td>
+</tr></table>
+</blockquote>
+<p>
+-->
+
+
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS280/BSTAVLTrees.exe">BST/AVL program</a> showing balance factors and node counts.
+<p>
+
+<!--	
+<a href="http://webpages.ull.es/users/jriera/Docencia/AVL/AVL%20tree%20applet.htm">Animations</a>
+-->
+
+</p><p>
+	
+</p><blockquote><pre></pre></blockquote>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">2-3 Search Trees
+</p>
+
+
+<ul>
+<li>Each node can contain 1 or 2 keys.
+</li><li>Each node has 2 or 3 children, hence 2-3 tree.
+</li><li>The keys in the nodes are ordered from small to large.
+</li><li>All leaves are at the same (bottom most) level, meaning we always add at the bottom.
+<!--
+<li>The data may be stored in the internal nodes or in the leaves (usually not both).
+-->
+</li><li>Balance is maintained after every insertion using a very simple balancing algorithm. (Splitting nodes)
+</li><li>Searches are O(lg N) in worst case.
+</li><li>Number of splits in worst case is O(lg N), but about O(1) on average.
+</li></ul>
+
+A possible node structure for a 2-3 search tree:
+<p>
+
+</p><blockquote><pre><b>struct</b> Node23
+{
+  Node23 *left, *middle, *right;
+  Key key1, key2;
+};
+</pre></blockquote>
+
+<p>
+</p><blockquote>
+<table cellpadding="5" cellspacing="5">
+<tbody><tr>
+<th>2-node (not showing empty)</th><th width="40"></th><th>2-node (showing empty)</th><th width="40"></th><th>3-node</th>
+</tr>
+<tr>
+<td>
+<img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/2-3Node-1.gif">
+</td>
+<td></td>
+<td>
+<img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/2-3Node-2.gif">
+</td>
+<td></td>
+<td>
+<img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/2-3Node-3.gif">
+</td>
+</tr></tbody></table>
+</blockquote>
+<p>
+
+An example using bottom-up balancing (splitting):
+<br>
+
+</p><blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+
+<blockquote><pre><img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/2-3Tree-1.gif">
+</pre></blockquote>
+
+<br><br>
+Inserting <b>D</b> into the tree causes the leftmost node to grow from a 2-node to a 3-node:
+
+<blockquote><pre><img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/2-3Tree-2.gif">
+</pre></blockquote>
+
+<br><br>
+<ul>
+<li>Adding <b>O</b> to the tree is slightly more complicated
+</li><li>It causes the 3-node <b>M,N</b> to overflow to <b>M,N,O</b>
+</li><li>Split the node into two 2-nodes, <b>M</b> and <b>O</b>
+</li><li>Pass up the middle, <b>N</b>
+</li></ul>
+
+<blockquote>
+<table cellspacing="10" cellpadding="5">
+<tbody><tr><th>4-node, not valid in 2-3 tree</th><th></th><th>Three 2-nodes</th></tr> 
+<tr valign="top">
+<td>
+<img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/2-3Node-MNO.gif">
+</td>
+<td width="30"><font size="+4">&#8594;</font></td>
+<td>
+<img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/2-3Tree-3.gif">
+</td>
+</tr></tbody></table>
+</blockquote>
+<p>
+	
+<br><br>
+</p><ul>
+<li>Passing up <b>N</b> causes the 3-node <b>L,P</b> to overflow to <b>L,N,P</b>
+</li><li>Split the node into two 2-nodes, <b>L</b> and <b>P</b>
+</li><li>Pass up the middle, <b>N</b>
+</li></ul>
+
+<blockquote><pre><img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/2-3Tree-4.gif">
+</pre></blockquote>
+
+<br><br>
+<ul>
+<li>Passing up <b>N</b> causes the 2-node <b>J</b> to become a 3-node, <b>J,N</b>
+</li><li>No more overflow/splits 
+</li></ul>
+
+<blockquote><pre><img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/2-3Tree-5.gif">
+</pre></blockquote>
+
+<p>
+What will the tree look like after inserting <b>A</b>? After inserting <b>I</b>? 
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS280/Trees-2-3-sample.html">Diagrams</a>
+</p><p>
+In the worst case, we have to traverse the entire tree twice. (Down to insert, up to balance)
+</p><p>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><p class="SectionHeader">2-3-4 Trees
+</p>
+
+<ul>
+<li>Similar to 2-3 trees</li>
+<li>Each node can contain 1, 2, or 3 keys.</li>
+<li>Each node has 2, 3 or 4 children, hence 2-3-4 tree.</li>
+<li>Restated: Every node has <i>at most</i> 4 children.</li>
+<li>All external nodes (NULL nodes) are at the same depth.</li>
+<li>2-3-4 trees form the basis for B-trees (1,000 children per node), which are used extensively in large data sets.</li>
+</ul>
+
+<ul>
+<li>Number of splits in the worst-case is O(lg N). When is worst-case?
+</li><li>Number of splits on average is very few.
+</li></ul>
+
+
+Modified algorithms can produce better efficiency (e.g. splitting nodes on the way down instead of splitting from
+the bottom up.)
+
+<p>
+A 2-node attached to a 4-node becomes a 3-node attached to two 2-nodes:
+</p><blockquote><pre><img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/Split2-3-4-1.gif">
+</pre></blockquote>
+
+<br>
+
+A 3-node attached to a 4-node becomes a 4-node attached to two 2-nodes:
+<blockquote><pre><img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/Split2-3-4-2.gif">
+</pre></blockquote>
+
+<br>
+<ul>
+<li>Splitting a 4-node into two 2-nodes preserves the number of child links (4 links)
+</li><li>Changes do not have to be propagated. Change remains local to the split.
+</li><li>By <b>splitting nodes on the way down</b>, we can guarantee that each node we pass through is not a 4-node.
+</li><li>When we reach the bottom, we will <i>not</i> be on a 4-node.
+</li><li>This means we only traverse the tree once when inserting/balancing.
+</li><li>When the root becomes a 4-node, we split it into a 2-node pointing to two 2-nodes:
+<blockquote><pre><img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/Split2-3-4-3.gif">
+</pre></blockquote>
+</li><li>Splitting the root is what causes the tree to grow one level. (This is the only way to grow the tree)
+</li></ul>
+
+<!-- ********************************************************** -->
+<!-- ********************************************************** -->
+<p>
+</p><hr width="90%">
+<p>
+	
+<b>Deletion</b>
+</p><p>
+Deleting an element in a 2-3-4 tree (assumes we will <i>grow</i> nodes on the way down.)
+</p><p>
+The idea is intuitive, but writing the algorithm down in English seems to make it look/sound harder than it is.
+</p><p>
+Again, when dealing with trees, there are different cases. Here, there are 3 different cases:
+
+</p><ol>
+<li>If the element, <i>k</i> is in the node and the node is a <i>leaf</i> containing at least 2 keys, simply remove <i>k</i> from the node.
+<p>
+</p></li><li>If the element, <i>k</i> is in the node and the node is an <i>internal node</i> perform <i>one</i> of the following:
+<ol>
+<li>If the element's <i>left</i> child has at least 2 keys, replace the element with its predecessor, <i>p</i>,
+and then recursively delete <i>p</i>.
+</li><li>If the element's <i>right</i> child has at least 2 keys, replace the element with its successor, <i>s</i>,
+and then recursively delete <i>s</i>.
+</li><li>If both children have only 1 key (the minimum), merge the right child into the left child and include
+the element, <i>k</i>, in the left child. Free the right child and recursively delete <i>k</i> from the 
+left child.
+</li></ol>
+<p>
+</p></li><li>If the element, <i>k</i>, is not in the internal node, follow the proper link to find <i>k</i>. 
+To ensure that all nodes we travel through will have at least 2 keys, you may need to perform one 
+of the following before descending into a node. Then, you will descend into the corresponding node. 
+Eventually, case 1 or 2 will be arrived at (if <i>k</i> is in the tree).
+<ol>
+<li>If the child node (the one being descending into) has only 1 key and has an immediate sibling
+with at least 2 keys, move an element down from the parent into the child and move an element from
+the sibling into the parent.
+</li><li>If both the child node and its immediate siblings have only 1 key each, merge the child node
+with one of the siblings and move an element down from the parent into the merged node. 
+This element will be the middle element in the node. Free the node whose elements were merged into the other node.
+</li></ol>
+</li></ol>
+
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS280/Trees-2-3-4-delete.html">Deletion example</a>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Red-Black Trees
+</p>
+
+Invented by Guibas and Sedgewick in 1978. It is the data structure used
+for implementing maps and sets in C++'s Standard Template Library (STL) and also
+used to implement the Completely Fair Scheduler in Linux.
+
+<ul>
+<li>A BST is a form of 2-3-4 tree in that all nodes are always 2-nodes.
+</li><li>Red-Black trees are BSTs (all nodes 2-nodes)
+</li><li>Red-Black trees are used to represent 2-3-4 trees.
+</li><li>The "-3-4" nodes of the 2-3-4 tree are "encoded" in the nodes.
+</li><li>This encoding is represented in the node as the node being either RED or BLACK.
+</li></ul>
+
+Advantages of Red-Black trees
+
+<ul>
+<li>Red-Black trees are BSTs, so the standard search methods for BSTs work as-is
+</li><li>They correspond directly to 2-3-4 trees, so they are always balanced.
+</li><li>This means that searching, inserting, and re-balancing are all O(lg N). Sweet!
+</li><li>The insertion/rebalancing algorithm is fairly simple. However, coming up with
+the algorithm is not.
+</li></ul>
+
+Properties of Red-Black trees
+
+<ul>
+<li>A Red-Black tree is a binary search tree.
+</li><li>Each node has an additional attribute, a color, which is either RED or BLACK. 
+</li><li>A node in a Red-Black tree also contains a link (back pointer) to the parent, which 
+helps to keep the algorithms simpler.
+</li><li>A possible data structure for a node of a Red-Black tree could be:
+</li></ul>
+
+<blockquote><pre><b>enum</b> COLOR { rbRED, rbBLACK };
+<b>struct</b> RBNode
+{
+  RBNode *left;
+  RBNode *right;
+  RBNode *parent;
+  COLOR color;
+  <b>void</b> *item;
+};
+</pre></blockquote>
+
+<!--
+http://en.wikipedia.org/wiki/Red%E2%80%93black_tree
+The color "red" was chosen because it was the best-looking color produced by the color 
+laser printer available to the authors while working at Xerox PARC.[5]
+-->
+
+Note that the terms "RED" and "BLACK" are completely arbitrary. The inventors could have
+simply used "GREEN/YELLOW", "A/B", "TRUE/FALSE", "TOM/JERRY". These terms are simply tags to distinguish
+between the two types of nodes.
+<p>
+
+A Red-Black tree is a Binary Search Tree with the additional properties of color:
+
+</p><ul>
+<li>Each node is marked as <b><font color="red">RED</font></b> or <b>BLACK</b>.
+</li><li>Newly inserted nodes are marked as <b><font color="red">RED</font></b>
+</li><li>NULL nodes (empty children) are marked as <b>BLACK</b>.
+</li><li>If a node is <b><font color="red">RED</font></b>, then its children must be <b>BLACK</b>.
+<ul>
+<li>This means that two <b><font color="red">RED</font></b> nodes are never adjacent on a path. 
+There is no limit on the number of <b>BLACK</b> nodes that may appear in sequence.
+</li></ul>
+</li><li>Every path from a node to any of its leaves contains the same number of <b>BLACK</b> nodes.
+</li><li>The root of the tree is <b>BLACK</b>. Technically, the root may be <font color="red"><b>RED</b></font>,
+but to keep the algorithm simple and ensure that everyone's trees look identical, we'll require the root to be <b>BLACK</b>.
+</li></ul>
+
+Another way to state this is to focus on these two conditions:
+<p>
+The <b><font color="red">RED</font></b> condition:
+</p><blockquote>
+Each <b><font color="red">RED</font></b> node has a <b>BLACK</b> parent.
+</blockquote>
+
+The <b>BLACK</b> condition:
+<blockquote>
+Each path from the root to every external node contains exactly the same number of <b>BLACK</b> nodes.
+</blockquote>
+
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS280/Trees-Mapping2-3-4IntoRB.html">Mapping 2-3-4 Trees into Red-Black Trees</a>
+<p>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><p class="SectionHeader">More Red-Black Tree Details
+</p>
+
+The implementation complexity with Red-Black trees arises when an insertion destroys the Red-Black properties that must
+hold for Red-Black trees. After such an insertion, we must restore the Red-Black properties as above.
+<p>
+
+</p><ul>
+<li>The specific condition that is violated is when an insertion causes two <b><font color="red">RED</font></b>
+nodes to be adjacent.
+</li><li>This is because newly inserted nodes are always marked as <b><font color="red">RED</font></b>, 
+and if the parent is <b><font color="red">RED</font></b>, we have
+a "situation."
+</li></ul>
+
+First some terminology about our family tree:
+
+<blockquote><pre><img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/FamilyTree-1.gif">
+</pre></blockquote>
+
+We will use these letters in our diagram:
+
+<ul>
+<li>C = Child
+</li><li>P = Parent
+</li><li>G = Grandparent
+</li><li>U = Uncle
+</li></ul>
+
+
+
+<h2>Situation #1</h2>
+
+<ul>
+<li>Child and Parent are <b><font color="red">RED</font></b> and Uncle is <b>BLACK</b>
+</li><li>Grandparent <i>must</i> be black because tree was valid Red-Black before insertion
+</li><li>Two possible orientations with the grandparent:
+</li></ul>
+
+
+Orientation #1 (zig-zig)
+
+<blockquote><pre><img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/Red-Black-1a.gif">
+</pre></blockquote>
+
+<br>
+Questions you should be able to reason about:
+<ul>
+<li>What color is the root of subtrees 1, 2, and 3?
+</li><li>What is the color of G's parent?
+</li><li>What color is the root of subtrees 4 and 5?
+</li><li>How does the number of black nodes along any path in G's left subtree
+	compare with the number of black nodes along any path in G's right subtree?
+</li></ul>	
+
+Transformation:
+<ul> 
+<li>Rotate Grandparent (promote parent) (G becomes child of P) 
+</li><li>Set Grandparent to <b><font color="red">RED</font></b> and Parent to <b>BLACK</b>
+</li><li>Changes were local so we are done. (Doesn't affect nodes above.)
+</li></ul>
+
+Orientation #2 (zig-zag)
+<blockquote><pre><img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/Red-Black-2a.gif">
+</pre></blockquote>
+
+Transformation:
+<ul> 
+<li>Rotate Parent left, then rotate Grandparent right (promote node, promote node)
+</li><li>Set Grandparent to <b><font color="red">RED</font></b> and Child to <b>BLACK</b> 
+</li><li>Changes were local so we are done. (Doesn't affect nodes above.)
+</li></ul>
+
+
+
+<h2>Situation #2</h2>
+<ul>
+<li>Child and Parent are <b><font color="red">RED</font></b> and Uncle is <b><font color="red">RED</font></b>
+</li><li>Grandparent <i>must</i> be black because tree was valid Red-Black before insertion
+</li><li>Two possible orientations with the grandparent:
+
+</li></ul>
+
+
+Orientation #1 (zig-zig)
+
+<blockquote><pre><img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/Red-Black-3a.gif">
+</pre></blockquote>
+
+Transformation:
+<ul> 
+<li>Set Grandparent to <b><font color="red">RED</font></b>, set Parent and Uncle to <b>BLACK</b> (flip colors of the 4-node)
+</li><li>Changing G to <b><font color="red">RED</font></b> may affect G's parent, so
+we need to continue up the tree
+</li></ul>
+
+Orientation #2 (zig-zag)
+<blockquote><pre><img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/Red-Black-4a.gif">
+</pre></blockquote>
+
+Transformation:
+<ul> 
+<li>Set Grandparent to <b><font color="red">RED</font></b>, set Parent and Uncle to <b>BLACK</b>
+</li><li>Changing G to <b><font color="red">RED</font></b> may affect G's parent, so
+we need to continue up the tree.
+</li></ul>
+
+
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS280/RBTreePseudoCode.html">Pseudocode</a> for insertion into a Red-Black tree.
+<p>
+
+Diagrams and pseudocode in a <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS280/Red-Black-code-diagrams.pdf">PDF document</a>.
+</p><p>
+
+
+
+Given the Red-Black tree below, insert the values 4, 6, 9, and 10 into it, re-balancing and re-coloring as
+necessary.
+</p><blockquote><pre><img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/Red-Black-Example-1.gif">
+</pre></blockquote>
+
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS280/Red-Black-Example1-Solution.html">Resulting trees</a> from inserting the values above.  (Letters: KBNAGOEH DFIJ)
+<p>
+
+Draw the resulting Red-Black tree from inserting the letters: E A S Y Q U T I O N
+
+</p><p>
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS280/Red-Black-Example2-Solution.html">Resulting tree</a> from inserting the letters above.
+</p><p>
+<!--
+-->
+
+<a href="http://www.ece.uc.edu/~franco/C321/html/RedBlack/redblack.html">Red-Black Demo (Empty)</a>
+<br>
+<a href="http://gauss.ececs.uc.edu/Users/Franco/RedBlackTester/redblack.html">Red-Black Demo (Populated)</a>
+</p><p>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><p class="SectionHeader">Examples of Inserting Sorted/Unsorted Data
+</p>
+
+<table cellpadding="0">
+
+<tbody><tr valign="center">
+<th>2-3-4 Tree: 1 2 3 4 5 6 7 8</th><th width="50"></th>
+<th>Red-Black Tree: 1 2 3 4 5 6 7 8</th><th width="50"></th>
+<th>BST: 1 2 3 4 5 6 7 8</th>
+</tr>
+
+<tr valign="center">
+<td><img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/2-3-4Tree1-8.gif"></td><td width="50"></td>
+<td><img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/RBTree1-8.gif"></td><td width="50"></td>
+<td><img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/BST1-8.gif"></td>
+</tr>
+
+<tr height="20"></tr>
+
+<tr valign="center">
+<th>2-3-4 Tree: 8 7 6 5 4 3 2 1</th><th width="50"></th>
+<th>Red-Black Tree: 8 7 6 5 4 3 2 1</th><th width="50"></th>
+<th>BST: 8 7 6 5 4 3 2 1</th>
+</tr>
+
+<tr valign="center">
+<td><img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/2-3-4Tree8-1.gif"></td><td width="50"></td>
+<td><img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/RBTree8-1.gif"></td><td width="50"></td>
+<td><img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/BST8-1.gif"></td>
+</tr>
+
+<tr height="20"></tr>
+
+<tr valign="center"><th>2-3-4 Tree: 2 7 5 6 1 4 8 3</th><th width="50"></th>
+<th>Red-Black Tree: 2 7 5 6 1 4 8 3</th><th width="50"></th>
+<th>BST: 2 7 5 6 1 4 8 3</th>
+</tr>
+
+<tr valign="center">
+<td><img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/2-3-4Tree27561483.gif"></td><td width="50"></td>
+<td><img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/RBTree27561483.gif"></td><td width="50"></td>
+<td><img src="http://azrael.digipen.edu/~mmead/www/Courses/CS280/BST27561483.gif"></td>
+</tr>
+
+</tbody></table>
+
+
+<h2>Highlights of Red-Black Trees:</h2>
+<ul>
+<li>Red-Black trees are BSTs, so standard BST search algorithms work as-is.
+</li><li>They correspond directly to 2-3-4 trees, so they remain (approximately) balanced after inserting.
+</li><li>There is less work during searches because no balancing is done (split on the way down). We only balance if we add a node.
+</li><li>The insertion/rebalancing algorithm is fairly simple. 
+</li><li>Searching, inserting, and re-balancing are all O(lg N).
+</li><li>Red-Black trees ensure the underlying 2-3-4 tree is balanced. This means:
+<ul>
+<li>The corresponding 2-3-4 tree is <i>exactly</i> balanced and requires at most <i>lg N</i> comparisons to reach 
+a leaf. The worst case complexity, then, is <i>O(lg N)</i>.
+</li><li>The Red-Black tree is <i>approximately</i> balanced and requires at most <i>2 lg N</i> comparisons to reach
+a leaf. The worst case complexity, then, is <i>O(lg N)</i>. On average, the number of comparisons is 
+<i>1.002 lg N</i>.
+</li></ul>
+</li></ul>
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS280/RedBlackTrees.exe">Red-Black Tree Program</a>
+<br>
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS280/BSTAVLTrees.exe">BST/AVL program</a>
+<p>
+
+</p><p>
+</p><p class="technote">
+<b>Self-check:</b>
+Insert the letters <tt>ABCDEFGHIJKLMNOPQRSTUVWXYZ</tt> into a 2-3-4 tree and compare it to a red-black tree
+with the same data. What do you see?
+</p>
+
+<h2>Red-Black vs. AVL</h2>
+
+According to Ben Pfaff (creator of <a href="http://adtinfo.org/">GNU libavl</a>) in
+an excerpt from Google Groups on the topic 
+<a href="http://groups.google.com/group/comp.theory/browse_frm/thread/2273ea9bfe3b78e7/b98afd7519f4f0ad?lnk=st&amp;q=Red+Black+Trees+Vs+Skip+Lists&amp;rnum=1#b98afd7519f4f0ad"><i>"Red Black Trees Vs Skip Lists"</i></a>
+<p>
+
+</p><blockquote>
+"In my own tests, the performance of AVL trees versus red-black 
+trees depends on the input data.  When the input data is in 
+random order, red-black trees perform better because they expend 
+less effort trying to balance a tree that is already well 
+balanced.  When the input data is pathological (e.g. in 
+increasing order), AVL trees perform better because they produce 
+trees with smaller average path length.  The choice between AVL 
+and red-black trees should therefore be made based on 
+expectations of typical input data."
+</blockquote>
+
+Another way to look at it is if the data is read only (e.g. a dictionary, no inserts/deletions), 
+using an AVL tree will result in faster lookups because it will be guaranteed to be exactly balanced.
+
+<!--
+From wikipedia:
+The AVL tree is another structure supporting O(log n) search, insertion, and removal. It is more 
+rigidly balanced than red–black trees, leading to slower insertion and removal but faster retrieval. 
+This makes it attractive for data structures that may be built once and loaded without reconstruction, 
+such as language dictionaries (or program dictionaries, such as the opcodes of an assembler or 
+interpreter).
+-->
+
+<!-- ********************************************************** -->
+<!-- ********************************************************** -->
+<!--
+<hr>
+<a href="http://www.cs.hope.edu/~alganim/ccaa/">Algorithm Animations</a><br>
+<a href="http://www.cs.hope.edu/~alganim/ccaa/tree.html">Tree Animations</a><br>
+<a href="http://aleph0.clarku.edu/%7Eachou/cs160/examples/bst_animation/SplayTree-Example-2.html">Splay Tree Animation</a><br>
+-->
+<!--<a href="http://aleph0.clarku.edu/%7Eachou/cs102/examples/bst_animation/RedBlackTree-Example2.html">Red-Black Tree Animation</a><br>-->
+
+<p>
+</p><hr>
+<p>
+<br>	
+
+
+  
+</p><blockquote><pre></pre></blockquote>
+
+</body></html>

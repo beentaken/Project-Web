@@ -1,0 +1,682 @@
+
+<!-- saved from url=(0067)http://azrael.digipen.edu/~mmead/www/Courses/CS180/BootProcess.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./The Boot Process_files/new.css">
+<title>The Boot Process</title>
+
+
+</head>
+
+<body>  
+
+<center><h1>
+The Boot Process
+</h1></center>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="sectionheader">
+Starting the Computer
+</p>
+
+A computer won't do anything until it is powered-up.
+<ul>
+	<li>What happens when the computer is turned on?</li>
+	<li>How does the computer "know" where the operating system is located?</li>
+	<li>What if the computer has more than one operating system installed?</li>
+	<ul>
+		<li>Which OS will be started?</li>
+		<li>Can the user change this?</li>
+		<li>What if the user wants to run multiple operating systems at the same time?</li>
+	</ul>
+</ul>
+
+<h3>The Power-On Self Test (POST)</h3>
+<ul>
+	<li>The computer first runs a self-diagnostic or <span id="wpurl"><a class="wplabel">POST</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Power-on_self-test">POST</a>. (Not unique to computers.)</li>
+  <li>Happens automatically (It is hard-coded into the <span id="wpurl"><a class="wplabel">BIOS</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/BIOS">BIOS</a> and always executes first.)
+  <ul>
+  	<li>Newer computers may use <span id="wpurl"><a class="wplabel">Unified Extensible Firmware Interface</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Unified_Extensible_Firmware_Interface">Unified Extensible Firmware Interface</a> or UEFI.</li>	
+  </ul>
+	</li><li>Discovers what kinds of devices are connected and checks if they're in working condition.</li>
+	<ul>
+		<li>CPU</li>
+		<li>Main memory</li>
+		<li>Disk drives (hard, floppy, DVD, etc.)</li>
+		<li>etc...</li>
+	</ul>
+	<li>Reads information stored in the BIOS (typically part of the motherboard) and initializes other parts.</li>
+	<li>Some hardware devices (e.g. video cards) may do their own POST at this time as well.</li>
+	<li>In the olden-days, if there were problems you would hear <span id="wpurl"><a class="wplabel">beep codes</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Power-on_self-test#Original_IBM_POST_beep_codes">beep codes</a>. (No other way to report problems.)</li>
+	<li>Newer motherboards have LED digits that may provide more information.</li>
+	<ul>
+		<li>Some even use "voice" output to identify the problem.</li>
+	</ul>
+	<li>Warm start vs. cold start (reset)</li>
+	<li>If everything checks out, the next steps takes place.</li>
+</ul>
+
+<h3>Finding and loading an operating system</h3>
+<ul>
+	<li>By default, the BIOS runs a program that is stored in the first sector of the first hard disk.</li>
+	<ul>
+		<li>This sector contains the <span id="wpurl"><a class="wplabel">Master Boot Record</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Master_boot_record">Master Boot Record</a> (MBR)</li>
+		<li>Some operating systems will use a <span id="wpurl"><a class="wplabel">GUID Partition Table</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/GUID_Partition_Table">GUID Partition Table</a>
+			(GPT) on very large (over 2 TB) disks.</li>
+	</ul>
+	<li>This sector is typically only 512 bytes, too small for an operating system.</li>
+	<li>This program, called bootstrapping code or <span id="wpurl"><a class="wplabel">bootloader</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Booting#Boot_loader">bootloader</a>, contains just enough code to "find" an operating system elsewhere.</li>
+	<li>Typically, the bootloader finds the first sector (Volume Boot Record) of the <i>active partition</i>, then loads and executes the code.</li>
+	<li>Computers with multiple operating systems may display a menu for the user to choose an OS to start.</li>
+	<li>You can alter the location of the bootloader in the BIOS (so you can boot from a DVD, USB drive, or over the network, for example.)</li>
+	<li>Remember that code must be in memory to be executed.</li>
+</ul>
+
+<!--
+This is a foobar message to test.
+-->
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="sectionheader">
+The Master Boot Record (<a href="http://en.wikipedia.org/wiki/Master_boot_record">MBR</a>)
+</p>
+
+The MBR is 512 bytes:
+<ul>
+<li>The <span class="bootcode">first 446 bytes</span> contain the primary boot loader code, with the last 6 bytes being a disk signature (typically only 4 bytes are used). (lavender)</li>
+<li>The <span class="partbl">next 64 bytes</span> contain the <span id="wpurl"><a class="wplabel">partition table</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Master_boot_record#Disk_partitioning">partition table</a>. Four records, each 16 bytes long. (pink)</li>
+<ul>
+	<li>Byte 1: <span id="wpurl"><a class="wplabel">Active/bootable flag</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Boot_flag">Active/bootable flag</a>. 80h is active/bootable, 00h is not.</li>
+
+
+	<li>Bytes 2-4: The starting <span id="wpurl"><a class="wplabel">cylinder-head-sector</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Cylinder-head-sector">cylinder-head-sector</a> (CHS).</li>
+	<li>Byte 5: <span id="wpurl"><a class="wplabel">Partition type</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Partition_type">Partition type</a> (<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/BootProcess.html#QR">System IDs</a>)</li>
+	<li>Bytes 6-8: The ending cylinder-head-sector (CHS).</li>
+	<li>Bytes 9-12: The starting sector using <span id="wpurl"><a class="wplabel">Logical Block Addressing</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Logical_block_addressing">Logical Block Addressing</a> (LBA).</li>
+	<li>Bytes 13-16: The number of sectors in the partition.</li>
+
+
+	<li>
+</li></ul>
+<li>The <span class="magic">last 2 bytes</span> are the Magic Number and are always 0xAA55 (little-endian). (violet)</li>
+<li>You can see some minimal <span class="errmsgs">error messages</span> that are stored in the code. (turquoise)</li>
+<li>The MBR is not in any partition. (It comes before the first partition.)</li>
+<li>The first sector of a partition is called the <span id="wpurl"><a class="wplabel">Volume Boot Record</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Volume_boot_record">Volume Boot Record</a>.</li>
+
+
+
+</ul>
+
+A Windows XP MBR:
+<blockquote>
+  <table bordercolor="#000000" border="1" cellspacing="0" cellpadding="7" align="centerx">
+    <tbody><tr>
+      <td> 
+      <!--<font face="Courier New, Courier, Mono">--><pre>        00 01 02 03 04 05 06 07  08 09 0A 0B 0C 0D 0E 0F
+--------------------------------------------------------------------------
+000000 <span class="bootcode">33 C0 8E D0 BC 00 7C FB  50 07 50 1F FC BE 1B 7C</span>   <span class="bootcode">3.....|.P.P....|</span>
+000010 <span class="bootcode">BF 1B 06 50 57 B9 E5 01  F3 A4 CB BD BE 07 B1 04</span>   <span class="bootcode">...PW...........</span>
+000020 <span class="bootcode">38 6E 00 7C 09 75 13 83  C5 10 E2 F4 CD 18 8B F5</span>   <span class="bootcode">8n.|.u..........</span>
+000030 <span class="bootcode">83 C6 10 49 74 19 38 2C  74 F6 A0 B5 07 B4 07 8B</span>   <span class="bootcode">...It.8,t.......</span>
+000040 <span class="bootcode">F0 AC 3C 00 74 FC BB 07  00 B4 0E CD 10 EB F2 88</span>   <span class="bootcode">..&lt;.t...........</span>
+000050 <span class="bootcode">4E 10 E8 46 00 73 2A FE  46 10 80 7E 04 0B 74 0B</span>   <span class="bootcode">N..F.s*.F..~..t.</span>
+000060 <span class="bootcode">80 7E 04 0C 74 05 A0 B6  07 75 D2 80 46 02 06 83</span>   <span class="bootcode">.~..t....u..F...</span>
+000070 <span class="bootcode">46 08 06 83 56 0A 00 E8  21 00 73 05 A0 B6 07 EB</span>   <span class="bootcode">F...V...!.s.....</span>
+000080 <span class="bootcode">BC 81 3E FE 7D 55 AA 74  0B 80 7E 10 00 74 C8 A0</span>   <span class="bootcode">..&gt;.}U.t..~..t..</span>
+000090 <span class="bootcode">B7 07 EB A9 8B FC 1E 57  8B F5 CB BF 05 00 8A 56</span>   <span class="bootcode">.......W.......V</span>
+0000A0 <span class="bootcode">00 B4 08 CD 13 72 23 8A  C1 24 3F 98 8A DE 8A FC</span>   <span class="bootcode">.....r#..$?.....</span>
+0000B0 <span class="bootcode">43 F7 E3 8B D1 86 D6 B1  06 D2 EE 42 F7 E2 39 56</span>   <span class="bootcode">C..........B..9V</span>
+0000C0 <span class="bootcode">0A 77 23 72 05 39 46 08  73 1C B8 01 02 BB 00 7C</span>   <span class="bootcode">.w#r.9F.s......|</span>
+0000D0 <span class="bootcode">8B 4E 02 8B 56 00 CD 13  73 51 4F 74 4E 32 E4 8A</span>   <span class="bootcode">.N..V...sQOtN2..</span>
+0000E0 <span class="bootcode">56 00 CD 13 EB E4 8A 56  00 60 BB AA 55 B4 41 CD</span>   <span class="bootcode">V......V.`..U.A.</span>
+0000F0 <span class="bootcode">13 72 36 81 FB 55 AA 75  30 F6 C1 01 74 2B 61 60</span>   <span class="bootcode">.r6..U.u0...t+a`</span>
+000100 <span class="bootcode">6A 00 6A 00 FF 76 0A FF  76 08 6A 00 68 00 7C 6A</span>   <span class="bootcode">j.j..v..v.j.h.|j</span>
+000110 <span class="bootcode">01 6A 10 B4 42 8B F4 CD  13 61 61 73 0E 4F 74 0B</span>   <span class="bootcode">.j..B....aas.Ot.</span>
+000120 <span class="bootcode">32 E4 8A 56 00 CD 13 EB  D6 61 F9 C3 </span><span class="errmsgs">49 6E 76 61</span>   <span class="bootcode">2..V.....a..</span><span class="errmsgs"><xb>Inva</xb></span>
+000130 <span class="errmsgs">6C 69 64 20 70 61 72 74  69 74 69 6F 6E 20 74 61</span>   <span class="errmsgs"><xb>lid partition ta</xb></span>
+000140 <span class="errmsgs">62 6C 65 <font color="red"><xb>00</xb></font> 45 72 72 6F  72 20 6C 6F 61 64 69 6E</span>   <span class="errmsgs"><xb>ble.Error loadin</xb></span>
+000150 <span class="errmsgs">67 20 6F 70 65 72 61 74  69 6E 67 20 73 79 73 74</span>   <span class="errmsgs"><xb>g operating syst</xb></span>
+000160 <span class="errmsgs">65 6D <font color="red"><xb>00</xb></font> 4D 69 73 73 69  6E 67 20 6F 70 65 72 61</span>   <span class="errmsgs"><xb>em.Missing opera</xb></span>
+000170 <span class="errmsgs">74 69 6E 67 20 73 79 73  74 65 6D <font color="red"><xb>00</xb></font></span><span class="bootcode"> 00 00 00 00</span>   <span class="errmsgs"><xb>ting system.</xb></span><span class="bootcode">....</span>
+000180 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+000190 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+0001A0 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+0001B0 <span class="bootcode">00 00 00 00 00 2C 44 63  <u><font color="blue">C7 A2 27 25</font></u> 00 00 </span><span class="partbl"><xb>80 01</xb></span>   <span class="bootcode">.....,Dc......</span><span class="partbl">..</span>
+0001C0 <span class="partbl">01 00 <font color="blue"><xb>07</xb></font> FE FF FF 3F 00  00 00 37 16 71 02 <xb>00 00</xb></span>   <span class="partbl">......?....@^...</span>
+0001D0 <span class="partbl">C1 FF <font color="blue"><xb>0F</xb></font> FE FF FF 76 16  71 02 0B 2F AB 1A 00 00</span>   <span class="partbl">................</span>
+0001E0 <span class="partbl">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="partbl">................</span>
+0001F0 <span class="partbl">00 00 00 00 00 00 00 00  00 00 00 00 00 00 </span><span class="magic">55 AA</span>   <span class="partbl">..............</span><span class="magic">U.</span>
+--------------------------------------------------------------------------
+       00 01 02 03 04 05 06 07  08 09 0A 0B 0C 0D 0E 0F</pre>
+      </td></tr></tbody></table>
+</blockquote>
+
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/BootProcess.html#QR">System IDs</a>
+
+<br><p>
+A Linux MBR:
+</p><blockquote>
+<table border="1" cellspacing="0" cellpadding="7">
+<tbody><tr><td><pre>       00 01 02 03 04 05 06 07  08 09 0A 0B 0C 0D 0E 0F
+--------------------------------------------------------------------------
+000000 <span class="bootcode">EB 48 90 10 8E D0 BC 00  B0 B8 00 00 8E D8 8E C0</span>   <span class="bootcode">.H..............</span>
+000010 <span class="bootcode">FB BE 00 7C BF 00 06 B9  00 02 F3 A4 EA 21 06 00</span>   <span class="bootcode">...|.........!..</span>
+000020 <span class="bootcode">00 BE BE 07 38 04 75 0B  83 C6 10 81 FE FE 07 75</span>   <span class="bootcode">....8.u........u</span>
+000030 <span class="bootcode">F3 EB 16 B4 02 B0 01 BB  00 7C B2 80 8A 74 03 02</span>   <span class="bootcode">.........|...t..</span>
+000040 <span class="bootcode">80 00 00 20 01 00 00 00  00 02 FA 90 90 F6 C2 80</span>   <span class="bootcode">... ............</span>
+000050 <span class="bootcode">75 02 B2 80 EA 59 7C 00  00 31 C0 8E D8 8E D0 BC</span>   <span class="bootcode">u....Y|..1......</span>
+000060 <span class="bootcode">00 20 FB A0 40 7C 3C FF  74 02 88 C2 52 BE 7F 7D</span>   <span class="bootcode">. ..@|&lt;.t...R..}</span>
+000070 <span class="bootcode">E8 34 01 F6 C2 80 74 54  B4 41 BB AA 55 CD 13 5A</span>   <span class="bootcode">.4....tT.A..U..Z</span>
+000080 <span class="bootcode">52 72 49 81 FB 55 AA 75  43 A0 41 7C 84 C0 75 05</span>   <span class="bootcode">RrI..U.uC.A|..u.</span>
+000090 <span class="bootcode">83 E1 01 74 37 66 8B 4C  10 BE 05 7C C6 44 FF 01</span>   <span class="bootcode">...t7f.L...|.D..</span>
+0000A0 <span class="bootcode">66 8B 1E 44 7C C7 04 10  00 C7 44 02 01 00 66 89</span>   <span class="bootcode">f..D|.....D...f.</span>
+0000B0 <span class="bootcode">5C 08 C7 44 06 00 70 66  31 C0 89 44 04 66 89 44</span>   <span class="bootcode">\..D..pf1..D.f.D</span>
+0000C0 <span class="bootcode">0C B4 42 CD 13 72 05 BB  00 70 EB 7D B4 08 CD 13</span>   <span class="bootcode">..B..r...p.}....</span>
+0000D0 <span class="bootcode">73 0A F6 C2 80 0F 84 EA  00 E9 8D 00 BE 05 7C C6</span>   <span class="bootcode">s.............|.</span>
+0000E0 <span class="bootcode">44 FF 00 66 31 C0 88 F0  40 66 89 44 04 31 D2 88</span>   <span class="bootcode">D..f1...@f.D.1..</span>
+0000F0 <span class="bootcode">CA C1 E2 02 88 E8 88 F4  40 89 44 08 31 C0 88 D0</span>   <span class="bootcode">........@.D.1...</span>
+000100 <span class="bootcode">C0 E8 02 66 89 04 66 A1  44 7C 66 31 D2 66 F7 34</span>   <span class="bootcode">...f..f.D|f1.f.4</span>
+000110 <span class="bootcode">88 54 0A 66 31 D2 66 F7  74 04 88 54 0B 89 44 0C</span>   <span class="bootcode">.T.f1.f.t..T..D.</span>
+000120 <span class="bootcode">3B 44 08 7D 3C 8A 54 0D  C0 E2 06 8A 4C 0A FE C1</span>   <span class="bootcode">;D.}&lt;.T.....L...</span>
+000130 <span class="bootcode">08 D1 8A 6C 0C 5A 8A 74  0B BB 00 70 8E C3 31 DB</span>   <span class="bootcode">...l.Z.t...p..1.</span>
+000140 <span class="bootcode">B8 01 02 CD 13 72 2A 8C  C3 8E 06 48 7C 60 1E B9</span>   <span class="bootcode">.....r*....H|`..</span>
+000150 <span class="bootcode">00 01 8E DB 31 F6 31 FF  FC F3 A5 1F 61 FF 26 42</span>   <span class="bootcode">....1.1.....a.&amp;B</span>
+000160 <span class="bootcode">7C BE 85 7D E8 40 00 EB  0E BE 8A 7D E8 38 00 EB</span>   <span class="bootcode">|..}.@.....}.8..</span>
+000170 <span class="bootcode">06 BE 94 7D E8 30 00 BE  99 7D E8 2A 00 EB FE </span><span class="errmsgs">47</span>   <span class="bootcode">...}.0...}.*...</span><span class="errmsgs">G</span>
+000180 <span class="errmsgs">52 55 42 20 <font color="red">00</font> 47 65 6F  6D <font color="red">00</font> 48 61 72 64 20 44</span>   <span class="errmsgs">RUB .Geom.Hard D</span>
+000190 <span class="errmsgs">69 73 6B <font color="red">00</font> 52 65 61 64  <font color="red">00</font> 20 45 72 72 6F 72 <font color="red">00</font></span>   <span class="errmsgs">isk.Read. Error.</span>
+0001A0 <span class="bootcode">BB 01 00 B4 0E CD 10 AC  3C 00 75 F4 C3 00 00 00</span>   <span class="bootcode">........&lt;.u.....</span>
+0001B0 <span class="bootcode">00 00 00 00 00 00 00 00  <font color="blue"><u>39 50 01 00</u></font> 00 00 </span><span class="partbl">80 01</span>   <span class="bootcode">........9P....</span><span class="partbl">..</span>
+0001C0 <span class="partbl">01 00 <font color="blue">83</font> FE 3F 83 3F 00  00 00 45 5B 20 00 00 00</span>   <span class="partbl">....?.?...E[ ...</span>
+0001D0 <span class="partbl">01 84 <font color="blue">FD</font> FE FF FF 84 5B  20 00 0D 2F C0 03 00 FE</span>   <span class="partbl">.......[ ../....</span>
+0001E0 <span class="partbl">FF FF <font color="blue">FD</font> FE FF FF 91 8A  E0 03 0D 2F C0 03 00 FE</span>   <span class="partbl">.........../....</span>
+0001F0 <span class="partbl">FF FF <font color="blue">05</font> FE FF FF 9E B9  A0 07 23 A0 CF 6C </span><span class="magic">55 AA</span>   <span class="partbl">..........#..l</span><span class="magic">U.</span>
+--------------------------------------------------------------------------
+       00 01 02 03 04 05 06 07  08 09 0A 0B 0C 0D 0E 0F</pre>
+
+</td></tr></tbody></table>
+</blockquote>
+Partition sizes:
+<ol>
+	<li><xpre>(Type: 0x83, Linux) - 0x205B45 = 2,120,517 sectors * 512 bytes per sector = 1,085,704,704 bytes (~ 1 GB)</xpre></li>
+	<li><xpre>(Type: 0xFD, Linux RAID) - 0x3C02F0D = 62,926,605 sectors * 512 bytes per sector = 32,218,421,760 (~ 30 GBs)</xpre></li>
+	<li><xpre>(Type: 0xFD, Linux RAID) - 0x3C02F0D = 62,926,605 sectors * 512 bytes per sector = 32,218,421,760 (~ 30 GBs)</xpre></li>
+	<li><xpre>(Type: 0x05, Extended) - 0x6CCFA023 = 1,825,546,275 sectors * 512 bytes per sector = 934,679,692,800 (~ 900 GBs)</xpre></li>
+</ol>
+<p>
+<a href="http://en.wikipedia.org/wiki/Binary_prefix">Binary prefixes</a>
+</p><p>
+
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/BootProcess.html#QR">System IDs</a>
+
+<br></p><p>
+A USB flash drive MBR:
+</p><blockquote>
+  <table bordercolor="#000000" border="1" cellspacing="0" cellpadding="7" align="centerx">
+    <tbody><tr>
+      <td> 
+      <!--<font face="Courier New, Courier, Mono">--><pre>       00 01 02 03 04 05 06 07  08 09 0A 0B 0C 0D 0E 0F
+--------------------------------------------------------------------------
+000000 <span class="bootcode">FA BE 00 7C BF 00 7A B9  00 01 FC 0E 1F 0E 07 F3</span>   <span class="bootcode">...|..z.........</span>
+000010 <span class="bootcode">A5 EA 16 7A 00 00 BB BE  7B 33 C9 80 3F 80 75 06</span>   <span class="bootcode">...z....{3..?.u.</span>
+000020 <span class="bootcode">FE C5 8B F3 EB 07 80 3F  00 75 02 FE C1 83 C3 10</span>   <span class="bootcode">.......?.u......</span>
+000030 <span class="bootcode">81 FB FE 7B 72 E5 83 F9  04 74 0B 81 F9 03 01 74</span>   <span class="bootcode">...{r....t.....t</span>
+000040 <span class="bootcode">0A BB A5 7A EB 2C BB 87  7A EB 27 8B 4C 02 8B 14</span>   <span class="bootcode">...z.,..z.'.L...</span>
+000050 <span class="bootcode">B8 01 02 BB 00 7C CD 13  73 05 BB BC 7A EB 13 2E</span>   <span class="bootcode">.....|..s...z...</span>
+000060 <span class="bootcode">A1 FE 7D 3D 55 AA 74 05  BB BC 7A EB 05 EA 00 7C</span>   <span class="bootcode">..}=U.t...z....|</span>
+000070 <span class="bootcode">00 00 2E 8A 07 3C 00 74  0C 53 BB 07 00 B4 0E CD</span>   <span class="bootcode">.....&lt;.t.S......</span>
+000080 <span class="bootcode">10 5B 43 EB ED EB FE </span><span class="errmsgs">4E  6F 20 62 6F 6F 74 61 62</span>   <span class="bootcode">.[C....</span><span class="errmsgs">No bootab</span>
+000090 <span class="errmsgs">6C 65 20 70 61 72 74 69  74 6F 6E 20 69 6E 20 74</span>   <span class="errmsgs">le partiton in t</span>
+0000A0 <span class="errmsgs">61 62 6C 65 00 49 6E 76  61 6C 69 64 20 50 61 72</span>   <span class="errmsgs">able.Invalid Par</span>
+0000B0 <span class="errmsgs">74 69 74 6F 6E 20 74 61  62 6C 65 00 49 6E 76 61</span>   <span class="errmsgs">titon table.Inva</span>
+0000C0 <span class="errmsgs">6C 69 64 20 6F 72 20 64  61 6D 61 67 65 64 20 42</span>   <span class="errmsgs">lid or damaged B</span>
+0000D0 <span class="errmsgs">6F 6F 74 61 62 6C 65 20  70 61 72 74 69 74 69 6F</span>   <span class="errmsgs">ootable partitio</span>
+0000E0 <span class="errmsgs">6E 00</span><span class="bootcode"> 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="errmsgs">n.</span><span class="bootcode">..............</span>
+0000F0 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+000100 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+000110 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+000120 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+000130 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+000140 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+000150 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+000160 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+000170 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+000180 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+000190 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+0001A0 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+0001B0 <span class="bootcode">00 00 00 00 00 00 00 00  <font color="blue"><u>4C B1 D3 E0</u></font> 00 00 </span><span class="partbl">80 01</span>   <span class="bootcode">........L.....</span><span class="partbl">..</span>
+0001C0 <span class="partbl">01 00 <font color="blue">0E</font> 0F E0 5F 20 00  00 00 E0 BF 1E 00 00 00</span>   <span class="partbl">....._..........</span>
+0001D0 <span class="partbl">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="partbl">................</span>
+0001E0 <span class="partbl">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="partbl">................</span>
+0001F0 <span class="partbl">00 00 00 00 00 00 00 00  00 00 00 00 00 00 </span><span class="magic">55 AA</span>   <span class="partbl">..............</span><span class="magic">U.</span>
+--------------------------------------------------------------------------
+       00 01 02 03 04 05 06 07  08 09 0A 0B 0C 0D 0E 0F</pre>
+      </td></tr></tbody></table>
+</blockquote>
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/BootProcess.html#QR">System IDs</a>
+
+<br><p>
+A disk with no boot record:
+</p><blockquote>
+  <table bordercolor="#000000" border="1" cellspacing="0" cellpadding="7" align="centerx">
+    <tbody><tr>
+      <td> 
+      <!--<font face="Courier New, Courier, Mono">--><pre>       00 01 02 03 04 05 06 07  08 09 0A 0B 0C 0D 0E 0F
+--------------------------------------------------------------------------
+000000 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+000010 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+000020 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+000030 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+000040 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+000050 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+000060 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+000070 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+000080 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+000090 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+0000A0 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+0000B0 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+0000C0 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+0000D0 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+0000E0 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+0000F0 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+000100 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+000110 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+000120 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+000130 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+000140 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+000150 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+000160 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+000170 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+000180 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+000190 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+0001A0 <span class="bootcode">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="bootcode">................</span>
+0001B0 <span class="bootcode">00 00 00 00 00 00 00 00  <font color="blue"><u>9B DB 78 07</u></font> 00 00 </span><span class="partbl">00 01</span>   <span class="bootcode">..........x...</span><span class="partbl">..</span>
+0001C0 <span class="partbl">01 00 <font color="blue">83</font> FE FF FF 3F 00  00 00 8D 29 00 0A 00 FE</span>   <span class="partbl">......?....)....</span>
+0001D0 <span class="partbl">FF FF <font color="blue">83</font> FE FF FF CC 29  00 0A 2F 53 00 7D 00 FE</span>   <span class="partbl">.......)../S.}..</span>
+0001E0 <span class="partbl">FF FF <font color="blue">83</font> FE FF FF FB 7C  00 87 46 EA A7 27 00 00</span>   <span class="partbl">.......|..F..'..</span>
+0001F0 <span class="partbl">00 00 00 00 00 00 00 00  00 00 00 00 00 00 </span><span class="magic">55 AA</span>   <span class="partbl">..............</span><span class="magic">U.</span>
+--------------------------------------------------------------------------
+       00 01 02 03 04 05 06 07  08 09 0A 0B 0C 0D 0E 0F</pre>
+      </td></tr></tbody></table>
+</blockquote>
+
+
+<a name="QR">Quick Reference:</a>
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="10">
+<tbody><tr><th>System ID</th><th>Developer</th><th>Description</th></tr>
+<tr><td>0x05</td><td>IBM</td><td>Extended partition</td></tr>
+<tr><td>0x06</td><td>Compaq</td><td>FAT16</td></tr>
+<tr><td>0x07</td><td>Microsoft</td><td>HPFS or NTFS</td></tr>
+<tr><td>0x0B</td><td>Microsoft</td><td>FAT32</td></tr>
+<tr><td>0x0E</td><td>Microsoft</td><td>Windows 95 FAT16 with LBA</td></tr>
+<tr><td>0x0F</td><td>Microsoft</td><td>Extended partition with LBA</td></tr>
+<tr><td>0x82</td><td>GNU/Linux</td><td>Linux swap</td></tr>
+<tr><td>0x83</td><td>GNU/Linux</td><td>Any native Linux file system</td></tr>
+<tr><td>0xFD</td><td>GNU/Linux</td><td>Linux RAID auto</td></tr>
+</tbody></table>
+</blockquote>
+
+
+Detailed References:
+<blockquote>
+<p>
+<a href="http://en.wikipedia.org/wiki/Partition_type">Partition Types</a>
+</p><p>
+</p></blockquote>
+
+
+The <tt>fdisk</tt> utility on Linux understands these partition types:
+<blockquote><pre> 0  Empty              24  NEC DOS            81  Minix / old Lin    bf  Solaris        
+ 1  FAT12              27  Hidden NTFS Win    82  Linux swap / So    c1  DRDOS/sec (FAT-
+ 2  XENIX root         39  Plan 9             83  Linux              c4  DRDOS/sec (FAT-
+ 3  XENIX usr          3c  PartitionMagic     84  OS/2 hidden C:     c6  DRDOS/sec (FAT-
+ 4  FAT16 &lt;32M         40  Venix 80286        85  Linux extended     c7  Syrinx         
+ 5  Extended           41  PPC PReP Boot      86  NTFS volume set    da  Non-FS data    
+ 6  FAT16              42  SFS                87  NTFS volume set    db  CP/M / CTOS / .
+ 7  HPFS/NTFS/exFAT    4d  QNX4.x             88  Linux plaintext    de  Dell Utility   
+ 8  AIX                4e  QNX4.x 2nd part    8e  Linux LVM          df  BootIt         
+ 9  AIX bootable       4f  QNX4.x 3rd part    93  Amoeba             e1  DOS access     
+ a  OS/2 Boot Manag    50  OnTrack DM         94  Amoeba BBT         e3  DOS R/O        
+ b  W95 FAT32          51  OnTrack DM6 Aux    9f  BSD/OS             e4  SpeedStor      
+ c  W95 FAT32 (LBA)    52  CP/M               a0  IBM Thinkpad hi    eb  BeOS fs        
+ e  W95 FAT16 (LBA)    53  OnTrack DM6 Aux    a5  FreeBSD            ee  GPT            
+ f  W95 Ext'd (LBA)    54  OnTrackDM6         a6  OpenBSD            ef  EFI (FAT-12/16/
+10  OPUS               55  EZ-Drive           a7  NeXTSTEP           f0  Linux/PA-RISC b
+11  Hidden FAT12       56  Golden Bow         a8  Darwin UFS         f1  SpeedStor      
+12  Compaq diagnost    5c  Priam Edisk        a9  NetBSD             f4  SpeedStor      
+14  Hidden FAT16 &lt;32M  61  SpeedStor          ab  Darwin boot        f2  DOS secondary  
+16  Hidden FAT16       63  GNU HURD or Sys    af  HFS / HFS+         fb  VMware VMFS    
+17  Hidden HPFS/NTF    64  Novell Netware     b7  BSDI fs            fc  VMware VMKCORE 
+18  AST SmartSleep     65  Novell Netware     b8  BSDI swap          fd  Linux raid auto
+1b  Hidden W95 FAT3    70  DiskSecure Mult    bb  Boot Wizard hid    fe  LANstep        
+1c  Hidden W95 FAT3    75  PC/IX              be  Solaris boot       ff  BBT            
+1e  Hidden W95 FAT1    80  Old Minix      
+</pre></blockquote>
+
+
+To dump the first sector of the first hard disk to a file (<tt>if</tt> is input file and <tt>of</tt> is output file):
+<blockquote><pre>dd if=/dev/sda of=mbr.bin bs=512 count=1
+</pre></blockquote>
+
+To view the file:
+
+<blockquote><pre>od -x mbr.bin
+</pre></blockquote>
+
+Note that <tt>dd</tt> and <tt>od</tt> are in the Cygwin utilities on Windows. There is also a tool called <tt>dump</tt> in Cygwin that works well. 
+<tt>dd</tt> and <tt>od</tt> are native to Linux. Consult your Windows documentation to see if
+these tools exist natively in Windows. You can download a Windows tool similar to <tt>dump</tt> called <a href="http://azrael.digipen.edu/~mmead/www/Files/dumpit.exe">dumpit</a>,
+which many of you should recognize.
+<p>
+
+</p><blockquote>
+<p class="Warning">
+<b>WARNING: BE VERY CAREFUL WITH THE <tt>dd</tt> COMMAND SHOWN ABOVE. USING THE WRONG
+OUTPUT FILE (<tt>of</tt>) CAN TOTALLY SCREW UP YOUR SYSTEM!!! MAKE SURE YOU ARE
+ABSOLUTELY SURE THAT YOU DIDN'T SWITCH <tt>if</tt> and <tt>of</tt>.</b>
+</p>
+</blockquote>
+
+<tt>dd</tt> for Windows <a href="http://www.chrysocome.net/dd">here</a>.
+<br>
+More <tt>dd</tt> info <a href="http://en.wikipedia.org/wiki/Dd_(Unix)">here</a>.
+<p>
+Don't forget the man pages. If you're running Windows and have Cygwin installed (and <b>everyone</b> should), at the command prompt type:
+
+</p><blockquote><pre>man dd
+</pre></blockquote>
+
+to see some help on the tool. Of course, you can Google for many examples of this utility.
+
+<blockquote><pre></pre></blockquote>
+
+An example of a partitioned disk in Windows XP:
+<p>
+</p><blockquote>
+<img src="./The Boot Process_files/DiskManagement-1.png">
+</blockquote>
+<p>
+
+<br><br>
+An example of a partitioned disk in Linux:
+</p><blockquote>
+<img src="./The Boot Process_files/GParted-maya-sda.png">
+</blockquote>
+<p>
+
+
+
+An example of a partitioned disk in Windows 7:
+</p><p>
+</p><blockquote>
+<img src="./The Boot Process_files/Win7-ComputerManagement-1.png">
+</blockquote>
+<p>
+
+The first partition is the 100 MB <span id="wpurl"><a class="wplabel">EFI System Partition</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/EFI_System_partition">EFI System Partition</a>
+		(ESP) used by Windows.
+
+<br><br>
+Partition properties:
+</p><blockquote>
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr valign="top"><td><img src="./The Boot Process_files/Win7-DiskProperties-1.png"></td><td>&nbsp;&nbsp;&nbsp;</td><td><img src="./The Boot Process_files/Win7-DiskProperties-2.png"></td></tr>
+</tbody></table>
+</blockquote>
+<p>
+
+
+<br></p><p>
+The MBR on Windows 7 above:
+</p><blockquote>
+  <table bordercolor="#000000" border="1" cellspacing="0" cellpadding="7" align="centerx">
+    <tbody><tr>
+      <td> 
+      <!--<font face="Courier New, Courier, Mono">--><pre>       00 01 02 03 04 05 06 07  08 09 0A 0B 0C 0D 0E 0F
+--------------------------------------------------------------------------
+000000 <span class="bootcode">33 C0 8E D0 BC 00 7C 8E  C0 8E D8 BE 00 7C BF 00</span>   <span class="bootcode">3.....|......|..</span>
+000010 <span class="bootcode">06 B9 00 02 FC F3 A4 50  68 1C 06 CB FB B9 04 00</span>   <span class="bootcode">.......Ph.......</span>
+000020 <span class="bootcode">BD BE 07 80 7E 00 00 7C  0B 0F 85 0E 01 83 C5 10</span>   <span class="bootcode">....~..|........</span>
+000030 <span class="bootcode">E2 F1 CD 18 88 56 00 55  C6 46 11 05 C6 46 10 00</span>   <span class="bootcode">.....V.U.F...F..</span>
+000040 <span class="bootcode">B4 41 BB AA 55 CD 13 5D  72 0F 81 FB 55 AA 75 09</span>   <span class="bootcode">.A..U..]r...U.u.</span>
+000050 <span class="bootcode">F7 C1 01 00 74 03 FE 46  10 66 60 80 7E 10 00 74</span>   <span class="bootcode">....t..F.f`.~..t</span>
+000060 <span class="bootcode">26 66 68 00 00 00 00 66  FF 76 08 68 00 00 68 00</span>   <span class="bootcode">&amp;fh....f.v.h..h.</span>
+000070 <span class="bootcode">7C 68 01 00 68 10 00 B4  42 8A 56 00 8B F4 CD 13</span>   <span class="bootcode">|h..h...B.V.....</span>
+000080 <span class="bootcode">9F 83 C4 10 9E EB 14 B8  01 02 BB 00 7C 8A 56 00</span>   <span class="bootcode">............|.V.</span>
+000090 <span class="bootcode">8A 76 01 8A 4E 02 8A 6E  03 CD 13 66 61 73 1C FE</span>   <span class="bootcode">.v..N..n...fas..</span>
+0000A0 <span class="bootcode">4E 11 75 0C 80 7E 00 80  0F 84 8A 00 B2 80 EB 84</span>   <span class="bootcode">N.u..~..........</span>
+0000B0 <span class="bootcode">55 32 E4 8A 56 00 CD 13  5D EB 9E 81 3E FE 7D 55</span>   <span class="bootcode">U2..V...]...&gt;.}U</span>
+0000C0 <span class="bootcode">AA 75 6E FF 76 00 E8 8D  00 75 17 FA B0 D1 E6 64</span>   <span class="bootcode">.un.v....u.....d</span>
+0000D0 <span class="bootcode">E8 83 00 B0 DF E6 60 E8  7C 00 B0 FF E6 64 E8 75</span>   <span class="bootcode">......`.|....d.u</span>
+0000E0 <span class="bootcode">00 FB B8 00 BB CD 1A 66  23 C0 75 3B 66 81 FB 54</span>   <span class="bootcode">.......f#.u;f..T</span>
+0000F0 <span class="bootcode">43 50 41 75 32 81 F9 02  01 72 2C 66 68 07 BB 00</span>   <span class="bootcode">CPAu2....r,fh...</span>
+000100 <span class="bootcode">00 66 68 00 02 00 00 66  68 08 00 00 00 66 53 66</span>   <span class="bootcode">.fh....fh....fSf</span>
+000110 <span class="bootcode">53 66 55 66 68 00 00 00  00 66 68 00 7C 00 00 66</span>   <span class="bootcode">SfUfh....fh.|..f</span>
+000120 <span class="bootcode">61 68 00 00 07 CD 1A 5A  32 F6 EA 00 7C 00 00 CD</span>   <span class="bootcode">ah.....Z2...|...</span>
+000130 <span class="bootcode">18 A0 B7 07 EB 08 A0 B6  07 EB 03 A0 B5 07 32 E4</span>   <span class="bootcode">..............2.</span>
+000140 <span class="bootcode">05 00 07 8B F0 AC 3C 00  74 09 BB 07 00 B4 0E CD</span>   <span class="bootcode">......&lt;.t.......</span>
+000150 <span class="bootcode">10 EB F2 F4 EB FD 2B C9  E4 64 EB 00 24 02 E0 F8</span>   <span class="bootcode">......+..d..$...</span>
+000160 <span class="bootcode">24 02 C3 49 6E 76 61 6C  69 64 20 70 61 72 74 69</span>   <span class="bootcode">$..Invalid parti</span>
+000170 <span class="bootcode">74 69 6F 6E 20 74 61 62  6C 65 00 45 72 72 6F 72</span>   <span class="bootcode">tion table.Error</span>
+000180 <span class="bootcode">20 6C 6F 61 64 69 6E 67  20 6F 70 65 72 61 74 69</span>   <span class="bootcode"> loading operati</span>
+000190 <span class="bootcode">6E 67 20 73 79 73 74 65  6D 00 4D 69 73 73 69 6E</span>   <span class="bootcode">ng system.Missin</span>
+0001A0 <span class="bootcode">67 20 6F 70 65 72 61 74  69 6E 67 20 73 79 73 74</span>   <span class="bootcode">g operating syst</span>
+0001B0 <span class="bootcode">65 6D 00 00 00 63 7B 9A  EC D1 9E 71 00 00 </span><span class="partbl">80 20</span>   <span class="bootcode">em...c{....q.</span><span class="partbl">.. </span> 
+0001C0 <span class="partbl">21 00 07 DF 13 0C 00 08  00 00 <span class="hilighter">00 20 03 00</span> 00 DF</span>   <span class="partbl">!.......... ....</span>
+0001D0 <span class="partbl">14 0C 07 FE FF FF 00 28  03 00 <span class="hilighter">00 D0 FC 09</span> 00 00</span>   <span class="partbl">.......(........</span>
+0001E0 <span class="partbl">00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00</span>   <span class="partbl">................</span>
+0001F0 <span class="partbl">00 00 00 00 00 00 00 00  00 00 00 00 00 00 </span><span class="magic">55 AA</span>   <span class="partbl">..............</span><span class="magic">U.</span>
+--------------------------------------------------------------------------
+       00 01 02 03 04 05 06 07  08 09 0A 0B 0C 0D 0E 0F</pre>
+      </td></tr></tbody></table>
+</blockquote>
+
+<br>
+Notes:
+<ul>
+	<li>The last 4 bytes (in yellow) of the partition entry are the number of sectors (little-endian) in the partition.</li>
+	<li>1st partition - Number of sectors: 00 03 20 00h is 204,800 in decimal. With 512-byte sectors, 204,800 * 512 = 104,857,600.</li>
+	<li>2nd partition - Number of sectors: 09 FC D0 00h is 167,563,264 in decimal. With 512-byte sectors, 167,563,264 * 512 = 85,792,391,168.</li>
+	<li>The properties dialog box in Windows shows 4,096 bytes less.</li>
+	<li>The <tt>df</tt> command (disk free) in Cygwin shows the same numbers: <!-- C:\Users\mmead>df -->
+<blockquote><pre>Filesystem     1K-blocks     Used Available Use% Mounted on
+C:/cygwin/bin   83781628 54288452  29493176  65% /usr/bin
+C:/cygwin/lib   83781628 54288452  29493176  65% /usr/lib
+C:/cygwin       83781628 54288452  29493176  65% /
+C:              83781628 54288452  29493176  65% /cygdrive/c
+</pre></blockquote>
+So, 83,781,628 blocks * 1,024 = 85,792,387,072 bytes, the size of the second partition.</li>
+
+</ul>
+<!--
+<div style="margin-top: 0px; margin-right: auto; margin-bottom: 15px; margin-left: auto; padding-top: 3px; padding-right: 0px; padding-bottom: 0px; padding-left: 0px; text-align: center; display: block; width: 1044px; height: 475px; initial initial; border: 2px solid #c0c0c0;">
+-->
+<!-- to make the image clickable for a URL -->
+<!--
+<a href="" style="color: #1359ae; text-decoration: none; cursor: pointer; padding: 0px; margin: 0px;">
+-->
+
+<!--
+<img src="DiskManagement-1.png" width="1044" height="455" style="background-image: initial; background-attachment: initial; background-origin: initial; background-clip: initial; background-color: #eeeeee; max-width: 100%; background-position: initial initial; background-repeat: initial initial; padding: 0px; margin: 0px; border: 0px" /></a>
+
+<br />
+<p style="padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 0px; text-align: right; font-size: 0.8em; color: #666666; margin: 0px;">Disk Management</p>
+</div>
+-->
+
+<!--
+<div id="foo" style="margin-top: 0px; margin-right: auto; margin-bottom: 15px; margin-left: auto; padding-top: 3px; padding-right: 0px; padding-bottom: 0px; padding-left: 0px; text-align: center; display: block;"><img src="DiskManagement-1.png" alt="Live Desktop" title="Live Desktop" width="500" height="364" /><br /><p style="padding-top: 0px; padding-right: 5px; padding-bottom: 0px; padding-left: 5px; text-align: right; font-size: 0.8em; color: #666666; margin: 0px;">Live Desktop</p>
+</div>
+-->
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="sectionheader">
+GUID Partition Table
+</p>
+The Master Boot Record technique was designed many years ago and is running into some limitations. 
+<ul>
+	<li>The MBR only allows 4 <i>primary</i> partitions or 3 primary and 1 extended partition
+		(with logical drives in the extended partition). 
+		<a href="https://wiki.archlinux.org/index.php/GUID_Partition_Table">Additional information</a>.</li>
+	<li>The partition table in the MBR uses 32 bits for block addresses.</li>
+	<li>This means a disk can have at most 2<sup>32</sup> blocks. With 512-byte blocks (sectors) this tells
+		us that the maximum disk size is about 2 TB. (2<sup>32</sup> * 512 = approximately 2 TB)</li>
+	<li>A sector size of 4,096 bytes will give us a maximum disk size of about 16 TB, plenty for the next
+		several years (but it's still going to be a problem then).
+</li></ul>
+
+A new technique was created to overcome these limitations:
+<ul>
+	<li>In the late 1990s, Intel invented a new technique called the 
+		<span id="wpurl"><a class="wplabel">GUID Partition Table</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/GUID_Partition_Table">GUID Partition Table</a>
+		 or GPT.</li> It is part of the Extensible Firmware Interface (from Intel) that has now become the
+		 <span id="wpurl"><a class="wplabel">Unified Extensible Firmware Interface</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Unified_Extensible_Firmware_Interface">Unified Extensible Firmware Interface</a> or UEFI.
+		 
+	<li>The GPT header begins on the second logical block of the hard drive (for backward-compatibility with the MBR scheme)
+		and includes a pointer to the partition table (called the Partition Entry Array).</li>
+		<ul>
+			<li>The first block is referred to as the "protective MBR" so that older disk utilities don't get
+				confused and think that there are no partitions on the drive.</li>
+			</ul>
+	<li>The default minimum number of partitions possible with a GPT is 128. (Windows sets this as the maximum.)</li>
+	<li>A copy of the header and partition table are written to the beginning and end of the disk, for redundancy in
+		case of disk corruption.</li>
+	<li>All 32-bit and 64-bit version of Linux support GPT (since about 2008)</li>
+	<li>All 32-bit and 64-bit version of Mac OS X (Intel-based hardware) support GPT (since about 2008)</li>
+	<li>32-bit Windows (before Windows 8) doesn't support booting with GPT.</li>
+	<li>64-bit Windows (Vista and later) supports booting, but requires special UEFI (modern) hardware.
+		<a href="http://msdn.microsoft.com/en-us/library/windows/hardware/gg463525.aspx">More information regarding Windows</a></li>
+</ul>
+
+Some additional <a href="http://www.rodsbooks.com/gdisk/">good information</a> from Roderick Smith. In my
+opinion, this guy writes some of the best books about Linux and other technologies.
+<p>
+Some <a href="http://technet.microsoft.com/en-us/library/cc739412(WS.10).aspx">in-depth information</a>
+regarding Windows disks and partitioning. WARNING: This information is only for hard-core users!
+
+</p><blockquote>
+<table border="0" cellspacing="0" cellpadding="2">
+	<tbody><tr><td>
+		<!--
+		<img src="http://upload.wikimedia.org/wikipedia/commons/thumb/0/07/GUID_Partition_Table_Scheme.svg/500px-GUID_Partition_Table_Scheme.svg.png">
+	-->
+	<img src="./The Boot Process_files/GUID_Partition_Table_Scheme.svg">
+		          
+	</td></tr>
+	<tr><td align="right"><span class="attrib"><a href="http://en.wikipedia.org/wiki/File:GUID_Partition_Table_Scheme.svg">http://en.wikipedia.org/wiki/File:GUID_Partition_Table_Scheme.svg</a></span></td></tr>
+</tbody></table>
+</blockquote>
+
+
+
+
+<hr>
+<h3>References:</h3>
+
+<ul>
+	<li><span id="wpurl"><a class="wplabel">Boot loader comparison</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Comparison_of_boot_loaders">Boot loader comparison</a></li>
+	<li><span id="wpurl"><a class="wplabel">Master Boot Record</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Master_boot_record">Master Boot Record</a></li>
+	<li><span id="wpurl"><a class="wplabel">Disk partioning</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Disk_partitioning">Disk partioning</a></li>
+	<li><a href="http://msdn.microsoft.com/en-us/library/windows/hardware/gg463525.aspx">Windows and GPT FAQ</a> Everything you ever wanted to know (and more) about Windows and GPT.</li>
+	<li><a href="http://developer.apple.com/library/mac/#technotes/tn2166/_index.html">Apple's GPT Info</a> This article describes how OS X deals with GPT.</li>
+</ul>		
+
+
+<br><br>
+
+How to find the Disk ID:
+<p>
+In Windows XP:
+</p><ol>
+	<li>"Start Menu" then "Control Panel"</li>
+	<li>Double-click the "System" icon in the Control Panel</li>
+	<li>Select the "Hardware" tab on the System Properties dialog box.</li>
+	<li>Click the "Device Manager" button.</li>
+	<li>Click on the "+" sign next to "Disk drives" to expand the list of drives.</li>
+	<li>Double-click the disk whose ID you want.</li>
+	<li>Select the "Details" tab in the Disk Properties dialog box. The "Device Instance Id" will be displayed in the drop-down box.</li>
+	<li>Click the drop-down box to open it and select the second item, "Hardware Ids".</li>
+	<li>The information will be displayed below the drop-down box.</li>
+</ol>
+
+In Linux:
+<ol>
+	<li>In a console window type (you may not need sudo):
+<blockquote><pre>sudo blkid
+</pre></blockquote>
+
+</li><li>Also, for a quick view of the partitions, use the <tt><b>lsblk</b></tt> command:
+
+<blockquote><pre></pre></blockquote>
+
+<table border="1" cellpadding="10" cellspacing="0">
+	<tbody><tr><th>maya</th><th>olga</th></tr>
+	<tr valign="top">
+	<td>
+<blockquote><pre>NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+sda      8:0    0 238.5G  0 disk 
+├─sda1   8:1    0  55.9G  0 part 
+├─sda2   8:2    0  55.9G  0 part /
+├─sda3   8:3    0     1K  0 part 
+└─sda5   8:5    0  46.6G  0 part /home
+sdb      8:16   0 931.5G  0 disk 
+├─sdb1   8:17   0   293G  0 part /backups
+└─sdb2   8:18   0 586.2G  0 part /storage
+sr0     11:0    1  1024M  0 rom  
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>NAME    MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINT
+sda       8:0    0 931.5G  0 disk  
+├─sda1    8:1    0     1G  0 part  
+├─sda2    8:2    0    30G  0 part  
+│ └─md2   9:2    0    60G  0 raid0 
+├─sda3    8:3    0    30G  0 part  
+│ └─md3   9:3    0    60G  0 raid0 
+├─sda4    8:4    0     1K  0 part  
+├─sda5    8:5    0   800G  0 part  
+│ └─md5   9:5    0   1.6T  0 raid0 /home
+└─sda6    8:6    0  70.5G  0 part  
+sdb       8:16   0 931.5G  0 disk  
+├─sdb1    8:17   0     1G  0 part  
+├─sdb2    8:18   0    30G  0 part  
+│ └─md2   9:2    0    60G  0 raid0 
+├─sdb3    8:19   0    30G  0 part  
+│ └─md3   9:3    0    60G  0 raid0 
+├─sdb4    8:20   0     1K  0 part  
+└─sdb5    8:21   0   800G  0 part  
+  └─md5   9:5    0   1.6T  0 raid0 /home
+sdd       8:48   0   1.4T  0 disk  
+├─sdd1    8:49   0    80G  0 part  /mnt/backups/olga/olga_root
+├─sdd2    8:50   0  1000G  0 part  /mnt/backups/olga/olga_home
+└─sdd3    8:51   0 317.3G  0 part  /mnt/sdc3
+sde       8:64   0 238.5G  0 disk  
+├─sde1    8:65   0    82G  0 part  /mnt/mint13
+├─sde2    8:66   0  78.1G  0 part  /
+└─sde3    8:67   0  78.3G  0 part  /mnt/vbox
+sdf       8:80   0 465.8G  0 disk  
+└─sdf1    8:81   0 465.8G  0 part  /mnt/mx200
+sr0      11:0    1   511M  0 rom   
+sr1      11:1    1  1024M  0 rom   
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+<p>
+
+Type:
+</p><blockquote><pre>lsblk --help
+</pre></blockquote>
+
+To see all of the output options.
+
+</li></ol>
+<br><br>
+
+
+<blockquote><pre></pre></blockquote>
+</body></html>

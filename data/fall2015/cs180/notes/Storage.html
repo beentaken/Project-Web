@@ -1,0 +1,876 @@
+
+<!-- saved from url=(0065)http://azrael.digipen.edu/~mmead/www/Courses/CS180/Storage-1.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./Storage_files/new.css">
+<title>Storage</title>
+
+</head>
+
+<body>  
+
+<center><h1>
+Storage
+</h1></center>
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<p class="sectionheader">
+Overview
+</p>
+
+The problems:
+<ul>
+	<li>When we turn off the computer, all contents of memory (RAM) are lost.</li>
+	<li>Need a way to save information when the computer is restarted.</li>
+	<li>We need some kind of secondary or external storage.</li>
+	<li>Lots of different kinds of secondary storage, for example:</li>
+	<ul>
+		<li>Magnetic disks (hard drives, floppies!)</li>
+		<li>Optical disks (CD, DVD, BD)</li>
+		<li>Solid state drives (<span id="wpurl"><a class="wplabel">USB flash drives</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/USB_flash_drive">USB flash drives</a>, 
+			<span id="wpurl"><a class="wplabel">SSD drives</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/SSD">SSD drives</a>)</li>
+		<li>Magnetic tape</li>
+	</ul>
+<a name="COSTPERGB">
+</a><li><a name="COSTPERGB">Main factors distinguishing slow/fast storage (disk/memory): Speed and Cost
+</a><ul><a name="COSTPERGB">
+</a><p><a name="COSTPERGB">
+<table border="1" cellpadding="8" cellspacing="0">
+<tbody><tr>
+	<th>Date</th><th>RAM</th><th>Magnetic disk<br>(Mechanical)</th><th>NAND SSD</th><th>Largest disk</th><th>Largest SSD</th>
+</tr>
+<tr><td>11/24/2015</td><td>about $5.00/GB</td><td>about $0.035/GB</td><td>about $0.32/GB</td><td>8 TB ($240)</td><td>2 TB ($700)</td></tr>
+<tr><td>7/7/2015</td><td>about $5.00/GB</td><td>about $0.029/GB</td><td>about $0.30/GB</td><td>8 TB ($275*)</td><td>1.6 TB ($1500)</td></tr>
+<tr><td>4/9/2015</td><td>about $7.50/GB</td><td>about $0.035/GB</td><td>about $0.38/GB</td><td>8 TB ($300)</td><td>1 TB ($380)</td></tr>
+<tr><td>11/18/2014</td><td>about $10.00/GB</td><td>about $0.040/GB</td><td>about $0.41/GB</td><td>6 TB ($300)</td><td>960 GB ($390)</td></tr>
+<tr><td>7/7/2014</td><td>about $10.25/GB</td><td>about $0.040/GB</td><td>about $0.44/GB</td><td>6 TB ($300)</td><td>1 TB ($440)</td></tr>
+<tr><td>4/3/2014</td><td>about $10.00/GB</td><td>about $0.045/GB</td><td>about $0.50/GB</td><td>4 TB ($165)</td><td>1 TB ($500)</td></tr>
+<tr><td>11/12/2013</td><td>about $10.00/GB</td><td>about $0.050/GB</td><td>about $0.73/GB</td><td>4 TB ($190)</td><td>1 TB ($600)</td></tr>
+<tr><td>7/9/2013</td><td>about $8.50/GB</td><td>about $0.050/GB</td><td>about $0.78/GB</td><td>4 TB ($200)</td><td>1 TB ($2500*)</td></tr>
+<tr><td>4/2/2013</td><td>about $6.25/GB</td><td>about $0.055/GB</td><td>about $0.55/GB</td><td>4 TB ($300)</td><td>1 TB ($2099)</td></tr>
+<tr><td>11/20/2012</td><td>about $3.50/GB</td><td>about $0.055/GB</td><td>about $0.72/GB</td><td>4 TB ($300)</td><td>1 TB ($2249)</td></tr>
+
+<tr><td>7/5/2012</td><td>about $5/GB</td><td bgcolor="ffff88">about $0.060/GB</td><td>about $0.72/GB</td><td>4 TB ($330)</td><td>1 TB ($2499)</td></tr>
+
+<tr><td>7/13/2011</td><td>about $5/GB</td><td>about $0.040/GB</td><td>about $1.66/GB</td><td>3 TB ($160)</td><td>1 TB ($2864)</td></tr>
+<tr><td>4/11/2011</td><td>about $15/GB</td><td>about $0.045/GB</td><td>about $2.00/GB</td><td>N/A</td><td>N/A</td></tr>
+<tr><td>12/7/2010</td><td>about $15/GB</td><td>about $0.060/GB</td><td>about $1.40/GB</td><td>N/A</td><td>N/A</td></tr>
+<tr><td>7/20/2010</td><td>about $15/GB</td><td>about $0.060/GB</td><td>N/A</td><td>N/A</td><td>N/A</td></tr>
+<tr><td>4/20/2010</td><td>about $30/GB</td><td>about $0.090/GB</td><td>N/A</td><td>N/A</td><td>N/A</td></tr>
+<tr><td>12/3/2009</td><td>about $22/GB</td><td>about $0.100/GB</td><td>N/A</td><td>N/A</td><td>N/A</td></tr>
+<tr><td>11/25/2008</td><td>about $16/GB</td><td>about $0.120/GB</td><td>N/A</td><td>N/A</td><td>N/A</td></tr>
+<tr><td>7/9/2008</td><td>about $21/GB</td><td>about $0.160/GB</td><td>N/A</td><td>N/A</td><td>N/A</td></tr>
+<tr><td>4/3/2008</td><td>about $20/GB</td><td>about $0.200/GB</td><td>N/A</td><td>N/A</td><td>N/A</td></tr>
+<tr><td>11/29/2007</td><td>about $70/GB</td><td>about $0.200/GB</td><td>N/A</td><td>N/A</td><td>N/A</td></tr>
+</tbody></table>
+All prices are from </a><a href="http://www.newegg.com/">Newegg.com</a> except *<a href="http://www.amazon.com/">Amazon.com</a>.
+</p><p>
+<!--
+<li>Cost today: RAM is about $5 per GB, Disk storage is about $0.060 per GB. (7/5/2012) (NAND SSD $0.72 per GB)
+<li>Cost today: RAM is about $15 per GB, Disk storage is about $0.045 per GB. (4/11/2011) (NAND SSD $2.00 per GB)
+<li>Cost today: RAM is about $15 per GB, Disk storage is about $0.060 per GB. (12/7/2010) (NAND SSD $1.40 per GB)
+<li>Cost today: RAM is about $30 per GB, Disk storage is about $0.060 per GB. (7/20/2010)
+<li>Cost today: RAM is about $30 per GB, Disk storage is about $0.090 per GB. (4/20/2010)
+<li>Cost today: RAM is about $22 per GB, Disk storage is about $0.100 per GB. (12/3/2009)
+<li>Cost today: RAM is about $16 per GB, Disk storage is about $0.120 per GB. (11/25/2008)
+<li>Cost today: RAM is about $21 per GB, Disk storage is about $0.160 per GB. (7/9/2008)
+<li>Cost today: RAM is about $20 per GB, Disk storage is about $0.200 per GB. (4/3/2008)
+<li>Cost today: RAM is about $70 per GB, Disk storage is about $0.200 per GB. (11/29/2007)
+-->
+</p></ul>
+</li><li>For <span id="wpurl"><a class="wplabel">historical comparisons</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Computer_storage_density">historical comparisons</a> (not counting the cost of inflation):</li>
+<ul>
+	<li>In 1956, IBM's first hard disk, RAMDAC, was 5 MB ($50,000) at a cost of $10,000,000 per GB</li>
+	<li>In 1980, a typical 40 MB hard drive ($1,200) had a cost of $36,000 per GB.</li>
+	<li>In 1990, I (Mead) bought my first <i>"big"</i> hard drive, 200 MBs. It cost me about $1000. That's $5,000 per GB, thank you very much.</li>
+	<li>In early 2000, drives had a cost of about $20 per GB.</li>
+	<li>Today, hard drives cost a few pennies per GB.</li>
+</ul>
+	
+</ul>	
+For large amounts of storage, the <span id="wpurl"><a class="wplabel">magnetic hard drive</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Hard_disk">magnetic hard drive</a> is still the most popular.
+	<blockquote>
+	<p><img src="./Storage_files/HardDrive-1.png" border="0"></p><p>
+	</p></blockquote>
+
+<ul>
+	<li><a href="http://en.wikipedia.org/wiki/File:5.25_inch_MFM_hard_disk_drive.JPG">physical size comparison</a> of a 5.25" full-height drive and a laptop drive.</li>
+	<ul>
+		<li><a href="http://en.wikipedia.org/wiki/File:SixHardDriveFormFactors.jpg">Another comparison</a></li>
+	</ul>
+	<li>The hard disk drive consists of several disks (platters) stacked one atop the other, rotating in sync at high speed (e.g. 3600, 5400, 5900, 7200, 10000, 15000 RPM).</li>
+	<li>Each platter is coated with a thin magnetic film (about 1/10,000 the thickness of a piece of paper)</li>
+	<li>For each disk there is a head that is used for reading and writing.</li>
+	<ul>
+		<li>Each head is attached to a disk arm (in a comb-like fashion) that positions the heads over the disks.</li>
+		<li>The heads move in unison and not independently.</li>
+	</ul>
+	<li>Each disk is divided into concentric circles, called <b>tracks</b>.</li>
+	<ul>
+		<li>Each disk has the same number of tracks.</li>
+		<li>The collection of tracks, one from each disk, lying at the same radius is called a <b>cylinder</b>.</li>
+	</ul>
+	<li>Each track is divided into arcs, called <b><span id="wpurl"><a class="wplabel">sectors</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Disk_sector">sectors</a></b>.</li>
+	<ul>
+		<li>Each sector contains the same fixed number of bytes. (e.g. legacy 512 bytes or <span id="wpurl"><a class="wplabel">newer advanced 4096</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Advanced_Format">newer advanced 4096</a> bytes)</li>
+		<ul>
+			<li>Why 4,096 bytes? Sound familiar? (NTFS/Ext3/HFS+ used for Windows, Linux, and Mac, 
+				respectively, default cluster size as well. Nice article <a href="http://www.anandtech.com/show/2888">here</a>.)</li>
+		</ul>
+		<li>Small sectors are inefficient for very large files; large sectors are wasteful for very small files.</li>
+		<ul>
+			<li>Large sectors can cause internal fragmentation with many small files. (External fragmentation is different.)</li>
+		</ul>
+		<li>An entire sector is read/written in a single disk operation. (Smallest operation)</li>
+		<li>Modern drives use <span id="wpurl"><a class="wplabel">Zone Bit Recording</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Zone_bit_recording">Zone Bit Recording</a> (more sectors on the outer tracks) to divide tracks into zones.</li> 
+		<blockquote>
+			<a href="./Storage_files/ZoneBitRecording.jpg"><img src="./Storage_files/ZoneBitRecording.jpg" width="200" height="200" border="1"></a>
+			<a href="http://en.wikipedia.org/wiki/File:DiskStructure.svg"><img src="./Storage_files/DiskStructure.svg" width="200" height="200" border="1"></a>
+
+		</blockquote>
+	</ul>
+	<li>A position on the hard disk originally specified by the disk's geometry, which is specified as a triple: (<!--disk/head #, track #, sector #--><b>C</b>ylinder #, <b>H</b>ead #, <b>S</b>ector #, 
+		<span id="wpurl"><a class="wplabel">CHS</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Cylinder-head-sector">CHS</a>)</li>
+		
+	<ul>
+		<li>Nowadays, CHS is used only by a few devices (and utility programs).</li>
+		<li>Operating systems use <span id="wpurl"><a class="wplabel">LBA</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Logical_block_addressing">LBA</a> 
+			(<b>L</b>ogical <b>B</b>lock <b>A</b>ddressing) as the interface (LBA 0, LBA 1, etc.)</li>
+		<li>LBA can be used with other storage devices (e.g. tapes) that don't have cylinders/heads/sectors.</li>
+		<li>LBA is also simpler when using zone bit recording.</li>
+	</ul>
+	<li>Two factors affect the <b>positioning time</b>, that is, the amount of time it takes to access a position on the disk.</li>
+	<ul>
+		<li><b><span id="wpurl"><a class="wplabel">Seek time</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Hard_disk#Seek_time">Seek time</a></b> – the amount of time needed to move the head to the desired cylinder.</li>
+		<li><b><span id="wpurl"><a class="wplabel">Rotational latency</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Hard_disk#Latency">Rotational latency</a></b> – the time needed for the desired sector to rotate to the head.</li>
+	</ul>
+	<li>Linear velocity vs. Angular velocity</li>
+	<ul>
+	<li>All sectors in all tracks experience the same <span id="wpurl"><a class="wplabel">angular velocity</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Angular_velocity">angular velocity</a></li>
+		<li>Tracks on the outside of the disks move faster than the inner tracks. (linear velocity)</li>
+	<li>Original Compact Disks (CDs) used <span id="wpurl"><a class="wplabel">constant linear velocity</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Constant_linear_velocity">constant linear velocity</a>
+	to keep the data access constant.</li>
+	<ul>
+		<li>This led to compact disks varying their speeds during accesses. (The jet engine syndrome.)</li>
+		<li>Now, they use constant angular velocity, which means that outer tracks read/write faster than inner tracks.</li>
+		<ul>
+			<li>Better for random access reading (Don't have to change speed for each random sector read)</li>
+			<!-- Don't have to change speed for each random sector read -->
+		</ul>
+	</ul>
+</ul>
+	<li>A hard disk is connected to the computer via an <b>I/O bus</b>.</li>
+	<ul>
+		<li>Various bus standards are used: for example, 
+			<span id="wpurl"><a class="wplabel">PATA</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Parallel_ATA">PATA</a> (IDE, EIDE), 
+			<span id="wpurl"><a class="wplabel">SCSI</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Scsi">SCSI</a>, 
+			<span id="wpurl"><a class="wplabel">USB</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/USB">USB</a>, 
+			<span id="wpurl"><a class="wplabel">SATA</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Sata">SATA</a></li>
+	</ul>
+	<li>Two controllers are used to transfer data between the computer and the disk.</li>
+	<ul>
+		<li><b>Disk controller</b> – on the disk end of the bus, used to read/write date to and from the disks.</li>
+		<li><b>Host controller</b> – on the computer end of the bus, uses memory-mapped I/O ports.</li>
+	</ul>
+</ul>
+
+<b><span id="wpurl"><a class="wplabel">Disk formatting</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Format_(computing)">Disk formatting</a> (low-level, hardware)</b>
+<ul>
+	<li>Prior to usage, a disk must be (<i>physically</i>, or <i>low-level</i>) formatted.</li>
+	<li>Each sector contains a data structure</li>
+	<ul>
+		<li>Sector number within the track</li>
+		<li>Data area, which stores data.</li>
+		<ul>
+			<li>Typically used to be 512 bytes <a href="http://www.anandtech.com/show/2888">4096 (Advanced Format)</a>  is becoming the norm. (Although it's <a href="http://arstechnica.com/microsoft/news/2010/03/why-new-hard-disks-might-not-be-much-fun-for-xp-users.ars">not perfect</a> for older versions of Windows.)</li>
+		</ul>
+		<li>Error correcting code (ECC), a value that is computed from values in the data area.</li>
+		<ul>
+			<li>Stored when the data area is written</li>
+			<li>Recomputed when the data is read, and compared with the written ECC</li>
+			<li>Error occurs if the two values do not match	</li>
+		</ul>
+	</ul>
+	<li>A disk may have bad sectors – unusable, or defective sectors.</li>
+	<ul>
+		<li>A new disk may come with bad sectors.</li>
+		<li>A disk may develop bad sectors over its lifetime.</li>
+		<li>Bad sectors are typically kept track of by the disk itself, and a bad sector is replaced by a spare sector (set aside by the disk, not visible to the OS).</li>
+		<ul>
+			<li><i>Sector sparing</i> may allow for reserving one sector on a track in case a sector becomes unusable.</li>
+		</ul> 
+	</ul>
+</ul>
+
+<b><span id="wpurl"><a class="wplabel">Disk partitioning</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Disk_partitioning">Disk partitioning</a> and high-level formatting</b>
+<ul>
+	<li>After a low-level format, the disk must be partitioned – divided up into groups of cylinders.</li>
+	<ul>
+		<li>Some operating systems refer to these as <i>logical drives</i>.</li>
+	</ul>
+	<li>Each partition is treated by the OS as a separate logical hard disk.</li>
+	<li>Once the drive is partitioned (even with only 1 partition), it is ready to
+		have a filesystem placed on it.</li>
+	<li>There is one filesystem per partition.</li>
+	<p>
+	</p><li>Windows XP with 3 hard disks:
+		<blockquote>
+			<img src="./Storage_files/ComputerManagement-1.png">
+		</blockquote>
+		<br>
+	</li><li>Windows 7 with 1 hard disk:
+		<blockquote>
+			<img src="./Storage_files/Win7-ComputerManagement-1.png">
+		</blockquote>
+	</li><li>Partition info from <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/fdisk-l-olga.html">olga</a>, <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/fdisk-l-athena.html">athena</a>, <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/fdisk-l-sabrina.html">sabrina</a> and <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/fdisk-l-maya.html">maya</a></li>
+	<li>To see the output shown in the links above, issue this command: (That's a lowercase <tt>L</tt>)</li>
+	<blockquote><tt>sudo fdisk -l</tt></blockquote>
+	This will list all of the partitions from all of the disks on the system.
+	<p>
+	</p><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/GParted-olga.html">Graphical view</a> of storage on olga.</li>
+	<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/GParted-maya.html">Graphical view</a> of storage on maya.</li>
+	<li>Now these partitions need a logical formatting (create the file system)</li>
+	<ul>
+		<li>This is what the OS deals with</li>
+	  <li>Groups sectors into clusters for better efficiency (<span id="wpurl"><a class="wplabel">internal fragmentation</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Internal_fragmentation#Internal_fragmentation">internal fragmentation</a>)
+		<a href="http://support.microsoft.com/kb/140365">Windows cluster sizes</a> (allocation units)</li>
+		<li>Allow applications (e.g. databases, pagefile) to do their own file I/O</li>
+	</ul>
+	<li>Typical uses for partitions: swap space, separate “system” and “data” partitions, different file systems, different operating systems, etc.</li>
+	<ul>
+		<li>Mutli-boot systems - each OS is on it's own partition.</li>
+		<li>Each partition can use a different file system.</li>
+		<ul>
+			<li>Can be mounted with different attributes, e.g. <i>read-only</i></li>
+		</ul>
+		<li>Different areas of the hard disk have better performance characteristics (e.g. the outer tracks are faster than the inner tracks)</li>
+		<li>Swap files may reside on their own partition (different format).</li>
+		<li>Log files or files that grow quickly. (On Unix-like systems this is the /var directory)</li>
+		<ul>
+			<li>Runaway programs or malicious programs only affect a single partition.</li>
+		</ul>
+		<ul>
+			<li>Doesn't endanger the system partition from running out of space.</li>
+		</ul>
+		<li>Isolates files - if one partition gets corrupted, the others may be fine.</li>
+	</ul>
+	<li>There are some drawbacks:</li>
+	<ul>
+		<li>There is overhead that will be duplicated on each partition.</li>
+		<li>You can't <i>move</i> a file between partitions, you have to <i>copy</i> it. (copy/delete)</li>
+		<li>Sometimes you can't link to a file on a different partition.</li>
+	</ul>	
+	<li>Can mount and unmount partitions as needed.</li>
+	<blockquote>
+		<img src="./Storage_files/MBR-Partition-1.png">
+	</blockquote>
+	<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/BootProcess.html">Boot process</a> from before.</li>
+</ul>
+	
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<p class="sectionheader">
+<span id="wpurl"><a class="wplabel">Disk Scheduling</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/I/O_scheduling">Disk Scheduling</a>
+</p>
+
+
+<ul>
+	<li>When several disk I/O requests are made, the OS must choose the order in which to service the requests.</li>
+	<li>Disk access involves moving the disk heads.</li>
+	<li>The farther the heads have to move, the longer the seek time.</li>
+	<li>To maximize disk bandwidth (the data transfer rate), we want to minimize the total seek time.</li>
+	<li>Hardware schedulers: (move scheduling from OS to disk/controller, OS still schedules I/O requests but hardware orders the requests received)</li>
+	<ul>
+		<li><span id="wpurl"><a class="wplabel">Tagged Command Queuing</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Tagged_Command_Queuing">Tagged Command Queuing</a> (High CPU usage)</li>
+		<li><span id="wpurl"><a class="wplabel">Native Command Queuing</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Native_Command_Queuing">Native Command Queuing</a> Uses direct memory access <a href="http://en.wikipedia.org/wiki/Direct_memory_access">(DMA)</a></li>
+	</ul>
+</ul>
+
+<b>Scheduling algorithms</b>
+<ul>
+	<li>First-Come First-Serve (FCFS) - schedule I/O requests in the order in which they are received.</li>
+	<ul>
+		<li>Simple to implement with a first-in, first-out (FIFO) queue.</li>
+		<li>Gives poor bandwidth, in general.</li>
+	</ul>
+	<li><span id="wpurl"><a class="wplabel">Shortest Seek Time First</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Shortest_seek_first">Shortest Seek Time First</a> (SSTF) – process the request that minimizes the distance the head must travel from its current position.</li>
+	<ul>
+		<li>May cause starvation (like SJF processor scheduling).</li>
+	</ul>
+	<li><span id="wpurl"><a class="wplabel">Scan</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Elevator_algorithm">Scan</a> algorithm (elevator algorithm)</li>
+	<ul>
+		<li>order the requests so that the head moves in the same direction until the end or beginning of the disk is reached</li>
+		<li>then the movement direction is reversed.</li>
+	</ul>
+	<li>Circular SCAN (C-SCAN) algorithm</li>
+	<ul>
+		<li>service the requests so that the head always moves from disk beginning to disk end</li>
+		<li>when the end is reached, the head is moved back to the disk beginning.</li>
+		<li>Provides a more uniform wait time than SCAN. (With SCAN, the middle tracks will be visited twice as much as the inner/outer tracks)</li>
+	</ul>
+	<li><span id="wpurl"><a class="wplabel">LOOK</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/LOOK_algorithm">LOOK</a> and C-LOOK – the same as the SCAN and C-SCAN algorithms, except that the head is not moved to the actual beginning or end, but rather the closest extreme among the scheduled requests.</li>
+</ul>
+
+<b>Scheduling examples assumptions:</b>
+<ul>
+	<li>Disk has 200 cylinders (0-199)</li>
+	<li>Head currently at cylinder 53, and moving towards the inside of the disk (increasing cylinder #)</li>
+	<li>Cylinder requests:</li>
+	<ul>
+		<pre>98, 183, 37, 122, 14, 124, 65, 67</pre>
+	</ul>
+</ul>
+	
+<b>FCFS example</b>
+<ul>
+	<li>Cylinder requests: <tt>98, 183, 37, 122, 14, 124, 65, 67</tt></li>
+	<li>Total head motion:</li>
+	<ul><pre>  |98-53| + |183-98| + |37-183| + |122-37| + |14-122| + |124-14| + |65-124| + |67-65|
+=    45   +    85    +    146   +    85    +   108    +    110   +    59    +    2
+= 640 cylinders</pre>
+	</ul>
+</ul>
+
+<p>
+</p><hr width="95%">
+<p>
+	
+<b>SSTF example</b>
+</p><ul>
+	<li>Cylinder requests: <tt>98, 183, 37, 122, 14, 124, 65, 67</tt></li>
+	<li>The order of processing is</li>
+	<ul>
+		<pre>(53), 65, 67, 37, 14, 98, 122, 124, 183</pre>
+	</ul>
+	<li>Total head motion:</li>
+	<ul><pre>  |65-53| + |67-65| + |37-67| + |14-37| + |98-14| + |122-98| + |124-122| + |183-124|
+=   12    +    2    +   30    +   23    +    84   +    24    +     2     +    59
+= 236 cylinders</pre>
+	</ul>
+</ul>
+
+<p>
+</p><hr width="95%">
+<p>
+	
+<b>SCAN example</b>
+</p><ul>
+	<li>Cylinder requests: <tt>98, 183, 37, 122, 14, 124, 65, 67</tt></li>
+	<li>Processing order</li>
+	<ul>
+		<pre>(53), 65, 67, 98, 122, 124, 183, (199), 37, 14</pre>
+	</ul>
+	<li>Total head motion:</li>
+	<ul><pre>  |65-53| + |67-65| + |98-67| + |122-98| + |124-122| + |183-124| + |199-183| + |37-199| + |14-37|
+=   12    +    2    +    31   +    24    +     2     +    59     +    16     +    162   +    23
+= 331 cylinders</pre>
+	</ul>
+</ul>
+
+
+<p>
+</p><hr width="95%">
+<p>
+	
+<b>C-SCAN example</b>
+</p><ul>
+	<li>Cylinder requests: <tt>98, 183, 37, 122, 14, 124, 65, 67</tt></li>
+	<li>Processing order</li>
+	<ul>
+		<pre>(53), 65, 67, 98, 122, 124, 183, (199), (0), 14, 37</pre>
+	</ul>
+	<li>Total head motion:</li>
+	<ul><pre>  |65-53| + |67-65| + |98-67| + |122-98| + |124-122| + |183-124| + |199-183| + |0-199| + |14-0| + |37-14|
+=   12    +    2    +    31   +    24    +     2     +    59     +    16     +   199   +   14   +   23
+= 382 cylinders</pre>
+	</ul>
+</ul>
+	
+<p>
+</p><hr width="95%">
+<p>
+	
+<b>LOOK example</b>
+</p><ul>
+	<li>Cylinder requests: <tt>98, 183, 37, 122, 14, 124, 65, 67</tt></li>
+	<li>Processing order (compare with Scan example)</li>
+	<ul>
+		<pre>(53), 65, 67, 98, 122, 124, 183, 37, 14</pre>
+	</ul>
+	<li>Total head motion:</li>
+	<ul><pre>  |65-53| + |67-65| + |98-67| + |122-98| + |124-122| + |183-124| + |37-183| + |14-37|
+=   12    +    2    +   31    +    24    +     2     +    59     +   146    +    23
+= 299 cylinders</pre>
+	</ul>
+</ul>
+
+
+<p>
+</p><hr width="95%">
+<p>
+	
+<b>C-LOOK example</b>
+</p><ul>
+	<li>Cylinder requests: <tt>98, 183, 37, 122, 14, 124, 65, 67</tt></li>
+	<li>Order of processing (compare with C-Scan)</li>
+	<ul>
+		<pre>(53), 65, 67, 98, 122, 124, 183, 14, 37</pre>
+	</ul>
+	<li>Total head motion:</li>
+	<ul><pre>  |65-53| + |67-65| + |98-67| + |122-98| + |124-122| + |183-124| + |14-183| + |37-14|
+=   12    +    2    +    31   +    24    +    2      +    59     +   169    +    23
+= 322 cylinders</pre>
+	</ul>
+</ul>
+
+<p>
+</p><hr width="95%">
+<p>
+	
+<b>Points:</b>
+</p><ul>
+	<li>The examples just accounted for seeks (which are the major factor in search times)</li>
+	<li>Other factors such as rotational latency might need to be considered.</li>
+	<li>The OS usually doesn't know about latency or the current positions of the heads, so the 
+		hardware should do the scheduling.</li>
+	<li>But, the OS may want to prioritize disk reads (e.g. paging is higher than user stuff).</li>
+	<li>Too find out which scheduling algorithm your device is using (assume sda in this example):
+		<blockquote>
+<pre>cat /sys/block/<b>sda</b>/queue/scheduler</pre>
+		</blockquote>
+		The command lists the available schedulers with the currently active one in brackets.
+		On all of my Linux Mint 13 systems (SSD and hard drives) I get this:
+		<blockquote>
+			<pre>noop deadline [cfq]</pre>
+		</blockquote>
+		However, on my <a href="http://www.raspberrypi.org/product/model-b/">Raspberry Pi</a>, 
+		I run this:
+		<blockquote>
+			<pre>cat /sys/block/<b>mmcblk0</b>/queue/scheduler</pre>
+		</blockquote>
+		And I get this:
+		<blockquote><pre>noop [deadline] cfq</pre></blockquote>
+	</li>
+My <a href="http://www.hardkernel.com/main/products/prdt_info.php?g_code=G138745696275">ODroid-U3</a>
+ is the same as the Raspberry Pi. It seems that the default scheduler on Linux Mint 17, 
+ is also the deadline scheduler.
+<p>
+	</p><li>Links for 
+<span id="wpurl"><a class="wplabel">noop</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Noop_scheduler">noop</a>,
+<span id="wpurl"><a class="wplabel">deadline</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Deadline_scheduler">deadline</a>, and
+<span id="wpurl"><a class="wplabel">cfq</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/CFQ">cfq</a>.</li>
+<li>There is an older one named <span id="wpurl"><a class="wplabel">anticipatory</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Anticipatory_scheduling">anticipatory</a>
+which has now been replaced by cfq.</li>
+<li>Most scheduling algorithms that re-order requests are variations of the Shortest-seek-time first, SCAN, and LOOK algorithms.</li>
+
+</ul>
+<!--
+cat /sys/block/sda/queue/scheduler
+cat /sys/block/mmcblk0/queue/scheduler
+-->
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<p class="sectionheader">
+Solid State Drives (SSD)
+</p>
+
+<ul>
+	<li>Hard drives have moving parts that</li>
+	<ul>
+		<li>are slow as seen from the CPU and memory</li>
+		<li>wear out over time</li>
+		<li>generate heat and noise</li>
+		<li>are susceptible to crashes (shocks)</li>
+	</ul>
+	<li>A <span id="wpurl"><a class="wplabel">RAM disk</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Ram_disk">RAM disk</a> is a logical disk created from main memory</li>
+	<ul>
+		<li>Super fast as there are no moving parts, it's just memory.</li>
+		<li>When the power is turned off, all data on the "drive" is lost.</li>
+		<li>The memory used is no longer available to the CPU. (Great for DOS-like operating systems).</li>
+	</ul>
+	<li><span id="wpurl"><a class="wplabel">Solid state drives</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Solid-state_drive">Solid state drives</a> (SSD) are drives made from 
+		certain types of <span id="wpurl"><a class="wplabel">flash memory</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Flash_memory">flash memory</a></li>
+	<ul>
+		<li>No moving parts, so they are fast, quiet, and generally cooler.</li>
+		<li>They use a different kind of memory that persists when the power is turned off.</li>
+		<ul>
+			<li><span id="wpurl"><a class="wplabel">DRAM</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/DRAM">DRAM</a>-based volitile memory (battery required to retain data)</li>
+			<li><span id="wpurl"><a class="wplabel">NAND</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Flash_memory#NAND_flash">NAND</a>-based non-volitile memory (no power needed to retain data)</li>
+			<li><span id="wpurl"><a class="wplabel">SLC</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Single_level_cell#Single-level_cell">SLC</a>,
+			<span id="wpurl"><a class="wplabel">MLC</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Multi-level_cell">MLC</a>, and
+			TLC (Single, mulitple, triple, levels).
+			</li>
+		</ul>
+		<li>The memory has a limited number of writes over the lifetime of the drive. (May implement wear-levelling.)</li>
+		<ul>
+			<li>Getting better/longer all the time. (i.e. warranties)</li>
+		</ul>
+		<li>Hybrid drives combine a hard drive and SSD in one.</li>
+		<li>Can't overwrite memory, must erase it first. (Many operating systems have a 
+			<span id="wpurl"><a class="wplabel">TRIM</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/TRIM">TRIM</a> command to free pages)</li>
+		<ul>
+			<li>Typically, SSDs write 4 KB pages but erase 256 - 512 KB blocks.</li>
+		</ul>
+		<li>Currently very expensive compared to hard drives (<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/Storage-1.html#COSTPERGB">Costs</a>)</li>
+		<ul>
+			<!--
+			<li>Hard drive: about <tt>$0.029</tt> per GB</li>
+			<li>SSD: about <tt>$0.30</tt> per GB</li>
+			-->
+		</ul>
+		<li>Currently limited storage compared to hard drives  (<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/Storage-1.html#COSTPERGB">Sizes</a>)</li>
+		<!--
+		<ul>
+			<li>Largest hard drive: 8 TB</li>
+			<li>Largest SSD: 1 TB</li>
+		</ul>
+		-->
+	</ul>
+
+	<li><span id="wpurl"><a class="wplabel">F2FS</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/F2FS">F2FS</a> - Flash-Friendly File System that is optimized for:</li> 
+	<ul>
+		<li>Random access - No seek-time latency.</li>
+		<li>Erasing blocks - Do it in the background when disk is idle.</li>
+		<li>Distributing the writes across the disk; don't reuse the same blocks as often.</li>
+	</ul>
+	<li>As SSD components get cheaper, larger, and more robust, they will start to fill in for smaller hard drives.</li>
+	<li>The most likely scenario for the next several years is for hybrid systems where the SSD sits between the hard drive and main memory (cache-like mechanism).</li>
+	<ul>
+		<li>Microsoft has a technology called <span id="wpurl"><a class="wplabel">ReadyBoost</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/ReadyBoost">ReadyBoost</a> that does something like this.</li>
+		<li>Putting often-accessed (especially read-only) files on an SSD is a good balance.</li>	
+	</ul>
+	<li>Hard drives will likely be around for long-term storage and for things that don't need the speed and expense of SSDs.</li>
+	<li>Interesting <span id="wpurl"><a class="wplabel">comparison</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Solid-state_drive#Comparison_of_SSD_with_hard_disk_drives">comparison</a> of SSDs with hard drives.</li>
+	<li><a href="http://www.youtube.com/watch?v=gpVyn2izhRo">The SSD Tutorial</a> - A video introduction to SSDs from Newegg TV.</li>
+	<ul>
+		<li>This is really good for those that want to learn more about storage hardware.</li>
+		<li>Another <a href="http://www.youtube.com/watch?v=87G8iOFnQXs">video</a> from Newegg TV showing the very popluar Samsung 830 SSD.</li>
+	</ul>
+	
+</ul>
+
+<!--
+<span id=wpurl><a class=wplabel>XXX</a></span><a class=wplink href="LINK">XXX</a>
+-->
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<p class="sectionheader">
+<font color="blue">R</font>edundant <font color="blue">A</font>rray of <font color="blue">I</font>nexpensive <font color="blue">D</font>isks (<font color="blue"><span id="wpurl"><a class="wplabel">RAID</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/RAID">RAID</a></font>)
+</p>
+
+
+<ul>
+	<li>Sometimes referred to as Redundant Array of <i>Independent</i> Disks.</li>
+	<li>Generally uses JBOD (<b>J</b>ust a <b>B</b>unch <b>O</b>f <b>D</b>isks).</li>	
+	<li>The concept is that you make two or more physical drives (an array) appear as a single drive.</li>
+	<li>There are several strategies, and two primary stategies are for <i>performance</i> and <i>reliability</i>.</li>
+	<ul>
+		<li>Striping – This is for performance. Files (data) are split among the drives.</li>
+		<li>Mirroring – This is for reliability. Files are duplicated (mirrored) on multiple drives.</li>
+		<li> <span id="wpurl"><a class="wplabel">Parity</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Parity_bit">Parity</a> – This is another form of reliability where one or more drives store parity information.</li>
+	</ul>
+	<li>The different schemes are divided into categories called <span id="wpurl"><a class="wplabel">RAID levels</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Standard_RAID_levels">RAID levels</a>:</li>
+	<ul>
+		<li><b>RAID 0</b> – Block level striping. High-performance but with no additional reliabilty 
+			built-in. Inverse reliability (the more disks, the less reliable they are). 100% disk usage. 
+			Can also make multiple disks appear as a single larger disk.</li>
+		<blockquote>
+		<p class="technote">
+		Technically, RAID 0 is not RAID because there is no <b>R</b>edundancy. In fact, it is worse than just a single drive. Mead uses this one! (I'm all about <i>speed</i>.)
+		</p>	
+		</blockquote>
+		<li><b>RAID 1</b> – Mirroring (no parity/striping). Redundancy with minimal disks. Data is duplicated on all drives. Reliability increases with the number of disks. May have slight increase in read performance with slight decrease in write performance. Separate physical controllers can help.</li>
+		<li>Parity uses XOR: <tt>0 ^ 0 = 0, 0 ^ 1 = 1</tt></li>
+		<li><span id="wpurl"><a class="wplabel">How parity bits work</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Parity_bit">How parity bits work</a>
+			
+		</li><li>Uncommon RAID levels:</li>
+		<ul>
+			<li><b>RAID 2</b> – Bit-level striping with parity.</li>
+			<li><b>RAID 3</b> – Byte-level striping with parity.</li>
+			<li><b>RAID 4</b> – Block-level striping with parity.</li>
+		</ul>
+		<li><b>RAID 5</b> – Block-level striping with distributed parity. (Possibly with a <i>hot spare</i>)</li>
+		<li><b>RAID 6</b> – Block-level striping with double distributed parity. (Possibly with a <i>hot spare</i>)</li>
+		<li>Parity is only calculated on writes (unless there is a failed drive.)</li>
+		<li><span id="wpurl"><a class="wplabel">Nested RAID levels</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Nested_RAID_levels">Nested RAID levels</a>:</li>
+		<ul>
+			<li><b>RAID 0+1</b> – There is a RAID 0 set inside a RAID 1 set. (A mirror of stripes)</li>
+			<li><b>RAID 1+0</b> – There is a RAID 1 set inside a RAID 0 set. (A stripe of mirrors)</li>
+		</ul>
+	</ul>
+<li>There is <span id="wpurl"><a class="wplabel">hardware-based RAID</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/RAID#Firmware-_and_driver-based">hardware-based RAID</a> and 
+		<span id="wpurl"><a class="wplabel">software-based RAID</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/RAID#Software-based">software-based RAID</a>.</li>
+	<li>Hardware:</li>
+	<ul>
+		<li>Uses less CPU resources as all the work is done on the controller.</li>
+		<li>Can protect boot drive.</li>
+		<li>OS doesn't have to know about RAID.</li>
+		<ul>
+			<li>If OS can't do RAID, it's OK as the hardware does all and the OS sees one big drive.</li>
+		</ul>
+		<li>Can't move drives to different controllers.</li>
+	</ul>
+	<li>Software:</li>
+	<ul>
+		<li>Uses CPU, but CPU performance has dramatically improved over the years and hard drives have not. </li>
+		<li>Can move drives to another similar OS.</li>
+		<li>Software can do advanced disk scheduling (via filesystems, e.g. ZFS and Btrfs).</li>
+		<li>Boot drives are problematic.</li>
+	</ul>		
+	<li>There is also <span id="wpurl"><a class="wplabel">fake RAID</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/RAID#Firmware-_and_driver-based">fake RAID</a>, which is unfortunately very prevalent.</li>
+	<li>Finally, don't ever forget this:</li>
+	<center>
+	<p class="technote">
+	<big><big><big><b>!! RAID IS NOT BACKUP !!</b></big></big></big>
+  </p>
+</center>
+</ul>
+
+<!--
+<span id=wpurl><a class=wplabel>XXX</a></span><a class=wplink href="LINK">XXX</a>
+-->
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<p class="sectionheader">
+<font color="blue">N</font>etwork <font color="blue">A</font>ttached <font color="blue">S</font>torage (<font color="blue"><span id="wpurl"><a class="wplabel">NAS</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Network-attached_storage">NAS</a></font>)
+</p>
+Running a full-sized desktop computer as a simple backup server is overkill. You don't need a lot of
+processor power or memory. If all you really want is some extra storage space to use as a backup,
+then a NAS is the perfect way to go. Even a processor that is used in a cell phone is adequate, and you 
+don't even need 1 GB of memory, either.
+<ul>
+	<li>A NAS is a simple "mini-computer" (not like the <span id="wpurl"><a class="wplabel">mini-computers</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Minicomputer">mini-computers</a> of yesteryear) that provides
+		everything you need to handle file backups.</li>
+	<li>Most NAS devices run Linux or a form of Linux (usually stripped down, which makes it very easy to manage).</li>
+	<li>They generally support some type of RAID system. 
+		(You want reliability the most, so at least RAID 1.)</li>
+	<li>Simple "home" NAS devices have as little as 256 MB of memory (yeah, MB!) and a low-powered CPU.</li>
+	<li>Higher-end "enterprise" NAS devices can have very powerful processors and several GBs of memory.</li>
+	<li>Some will allow external drives (USB, eSATA, etc.) to be connected.</li>
+	<li>They have minimal connections and don't have video support so you manage them via a web browser.</li>
+	<li>In addition to providing basic file services, most NAS devices (especially home versions) support such things as:</li>
+	<ul>
+		<li>Additional file services (e.g. 
+			<span id="wpurl"><a class="wplabel">CIFS</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/CIFS">CIFS</a> (SMB, Samba), 
+			<span id="wpurl"><a class="wplabel">NFS</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Network_File_System">NFS</a>, 
+			<span id="wpurl"><a class="wplabel">AFP</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Apple_Filing_Protocol">AFP</a>, 
+			<span id="wpurl"><a class="wplabel">FTP</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/FTP">FTP</a>, 
+			<span id="wpurl"><a class="wplabel">HTTP</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/HTTP">HTTP</a>, 
+			<span id="wpurl"><a class="wplabel">HTTPS</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/HTTPS">HTTPS</a>)
+		</li>
+		<li>Streaming services (<span id="wpurl"><a class="wplabel">DLNA</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/DLNA">DLNA</a>, iTunes).</li>
+		<li>Discovery services (<span id="wpurl"><a class="wplabel">Bonjour</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Bonjour_(software)">Bonjour</a>, <span id="wpurl"><a class="wplabel">UPnP</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/UPnP">UPnP</a>)</li>
+		<li>Photo server (a complete website for sharing photos)</li>
+		<li>Terminal services (e.g. <span id="wpurl"><a class="wplabel">SSH</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Secure_Shell">SSH</a>, <span id="wpurl"><a class="wplabel">Telnet</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Telnet">Telnet</a>).</li>
+		<li>Surveillance (web/video cams).</li>
+		<li>Mail services (<span id="wpurl"><a class="wplabel">POP3</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/POP3">POP3</a>, 
+			<span id="wpurl"><a class="wplabel">SMTP</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/SMTP">SMTP</a>, 
+			<span id="wpurl"><a class="wplabel">IMAP</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/IMAP">IMAP</a>).</li>
+		<li>Connecting printers and sharing them with computers on the network.</li>
+		<li>Built-in firewalls and security.</li>
+		<li>Apps to access the backup from iPhones, iPads, Androids, etc.</li>
+	</ul>
+	<li>NAS devices that I've used:</li>
+	<ul>
+		<li><a href="http://www.synology.com/us/products/DS209/">Synology DS209</a> - Low cost, low power, nice interface, under-powered CPU.</li>
+		<ul>
+			<li>Time to backup: about 25 minutes (delta on about 1,000,000 files consuming about 325 GBs of space)</li>
+		</ul>
+		<li><a href="http://www.synology.com/products/product.php?product_name=DS212j&lang=us">Synology DS212j</a> - Low cost, low power, nice interface, broad support, decently powered CPU.</li>
+		<ul>
+			<li>Time to backup: about 6 minutes.</li>
+		</ul>
+		<li><a href="http://support.netgear.com/product/RNDP2000%20(ReadyNAS%20Pro%202)">Netgear ReadyNAS Pro 2</a> - Slightly higher cost, decent interface, more powerful CPU.</li>
+		<ul>
+			<li>Time to backup: about 4 minutes.</li>
+		</ul>
+	</ul>
+</ul>
+
+<!--
+mmead@netgear1:/c/backup/olga/home>time du -sh
+324G    .
+
+real    3m25.175s
+user    0m2.948s
+sys     0m23.132s
+-->
+
+
+
+
+<!--
+<span id=wpurl><a class=wplabel>XXX</a></span><a class=wplink href="">XXX</a>
+-->
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<p class="sectionheader">
+Other Useful Linux Commands (for dealing with disks)
+</p>
+For detailed information on any command, use the <tt>man pages</tt> or Google.
+
+<ul>
+	<li><tt>hdparm</tt> - get/set hard disk parameters (<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/hdparm-help.html"><tt>hdparm --help</tt>)</a> especially <tt>-t</tt>, <tt>-i</tt>, <tt>-I</tt>, and <tt>--offset <i>X</i>GBs</tt></li>
+	<p>
+	</p><ul>
+		<li>A nice introduction to hdparm can be found <a href="http://www.linux-magazine.com/Online/Features/hdparm-Drive-Utility">here</a>.
+			<!--although there is an error in one of the statements. Can you find it?</li>-->
+		</li></ul>
+	<p>
+	</p><li><tt>smartctl</tt> - part of the <b>smartmon tools</b> (<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/smartctl-help.html"><tt>smartctl --help</tt>)</a></li>
+	<p>
+	</p><ul>
+		<li>This displays the <a href="http://en.wikipedia.org/wiki/S.M.A.R.T.">S.M.A.R.T.</a> (Self-Monitoring, Analysis and Reporting Technology) information from a disk.</li>
+	</ul>
+</ul>
+
+
+<p>
+</p><hr>
+<p>
+	
+<b>Links:</b>
+</p><ul>
+	<li><a href="http://hddscan.com/doc/HDD_from_inside.html">Detailed look</a> at a hard drive.</li>
+	<li><a href="http://hddscan.com/doc/HDD_Tracks_and_Zones.html">Tracks and zones</a>, quite detailed.</li>
+	<li><a href="http://hddscan.com/">HDDScan</a> program.</li>
+	<li><a href="http://www.bit-tech.net/hardware/2007/03/12/introduction_to_hard_drive_technology/1">Introduction to hard drive technology</a>  a little older, but informative.</li>
+	<li><a href="http://www.zdnet.com/blog/storage/are-you-ready-for-4k-sector-drives/731">Are you ready for 4k sectors?</a></li>
+	<li><a href="http://consumer.media.seagate.com/2010/03/the-digital-den/4k-sector-hard-drive-primer/">4K sector hard drive primer</a> from Seagate.</li>
+	<li><a href="http://www.ibm.com/developerworks/linux/library/l-linux-on-4kb-sector-disks/">Linux on 4 KB sector disks: Practical advice</a> by Roderick Smith.
+		(<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/linux-on-4kb-sector-disks.pdf">PDF</a>)
+	</li><li><a href="http://hothardware.com/printarticle.aspx?articleid=1466">Introduction to Advanced Format</a> about Western Digital drives.</li>
+	<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/sata_ncq_intel_seagate.pdf">SATA Native Command Queueing</a> from Intel and Seagate.</li>
+	<p>
+	</p><li><a href="http://www.anandtech.com/print/2738">The SSD Anthology: Understanding SSDs and New Drives from OCZ</a> from AnandTech.com</li>
+	<li><a href="http://www.notebookcheck.net/SSD-versus-HDD-in-comparison.18750.0.html">SSDs and HDDs in comparison</a> from NoteBookCheck.net</li>
+	<li><a href="http://ldn.linuxfoundation.org/blog-entry/aligning-filesystems-ssd%E2%80%99s-erase-block-size">Aligning Filesystems to an SSD’s Erase Block Size</a> by Ted Ts'o, a guru in the Linux world.</li>
+	<li><a href="http://www.storagesearch.com/chartingtheriseofssds.html">Charting the 30 Year Rise of the Solid State Disk Market</a> Interesting history from StorageSearch.com</li>
+	<li><a href="https://wiki.debian.org/SSDOptimization">SSD Optimization</a> from the Debian Wiki.</li>
+	<li><a href="http://www.phoronix.com/scan.php?page=article&item=linux_raid_fs4&num=1">
+		Btrfs/EXT4/XFS/F2FS RAID 0/1/5/6/10 Linux Benchmarks On Four SSDs</a> A comparison from 
+		<a href="http://www.phoronix.com/">Phoronix</a>.</li>
+	<p>
+	</p><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/Adaptec-RAID.pdf">Introduction to RAID</a> from Adaptec.</li>
+	<li><a href="http://en.wikipedia.org/wiki/RAID">RAID</a> from wikipedia.</li>
+	<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/SNIA_DDF_Technical_Position_v2.0.pdf">Common RAID Disk Data Format Specification</a> from the Storage Networking Industry Association</li>
+  <p>
+ 	</p><li><a href="http://www.zdnet.com/new-15000-rpm-disk-drives-why-7000026940/">
+ 	New 15,000 rpm disk drives. Why?</a>	
+</li></ul>
+
+
+
+<!--
+drive cache
+parameters when buying
+read the label on the hard drive
+rotational velocity (inner vs outer tracks)
+
+<a href="Megascenery.html">Megascenery</a> July 2005
+
+<a href="http://www.bit-tech.net/hardware/2007/03/12/introduction_to_hard_drive_technology/1">Intro</a>  a little older, but informative.
+
+<a href="http://www.zdnet.com/blog/storage/are-you-ready-for-4k-sector-drives/731">Are you ready for 4k sectors?</a>
+
+<a href="http://consumer.media.seagate.com/2010/03/the-digital-den/4k-sector-hard-drive-primer/">4K sector hard drive primer</a> from Seagate.
+
+<a href="http://hothardware.com/printarticle.aspx?articleid=1466">Introduction to Advanced Format</a> about Western Digital drives.
+
+
+<a href="sata_ncq_intel_seagate">SATA Native Command Queueing</a> from Intel and Seagate.
+<a href="AdaptecRaid.pdf">Introduction to RAID</a> from Adaptec.
+
+-->
+
+	
+
+
+
+<blockquote><pre></pre></blockquote>
+  
+  
+<blockquote><pre></pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<tt><b></b></tt>
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<!--
+
+–
+–
+
+
+<big>&rarr;</big>
+
+	<span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne &copy;2009</span>
+	
+<blockquote>
+<table border=0 cellspacing=0 cellpadding=2>
+	<tr><td><img src="ComputerComponents-1.png"></td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne &copy;2009&nbsp;&nbsp;</span></td></tr>
+</table>
+</blockquote>
+	
+-->
+</body></html>

@@ -1,0 +1,466 @@
+Script started on Wed 07 Oct 2015 11:54:00 PM PDT
+date
+uptime
+echo FIRSTNAME LASTNAME
+pwd
+whoami
+uname -a
+cat /proc/cpuinfo
+cat /proc/meminfo
+gcc -O -g -Wall -Wextra -ansi -pedantic filter.c -o filter
+./filter < input1.txt --toupper | tee output.txt
+./filter input1.txt --toupper | tee output.txt
+diff output.txt output1u.txt
+valgrind -q --leak-check=full --show-reachable=yes --tool=memcheck ./filter input1.txt --line-numbers > /dev/null
+doxygen
+ls -al html/[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/Desktop/CS180/Assignments/Assignment_2 $[00m date
+Wed Oct  7 23:54:00 PDT 2015
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/Desktop/CS180/Assignments/Assignment_2 $[00m uptime
+ 23:54:00 up 1 day,  9:48,  2 users,  load average: 0.13, 0.07, 0.11
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/Desktop/CS180/Assignments/Assignment_2 $[00m echo FIRSTNAME LASTNAME
+FIRSTNAME LASTNAME
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/Desktop/CS180/Assignments/Assignment_2 $[00m pwd
+/home/tardis/Desktop/CS180/Assignments/Assignment_2
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/Desktop/CS180/Assignments/Assignment_2 $[00m whoami
+tardis
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/Desktop/CS180/Assignments/Assignment_2 $[00m uname -a
+Linux tardis-VirtualBox 3.13.0-24-generic #47-Ubuntu SMP Fri May 2 23:30:00 UTC 2014 x86_64 x86_64 x86_64 GNU/Linux
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/Desktop/CS180/Assignments/Assignment_2 $[00m cat /proc/cpuinfo
+processor	: 0
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 60
+model name	: Intel(R) Core(TM) i7-4800MQ CPU @ 2.70GHz
+stepping	: 3
+microcode	: 0x19
+cpu MHz		: 2693.764
+cache size	: 6144 KB
+physical id	: 0
+siblings	: 4
+core id		: 0
+cpu cores	: 4
+apicid		: 0
+initial apicid	: 0
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 13
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc pni pclmulqdq ssse3 cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx rdrand hypervisor lahf_lm abm
+bogomips	: 5387.52
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 39 bits physical, 48 bits virtual
+power management:
+
+processor	: 1
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 60
+model name	: Intel(R) Core(TM) i7-4800MQ CPU @ 2.70GHz
+stepping	: 3
+microcode	: 0x19
+cpu MHz		: 2693.764
+cache size	: 6144 KB
+physical id	: 0
+siblings	: 4
+core id		: 1
+cpu cores	: 4
+apicid		: 1
+initial apicid	: 1
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 13
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc pni pclmulqdq ssse3 cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx rdrand hypervisor lahf_lm abm
+bogomips	: 5387.52
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 39 bits physical, 48 bits virtual
+power management:
+
+processor	: 2
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 60
+model name	: Intel(R) Core(TM) i7-4800MQ CPU @ 2.70GHz
+stepping	: 3
+microcode	: 0x19
+cpu MHz		: 2693.764
+cache size	: 6144 KB
+physical id	: 0
+siblings	: 4
+core id		: 2
+cpu cores	: 4
+apicid		: 2
+initial apicid	: 2
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 13
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc pni pclmulqdq ssse3 cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx rdrand hypervisor lahf_lm abm
+bogomips	: 5387.52
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 39 bits physical, 48 bits virtual
+power management:
+
+processor	: 3
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 60
+model name	: Intel(R) Core(TM) i7-4800MQ CPU @ 2.70GHz
+stepping	: 3
+microcode	: 0x19
+cpu MHz		: 2693.764
+cache size	: 6144 KB
+physical id	: 0
+siblings	: 4
+core id		: 3
+cpu cores	: 4
+apicid		: 3
+initial apicid	: 3
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 13
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc pni pclmulqdq ssse3 cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx rdrand hypervisor lahf_lm abm
+bogomips	: 5387.52
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 39 bits physical, 48 bits virtual
+power management:
+
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/Desktop/CS180/Assignments/Assignment_2 $[00m cat /proc/meminfo
+MemTotal:        3081932 kB
+MemFree:          838912 kB
+Buffers:          162420 kB
+Cached:          1197572 kB
+SwapCached:            0 kB
+Active:          1281568 kB
+Inactive:         690328 kB
+Active(anon):     538920 kB
+Inactive(anon):   154988 kB
+Active(file):     742648 kB
+Inactive(file):   535340 kB
+Unevictable:         156 kB
+Mlocked:             156 kB
+SwapTotal:       3143676 kB
+SwapFree:        3143436 kB
+Dirty:               176 kB
+Writeback:             0 kB
+AnonPages:        612152 kB
+Mapped:           217340 kB
+Shmem:             82004 kB
+Slab:             212488 kB
+SReclaimable:     190084 kB
+SUnreclaim:        22404 kB
+KernelStack:        3136 kB
+PageTables:        21780 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:     4684640 kB
+Committed_AS:    2505808 kB
+VmallocTotal:   34359738367 kB
+VmallocUsed:       36524 kB
+VmallocChunk:   34359639348 kB
+HardwareCorrupted:     0 kB
+AnonHugePages:    198656 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+DirectMap4k:       42944 kB
+DirectMap2M:     3102720 kB
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/Desktop/CS180/Assignments/Assignment_2 $[00m gcc -O -g -Wall -Wextra -ansi -pedanti c filter.c -o filter
+filter.c: In function ‘filter’:
+filter.c:147:10: warning: unused variable ‘c’ [-Wunused-variable]
+     char c;
+          ^
+filter.c: In function ‘main’:
+filter.c:224:9: warning: unused variable ‘c’ [-Wunused-variable]
+     int c;
+         ^
+filter.c:202:17: warning: ‘num_spaces’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+                 for(i = 0; i < num_spaces; i++)
+                 ^
+filter.c:148:9: note: ‘num_spaces’ was declared here
+     int num_spaces;  
+         ^
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/Desktop/CS180/Assignments/Assignment_2 $[00m ./filter < input1.txt --toupper | tee  output.txt
+# Macros =======================================================
+
+CC=g++
+CFLAGS=-Wall -Wextra -ansi -pedantic -Werror
+EXE=program.exe
+OUTDIR=gnu/
+OBJS=$(OUTDIR)driver.o $(OUTDIR)scantext.o $(OUTDIR)jumble.o
+ERASE=rm
+
+# TARGETS ======================================================
+
+$(OUTDIR)$(EXE) : $(OBJS)
+	$(CC) $(OBJS) -o $(OUTDIR)$(EXE)
+
+$(OUTDIR)driver.o : driver.cpp scantext.h jumble.h
+	$(CC) $(CFLAGS) -c driver.cpp -o driver.o
+
+$(OUTDIR)jumble.o : jumble.cpp jumble.h
+	$(CC) $(CFLAGS) -c jumble.cpp -o jumble.o
+
+$(OUTDIR)scantext.o : scantext.cpp
+	$(CC) $(CFLAGS) -c scantext.cpp -o scantext.o
+
+clean : 
+	$(ERASE) $(OBJS) $(OUTDIR)$(EXE)
+
+rebuild :
+	$(MAKE) clean
+	$(MAKE)
+
+
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/Desktop/CS180/Assignments/Assignment_2 $[00m ./filter input1.txt --toupper | tee ou tput.txt
+# Macros =======================================================
+
+CC=g++
+CFLAGS=-Wall -Wextra -ansi -pedantic -Werror
+EXE=program.exe
+OUTDIR=gnu/
+OBJS=$(OUTDIR)driver.o $(OUTDIR)scantext.o $(OUTDIR)jumble.o
+ERASE=rm
+
+# TARGETS ======================================================
+
+$(OUTDIR)$(EXE) : $(OBJS)
+	$(CC) $(OBJS) -o $(OUTDIR)$(EXE)
+
+$(OUTDIR)driver.o : driver.cpp scantext.h jumble.h
+	$(CC) $(CFLAGS) -c driver.cpp -o driver.o
+
+$(OUTDIR)jumble.o : jumble.cpp jumble.h
+	$(CC) $(CFLAGS) -c jumble.cpp -o jumble.o
+
+$(OUTDIR)scantext.o : scantext.cpp
+	$(CC) $(CFLAGS) -c scantext.cpp -o scantext.o
+
+clean : 
+	$(ERASE) $(OBJS) $(OUTDIR)$(EXE)
+
+rebuild :
+	$(MAKE) clean
+	$(MAKE)
+
+
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/Desktop/CS180/Assignments/Assignment_2 $[00m diff output.txt output1u.txt
+diff: output1u.txt: No such file or directory
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/Desktop/CS180/Assignments/Assignment_2 $[00m valgrind -q --leak-check=full --show-r eachable=yes --tool=memcheck ./filter input1.txt --line-numbers > /dev/null
+==492== Invalid read of size 4
+==492==    at 0x4EB302D: _IO_flush_all_lockp (genops.c:841)
+==492==    by 0x4EB31B9: _IO_cleanup (genops.c:1013)
+==492==    by 0x4E7320A: __run_exit_handlers (exit.c:95)
+==492==    by 0x4E732A4: exit (exit.c:104)
+==492==    by 0x4E58ECB: (below main) (libc-start.c:321)
+==492==  Address 0x51fc150 is 192 bytes inside a block of size 568 free'd
+==492==    at 0x4C2BDEC: free (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==492==    by 0x400ECD: main (filter.c:264)
+==492== 
+==492== Invalid read of size 8
+==492==    at 0x4EB3120: _IO_flush_all_lockp (genops.c:841)
+==492==    by 0x4EB31B9: _IO_cleanup (genops.c:1013)
+==492==    by 0x4E7320A: __run_exit_handlers (exit.c:95)
+==492==    by 0x4E732A4: exit (exit.c:104)
+==492==    by 0x4E58ECB: (below main) (libc-start.c:321)
+==492==  Address 0x51fc0b0 is 32 bytes inside a block of size 568 free'd
+==492==    at 0x4C2BDEC: free (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==492==    by 0x400ECD: main (filter.c:264)
+==492== 
+==492== Invalid read of size 8
+==492==    at 0x4EB3124: _IO_flush_all_lockp (genops.c:841)
+==492==    by 0x4EB31B9: _IO_cleanup (genops.c:1013)
+==492==    by 0x4E7320A: __run_exit_handlers (exit.c:95)
+==492==    by 0x4E732A4: exit (exit.c:104)
+==492==    by 0x4E58ECB: (below main) (libc-start.c:321)
+==492==  Address 0x51fc0b8 is 40 bytes inside a block of size 568 free'd
+==492==    at 0x4C2BDEC: free (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==492==    by 0x400ECD: main (filter.c:264)
+==492== 
+==492== Invalid read of size 8
+==492==    at 0x4EB30CA: _IO_flush_all_lockp (genops.c:862)
+==492==    by 0x4EB31B9: _IO_cleanup (genops.c:1013)
+==492==    by 0x4E7320A: __run_exit_handlers (exit.c:95)
+==492==    by 0x4E732A4: exit (exit.c:104)
+==492==    by 0x4E58ECB: (below main) (libc-start.c:321)
+==492==  Address 0x51fc0f8 is 104 bytes inside a block of size 568 free'd
+==492==    at 0x4C2BDEC: free (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==492==    by 0x400ECD: main (filter.c:264)
+==492== 
+==492== Invalid read of size 4
+==492==    at 0x4EB31D0: _IO_cleanup (genops.c:952)
+==492==    by 0x4E7320A: __run_exit_handlers (exit.c:95)
+==492==    by 0x4E732A4: exit (exit.c:104)
+==492==    by 0x4E58ECB: (below main) (libc-start.c:321)
+==492==  Address 0x51fc090 is 0 bytes inside a block of size 568 free'd
+==492==    at 0x4C2BDEC: free (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==492==    by 0x400ECD: main (filter.c:264)
+==492== 
+==492== Invalid write of size 4
+==492==    at 0x4EB3270: _IO_cleanup (genops.c:990)
+==492==    by 0x4E7320A: __run_exit_handlers (exit.c:95)
+==492==    by 0x4E732A4: exit (exit.c:104)
+==492==    by 0x4E58ECB: (below main) (libc-start.c:321)
+==492==  Address 0x51fc150 is 192 bytes inside a block of size 568 free'd
+==492==    at 0x4C2BDEC: free (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==492==    by 0x400ECD: main (filter.c:264)
+==492== 
+==492== Invalid read of size 8
+==492==    at 0x4EB327A: _IO_cleanup (genops.c:950)
+==492==    by 0x4E7320A: __run_exit_handlers (exit.c:95)
+==492==    by 0x4E732A4: exit (exit.c:104)
+==492==    by 0x4E58ECB: (below main) (libc-start.c:321)
+==492==  Address 0x51fc0f8 is 104 bytes inside a block of size 568 free'd
+==492==    at 0x4C2BDEC: free (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==492==    by 0x400ECD: main (filter.c:264)
+==492== 
+==492== Invalid read of size 4
+==492==    at 0x4EB302D: _IO_flush_all_lockp (genops.c:841)
+==492==    by 0x4EB31B9: _IO_cleanup (genops.c:1013)
+==492==    by 0x4F9C57A: __libc_freeres (in /lib/x86_64-linux-gnu/libc-2.19.so)
+==492==    by 0x4A256BC: _vgnU_freeres (in /usr/lib/valgrind/vgpreload_core-amd64-linux.so)
+==492==    by 0x4E7321A: __run_exit_handlers (exit.c:97)
+==492==    by 0x4E732A4: exit (exit.c:104)
+==492==    by 0x4E58ECB: (below main) (libc-start.c:321)
+==492==  Address 0x51fc150 is 192 bytes inside a block of size 568 free'd
+==492==    at 0x4C2BDEC: free (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==492==    by 0x400ECD: main (filter.c:264)
+==492== 
+==492== Invalid read of size 8
+==492==    at 0x4EB3120: _IO_flush_all_lockp (genops.c:841)
+==492==    by 0x4EB31B9: _IO_cleanup (genops.c:1013)
+==492==    by 0x4F9C57A: __libc_freeres (in /lib/x86_64-linux-gnu/libc-2.19.so)
+==492==    by 0x4A256BC: _vgnU_freeres (in /usr/lib/valgrind/vgpreload_core-amd64-linux.so)
+==492==    by 0x4E7321A: __run_exit_handlers (exit.c:97)
+==492==    by 0x4E732A4: exit (exit.c:104)
+==492==    by 0x4E58ECB: (below main) (libc-start.c:321)
+==492==  Address 0x51fc0b0 is 32 bytes inside a block of size 568 free'd
+==492==    at 0x4C2BDEC: free (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==492==    by 0x400ECD: main (filter.c:264)
+==492== 
+==492== Invalid read of size 8
+==492==    at 0x4EB3124: _IO_flush_all_lockp (genops.c:841)
+==492==    by 0x4EB31B9: _IO_cleanup (genops.c:1013)
+==492==    by 0x4F9C57A: __libc_freeres (in /lib/x86_64-linux-gnu/libc-2.19.so)
+==492==    by 0x4A256BC: _vgnU_freeres (in /usr/lib/valgrind/vgpreload_core-amd64-linux.so)
+==492==    by 0x4E7321A: __run_exit_handlers (exit.c:97)
+==492==    by 0x4E732A4: exit (exit.c:104)
+==492==    by 0x4E58ECB: (below main) (libc-start.c:321)
+==492==  Address 0x51fc0b8 is 40 bytes inside a block of size 568 free'd
+==492==    at 0x4C2BDEC: free (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==492==    by 0x400ECD: main (filter.c:264)
+==492== 
+==492== Invalid read of size 8
+==492==    at 0x4EB30CA: _IO_flush_all_lockp (genops.c:862)
+==492==    by 0x4EB31B9: _IO_cleanup (genops.c:1013)
+==492==    by 0x4F9C57A: __libc_freeres (in /lib/x86_64-linux-gnu/libc-2.19.so)
+==492==    by 0x4A256BC: _vgnU_freeres (in /usr/lib/valgrind/vgpreload_core-amd64-linux.so)
+==492==    by 0x4E7321A: __run_exit_handlers (exit.c:97)
+==492==    by 0x4E732A4: exit (exit.c:104)
+==492==    by 0x4E58ECB: (below main) (libc-start.c:321)
+==492==  Address 0x51fc0f8 is 104 bytes inside a block of size 568 free'd
+==492==    at 0x4C2BDEC: free (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==492==    by 0x400ECD: main (filter.c:264)
+==492== 
+==492== Invalid read of size 4
+==492==    at 0x4EB31D0: _IO_cleanup (genops.c:952)
+==492==    by 0x4F9C57A: __libc_freeres (in /lib/x86_64-linux-gnu/libc-2.19.so)
+==492==    by 0x4A256BC: _vgnU_freeres (in /usr/lib/valgrind/vgpreload_core-amd64-linux.so)
+==492==    by 0x4E7321A: __run_exit_handlers (exit.c:97)
+==492==    by 0x4E732A4: exit (exit.c:104)
+==492==    by 0x4E58ECB: (below main) (libc-start.c:321)
+==492==  Address 0x51fc090 is 0 bytes inside a block of size 568 free'd
+==492==    at 0x4C2BDEC: free (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==492==    by 0x400ECD: main (filter.c:264)
+==492== 
+==492== Invalid write of size 4
+==492==    at 0x4EB3270: _IO_cleanup (genops.c:990)
+==492==    by 0x4F9C57A: __libc_freeres (in /lib/x86_64-linux-gnu/libc-2.19.so)
+==492==    by 0x4A256BC: _vgnU_freeres (in /usr/lib/valgrind/vgpreload_core-amd64-linux.so)
+==492==    by 0x4E7321A: __run_exit_handlers (exit.c:97)
+==492==    by 0x4E732A4: exit (exit.c:104)
+==492==    by 0x4E58ECB: (below main) (libc-start.c:321)
+==492==  Address 0x51fc150 is 192 bytes inside a block of size 568 free'd
+==492==    at 0x4C2BDEC: free (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==492==    by 0x400ECD: main (filter.c:264)
+==492== 
+==492== Invalid read of size 8
+==492==    at 0x4EB327A: _IO_cleanup (genops.c:950)
+==492==    by 0x4F9C57A: __libc_freeres (in /lib/x86_64-linux-gnu/libc-2.19.so)
+==492==    by 0x4A256BC: _vgnU_freeres (in /usr/lib/valgrind/vgpreload_core-amd64-linux.so)
+==492==    by 0x4E7321A: __run_exit_handlers (exit.c:97)
+==492==    by 0x4E732A4: exit (exit.c:104)
+==492==    by 0x4E58ECB: (below main) (libc-start.c:321)
+==492==  Address 0x51fc0f8 is 104 bytes inside a block of size 568 free'd
+==492==    at 0x4C2BDEC: free (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==492==    by 0x400ECD: main (filter.c:264)
+==492== 
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/Desktop/CS180/Assignments/Assignment_2 $[00m doxygen
+error: Doxyfile not found and no input file specified!
+Doxygen version 1.8.6
+Copyright Dimitri van Heesch 1997-2013
+
+You can use doxygen in a number of ways:
+
+1) Use doxygen to generate a template configuration file:
+    doxygen [-s] -g [configName]
+
+    If - is used for configName doxygen will write to standard output.
+
+2) Use doxygen to update an old configuration file:
+    doxygen [-s] -u [configName]
+
+3) Use doxygen to generate documentation using an existing configuration file:
+    doxygen [configName]
+
+    If - is used for configName doxygen will read from standard input.
+
+4) Use doxygen to generate a template file controlling the layout of the
+   generated documentation:
+    doxygen -l layoutFileName.xml
+
+5) Use doxygen to generate a template style sheet file for RTF, HTML or Latex.
+    RTF:        doxygen -w rtf styleSheetFile
+    HTML:       doxygen -w html headerFile footerFile styleSheetFile [configFile]
+    LaTeX:      doxygen -w latex headerFile footerFile styleSheetFile [configFile]
+
+6) Use doxygen to generate a rtf extensions file
+    RTF:   doxygen -e rtf extensionsFile
+
+If -s is specified the comments of the configuration items in the config file will be omitted.
+If configName is omitted `Doxyfile' will be used as a default.
+
+-v print version string
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/Desktop/CS180/Assignments/Assignment_2 $[00m ls -al html/
+ls: cannot access html/: No such file or directory
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/Desktop/CS180/Assignments/Assignment_2 $[00m ls -l[Kal
+total 2408
+drwxr-xr-x 3 tardis tardis    4096 Oct  7 23:54 [0m[01;34m.[0m
+drwxr-xr-x 4 tardis tardis    4096 Oct  5 23:13 [01;34m..[0m
+-rw-r--r-- 1 tardis tardis     272 Oct  7 18:46 Blanklines.txt
+-rwxr-xr-x 1 tardis tardis   22904 Oct  7 23:54 [01;32mfilter[0m
+-rw-r----- 1 tardis tardis    7624 Oct  7 23:53 filter.c
+-rw-r--r-- 1 tardis tardis      73 Oct  7 00:53 HotDogs.txt
+-rw-r----- 1 tardis tardis     686 Oct  7 20:04 input1.txt
+-rw-r--r-- 1 tardis tardis     686 Oct  7 23:54 output.txt
+-rw-r--r-- 1 tardis tardis    2631 Oct  7 15:34 Output.txt
+-rw-r--r-- 1 tardis tardis     241 Oct  7 18:45 Out.txt
+-rw-r--r-- 1 tardis tardis    2887 Oct  7 19:05 Qauntum.txt
+drwxr-xr-x 2 tardis tardis    4096 Oct  5 23:13 [01;34mstress[0m
+-rw-r----- 1 tardis tardis 2348119 Oct  5 23:12 [01;31mstress.zip[0m
+-rw-r--r-- 1 tardis tardis    2261 Oct  7 17:08 Symbols_Out.txt
+-rw-r--r-- 1 tardis tardis    2261 Oct  6 23:15 Symbols.txt
+-rw-r--r-- 1 tardis tardis      40 Oct  7 17:51 Tabs.txt
+-rw-r--r-- 1 tardis tardis       0 Oct  7 20:54 temp.txt
+-rw-r--r-- 1 tardis tardis   16384 Oct  7 23:54 typescript
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/Desktop/CS180/Assignments/Assignment_2 $[00m exit
+
+Script done on Wed 07 Oct 2015 11:54:10 PM PDT

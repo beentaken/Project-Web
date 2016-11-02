@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="../../../D_style.css">
+<link rel="icon" href="./Independent_Notes_Directory_files/Logo.ico">
+</head>
+<body>
+<div style="font-family:Helvetica; color:white;">
+<p class="section_heading"><b>XOR List - Memory Efficient Doubly Linked List</b> : xor_list.cpp</p>
+<pre class="SourceCode"><code>
+#include &lt;<b>iostream</b>&gt;
+#include &lt;<b>stdlib.h</b>&gt;
+#include &lt;<b>stdint.h</b>&gt;
+
+<b>template</b> &lt;<b>typename</b> T&gt; 
+xor_list&lt;T&gt;::<b>xor_list</b>() : head_(0), tail_(0), size_(0) {}
+
+<b>template</b> &lt;<b>typename</b> T&gt; 
+xor_list&lt;T&gt;::<b>~xor_list</b>()
+{
+  <b>xor_node*</b> curr = head_;
+  <b>xor_node*</b> prev = NULL;
+  <b>xor_node*</b> next;
+   
+  <b>while</b>(curr != 0) 
+  {
+    next = XOR(prev, curr->ptx);
+    delete prev;
+    prev = curr;
+    curr = next;
+  }
+  delete prev;
+}
+
+<b>template</b> &lt;<b>typename</b> T&gt; 
+int xor_list&lt;T&gt;::<b>push_front</b>(T* data)
+{
+  <b>xor_node*</b> newnode = makeNode(data);
+  
+  <b>if</b>(head_ == NULL) 
+  {
+     <font color="#003399"><i>// In the event of an empty list, the head becomes the new node</i></font>
+    head_ = newnode;
+    tail_ = newnode;
+  } 
+  <b>else</b> 
+  {     
+     <font color="#003399"><i>// Former First  Node = FFN</i></font>
+     <font color="#003399"><i>// Former Second Node = FSN</i></font>
+     <font color="#003399"><i>// Newnode's ptx set: (NULL) <-- [newnode] --> (FFN)</i></font>
+    newnode->ptx = XOR(NULL, head_);
+     <font color="#003399"><i>// Former first node's ptx set: (newnode) <-- [FFN] --> (FSN)</i></font>
+    head_->ptx = XOR(newnode, XOR(head_->ptx, NULL)); 
+  }
+   <font color="#003399"><i>// Newnode becomes new first node</i></font>
+  head_ = newnode;   
+  
+  <b>return</b> 1;
+}
+
+<b>template</b> &lt;<b>typename</b> T&gt; 
+int xor_list&lt;T&gt;::<b>push_back</b>(T* data)
+{
+  <b>xor_node*</b> newnode = makeNode(data);
+  <b>xor_node*</b> curr = head_;
+  <b>xor_node*</b> prev = NULL;
+  <b>xor_node*</b> next = XOR(curr->ptx, prev);
+
+  <b>while</b>(next != NULL)
+  {
+    prev = curr;
+    curr = next;
+    next = XOR(curr->ptx, prev);
+  }
+  curr->ptx = XOR(prev, newnode);
+  newnode->ptx = XOR(curr, NULL);
+  tail_ = newnode;
+
+  <b>return</b> 1;
+}
+
+<b>template</b> &lt;<b>typename</b> T&gt; 
+int xor_list&lt;T&gt;::<b>pop_front</b>()
+{
+  <b>if</b>(head_ == NULL)
+    <b>return</b> 0;
+  <b>if</b>(head_ == tail_)
+  {
+    delete head_;
+    head_ = NULL;
+    tail_ = NULL;
+  
+    <b>return</b> 1;
+  }
+
+  <b>xor_node*</b> prev = head_;
+  <b>xor_node*</b> curr = XOR(prev->ptx, NULL);
+  <b>xor_node*</b> next = XOR(curr->ptx, prev);
+
+  head_ = curr;
+  delete prev;
+  curr->ptx = XOR(NULL, next);
+
+  <b>return</b> 1;
+}
+
+<b>template</b> &lt;<b>typename</b> T&gt; 
+int xor_list&lt;T&gt;::<b>pop_back</b>()
+{
+  <b>if</b>(head_ == NULL)
+    <b>return</b> 0;
+  <b>if</b>(head_ == tail_)
+  {
+    delete head_;
+    head_ = NULL;
+    tail_ = NULL;
+
+    <b>return</b> 1;
+  }
+
+  <b>xor_node*</b> newlast = XOR(tail_->ptx, NULL);
+  <b>xor_node*</b> prev = XOR(newlast->ptx, tail_);
+
+  delete tail_;
+  newlast->ptx = XOR(prev, NULL);
+  tail_ = newlast;
+
+  <b>return</b> 1;
+}
+
+<b>template</b> &lt;<b>typename</b> T&gt; 
+int xor_list&lt;T&gt;::<b>insert</b>(T* data, int pos)
+{
+
+}
+
+<b>template</b> &lt;<b>typename</b> T&gt; 
+int xor_list&lt;T&gt;::<b>displayList</b>(const char* msg)
+{
+  <b>xor_node*</b> curr = head_;
+  <b>xor_node*</b> prev = NULL;
+  <b>xor_node*</b> next;
+
+  <b>if</b>(head_ == <b>NULL</b> && tail_ == <b>NULL</b>)
+  {
+    std::cout << <font color="#9933CC">"[ Empty List ]"</font> << std::endl;
+    std::cout << <font color="#9933CC">"----------------------------------------------------------"</font>> << std::endl <<   std::endl;
+
+     <b>return</b> 1;
+  }
+
+  std::cout << <font color="#9933CC">"HEAD/NULL"</font>;
+  <b>while</b>(curr != NULL) 
+  {
+    std::cout << <font color="#9933CC">" -- "</font> << *(curr->data_);
+    next = XOR(prev, curr->ptx);
+    prev = curr;
+    curr = next;
+  }
+  std::cout << <font color="#9933CC">" -- TAIL/NULL "</font> << std::endl;
+  std::cout << <font color="#9933CC">"----------------------------------------------------------"</font> << std::endl << std::endl;
+
+  <b>return</b> 1;
+}
+
+<font color="#003399"><i>// Private //////////////////////////////////</i></font>
+<font color="#003399"><i>/////////////////////////////////////////////</i></font>
+
+<b>template</b> &lt;<b>typename</b> T&gt; 
+<b>typename</b> xor_list&lt;T&gt;::xor_node* xor_list&lt;T&gt;::<b>XOR</b>(xor_list&lt;T&gt;::xor_node* p1, xor_list&lt;T&gt;::xor_node* p2)
+{
+  return (<b>xor_node*</b>)((<b>uintptr_t</b>)p1 ^ (<b>uintptr_t</b>)p2);
+}
+
+<b>template</b> &lt;<b>typename</b> T&gt; 
+<b>typename</b> xor_list&lt;T&gt;::xor_node* xor_list&lt;T&gt;::<b>makeNode</b>(T* data)
+{
+   <b>xor_node*</b> newnode = new xor_node;
+   newnode->data_ = data;
+   newnode->ptx = <b>NULL</b>;
+
+   <b>return</b> newnode;
+}
+
+</code></pre>
+</pre>
+
+</div>
+</body>
+</html>

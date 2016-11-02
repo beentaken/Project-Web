@@ -1,0 +1,2119 @@
+
+<!-- saved from url=(0065)http://azrael.digipen.edu/~mmead/www/Courses/CS180/Threads-1.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./Threads_files/new.css">
+<title>Threads</title>
+
+</head>
+
+<body>
+
+<center><h1>
+Threads
+</h1></center>
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<p class="sectionheader">
+Review of Processes
+</p>
+
+To understand threads, it's important to review what a process is.
+<p>
+<b>Processes</b>
+
+</p><ul>
+  <li>Each process runs in its own process space.</li>
+  <li>Each process has a unique process id (pid) that distinguishes it from other processes.</li>
+  <li>When one process creates another process (e.g. <b>fork</b>), the new (child) process is
+  an independent process with nothing shared with the parent.</li>
+  <li>The operating system ensures that each process stays within its own memory space.</li>
+  <li>If a process wants to communicate with another process, it must do so with the operating system's help.</li>
+  <li>There are several ways that processes can communicate and we've looked at three:</li>
+  <ul>
+    <li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/Processes-1.html#SHAREDMEM">Shared memory</a></li>
+    <li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/Processes-1.html#MSGQUEUE">Message passing</a></li>
+    <li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/Processes-1.html#PIPES">Pipes</a></li>
+  </ul>
+  <li>If a process does nothing to enable communication with another process, no communication can take place.</li>
+</ul>
+
+Recall the classic "fork" code:
+
+<pre class="sourcecode"><code><b>#include</b> &lt;stdio.h&gt;    <font color="#003399"><i>/* printf       */</i></font>
+<b>#include</b> &lt;unistd.h&gt;   <font color="#003399"><i>/* fork, getpid */</i></font>
+<b>#include</b> &lt;stdlib.h&gt;   <font color="#003399"><i>/* exit         */</i></font>
+<b>#include</b> &lt;sys/wait.h&gt; <font color="#003399"><i>/* wait         */</i></font>
+
+<b>int</b> main(<b>void</b>)
+{
+  <b>int</b> pid = fork();
+
+  <b>if</b> (pid == 0) <font color="#003399"><i>/* child */</i></font>
+  {
+    printf(<font color="#9933CC">" child pid: %i\n"</font>, getpid());
+
+    <font color="#003399"><i>/* do child stuff */</i></font>
+
+    exit(0);
+  }
+  <b>else</b> <font color="#003399"><i>/* parent */</i></font>
+  {
+    printf(<font color="#9933CC">"parent pid: %i\n"</font>, getpid());
+
+    <font color="#003399"><i>/* do parent stuff */</i></font>
+
+    wait(NULL);
+  }
+
+  <b>return</b> 0;
+}
+_______________________________________________
+<b>Output:</b>
+parent pid: 32491
+ child pid: 32492
+
+</code></pre>
+
+<ul>
+  <li>Both processes are executing <i>concurrently</i>.</li>
+  <li>The parent is <i>blocked</i> (at the <tt><b>wait</b></tt> call) until the child finishes.</li>
+  <li>No data is shared between the processes.</li>
+  <li>The only communication possible is the (1 byte) exit code returned from the child to the parent.</li>
+</ul>
+
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<p class="sectionheader">
+Threads Overview
+</p>
+
+<ul>
+  <li>Traditionally, a process is heavyweight, meaning it requires a lot of work to create and manage.</li>
+  <li>Threads are also called "lightweight processes" as they don't incur as much overhead as a process.</li>
+  <li>A thread is the most basic unit of work in a process.</li>
+  <ul>
+    <li>It might help to think of a thread as a <i>sub-process</i>, although this isn't a strict definition.</li>
+    <li>A process can be broken down into several sub-processes (not unlike how a program is broken down into functions).</li>
+  </ul>
+  <li>Like processes, separate threads are alloted their own time slices by the OS and run independently of one another.</li>
+  <li>A thread by itself is not a process.</li>
+  <li>All processes have at least one thread (thread of execution).</li>
+  <li>It is possible for a process to have more than one thread.</li>
+  <ul>
+    <li>It must contain at least one thread, usually called the main thread.</li>
+    <li>If it has more than one thread, it is said to be multi-threaded.</li>
+  </ul>
+  <li>Depending on the type of application (process), multiple threads can be very beneficial.</li>
+  <li>A process with multiple threads (called a multi-threaded process) can do multiple things <i>at the same time</i>. (Assuming multiple CPUs or cores)</li>
+   <li>Threads don't have their own resources; rather, they use those of the whole process.</li>
+</ul>
+
+<b>Thread resources</b><p>
+</p><ul>
+  <li>Instead of an entire PCB (Process Control Block), the OS needs to store less information about the thread.</li>
+  <ul>
+    <li>Thread identifier (similar to a process id)</li>
+    <li>Thread state (created, ready, running, blocked, or terminated)</li>
+    <li>CPU registers</li>
+    <li>Thread stack</li>
+  </ul>
+  <li>Makes for quicker context switching.</li>
+  <li>Each thread of a process shares its process's memory space with other threads in the process.</li>
+  <ul>
+    <li>This means you don't need any help from the OS to communicate with the other threads in the process.</li>
+  </ul>
+</ul>
+<p>
+<b>Types of threads</b>
+</p><ul>
+  <li>User level thread</li>
+  <ul>
+    <li>Thread support is provided on the library level in user space.</li>
+    <li>Context switching between threads is initiated by the library (i.e. the user process)</li>
+    <li>The kernel only sees the process, not the threads.</li>
+    <li>If a user thread blocks, the whole process blocks.</li>
+  </ul>
+  <li>Kernel level thread</li>
+  <ul>
+    <li>Threads are directly supported by the OS.</li>
+    <li>Context switching is done by the OS (kernel).</li>
+    <li>Thread library only provides an interface.</li>
+    <li>The kernel sees and handles all of the process' threads.</li>
+  </ul>
+  <li>Most modern OS's (e.g. Linux, Windows, Mac OS X) provide kernel level threads.</li>
+</ul>
+
+
+<b>Single CPU/core systems</b><p>
+With a single CPU/core:
+</p><ul>
+  <li>Like processes, only one thread can be executing.</li>
+  <li>Only one thread will actually be executing on the CPU.</li>
+  <li>If multiple threads are in the ready/runnable state, only one is able to run, causing performance problems.</li>
+  <li>If many threads are in the blocked state, then giving the CPU to the runnable threads increases performance.</li>
+</ul>
+<b>Multi-CPU/core</b><p>
+With multiple CPUs/cores
+</p><ul>
+  <li>Multiple threads can also execute in parallel, one per CPU/core.</li>
+  <li>For example, with a quad-core CPU:</li>
+  <ul>
+    <li>4 single-threaded processes can execute simultaneously.</li>
+    <li>A single process with 4 threads can have all 4 threads executing simultaneously.</li>
+  </ul>
+  <li>Multi-threaded processes really work well on multi-core (or multi-CPU) systems.</li>
+  <ul>
+    <li>This is true parallelism.</li>
+  </ul>
+  <li>Processor affinity is the ability to specify on which CPU/core a thread will execute.</li>
+  <ul>
+    <li>If another CPU/core is available, the thread will still wait until the specific CPU/core becomes available.</li>
+  </ul>
+  <li>Diagrams showing parallelism vs. pseudo-parallelism (this is very similar to the process version)</li>
+  <ul>
+    <li>This is a single process with multiple threads.</li>
+    <li>The <font color="red"><b>RED LINE</b></font> represents the time to switch between threads.</li>
+    <li>The thick <font color="black"><b>BLACK LINE</b></font> indicates that this is a single process running.</li>
+  </ul>
+
+</ul>
+
+<blockquote>
+<table border="0" cellspacing="0" cellpadding="0">
+<tbody><tr valign="top"><th>No parallelism</th><th></th><th>Pseudo-parallelism</th></tr>
+<tr valign="top">
+<td>
+<img src="./Threads_files/Threads-NoParallelism.png">
+</td>
+<td width="30"></td>
+<td>
+<img src="./Threads_files/Threads-PseudoParallelism.png">
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<blockquote>
+<table border="0" cellspacing="0" cellpadding="0">
+<tbody><tr valign="top"><th>Pseudo-parallelism (detail)</th></tr>
+<tr valign="top">
+<td>
+<img src="./Threads_files/Threads-PseudoParallelism-2.png">
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<p>
+
+
+</p><blockquote>
+<table border="0" cellspacing="0" cellpadding="0">
+<tbody><tr valign="top" align="left"><th>Parallelism</th></tr>
+<tr valign="top">
+<td>
+<img src="./Threads_files/Threads-Parallelism.png">
+</td>
+</tr></tbody></table>
+</blockquote>
+<p>
+
+<b>Thread States</b>
+</p><p>
+There are several states in which a thread can be, and they are very similar to process states. They are mutually-exclusive, so a thread can
+only be in exactly one of these states at any given time:
+
+</p><ul>
+  <li><b>New (Created)</b> - The thread is being created.</li>
+  <li><b>Running</b> - The thread is actively using the CPU and other resources.</li>
+  <li><b>Blocked</b> - The thread is currently waiting (paused) while some I/O completes or an event happens.</li>
+  <li><b>Ready</b> - The thread is in the runnable queue and is waiting to run.</li>
+  <li><b>Terminated</b> - The thread has been terminated, either because it has finished its task or because
+  the system (or user) has terminated it.</li>
+</ul>
+
+
+<blockquote>
+<img src="./Threads_files/ProcessStates-1.png">
+</blockquote>
+
+<ol>
+  <li><b>(Admitted)</b> The thread has been created and is now being put into the ready/runnable queue.</li>
+  <li><b>(Dispatched)</b> The OS has selected a thread to run and is executing it on the CPU.</li>
+  <li><b>(Timeout)</b> The thread has used up its alloctted time slice and is put back in the queue for later execution.</li>
+  <ul>
+    <li>The thread may still have time remaining in its time slice, but a higher-priority thread has bumped it.</li>
+  </ul>
+  <li><b>(Need I/O or event to happen</b>) The thread has requested I/O or has requested to wait until a future event.</li>
+  <li><b>(I/O done or event occurred)</b> The I/O has completed or event has occurred that the thread was waiting on.</li>
+  <li><b>(Ending)</b> The thread has completed its task or it has been terminated.</li>
+</ol>
+
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<p class="sectionheader">
+Thread Libraries
+</p>
+
+<b>POSIX Pthreads</b>
+<ul>
+  <li>POSIX provides a standard thread library</li>
+  <ul>
+    <li>Creation and termination of threads</li>
+    <li>Management of threads</li>
+    <ul>
+      <li>Synchronization</li>
+      <li>Locking</li>
+    </ul>
+  </ul>
+  <li>Implementation (as kernel or user level threads) is platform dependent.</li>
+  <li><b><tt><a href="http://man7.org/linux/man-pages/man3/pthread_create.3.html">pthread_create</a></tt></b> used to create and start a thread.</li>
+  <ul>
+    <li>If successful, returns 0, else returns non-zero</li>
+<!--
+    <li>Prototype:</li>
+    <blockquote><pre><b>int</b> pthread_create(pthread_t *thread, pthread_attr_t *attr, <b>void</b> * (*start_routine)(<b>void</b> *), <b>void</b> *arg);</pre></blockquote>
+-->
+  </ul>
+  <li><tt><b><a href="http://man7.org/linux/man-pages/man3/pthread_join.3.html">pthread_join</a></b></tt> used to wait for a thread.</li>
+  <ul>
+    <li>If successful, returns 0, else returns non-zero</li>
+  </ul>
+  <li><tt><b><a href="http://man7.org/linux/man-pages/man3/pthread_exit.3.html">pthread_exit</a></b></tt> used by a thread to exit.</li>
+  <ul>
+    <li>Doesn't return. Works much like <tt>exit</tt>.</li>
+    <li><font color="red"><b>Do not use this function in CS180</b></font>. Use a simple <b>return</b> statement instead. (Valgrind gives a false positive memory leak with <tt>pthread_exit</tt>.)</li>
+  </ul>
+  <li>Supported on Linux, Mac OS X, and Cygwin</li>
+  <li>POSIX thread example: (<tt><b>thread1.c</b></tt>)</li><p>
+  <font color="blue"></font>
+
+  </p><blockquote>
+  <table border="1" cellpadding="5" cellspacing="0">
+    <tbody><tr>
+      <td>
+        <font color="blue">This program simply creates a thread which prints the word <i>Hello!</i> to the screen and then exits.</font>
+      </td>
+    </tr>
+  </tbody></table>
+</blockquote>
+
+
+
+<pre class="sourcecode"><code><font color="#003399"><i>/* To compile under Linux, use <tt><b>-pthread</b></tt> or <tt><b>-lpthread</b></tt> option */</i></font>
+<b>#include</b> &lt;stdio.h&gt;   <font color="#003399"><i>/* printf                  */</i></font>
+<b>#include</b> &lt;pthread.h&gt; <font color="#003399"><i>/* thread create/join/exit */</i></font>
+
+<b>void</b> *hello(<b>void</b> *p)
+{
+  printf(<font color="#9933CC">"Hello!\n"</font>);
+  <b>return</b> NULL;
+}
+
+<b>int</b> main(<b>void</b>)
+{
+  pthread_t tid;
+
+  <a href="http://man7.org/linux/man-pages/man3/pthread_create.3.html">pthread_create</a>(&amp;tid, NULL, hello, NULL);
+  <a href="http://man7.org/linux/man-pages/man3/pthread_join.3.html">pthread_join</a>(tid, NULL);
+
+  <b>return</b> 0;
+}
+</code></pre>
+</ul>
+
+<ul>
+  <li><tt><b>pthread_create</b></tt> has four arguments:</li>
+  <blockquote><pre><b>int</b> pthread_create(pthread_t *thread, pthread_attr_t *attr, <b>void</b> * (*start_routine)(<b>void</b> *), <b>void</b> *arg);</pre></blockquote>
+  <ol>
+    <li>pthread_t pointer – fills in with thread id of new thread</li>
+    <li>pthread_attr_t pointer – pointer to requested <a href="http://man7.org/linux/man-pages/man3/pthread_attr_init.3.html">thread attributes</a>, may be NULL (default attributes)</li>
+    <ul>
+      <li>Priority, stack size, etc.</li>
+    </ul>
+    <li>function pointer – the thread function to call</li>
+    <ul>
+      <li>must have the prototype: <tt><b>void</b>* fn_name(<b>void</b> *)</tt></li>
+      <li>that's a function that takes a void pointer and returns a void pointer.</li>
+    </ul>
+
+    <li>void pointer – data to pass to thread function (arguments).</li>
+  </ol>
+  <li><tt><b>pthread_join</b></tt> has two arguments:</li>
+  <ol>
+    <li>pthread_t – identifier of thread to wait for</li>
+    <li>void pointer-to-pointer – retrieve thread exit status (NULL means to ignore exit status)</li>
+  </ol>
+  <li><tt><b>pthread_exit</b></tt> has a single argument:</li>
+  <ol>
+    <li>void pointer – stores exit value</li>
+    <li><font color="red"><b>Do not use this function in CS180</b></font>. Use a simple <b>return</b> statement instead. (Valgrind gives a false positive memory leak with <tt>pthread_exit</tt>.)</li>
+  </ol>
+</ul>
+  <ul>
+
+
+<li>A larger example using multiple threads and shared (global) data: (<tt><b>thread2.c</b></tt>)</li>
+<ul>
+  <li>All global data is shared between all threads.</li>
+  <li>Unlike processes, no extra work is required to share the data.</li>
+  <li>This gives threads a performance advantage over processes.</li>
+  <li>In this example, all threads (but the main thread) are executing the same code (same function).</li>
+  <ul>
+    <li>This isn't a problem, since all "copies" of the function have their own registers 
+      and stack (local variables, parameters).</li>
+    <li>Think about how C++ object-oriented programming works with objects and member functions.</li>
+    <!--
+    The "this" pointer tells the function where the data is. Each thread has it's own stack pointer
+    so the functions can find the data.
+  -->
+  </ul>
+  <li>The example could have had each thread running a different function. (A later example will show that.)</li>
+</ul>
+<p>
+  </p><blockquote>
+  <table border="1" cellpadding="5" cellspacing="0">
+    <tbody><tr>
+      <td>
+        <font color="blue">
+          This program uses a global array of strings (character pointers). The main function creates several threads. Each
+          thread runs the same function <tt><b>palindrome</b></tt>, which simply chooses a number
+          of random palindromes (from the global array) to print to the screen.
+          There is only one process, but many threads.
+        </font>
+      </td>
+    </tr>
+  </tbody></table>
+</blockquote>
+
+<pre class="sourcecode"><code><b>#include</b> &lt;stdio.h&gt;   <font color="#003399"><i>/* printf                  */</i></font>
+<b>#include</b> &lt;unistd.h&gt;  <font color="#003399"><i>/* sleep, getpid           */</i></font>
+<b>#include</b> &lt;pthread.h&gt; <font color="#003399"><i>/* thread create/join/exit */</i></font>
+
+<b>char</b> <b>const</b> *table[]
+   = { <font color="#9933CC">"A man, a plan, a canal: Panama!"</font>,
+       <font color="#9933CC">"No lemons, no melon."</font>,
+       <font color="#9933CC">"Step on no pets."</font>,
+       <font color="#9933CC">"Was it a rat I saw?"</font>,
+       <font color="#9933CC">"Dog as a devil deified lived as a god."</font>,
+       <font color="#9933CC">"Able was I ere I saw Elba."</font>,
+       <font color="#9933CC">"Yawn! Madonna fan? No damn way!"</font>,
+       <font color="#9933CC">"Go hang a salami. I'm a lasagna hog!"</font>
+     };
+
+<b>const</b> <b>int</b> table_size = <b>sizeof</b>(table) / <b>sizeof</b>(*table);
+
+<b>void</b> *palindrome(<b>void</b> *p) <font color="#003399"><i>/* p is unused */</i></font>
+{
+  pthread_t tid = pthread_self();
+  <b>int</b> max = 5;
+  <b>int</b> i, pid;
+
+  pid = getpid(); <font color="#003399"><i>/* all threads have the same pid */</i></font>
+
+  <b>for</b> (i = 0; i &lt; max; ++i)
+  {
+    <b>int</b> index = rand() % table_size;
+    printf(<font color="#9933CC">"[p:%i][t:%u]: %s\n"</font>, pid, (<b>unsigned</b>)tid / 1000000, table[index]);
+  }
+
+  <b>return</b> NULL;
+}
+
+<b>int</b> main(<b>void</b>)
+{
+  <b>#define</b> COUNT 8
+  <b>int</b> i;
+
+  pthread_t thread_id[COUNT];
+
+  srand(0);
+
+  printf(<font color="#9933CC">"Creating threads...\n"</font>);
+  <b>for</b> (i = 0; i &lt; COUNT; ++i)
+    pthread_create(&amp;thread_id[i], NULL, palindrome, NULL);
+  printf(<font color="#9933CC">"Done creating threads.\n"</font>);
+
+  printf(<font color="#9933CC">"Waiting on threads...\n"</font>);
+  <b>for</b> (i = 0; i &lt; COUNT; ++i)
+  {
+    printf(<font color="#9933CC">"Joining thread %i\n"</font>, i);
+    pthread_join(thread_id[i], NULL);
+  }
+  printf(<font color="#9933CC">"Done waiting on threads.\n"</font>);
+
+  <b>return</b> 0;
+}
+</code></pre>
+
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/thread-runs-1.html">Output from above</a>
+<p>
+
+</p><li>Another example using multiple threads and passing data (no globals): (<tt><b>thread3.c</b></tt>)</li>
+<ul>
+  <li>Global data isn't always desirable in programs.</li>
+  <li>Just like we pass data to functions (rather than let all functions access global data), we can pass data to the threads.</li>
+  <li>This can give each thread its own local copy of the data.</li>
+  <li>In this example, all threads (but the main thread) are still executing the same code (same function).</li>
+  <ul>
+    <li>This isn't a problem, since all "copies" of the function have their own registers and stack (local variables).</li>
+  </ul>
+  <li>Much like the IPC mechanism of message passing, we can create our own user-defined structure used
+    to communicate with the threads.</li>
+</ul>
+
+
+  <blockquote>
+  <table border="1" cellpadding="5" cellspacing="0">
+    <tbody><tr>
+      <td>
+        <font color="blue">
+          This program is similar to the one above but instead of using global data, the data is passed to each thread. The data is a user-defined <tt><b>struct</b></tt>
+          that contains a pointer to the palindrome strings, the size of the table (array), and a count of how many strings to print. Although each thread
+          receives its own copy of the pointer to the strings, they are all reading from the same array. This is completely safe. As before, there is
+          only one process, but many threads.
+        </font>
+      </td>
+    </tr>
+  </tbody></table>
+</blockquote>
+
+
+<pre class="sourcecode"><code><b>#include</b> &lt;stdio.h&gt;   <font color="#003399"><i>/* printf                  */</i></font>
+<b>#include</b> &lt;unistd.h&gt;  <font color="#003399"><i>/* sleep, getpid           */</i></font>
+<b>#include</b> &lt;stdlib.h&gt;  <font color="#003399"><i>/* rand, srand             */</i></font>
+<b>#include</b> &lt;pthread.h&gt; <font color="#003399"><i>/* thread create/join/exit */</i></font>
+
+<font color="#003399"><i>/* User-defined data for threads */</i></font>
+<b>typedef</b> <b>struct</b>
+{
+  <b>const</b> <b>char</b> **table;
+  <b>int</b> table_size;
+  <b>int</b> to_do_count;
+}data_struct; <font color="#003399"><i>/* an unimaginative name for our structure ... */</i></font>
+
+<b>void</b> *palindrome(<b>void</b> *data)
+{
+  data_struct *ds = (data_struct *)data; <font color="#003399"><i>/* typical use when providing arguments */</i></font>
+  pthread_t tid = pthread_self();        <font color="#003399"><i>/* get this thread's tid                */</i></font>
+  <b>int</b> pid = getpid();                    <font color="#003399"><i>/* all threads have the same pid        */</i></font>
+  <b>int</b> i;
+
+  <b>for</b> (i = 0; i &lt; ds-&gt;to_do_count; ++i)
+  {
+    <b>int</b> index = rand() % ds-&gt;table_size;
+    printf(<font color="#9933CC">"[p:%i][t:%u]: %s\n"</font>, pid, (<b>unsigned</b>)tid / 1000000, ds-&gt;table[index]);
+  }
+
+  <b>return</b> NULL;
+}
+
+<b>int</b> main(<b>void</b>)
+{
+  <b>#define</b> COUNT 8
+  <b>int</b> i;
+
+  <b>const</b> <b>char</b> *table[]
+   = { <font color="#9933CC">"A man, a plan, a canal: Panama!"</font>,
+       <font color="#9933CC">"No lemons, no melon."</font>,
+       <font color="#9933CC">"Step on no pets."</font>,
+       <font color="#9933CC">"Was it a rat I saw?"</font>,
+       <font color="#9933CC">"Dog as a devil deified lived as a god."</font>,
+       <font color="#9933CC">"Able was I ere I saw Elba."</font>,
+       <font color="#9933CC">"Yawn! Madonna fan? No damn way!"</font>,
+       <font color="#9933CC">"Go hang a salami. I'm a lasagna hog!"</font>
+     };
+
+  <b>const</b> <b>int</b> table_size = <b>sizeof</b>(table) / <b>sizeof</b>(*table);
+
+  srand(0);
+
+  data_struct ds[COUNT];
+  pthread_t thread_id[COUNT];
+
+  printf(<font color="#9933CC">"Creating threads...\n"</font>);
+  <b>for</b> (i = 0; i &lt; COUNT; ++i)
+  {
+    ds[i].table = table;
+    ds[i].table_size = table_size;
+    ds[i].to_do_count = 5; <font color="#003399"><i>/*1 + rand() % 10;*/</i></font>
+    pthread_create(&amp;thread_id[i], NULL, palindrome, &amp;ds[i]);
+  }
+  printf(<font color="#9933CC">"Done creating threads.\n"</font>);
+
+  printf(<font color="#9933CC">"Waiting on threads...\n"</font>);
+  <b>for</b> (i = 0; i &lt; COUNT; ++i)
+  {
+    printf(<font color="#9933CC">"Joining thread %i\n"</font>, i);
+    pthread_join(thread_id[i], NULL);
+  }
+  printf(<font color="#9933CC">"Done waiting on threads.\n"</font>);
+
+  <b>return</b> 0;
+}
+</code></pre>
+
+<li>Each thread is passed a <b>pointer</b> to its own (possibly unique) data.</li>
+<li>The data structure is up to the programmer.</li>
+<li>The data is created in the main thread.</li>
+<ul>
+  <li>It's possible for a thread to allocate its own private memory as well.</li>
+  <li>The data must still be "alive" (in main or whatever called the function) while other threads are using it.</li>
+</ul>
+<li>The data is passed to and from threads using <tt><b>void</b></tt> pointers, which means that
+it is necessary to cast the <tt><b>void</b></tt> pointers to the correct type before using them.</li>
+<li>Passing data to the thread procedures can be used to eliminate the need for global data.</li>
+<p>
+
+<b>Output:</b> (Like before, each run will produce a <font color="blue">different ordering.</font>)
+</p><pre>Creating threads...
+[p:20030][t:791]: Go hang a salami. I'm a lasagna hog!
+[p:20030][t:791]: Was it a rat I saw?
+[p:20030][t:791]: No lemons, no melon.
+[p:20030][t:791]: Step on no pets.
+[p:20030][t:766]: Go hang a salami. I'm a lasagna hog!
+[p:20030][t:783]: Yawn! Madonna fan? No damn way!
+[p:20030][t:783]: Able was I ere I saw Elba.
+[p:20030][t:783]: Step on no pets.
+[p:20030][t:783]: Step on no pets.
+[p:20030][t:783]: Was it a rat I saw?
+<font color="blue"><b>[p:20030][t:741]: Was it a rat I saw?</b></font>
+[p:20030][t:758]: No lemons, no melon.
+[p:20030][t:758]: Yawn! Madonna fan? No damn way!
+[p:20030][t:758]: Step on no pets.
+[p:20030][t:758]: Dog as a devil deified lived as a god.
+[p:20030][t:758]: A man, a plan, a canal: Panama!
+Done creating threads.
+[p:20030][t:733]: A man, a plan, a canal: Panama!
+[p:20030][t:733]: Go hang a salami. I'm a lasagna hog!
+[p:20030][t:766]: Dog as a devil deified lived as a god.
+[p:20030][t:766]: Yawn! Madonna fan? No damn way!
+[p:20030][t:766]: Step on no pets.
+[p:20030][t:766]: Yawn! Madonna fan? No damn way!
+[p:20030][t:733]: Able was I ere I saw Elba.
+[p:20030][t:733]: Was it a rat I saw?
+[p:20030][t:733]: Was it a rat I saw?
+<font color="blue"><b>[p:20030][t:741]: Was it a rat I saw?</b></font>
+<font color="blue"><b>[p:20030][t:741]: Go hang a salami. I'm a lasagna hog!</b></font>
+[p:20030][t:791]: Dog as a devil deified lived as a god.
+[p:20030][t:749]: Was it a rat I saw?
+[p:20030][t:749]: No lemons, no melon.
+[p:20030][t:749]: Step on no pets.
+[p:20030][t:749]: Yawn! Madonna fan? No damn way!
+[p:20030][t:749]: Step on no pets.
+Waiting on threads...
+Joining thread 0
+[p:20030][t:775]: No lemons, no melon.
+[p:20030][t:775]: Able was I ere I saw Elba.
+[p:20030][t:775]: No lemons, no melon.
+[p:20030][t:775]: A man, a plan, a canal: Panama!
+[p:20030][t:775]: Was it a rat I saw?
+Joining thread 1
+Joining thread 2
+Joining thread 3
+<font color="blue"><b>[p:20030][t:741]: Go hang a salami. I'm a lasagna hog!</b></font>
+<font color="blue"><b>[p:20030][t:741]: Step on no pets.</b></font>
+Joining thread 4
+Joining thread 5
+Joining thread 6
+Joining thread 7
+Done waiting on threads.
+</pre>
+</ul>
+
+Notes:
+<ul>
+  <li>Functions in the <b>stdio</b> library are thread safe with GNU and Microsoft
+    compilers.</li>
+    <ul>
+      <li>Thread-safety is somewhat related to <i>reentrancy</i>.</li>
+      <li>Global and static variables generally have a negative impact on threading
+        (which is the primary reason to avoid them, although we don't usually teach this reason
+        to beginners).</li>
+      <li>The <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/Single-Multi-task-OS.html#STRACE">strace example</a> would suffer
+        from this problem because the <tt>localtime</tt> function returns a pointer to static data.</li>
+
+    </ul>
+  <li>Microsoft used to provide two sets of libraries: single-threaded and multi-threaded.
+    Now everything uses multi-threaded libraries.</li>
+  <li>The I/O functions use <a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/flockfile.html">
+    locking functions</a> to ensure thread-safety.</li>
+  <li>This doesn't mean you won't get interleaved output. It just means that you won't corrupt
+    anything by having multiple threads access the functions.</li>
+  <li><a href="http://www.unix.org/whitepapers/reentrant.html">
+    Thread-safety and POSIX.1</a> - This explains a little bit about <b>stdio</b>
+    functions that are thread-safe.</li>
+</ul>
+
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<!--
+<p class="sectionheader">
+A Note About the Thread Function
+</p>
+
+Recall the first threaded program:
+
+<pre class="sourcecode"><code><font color="#003399"><i>/* To compile under Linux, use <tt><b>-pthread</b></tt> or <tt><b>-lpthread</b></tt> option */</i></font>
+<b>#include</b> &lt;stdio.h&gt;   <font color="#003399"><i>/* printf                  */</i></font>
+<b>#include</b> &lt;pthread.h&gt; <font color="#003399"><i>/* thread create/join/exit */</i></font>
+
+<b>void</b> *hello(<b>void</b> *p)
+{
+  printf(<font color="#9933CC">&quot;Hello!&#92;n&quot;</font>);
+  <b>return</b> NULL;
+}
+
+<b>int</b> main(<b>void</b>)
+{
+  pthread_t tid;
+
+  <a href="http://www.linuxmanpages.com/man3/pthread_create.3thr.php">pthread_create</a>(&amp;tid, NULL, hello, NULL);
+  <a href="http://www.linuxmanpages.com/man3/pthread_join.3thr.php">pthread_join</a>(tid, NULL);
+
+  <b>return</b> 0;
+}
+</code></pre>
+
+What exactly is the <tt><b>hello</b></tt> function returning? And to what/where is it returning a value?
+<p>
+It is "returning" the value as the second parameter to the <tt>pthread_join</tt> function:
+<blockquote><pre>
+pthread_join(tid, NULL);
+</pre></blockquote>
+
+By passing <tt>NULL</tt>, we are essentially ignoring the return value, which is good because we
+aren't returning anything that we can read. (The program would actually crash if we tried to read
+the returned <tt>NULL</tt>). This is the prototype for <tt>pthread_join</tt>:
+<p>
+	
+<blockquote><pre>
+<b>int</b> pthread_join(pthread_t th, <b>void</b> **thread_return); 	
+</pre></blockquote>
+
+The return value is similar to the parameter to the thread function; it's pointer to a pointer (to void). This
+means that the value being pointed at must still be accessible after the function returns.
+<p>
+Why would this be a bad idea?
+
+<blockquote><pre>
+<b>void</b> *hello(<b>void</b> *p)
+{
+  <b>int</b> retval = 10;
+  printf(<font color="#9933CC">&quot;Hello!&#92;n&quot;</font>);
+  <b>return</b> &retval;
+}
+</pre></blockquote>
+
+Would this work?
+
+<blockquote><pre>
+<b>int</b> retval = 10;
+
+<b>void</b> *hello(<b>void</b> *p)
+{
+  printf(<font color="#9933CC">&quot;Hello!&#92;n&quot;</font>);
+  <b>return</b> &retval;
+}
+</pre></blockquote>
+
+A thread function that doesn't match the prototype. (We need to cast the argument in the <tt>pthread_create</tt> call):
+
+<pre class="sourcecode"><code><font color="990099">#include &lt;stdio.h&gt;   /* printf                  */</font>
+<font color="990099">#include &lt;pthread.h&gt; /* thread create/join/exit */</font>
+
+<b>void</b> hello(<b>void</b>)
+{
+  printf(<font color="#9933CC">&quot;Hello!&#92;n&quot;</font>);
+}
+
+<b>int</b> main(<b>void</b>) 
+{
+  pthread_t tid;
+  
+  pthread_create(&amp;tid, NULL, (<b>void</b> *(*)(<b>void</b> *)) hello, NULL);
+  pthread_join(tid, NULL);
+  
+  <b>return</b> 0;
+}
+</code></pre>
+
+Returning an integer (assumes size of an integer is <= size of a pointer):
+
+<pre class="sourcecode"><code><font color="990099">#include &lt;stdio.h&gt;   /* printf                  */</font>
+<font color="990099">#include &lt;pthread.h&gt; /* thread create/join/exit */</font>
+
+<b>void</b> *hello(<b>void</b> *p)
+{
+  printf(<font color="#9933CC">&quot;Hello!&#92;n&quot;</font>);
+  <b>return</b> (<b>void</b> *) 123;
+}
+
+<b>int</b> main(<b>void</b>) 
+{
+  pthread_t tid;
+  <b>int</b> p;
+
+  pthread_create(&amp;tid, NULL, hello, NULL);
+  pthread_join(tid, (<b>void</b> **)&amp;p);
+  printf(<font color="#9933CC">&quot;p = %i&#92;n&quot;</font>, (<b>int</b>)p);
+
+  <b>return</b> 0;
+}
+</code></pre>
+-->
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<p class="sectionheader">
+A More Real-World<sup>™</sup> Example
+</p>
+
+The previous examples were a good introduction to how threads work, but they were contrived. There was little to be gained by having a seperate
+thread print out those strings at the same time to the screen. In fact, it may have been worse using threads because the output appeared chaotic.
+Let's do something that actually makes sense.
+<p>
+
+</p><center><blockquote>
+<p class="technote">
+<big>Remember, the goal of multi-threading is <i>to keep the CPU busy</i>. We never want it to be idle.</big>
+</p>
+</blockquote></center>
+
+In this example, we have 3 different ways to calculate the value of <b>pi</b>: (two methods are from CS120, <tt><b>pi.c</b></tt>)
+<ul>
+  <li>Using the <tt><b>circle</b></tt> method</li>
+  <li>Using the <tt><b>Leibniz</b></tt> method</li>
+  <li>Using the <tt><b>atan</b></tt> method</li>
+</ul>
+
+Briefly, the way these methods work is to iteratively calculate more and more precision for pi. The more iterations that are done, the closer
+approximation to pi we get. For reference, we are going to do 200,000,000 iterations with each function, giving us several digits of precision.
+Also for reference, the time it takes for each function to calculate pi on my reference machine 
+(<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/computer-specs.html">olga</a>, quad core CPU) is: (<b>No optimizations were used</b>)
+<blockquote>
+<table border="1" cellpadding="5" cellspacing="0">
+<tbody><tr><th>Method</th><th>Time</th></tr>
+<tr><td>Circle method</td><td>2.2 seconds</td></tr>
+<tr><td>Leibniz method</td><td>2.4 seconds</td></tr>
+<tr><td>atan method</td><td>1.5 seconds</td></tr>
+</tbody></table>
+</blockquote>
+<p>
+
+To give you an idea of how these function work, this is what the atan method looks like:
+
+</p><blockquote><pre><b>double</b> atan_pi(<b>int</b> rectangles)
+{
+  <b>double</b> width = 1.0 / rectangles;
+  <b>double</b> length;
+  <b>double</b> area = 0.0;
+  <b>int</b> i;
+
+  <b>double</b> midpoint = width / 2;
+  <b>for</b> (i = 0; i &lt; rectangles; i++)
+  {
+    <b>double</b> area_of_rectangle;
+
+    length = 4.0 / (1 + midpoint * midpoint);
+    area_of_rectangle = length * width;
+    area += area_of_rectangle;
+    midpoint += width;
+  }
+
+  <b>return</b> area;
+}
+</pre></blockquote>
+
+The details are not important. What is important is that this function is going to take a while to perform 200,000,000 iterations. The
+other two functions are similar in that they are going to loop 200,000,000 times.
+<p>
+Before we learned about processes, threads, and multi-core CPUs, we would have programmed it like this: (<tt><b>pi-nothread.c</b></tt>)
+
+</p><pre class="sourcecode"><code><font color="#003399"><i>/* To compile under Linux, use <tt><b>-lm</b></tt> linker option */</i></font>
+<b>#include</b> &lt;stdio.h&gt;  <font color="#003399"><i>/* printf */</i></font>
+<b>#include</b> &lt;stdlib.h&gt; <font color="#003399"><i>/* atoi   */</i></font>
+
+<b>double</b> circle_pi(<b>int</b> rectangles);  <font color="#003399"><i>/* Calculates PI using a quarter circle */</i></font>
+<b>double</b> leibniz_pi(<b>int</b> iterations); <font color="#003399"><i>/* Calculates PI using a series         */</i></font>
+<b>double</b> atan_pi(<b>int</b> rectangles);    <font color="#003399"><i>/* Calculates PI using a curve          */</i></font>
+
+<b>int</b> main(<b>int</b> argc, <b>char</b> **argv)
+{
+  <b>int</b> iterations = 1000 * 1000 * 100;
+  <b>double</b> pi_circle, pi_leibniz, pi_atan;
+
+  <b>if</b> (argc &gt; 1)
+    iterations = 1000 * 1000 * atoi(argv[1]);
+
+  pi_circle = circle_pi(iterations);
+  pi_leibniz = leibniz_pi(iterations);
+  pi_atan = atan_pi(iterations);
+
+  printf(<font color="#9933CC">"Iterations: %10i\n"</font>, iterations);
+  printf(<font color="#9933CC">" circle:%20.16f\n"</font>, pi_circle);
+  printf(<font color="#9933CC">"leibniz:%20.16f\n"</font>, pi_leibniz);
+  printf(<font color="#9933CC">"   atan:%20.16f\n"</font>, pi_atan);
+
+  <b>return</b> 0;
+}
+</code></pre>
+
+Then, run from the command line and timing it:
+
+<blockquote><pre>time ./pi-nothread 200
+</pre></blockquote>
+
+the output:
+
+<blockquote><pre>Iterations:  200000000
+ circle:  3.1415926568498080
+leibniz:  3.1415926485894077
+   atan:  3.1415926536631549
+
+real    0m6.168s
+user    0m6.150s
+sys     0m0.010s
+</pre></blockquote>
+
+Reminder of the times for each function:
+<blockquote>
+<table border="1" cellpadding="5" cellspacing="0">
+<tbody><tr><th>Method</th><th>Time</th></tr>
+<tr><td>Circle method</td><td>2.2 seconds</td></tr>
+<tr><td>Leibniz method</td><td>2.4 seconds</td></tr>
+<tr><td>atan method</td><td>1.5 seconds</td></tr>
+</tbody></table>
+</blockquote>
+
+As expected, since we ran each function serially (one after the other), the total time is the sum of the times of each function.
+(The time to run the program without calling any pi function was 0.001 s.)
+<p>
+On a single-core CPU, that's the best we can do. Even putting each function in its own process or own thread would likely make the timings
+worse. Why?
+<!--
+Because the functions are CPU-bound the whole time, they won't be blocked for I/O or events. The overhead
+in process or thread switching will actually add to the overall time.
+-->
+</p><p>
+BUT, on a multi-core system, we can certainly improve things. Let's run each function in its own process and hope that the operating
+system will give each process its own core to run on simultaneously. Now we program it like this: (<tt><b>pi-mpsh.c</b></tt>)
+<!--
+ remark:
+   For this to run properly under Cygwin, the Cygwin
+   server ('cygserver') must be running in the background.
+   See:
+   http://www.cygwin.com/cygwin-ug-net/using-cygserver.html
+-->
+
+</p><pre class="sourcecode"><code><font color="#003399"><i>/* To compile under Linux, use <tt><b>-lm</b></tt> linker option */</i></font>
+<b>#include</b> &lt;stdio.h&gt;    <font color="#003399"><i>/* printf                       */</i></font>
+<b>#include</b> &lt;stdlib.h&gt;   <font color="#003399"><i>/* exit, atoi                   */</i></font>
+<b>#include</b> &lt;string.h&gt;   <font color="#003399"><i>/* strcpy                       */</i></font>
+<b>#include</b> &lt;unistd.h&gt;   <font color="#003399"><i>/* sleep, fork                  */</i></font>
+<b>#include</b> &lt;sys/shm.h&gt;  <font color="#003399"><i>/* shmget, shmat, shmdt, shmctl */</i></font>
+<b>#include</b> &lt;sys/wait.h&gt; <font color="#003399"><i>/* waitpid                      */</i></font>
+
+<b>double</b> circle_pi(<b>int</b> rectangles);  <font color="#003399"><i>/* Calculates PI using a quarter circle */</i></font>
+<b>double</b> leibniz_pi(<b>int</b> iterations); <font color="#003399"><i>/* Calculates PI using a series         */</i></font>
+<b>double</b> atan_pi(<b>int</b> rectangles);    <font color="#003399"><i>/* Calculates PI using a curve          */</i></font>
+
+<b>int</b> main(<b>int</b> argc, <b>char</b> **argv)
+{
+  <b>int</b> iterations = 1000 * 1000 * 100;
+
+  <b>int</b> child1, child2, child3;
+  <b>int</b> shmid;
+  <b>double</b> *buffer;  <font color="#003399"><i>/* shared buffer */</i></font>
+  key_t key = 123; <font color="#003399"><i>/* arbitrary key */</i></font>
+
+  <b>if</b> (argc &gt; 1)
+    iterations = 1000 * 1000 * atoi(argv[1]);
+
+    <font color="#003399"><i>/* Buffer will hold 3 doubles; one from each child process */</i></font>
+  shmid = shmget(key, 3 * <b>sizeof</b>(<b>double</b>), 0600 | IPC_CREAT);
+  buffer = (<b>double</b> *) shmat(shmid, NULL, 0);
+
+    <font color="#003399"><i>/* Initialize the buffer */</i></font>
+  *buffer = 0.0;
+  *(buffer + 1) = 0.0;
+  *(buffer + 2) = 0.0;
+
+  <b>if</b> ( (child1 = fork()) == 0 ) <font color="#003399"><i>/* first child */</i></font>
+  {
+    *buffer = circle_pi(iterations);
+    shmdt(buffer); <font color="#003399"><i>/* detach memory from child process */</i></font>
+    exit(0);
+  }
+
+    <font color="#003399"><i>/* parent */</i></font>
+  <b>if</b> ( (child2 = fork()) == 0 ) <font color="#003399"><i>/* second child */</i></font>
+  {
+    *(buffer + 1) = leibniz_pi(iterations);
+    shmdt(buffer); <font color="#003399"><i>/* detach memory from second process */</i></font>
+    exit(0);
+  }
+
+    <font color="#003399"><i>/* parent */</i></font>
+  <b>if</b> ( (child3 = fork()) == 0 ) <font color="#003399"><i>/* third child */</i></font>
+  {
+    *(buffer + 2) = atan_pi(iterations);
+    shmdt(buffer); <font color="#003399"><i>/* detach memory from third child process */</i></font>
+    exit(0);
+  }
+
+  <font color="#003399"><i>/* parent */</i></font>
+
+  <a href="http://www.linuxmanpages.com/man2/waitpid.2.php">waitpid</a>(child1, NULL, 0);
+  waitpid(child2, NULL, 0);
+  waitpid(child3, NULL, 0);
+
+  printf(<font color="#9933CC">"Iterations: %10i\n"</font>, iterations);
+  printf(<font color="#9933CC">" circle:%20.16f\n"</font>, *buffer);
+  printf(<font color="#9933CC">"leibniz:%20.16f\n"</font>, *(buffer + 1));
+  printf(<font color="#9933CC">"   atan:%20.16f\n"</font>, *(buffer + 2));
+
+  shmdt(buffer);              <font color="#003399"><i>/* detach memory from parent process */</i></font>
+  shmctl(shmid, IPC_RMID, 0); <font color="#003399"><i>/* delete memory block               */</i></font>
+
+  <b>return</b> 0;
+}
+</code></pre>
+
+Then, run from the command line and timing it:
+
+<blockquote><pre>time ./pi-mpsh 200
+</pre></blockquote>
+
+the output:
+
+<blockquote><pre>Iterations:  200000000
+ circle:  3.1415926568498080
+leibniz:  3.1415926485894077
+   atan:  3.1415926536631549
+
+real    0m2.405s
+user    0m6.140s
+sys     0m0.000s
+</pre></blockquote>
+
+Reminder:
+<blockquote>
+<table border="1" cellpadding="5" cellspacing="0">
+<tbody><tr><th>Method</th><th>Time</th></tr>
+<tr><td>Circle method</td><td>2.2 seconds</td></tr>
+<tr><td>Leibniz method</td><td>2.4 seconds</td></tr>
+<tr><td>atan method</td><td>1.5 seconds</td></tr>
+</tbody></table>
+</blockquote>
+
+The single-process version took 6.15 seconds. This is a clearly significant improvement. Why do you think the time is 2.4 seconds? (It was run on a machine with 4 cores.)
+<!--
+This was the time of the longest running thread. The others had finished before.
+-->
+
+<p>
+Now, let's run each function in its own thread and see how that goes. We program it like this: (<tt><b>pi-mt.c</b></tt>)
+
+</p><pre class="sourcecode"><code><font color="#003399"><i>/* To compile under Linux, use <tt><b>-lm</b></tt> linker option */</i></font>
+<b>#include</b> &lt;stdio.h&gt;   <font color="#003399"><i>/* printf                  */</i></font>
+<b>#include</b> &lt;stdlib.h&gt;  <font color="#003399"><i>/* exit, atoi              */</i></font>
+<b>#include</b> &lt;pthread.h&gt; <font color="#003399"><i>/* thread create/join/exit */</i></font>
+
+<b>double</b> circle_pi(<b>int</b> rectangles);  <font color="#003399"><i>/* Find PI using a quarter circle */</i></font>
+<b>double</b> leibniz_pi(<b>int</b> iterations); <font color="#003399"><i>/* Find PI using a series         */</i></font>
+<b>double</b> atan_pi(<b>int</b> rectangles);    <font color="#003399"><i>/* Find PI using a curve          */</i></font>
+
+<b>double</b> pi_circle;
+<b>double</b> pi_leibniz;
+<b>double</b> pi_atan;
+
+<b>void</b> *th1(<b>void</b> *p)
+{
+  <b>int</b> it = *(<b>int</b> *)p;
+  pi_circle = circle_pi(it);
+  <b>return</b> NULL;
+}
+
+<b>void</b> *th2(<b>void</b> *p)
+{
+  <b>int</b> it = *(<b>int</b> *)p;
+  pi_leibniz = leibniz_pi(it);
+  <b>return</b> NULL;
+}
+
+<b>void</b> *th3(<b>void</b> *p)
+{
+  <b>int</b> it = *(<b>int</b> *)p;
+  pi_atan = atan_pi(it);
+  <b>return</b> NULL;
+}
+
+<b>int</b> main(<b>int</b> argc, <b>char</b> **argv)
+{
+  <b>int</b> iterations = 1000 * 1000 * 100;
+
+  pthread_t thread1, thread2, thread3;
+
+  <b>if</b> (argc &gt; 1)
+    iterations = 1000 * 1000 * atoi(argv[1]);
+
+    <font color="#003399"><i>/* Create threads with data passing */</i></font>
+  pthread_create(&amp;thread1, NULL, th1, &amp;iterations);
+  pthread_create(&amp;thread2, NULL, th2, &amp;iterations);
+  pthread_create(&amp;thread3, NULL, th3, &amp;iterations);
+
+    <font color="#003399"><i>/* Wait on the threads */</i></font>
+  pthread_join(thread1, NULL);
+  pthread_join(thread2, NULL);
+  pthread_join(thread3, NULL);
+
+  printf(<font color="#9933CC">"Iterations: %10i\n"</font>, iterations);
+  printf(<font color="#9933CC">" circle:%20.16f\n"</font>, pi_circle);
+  printf(<font color="#9933CC">"leibniz:%20.16f\n"</font>, pi_leibniz);
+  printf(<font color="#9933CC">"   atan:%20.16f\n"</font>, pi_atan);
+
+  <b>return</b> 0;
+}
+</code></pre>
+
+Then, run from the command line and timing it:
+
+<blockquote><pre>time ./pi-mt 200
+</pre></blockquote>
+
+the output:
+
+<blockquote><pre>Iterations:  200000000
+ circle:  3.1415926568498080
+leibniz:  3.1415926485894077
+   atan:  3.1415926536631549
+
+real    0m2.398s
+user    0m6.130s
+sys     0m0.000s
+</pre></blockquote>
+
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/threads-pi-arrays.html">Another version</a> using arrays for scaling. This example also shows
+how to return data from one thread to another thread via the thread-function argument.
+
+<p>
+<a name="BENCHMARKS">
+<b>Some interesting benchmarks:</b>
+</a>
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/computer-specs.html">Various computer specs</a> for testing in this class.
+</p><p>
+
+Below are timings for calculating <b>pi</b> using the methods and systems described above. 
+There are two primary factors that determine the overall performance of the calculations.
+One is the version of the GNU compiler used, and the other is the architecture of the
+processor, which includes the speed of the CPU itself, as well as the size, speed,
+and architecture of the caches. We will learn more about the details of cache memory later.
+Don't forget the informal rule of thumb: <i>Cache is King<sup>™</sup></i>
+</p><p>
+Finally, realize that, although this is not a <i>synthetic</i> benchmark, it really doesn't
+represent all of the tasks and programs a system is going to run during an average day, so
+you can't just look at this one benchmark and conclude which system is <i>best</i>.
+
+</p><blockquote>
+<table border="1" cellspacing="0" cellpadding="8">
+  <tbody><tr>
+    <th>Computer<br>(200,000,000 iterations)</th>
+    <th>Individual<br>timings (secs)<br><tt>pi-nothread.c</tt></th>
+    <th>One process<br>One thread<br><tt>pi-nothread.c</tt></th>
+    <th>Multiple processes<br>One thread each<br><tt>pi-mpsh.c</tt></th>
+    <th>One process<br>Multiple Threads<br><tt>pi-mt.c</tt></th>
+  </tr>
+<tr>
+
+<td><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/computer-specs.html#MAYA">Maya</a> (3.4 GHz) 4 cores<br>Linux 64-bit (3.2.0-23)<br>gcc 4.6.3</td>
+<td>
+<pre> circle: 0.8
+Leibniz: 1.7
+   atan: 0.8
+         3.3
+</pre>
+</td>
+<td><pre>real  0m3.299s
+user  0m3.288s
+sys   0m0.000s
+</pre></td>
+<td><pre>real  0m1.717s
+user  0m3.420s
+sys   0m0.008s
+</pre></td>
+<td><pre>real  0m1.713s
+user  0m3.680s
+sys   0m0.000s
+</pre></td>
+</tr>
+
+<tr>
+<td><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/computer-specs.html#CLARA">Clara</a> (3.3 GHz) 4 cores<br>Linux 64-bit (3.2.0-23)<br>gcc 4.6.3</td>
+<td>
+<pre> circle: 1.0
+Leibniz: 1.7
+   atan: 1.1
+         3.8
+</pre>
+</td>
+<td><pre>real  0m3.730s
+user  0m3.724s
+sys   0m0.000s
+</pre></td>
+<td><pre>real  0m1.673s
+user  0m3.724s
+sys   0m0.000s
+</pre></td>
+<td><pre>real  0m1.699s
+user  0m3.764s
+sys   0m0.000s
+</pre></td>
+</tr>
+
+<tr>
+<td><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/computer-specs.html#SERVER">Server</a> (3.1 GHz) 4 cores<br>Linux 64-bit<br>gcc 4.6.3</td>
+<td>
+<pre> circle: 1.7
+Leibniz: 1.0
+   atan: 1.7
+         4.4
+</pre>
+</td>
+<td><pre>real 0m4.324s
+user 0m4.304s
+sys  0m0.000s 
+</pre></td>
+<td><pre>real 0m1.743s
+user 0m4.292s
+sys  0m0.000s
+</pre></td>
+<td><pre>real 0m1.704s
+user 0m4.252s
+sys  0m0.000s
+</pre></td>
+</tr>
+
+<tr>
+<td><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/computer-specs.html#ATHENA">Athena</a> (2.83 GHz) 4 cores<br>Linux 32-bit (2.6.18-2)<br>gcc 4.1.2</td>
+<td>
+<pre> circle: 2.1
+Leibniz: 1.6
+   atan: 1.6
+         5.3
+</pre>
+</td>
+<td><pre>real  0m5.200s
+user  0m5.196s
+sys   0m0.004s
+</pre></td>
+<td><pre>real  0m2.105s
+user  0m5.252s
+sys   0m0.000s
+</pre></td>
+<td><pre>real  0m2.100s
+user  0m5.256s
+sys   0m0.000s
+</pre></td>
+</tr>
+
+<tr>
+<td><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/computer-specs.html#LULU">Lulu</a> (2.7 GHz) 6 cores<br>Linux 64-bit<br>gcc 4.6.3</td>
+<td>
+<pre> circle: 2.0
+Leibniz: 2.1
+   atan: 1.9
+         6.0
+</pre>
+</td>
+<td><pre>real 0m6.087s
+user 0m6.084s
+sys  0m0.000s
+</pre></td>
+<td><pre>real 0m2.224s
+user 0m6.288s
+sys  0m0.000s
+</pre></td>
+<td><pre>real 0m2.209s
+user 0m6.244s
+sys  0m0.000s
+</pre></td>
+</tr>
+
+<tr><td><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/computer-specs.html#OLGA">Olga</a> (2.8 GHz) 4 cores<br>Linux 64-bit (2.6.32-24)<br>gcc 4.4.3</td>
+<td>
+<pre> circle: 2.2
+Leibniz: 2.4
+   atan: 1.5
+         6.1
+</pre>
+</td>
+<td><pre>real  0m6.135s
+user  0m6.130s
+sys   0m0.000s
+</pre></td>
+<td><pre>real  0m2.405s
+user  0m6.150s
+sys   0m0.000s
+</pre></td>
+<td><pre>real  0m2.408s
+user  0m6.120s
+sys   0m0.000s
+</pre></td>
+</tr>
+
+<tr>
+<td><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/computer-specs.html#LISA">Lisa</a> (2.67 GHz) 2 core<br>Linux 64-bit (2.6.38)<br>gcc 4.5.2</td>
+<td>
+<pre> circle: 2.2
+Leibniz: 2.4
+   atan: 1.5
+         6.1
+</pre>
+</td>
+<td><pre>real  0m6.131s
+user  0m6.120s
+sys   0m0.010s
+</pre></td>
+<td><pre>real  0m3.007s
+user  0m8.360s
+sys   0m0.000s
+</pre></td>
+<td><pre>real  0m2.984s
+user  0m8.400s
+sys   0m0.000s
+</pre></td>
+</tr>
+
+<tr>
+<td><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/computer-specs.html#GINA">Gina</a> (3.0 GHz) 2 cores<br>Linux 64-bit<br>gcc 4.8.2</td>
+<td>
+<pre> circle: 4.8
+Leibniz: 2.2
+   atan: 1.0
+         8.0
+</pre>
+</td>
+<td><pre>real 0m7.879s
+user 0m7.813s
+sys  0m0.008s
+</pre></td>
+<td><pre>real 0m3.011s
+user 0m4.026s
+sys  0m0.000s
+</pre></td>
+<td><pre>real 0m4.105s
+user 0m5.550s
+sys  0m0.021s
+</pre></td>
+</tr>
+
+<tr>
+<td><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/computer-specs.html#DIGIPEN">Digipen</a> (2.4 GHz) 2 cores<br>Windows 32-bit (XP)<br>gcc 4.3.2</td>
+<td>
+<pre> circle: 6.3
+Leibniz: 3.2
+   atan: 3.2
+        12.7
+</pre>
+</td>
+<td><pre>real  0m12.516s
+user  0m12.499s
+sys   0m0.046s
+</pre></td>
+<td><pre>real  0m7.406s
+user  0m12.341s
+sys   0m0.015s
+</pre></td>
+<td><pre>real  0m5.281s
+user  0m10.374s
+sys   0m0.031s
+</pre></td>
+</tr>
+
+
+
+<tr>
+<td><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/computer-specs.html#JESSICA">Jessica</a> (2.8 GHz) 1 core<br>Windows 32-bit (Server 2003)<br>gcc 4.3.2</td>
+<td>
+<pre> circle: 6.2
+Leibniz: 3.4
+   atan: 3.7
+        13.3
+</pre>
+</td>
+<td><pre>real  0m6.141s
+user  0m5.953s
+sys   0m0.015s
+</pre></td>
+<td><pre>real  0m13.547s
+user  0m23.046s
+sys   0m0.015s
+</pre></td>
+<td><pre>real  0m14.718s
+user  0m26.093s
+sys   0m0.015s
+</pre></td>
+</tr>
+
+
+
+<tr>
+<td><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/computer-specs.html#SABRINA">Sabrina</a> (2.4 GHz) 1 core<br>Linux 32-bit (2.4.20)<br>gcc 3.3</td>
+<td>
+<pre> circle:10.7
+Leibniz: 3.9
+   atan: 4.0
+        18.6
+</pre>
+</td>
+<td><pre>real  0m18.645s
+user  0m18.200s
+sys   0m0.000s
+</pre></td>
+<td><pre>real  0m18.610s
+user  0m18.180s
+sys   0m0.000s
+</pre></td>
+<td><pre>real  0m19.046s
+user  0m18.590s
+sys   0m0.000s
+</pre></td>
+</tr>
+
+<tr>
+<td><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/computer-specs.html#MARIA">Maria</a> (1.66 GHz) 2 cores<br>Linux 32-bit (2.6.31-16)<br>gcc 4.4.1</td>
+<td>
+<pre> circle:17.7
+Leibniz:12.9
+   atan:16.3
+        46.9
+</pre>
+</td>
+<td><pre>real  0m46.806s
+user  0m46.759s
+sys   0m0.048s
+</pre></td>
+<td><pre>real  0m27.072s
+user  0m52.855s
+sys   0m0.052s
+</pre></td>
+<td><pre>real  0m27.306s
+user  0m52.091s
+sys   0m0.024s
+</pre></td>
+</tr>
+
+
+
+</tbody></table>
+</blockquote>
+
+
+
+Some real stress testing: (Try this at home! <b><tt>pi-mtv.c</tt></b>)
+<p>
+  </p><blockquote>
+  <table border="1" cellpadding="5" cellspacing="0">
+    <tbody><tr>
+      <td>
+        <font color="blue">
+          This program runs many threads (up to 1024, but you can set it higher) and executes the function <tt><b>atan_pi</b></tt> for calculating pi.
+          Under Windows, you can watch the program with Task Manager or Process Explorer and see all of the threads. The command line takes two parameters:
+          The number of threads (default 1) and the number of iterations (times one million) for the function (default 100).
+
+        </font>
+      </td>
+    </tr>
+  </tbody></table>
+</blockquote>
+
+<pre class="sourcecode"><code><font color="#003399"><i>/* To compile under Linux, use <tt><b>-lm</b></tt> linker option */</i></font>
+<b>#include</b> &lt;stdio.h&gt;   <font color="#003399"><i>/* printf                  */</i></font>
+<b>#include</b> &lt;stdlib.h&gt;  <font color="#003399"><i>/* atoi                    */</i></font>
+<b>#include</b> &lt;pthread.h&gt; <font color="#003399"><i>/* thread create/join/exit */</i></font>
+
+<b>#define</b> MAX_THREADS 1024
+
+<b>double</b> atan_pi(<b>int</b> rectangles); <font color="#003399"><i>/* Find PI using a curve */</i></font>
+
+<b>void</b> *th1(<b>void</b> *p)
+{
+  <b>int</b> it = *(<b>int</b> *)p;
+  atan_pi(it);
+  <b>return</b> NULL;
+}
+
+<b>int</b> main(<b>int</b> argc, <b>char</b> **argv)
+{
+  <b>int</b> iterations = 1000 * 1000 * 100;
+  <b>int</b> thread_count = 1;
+  <b>int</b> i;
+
+  pthread_t threads[MAX_THREADS];
+
+  <b>if</b> (argc &gt; 1)
+  {
+    thread_count = atoi(argv[1]);
+    thread_count = thread_count &gt; MAX_THREADS ? MAX_THREADS : thread_count;
+  }
+
+  <b>if</b> (argc &gt; 2)
+    iterations = 1000 * 1000 * atoi(argv[2]);
+
+  printf(<font color="#9933CC">"   Threads: %i\n"</font>, thread_count);
+  printf(<font color="#9933CC">"Iterations: %i\n"</font>, iterations);
+
+  <b>for</b> (i = 0; i &lt; thread_count; i++)
+    pthread_create(&amp;threads[i], NULL, th1, &amp;iterations);
+
+  <b>for</b> (i = 0; i &lt; thread_count; i++)
+    pthread_join(threads[i], NULL);
+
+  <b>return</b> 0;
+}
+</code></pre>
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<p class="sectionheader">
+Win32 Threads
+</p>
+
+Windows has its own API for threads:
+<ul>
+  <li>Basic thread creation functions are a part of the Win32 API.</li>
+  <li><tt><b><a href="http://msdn.microsoft.com/en-us/library/ms682453(v=VS.85).aspx">CreateThread</a></b></tt> – creates and runs a thread</li>
+  <ul>
+    <li>Returns a thread handle</li>
+  </ul>
+  <!--<li>Threads can be identified by either the thread handle, and its thread identifier</li>-->
+  <li><tt><b><a href="http://msdn.microsoft.com/en-us/library/ms687032(VS.85).aspx">WaitForSingleObject</a></b></tt> – wait for a single thread to terminate.</li>
+  <ul>
+    <li>can specify a wait time</li>
+  </ul>
+  <li><tt><b><a href="http://msdn.microsoft.com/en-us/library/ms687025(VS.85).aspx">WaitForMultipleObjects</a></b></tt> – wait for more than one thread to terminate.</li>
+  <li>Brief example: (<tt><b>wthread1.c</b></tt>)</li>
+
+  <blockquote>
+  <table border="1" cellpadding="5" cellspacing="0">
+    <tbody><tr>
+      <td>
+        <font color="blue">This program simply creates a thread which prints the word <i>Hello!</i> to the screen and then exits.</font>
+      </td>
+    </tr>
+  </tbody></table>
+</blockquote>
+
+
+<pre class="sourcecode"><code><b>#include</b> &lt;stdio.h&gt;   <font color="#003399"><i>/* printf        */</i></font>
+<b>#include</b> &lt;windows.h&gt; <font color="#003399"><i>/* Windows stuff */</i></font>
+
+DWORD WINAPI hello(LPVOID)
+{
+  printf(<font color="#9933CC">"Hello!\n"</font>);
+  <b>return</b> 0;
+}
+
+<b>int</b> main(<b>void</b>)
+{
+  HANDLE thread_handle;
+
+  thread_handle = <a href="http://msdn.microsoft.com/en-us/library/ms682453(VS.85).aspx">CreateThread</a>(0,     <font color="#003399"><i>/* Default attributes */</i></font>
+                               0,     <font color="#003399"><i>/* Default stack size */</i></font>
+                               hello, <font color="#003399"><i>/* Start function     */</i></font>
+                               0,     <font color="#003399"><i>/* No parameters      */</i></font>
+                               0,     <font color="#003399"><i>/* Creation flags     */</i></font>
+                               0      <font color="#003399"><i>/* Returned thread id */</i></font>
+                              );
+
+    <font color="#003399"><i>/* Wait for the thread (no timeout) */</i></font>
+  <a href="http://msdn.microsoft.com/en-us/library/ms687032(VS.85).aspx">WaitForSingleObject</a>(thread_handle, INFINITE);
+
+    <font color="#003399"><i>/* Release the thread */</i></font>
+  <a href="http://msdn.microsoft.com/en-us/library/ms724211(VS.85).aspx">CloseHandle</a>(thread_handle);
+
+  <b>return</b> 0;
+}
+</code></pre>
+
+  <li>The thread procedure must have the form:</li>
+    <ul>
+      <li><tt>DWORD WINAPI fn(LPVOID data_ptr)</tt></li>
+    </ul>
+  <li>A thread handle is a system resource that was allocated with CreateThread.</li>
+  <li>It needs to be freed using CloseHandle when the thread has completed.</li>
+  <li>You must include <tt><b>windows.h</b></tt> when using anything from the Windows API.</li>
+  <p>
+  </p><li>Another larger Win32 example: (<tt><b>wthread2.c</b></tt>)</li>
+
+
+
+  <blockquote>
+  <table border="1" cellpadding="5" cellspacing="0">
+    <tbody><tr>
+      <td>
+        <font color="blue">
+          This program uses a global array of strings (character pointers). The main function creates several threads. Each
+          thread runs the same function <tt><b>palindrome</b></tt>, which simply chooses a random number of palindromes (from the global array) to print to the screen.
+          There is only one process, but many threads.
+        </font>
+      </td>
+    </tr>
+  </tbody></table>
+</blockquote>
+
+
+<pre class="sourcecode"><code><b>#include</b> &lt;stdio.h&gt;   <font color="#003399"><i>/* printf        */</i></font>
+<b>#include</b> &lt;stdlib.h&gt;  <font color="#003399"><i>/* rand, srand   */</i></font>
+<b>#include</b> &lt;windows.h&gt; <font color="#003399"><i>/* Windows stuff */</i></font>
+
+<b>char</b> <b>const</b> *table[]
+   = { <font color="#9933CC">"A man, a plan, a canal: Panama!"</font>,
+       <font color="#9933CC">"No lemons, no melon."</font>,
+       <font color="#9933CC">"Step on no pets."</font>,
+       <font color="#9933CC">"Was it a rat I saw?"</font>,
+       <font color="#9933CC">"Dog as a devil deified lived as a god."</font>,
+       <font color="#9933CC">"Able was I ere I saw Elba."</font>,
+       <font color="#9933CC">"Yawn! Madonna fan? No damn way!"</font>,
+       <font color="#9933CC">"Go hang a salami. I'm a lasagna hog!"</font>
+     };
+
+<b>const</b> <b>int</b> table_size = <b>sizeof</b>(table) / <b>sizeof</b>(*table);
+
+DWORD WINAPI palindrome(LPVOID)
+{
+  DWORD tid = <a href="http://msdn.microsoft.com/en-us/library/ms683183(VS.85).aspx">GetCurrentThreadId</a>();  <font color="#003399"><i>/* each thread has unique tid    */</i></font>
+  DWORD pid = <a href="http://msdn.microsoft.com/en-us/library/ms683180(VS.85).aspx">GetCurrentProcessId</a>(); <font color="#003399"><i>/* all threads have the same pid */</i></font>
+  <b>int</b> max = 5;
+  <b>int</b> i;
+
+  <b>for</b> (i = 0; i &lt; max; ++i)
+  {
+    <b>int</b> index = rand() % table_size;
+    printf(<font color="#9933CC">"[p:%i][t:%u]: %s\n"</font>, pid, tid, table[index]);
+  }
+
+  <b>return</b> 0;
+}
+
+<b>int</b> main(<b>void</b>)
+{
+  <b>#define</b> COUNT 8
+  <b>int</b> i;
+
+  HANDLE th_handles[COUNT];
+
+  srand(0);
+
+  printf(<font color="#9933CC">"Creating threads...\n"</font>);
+  <b>for</b> (i = 0; i &lt; COUNT; ++i)
+    th_handles[i] = <a href="http://msdn.microsoft.com/en-us/library/ms682453(VS.85).aspx">CreateThread</a>(0,          <font color="#003399"><i>/* Default attributes */</i></font>
+                                 0,          <font color="#003399"><i>/* Default stack size */</i></font>
+                                 palindrome, <font color="#003399"><i>/* Start function     */</i></font>
+                                 0,          <font color="#003399"><i>/* No parameters      */</i></font>
+                                 0,          <font color="#003399"><i>/* Default flags      */</i></font>
+                                 0           <font color="#003399"><i>/* Returned thread id */</i></font>
+                                );
+  printf(<font color="#9933CC">"Done creating threads.\n"</font>);
+
+  printf(<font color="#9933CC">"Waiting on threads...\n"</font>);
+  <a href="http://msdn.microsoft.com/en-us/library/ms687025(VS.85).aspx">WaitForMultipleObjects</a>(COUNT, th_handles, <b>TRUE</b>, INFINITE);
+  printf(<font color="#9933CC">"Done waiting on threads.\n"</font>);
+
+  <b>for</b> (i = 0; i &lt; COUNT; ++i)
+    <a href="http://msdn.microsoft.com/en-us/library/ms724211(VS.85).aspx">CloseHandle</a>(th_handles[i]);
+
+  <b>return</b> 0;
+}
+</code></pre>
+
+<li>Another Win32 example: (<tt><b>wthread3.c</b></tt>)</li>
+
+  <blockquote>
+  <table border="1" cellpadding="5" cellspacing="0">
+    <tbody><tr>
+      <td>
+        <font color="blue">
+          This program is similar to the one above but instead of using global data, the data is passed to each thread. The data is a user-defined <tt><b>struct</b></tt>
+          that contains a pointer to the palindrome strings, the size of the table (array), and a count of how many strings to print. Although each thread
+          receives its own copy of the pointer to the strings, they are all reading from the same array. This is completely safe. As before, there is
+          only one process, but many threads.
+        </font>
+      </td>
+    </tr>
+  </tbody></table>
+</blockquote>
+
+<pre class="sourcecode"><code><b>#include</b> &lt;stdio.h&gt;   <font color="#003399"><i>/* printf                  */</i></font>
+<b>#include</b> &lt;stdlib.h&gt;  <font color="#003399"><i>/* rand, srand             */</i></font>
+<b>#include</b> &lt;windows.h&gt; <font color="#003399"><i>/* Windows stuff           */</i></font>
+
+<b>typedef</b> <b>struct</b>
+{
+  <b>const</b> <b>char</b> **table;
+  <b>int</b> table_size;
+  <b>int</b> to_do_count;
+}data_struct;
+
+DWORD WINAPI palindrome(LPVOID data)
+{
+  data_struct *ds = (data_struct *)data;
+  DWORD tid = GetCurrentThreadId();
+  DWORD pid = GetCurrentProcessId();; <font color="#003399"><i>/* all threads have the same pid */</i></font>
+  <b>int</b> i;
+
+  <b>for</b> (i = 0; i &lt; ds-&gt;to_do_count; ++i)
+  {
+    <b>int</b> index = rand() % ds-&gt;table_size;
+    printf(<font color="#9933CC">"[p:%i][t:%u]: %s\n"</font>, pid, tid, ds-&gt;table[index]);
+  }
+
+  <b>return</b> 0;
+}
+
+<b>int</b> main(<b>void</b>)
+{
+  <b>#define</b> COUNT 8
+  <b>int</b> i;
+
+  <b>char</b> <b>const</b> *table[]
+   = { <font color="#9933CC">"A man, a plan, a canal: Panama!"</font>,
+       <font color="#9933CC">"No lemons, no melon."</font>,
+       <font color="#9933CC">"Step on no pets."</font>,
+       <font color="#9933CC">"Was it a rat I saw?"</font>,
+       <font color="#9933CC">"Dog as a devil deified lived as a god."</font>,
+       <font color="#9933CC">"Able was I ere I saw Elba."</font>,
+       <font color="#9933CC">"Yawn! Madonna fan? No damn way!"</font>,
+       <font color="#9933CC">"Go hang a salami. I'm a lasagna hog!"</font>
+     };
+
+  <b>const</b> <b>int</b> table_size = <b>sizeof</b>(table) / <b>sizeof</b>(*table);
+
+  srand(0);
+
+  data_struct ds[COUNT];
+  HANDLE th_handles[COUNT];
+
+  printf(<font color="#9933CC">"Creating threads...\n"</font>);
+  <b>for</b> (i = 0; i &lt; COUNT; ++i)
+  {
+    ds[i].table = table;
+    ds[i].table_size = table_size;
+    ds[i].to_do_count = 5; <font color="#003399"><i>/*1 + rand() % 10;*/</i></font>
+    th_handles[i] = CreateThread(0, 0, palindrome, &amp;ds[i], 0, 0);
+  }
+  printf(<font color="#9933CC">"Done creating threads.\n"</font>);
+
+  printf(<font color="#9933CC">"Waiting on threads...\n"</font>);
+  WaitForMultipleObjects(COUNT, th_handles, <b>TRUE</b>, INFINITE);
+  printf(<font color="#9933CC">"Done waiting on threads.\n"</font>);
+
+  <b>for</b> (i = 0; i &lt; COUNT; ++i)
+    CloseHandle(th_handles[i]);
+
+  <b>return</b> 0;
+}
+</code></pre>
+
+</ul>
+
+The threaded stress test using the Win32 API. Use Windows Task Manager or Process Explorer to see the processes and threads. (<tt><b>wpi-mtv.c</b></tt>)
+<p>
+</p><blockquote>
+<pre class="sourcecode"><code>
+<b>#include</b> &lt;stdio.h&gt;   <font color="#003399"><i>/* printf        */</i></font>
+<b>#include</b> &lt;stdlib.h&gt;  <font color="#003399"><i>/* exit, atoi    */</i></font>
+<b>#include</b> &lt;windows.h&gt; <font color="#003399"><i>/* Windows stuff */</i></font>
+
+<b>#define</b> MAX_THREADS 1024
+
+<b>double</b> atan_pi(<b>int</b> rectangles); <font color="#003399"><i>/* Find PI using a curve */</i></font>
+
+DWORD WINAPI th1(LPVOID p)
+{
+  <b>int</b> it = *(<b>int</b> *)p;
+  atan_pi(it);
+  <b>return</b> 0;
+}
+
+<b>int</b> main(<b>int</b> argc, <b>char</b> **argv)
+{
+  <b>int</b> iterations = 1000 * 1000 * 100;
+  <b>int</b> thread_count = 1;
+  <b>int</b> i;
+
+  HANDLE threads[MAX_THREADS];
+
+  <b>if</b> (argc &gt; 1)
+  {
+    thread_count = atoi(argv[1]);
+    thread_count = thread_count &gt; MAX_THREADS ? MAX_THREADS : thread_count;
+  }
+
+  <b>if</b> (argc &gt; 2)
+  {
+    iterations = 1000 * 1000 * atoi(argv[2]);
+  }
+
+  printf(<font color="#9933CC">"   Threads: %i\n"</font>, thread_count);
+  printf(<font color="#9933CC">"Iterations: %i\n"</font>, iterations);
+
+  <b>for</b> (i = 0; i &lt; thread_count; i++)
+    threads[i] = CreateThread(0, 0, th1, &amp;iterations, 0, 0);
+
+  WaitForMultipleObjects(thread_count, threads, <b>TRUE</b>, INFINITE);
+
+  <b>for</b> (i = 0; i &lt; thread_count; i++)
+    CloseHandle(threads[i]);
+
+  <b>return</b> 0;
+}
+</code></pre>
+</blockquote>
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<p class="sectionheader">
+Multi-threading Problems
+</p>
+
+So far, everything seems to be working out just fine. However, consider the following two
+programs:
+<p>
+
+Single-threaded version: (<tt><b>thread-safe.c</b></tt>)
+
+</p><pre class="sourcecode"><code><b>#include</b> &lt;stdio.h&gt; <font color="#003399"><i>/* printf */</i></font>
+
+<b>int</b> Count = 0;
+
+<b>void</b> Increment(<b>void</b>)
+{
+  <b>int</b> i;
+  <b>int</b> loops = 1000;
+  <b>for</b> (i = 0; i &lt; loops; i++)
+    Count++;
+}
+
+<b>int</b> main(<b>void</b>)
+{
+  <b>#define</b> N 10
+  <b>int</b> i;
+
+  <b>for</b> (i = 0; i &lt; N; i++)
+    Increment();
+
+  printf(<font color="#9933CC">"Count = %i\n"</font>, Count);
+
+  <b>return</b> 0;
+}
+</code></pre>
+
+<b>Output:</b>
+<blockquote><pre>Count = 10000
+</pre></blockquote>
+
+Multi-threaded version: (<tt><b>thread-unsafe.c</b></tt>)
+
+<pre class="sourcecode"><code><b>#include</b> &lt;stdio.h&gt;   <font color="#003399"><i>/* printf                  */</i></font>
+<b>#include</b> &lt;pthread.h&gt; <font color="#003399"><i>/* thread create/join/exit */</i></font>
+
+<b>int</b> Count;
+
+<b>void</b> *Increment(<b>void</b> *p)
+{
+  <b>int</b> i;
+  <b>int</b> loops = 1000;
+  <b>for</b> (i = 0; i &lt; loops; i++)
+    Count++;
+
+  <b>return</b> NULL;
+}
+
+<b>int</b> main(<b>void</b>)
+{
+  <b>#define</b> N 10
+  <b>int</b> i;
+  pthread_t thread_id[N];
+
+  <b>for</b> (i = 0; i &lt; N; i++)
+    pthread_create(thread_id + i, NULL, Increment, NULL);
+
+  <b>for</b> (i = 0; i &lt; N; i++)
+    pthread_join(thread_id[i], NULL);
+
+  printf(<font color="#9933CC">"Count = %i\n"</font>, Count);
+
+  <b>return</b> 0;
+}
+</code></pre>
+
+<b>Output:</b>
+<blockquote><pre>Count = 10000
+</pre></blockquote>
+
+Hey, we found a way to speed up increments! (Not really...) Let's see what happens when we change this line in the <tt><b>Increment</b></tt> function
+from this:
+
+<blockquote><pre><b>int</b> loops = 1000;
+</pre></blockquote>
+
+to this:
+
+<blockquote><pre><b>int</b> loops = 1000 * 100;
+</pre></blockquote>
+
+<b>Results:</b>
+
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="8">
+<tbody><tr><th>&nbsp;</th><th>Single-threaded</th><th>Multi-threaded</th></tr>
+
+<tr valign="center">
+<td><pre>Run #1
+</pre></td>
+<td>
+<pre>Count = 1000000
+</pre>
+</td>
+<td>
+<pre>Count = 591274
+</pre>
+</td>
+</tr>
+
+<tr valign="center">
+<td><pre>Run #2
+</pre></td>
+<td>
+<pre>Count = 1000000
+</pre>
+</td>
+<td>
+<pre>Count = 636767
+</pre>
+</td>
+</tr>
+
+<tr valign="center">
+<td><pre>Run #3
+</pre></td>
+<td>
+<pre>Count = 1000000
+</pre>
+</td>
+<td>
+<pre>Count = 591146
+</pre>
+</td>
+</tr>
+
+<tr valign="center">
+<td><pre>Run #4
+</pre></td>
+<td>
+<pre>Count = 1000000
+</pre>
+</td>
+<td>
+<pre>Count = 611036
+</pre>
+</td>
+</tr>
+
+<tr valign="center">
+<td><pre>Run #5
+</pre></td>
+<td>
+<pre>Count = 1000000
+</pre>
+</td>
+<td>
+<pre>Count = 625463
+</pre>
+</td>
+</tr>
+
+</tbody></table>
+</blockquote>
+
+<ul>
+<li>What's going on here???</li>
+<li>Why did it "work" with a smaller number?</li>
+<li>Can it be "fixed" so it produces the correct output?</li>
+<li>Will it be faster?</li>
+</ul>
+
+<!--
+No synchronization at the assembly level.
+You got lucky.
+Yes.
+Probably not as it is purely CPU-bound
+-->
+
+<p>
+This is the fundamental problem with multi-threaded programs accessing a shared resource. Later, we'll see various ways
+of dealing with this issue and others when we talk about synchronization.
+</p><p>
+And the Windows API has the exact same problem:
+
+</p><pre class="sourcecode"><code><b>#include</b> &lt;stdio.h&gt;   <font color="#003399"><i>/* printf        */</i></font>
+<b>#include</b> &lt;windows.h&gt; <font color="#003399"><i>/* Windows stuff */</i></font>
+
+<b>int</b> Count;
+
+DWORD WINAPI Increment(LPVOID p)
+{
+  <b>int</b> i;
+  <b>int</b> loops = 1000 * 100;
+  <b>for</b> (i = 0; i &lt; loops; i++)
+    Count++;
+
+  <b>return</b> 0;
+}
+
+<b>int</b> main(<b>void</b>)
+{
+  <b>#define</b> N 10
+  <b>int</b> i;
+  HANDLE thread[N];
+
+  <b>for</b> (i = 0; i &lt; N; i++)
+    thread[i] = CreateThread(0, 0, Increment, 0, 0, 0);
+
+  WaitForMultipleObjects(N, thread, <b>TRUE</b>, INFINITE);
+
+  <b>for</b> (i = 0; i &lt; N; i++)
+    CloseHandle(thread[i]);
+
+  printf(<font color="#9933CC">"Count = %i\n"</font>, Count);
+
+  <b>return</b> 0;
+}
+</code></pre>
+<b>Output:</b>
+<blockquote><pre>Count = 629261
+Count = 652001
+Count = 628380
+Count = 743270
+Count = 653191
+</pre></blockquote>
+
+Other points to make:
+<ul>
+<li>Used in many of my drivers. (Older drivers on Windows, now using processes on Linux.)</li>
+<li>Web server (any server) listen on one thread, do work on another.</li>
+<ul>
+  <li>In-process modules (threads)</li>
+  <li>Out-of-process modules (processes)</li>
+</ul>
+<li>Communicating with threads while they run</li>
+<li>Terminating a thread. (Immediately or deferred)</li>
+<li>Thread priorities</li>
+<li>Does <tt><b>fork</b></tt> duplicate just the calling thread or all?</li>
+<li>Sending a signal to a process. Which thread?</li>
+<li>Thread pools (faster, bounded by size of pool)</li>
+<li>Finding parallelism in the problem is generally the hardest part of thread programming.</li>
+</ul>
+
+Multi-process vs. multi-thread
+<ul>
+  <li>Processes generally take more time/resources to create.</li>
+  <li>Processes do not share any memory or other resources without explicitly making it happen (via the OS, pipes, shared memory, messages).</li>
+  <li>Threads are in the same process so they have access to global resources without needing help from the OS.</li>
+  <li>Communicating between threads is faster.</li>
+  <li>Processes can be safer because they run in their own, well, process space.</li>
+  <ul>
+    <li>If one processes crashes, only that process is affected.</li>
+    <li>If one thread dies, it takes the whole process with it.</li>
+  </ul>
+  <li>The actual performance will vary depending on the operating system.</li>
+</ul>
+
+
+
+  
+
+
+
+
+
+<blockquote><pre></pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<tt><b></b></tt>
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<!--
+  <span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne &copy;2009</span>
+
+<table border=0>
+  <tr><td></td></tr>
+  <tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne &copy;2009&nbsp;&nbsp;</span></td></tr>
+</table>
+
+-->
+</body></html>

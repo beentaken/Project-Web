@@ -1,0 +1,589 @@
+
+<!-- saved from url=(0082)http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/index.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./Handout_2_files/new.css">
+<title>CS 280 - Programming Assignment #6</title>
+<style>
+body {
+   background : #ffffff; 
+   margin-left : 50;
+   margin-right : 20;
+   background : url("../../../../../images/notebook.jpg");
+   }
+</style></head>
+
+
+
+<body>  
+<center>
+<h1>CS 280 - Programming Assignment #6</h1>
+Due Sunday, April 10, 2016 at 11:59 pm<br>
+</center>
+<p>
+
+</p><p class="SectionHeader">
+Information
+</p>
+
+<ul>
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/cs280-programming-assignment-algraph.pdf">Handout</a>
+<p>
+</p></li><li>ALGraph: <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/ALGraph.h.html">HTML</a> <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/ALGraph.h">Text</a>
+<p>
+
+</p></li><li>An example driver program: <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/driver-sample.cpp.html">HTML</a> <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/driver-sample.cpp">Text</a>
+<ul>
+<li>You need to provide command line args to run each test. See the driver for details.</li>
+</ul>  
+<p>
+</p></li><li>Random number generator
+<ul>
+  <li>Interface: <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/PRNG.h.html">HTML</a> <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/PRNG.h">Text</a>  
+  </li><li>Implementation: <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/PRNG.cpp.html">HTML</a> <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/PRNG.cpp">Text</a>  
+</li></ul>
+<p>
+</p><p>
+</p></li><li>Remember, if you choose not to implement the searching algorithm, you must not have any warnings from the <i>SearchFrom</i> method. You must
+  remove the parameters that you are not using and return an empty vector:
+<blockquote><pre>std::vector&lt;<b>unsigned</b>&gt; ALGraph::SearchFrom(<b>unsigned</b>, TRAVERSAL_METHOD) <b>const</b>
+{
+  <b>return</b> std::vector&lt;<b>unsigned</b>&gt;();
+}
+</pre></blockquote>
+This ensures that the code will compile cleanly.
+
+
+<p>
+	
+<!--
+std::vector&lt;DijkstraInfo&gt; ALGraph::Dijkstra(<b>unsigned</b><font color="#003399"><i> /* start_node */</i></font>) <b>const</b>
+{
+  <b>return</b> std::vector&lt;DijkstraInfo&gt;();
+}
+</pre></blockquote>
+-->
+  
+</p></li><li>Some sample output from the driver is provided below. 
+	
+<ol>
+<li>Output from the <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/output-D0-1.txt"><tt>TestDijkstra0(1)</tt></a> driver function. <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/Dijkstra0-gviz.txt">Graphviz file</a>&nbsp;&nbsp;<a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/Dijkstra0-gviz.txt.png">Image (dot)</a>
+</li><li>Output from the <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/output-D1-1.txt"><tt>TestDijkstra1(1)</tt></a> driver function. <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/Dijkstra1-gviz.txt">Graphviz file</a>&nbsp;&nbsp;<a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/Dijkstra1-gviz.txt.png">Image (dot)</a>
+</li><li>Output from the <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/output-D4-1.txt"><tt>TestDijkstra4(1)</tt></a> driver function. <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/Dijkstra4-gviz.txt">Graphviz file</a>&nbsp;&nbsp;<a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/Dijkstra4-gviz.txt.png">Image (dot)</a>
+</li><li>Output from the <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/output-D4a-1.txt"><tt>TestDijkstra4a(1)</tt></a> driver function. <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/Dijkstra4a-gviz.txt">Graphviz file</a>&nbsp;&nbsp;<a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/Dijkstra4a-gviz.txt.png">Image (dot)</a>
+</li><li>Output from the <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/output-D5-1.txt"><tt>TestDijkstra5(1)</tt></a> driver function. <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/Dijkstra5-gviz.txt">Graphviz file</a>&nbsp;&nbsp;<a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/Dijkstra5-gviz.txt.png">Image (dot)</a>
+</li><li>Output from the <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/output-D9-1.txt"><tt>TestDijkstra9(1)</tt></a> driver function. <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/Dijkstra9-gviz.txt">Graphviz file</a>&nbsp;&nbsp;<a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/Dijkstra9-gviz.txt.png">Image (dot)</a>
+</li><li>Output from the <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/output-D10-1.txt"><tt>TestDijkstra10(1)</tt></a> driver function. <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/Dijkstra10-gviz.txt">Graphviz file</a>&nbsp;&nbsp;<a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/Dijkstra10-gviz.txt.png">Image (dot)</a>
+</li><li>Output from the <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/output-D10-14.txt"><tt>TestDijkstra10(14)</tt></a> driver function. 
+</li><li>Output from the <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/output-D10-all.txt"><tt>TestAllDijkstra()</tt></a> driver function. 
+</li><li>Output from the <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/output-D10-all-lists.txt"><tt>TestAllLists()</tt></a> driver function. 
+</li></ol>  
+<p>
+</p></li><li>Stress-test outputs from 3 calls to TestBig: 
+<ol>
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/output-Big-10x100.txt"><tt>TestBig(10, 100)</tt></a> <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/TestBig-10-100-gviz.txt">Graphviz file</a>&nbsp;&nbsp;<a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/TestBig10-100.txt.png">Image (dot)</a>
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/output-Big-30x10.txt"><tt>TestBig(30, 10)</tt></a> <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/TestBig-30-10-gviz.txt">Graphviz file</a>&nbsp;&nbsp;<a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/TestBig30-10.txt.png">Image (dot)</a>
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/output-Big-99x2.txt"><tt>TestBig(99, 2)</tt></a> <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/TestBig-99-2-gviz.txt">Graphviz file</a>&nbsp;&nbsp;<a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/TestBig99-2.txt.png">Image (dot)</a>
+<p>
+</p></li></ol>
+<p>
+</p></li><li>Sample outputs for the searches:
+<ol>
+<li>Output from the <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/output-S1-1.txt"><tt>TestSearch1(1)</tt></a> driver function. <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/Search1-gviz.txt">Graphviz file</a>&nbsp;&nbsp;<a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/Search1-gviz.txt.png">Image (dot)</a>
+</li><li>Output from the <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/output-S1-all.txt"><tt>TestAllSearch1()</tt></a> driver function.
+</li><li>Output from the <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/output-S2-1.txt"><tt>TestSearch2(1)</tt></a> driver function. <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/Dijkstra4-gviz.txt">Graphviz file</a>&nbsp;&nbsp;<a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/Dijkstra4-gviz.txt.png">Image (dot)</a>
+</li><li>Output from the <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/output-S2-all.txt"><tt>TestAllSearch2()</tt></a> driver function.
+</li></ol>
+
+<p>
+<!--
+<li>A couple other tests: <a href="driver-sample2.cpp.html">HTML</a> <a href="driver-sample2.cpp">Text</a> 
+    <a href="output-sample2.txt">Output</a>
+-->
+ 
+  
+</p></li><li>Sample command lines:
+  <p>
+</p><ul>
+<li>GNU g++:
+<blockquote><pre><b>g++</b> driver.cpp ALGraph.cpp PRNG.cpp -o gnu -O2 -Wall -Wextra -std=c++11 -pedantic -Wconversion
+</pre></blockquote>
+</li>
+
+<li>Clang:
+<blockquote><pre><b>clang++</b> driver.cpp ALGraph.cpp PRNG.cpp -o clan -O2 -Wall -Wextra -std=c++11 -pedantic -Wconversion
+</pre></blockquote>
+If you are unable to link with Clang under Windows, provide the <tt><b>-c</b></tt> to just perform the
+compilation:
+<blockquote><pre><b>clang++</b> driver.cpp ALGraph.cpp PRNG.cpp <b>-c</b> -O2 -Wall -Wextra -std=c++11 -pedantic -Wconversion
+</pre></blockquote>
+
+</li>
+
+<li>Microsoft:
+<blockquote><pre><b>cl</b> driver.cpp ALGraph.cpp PRNG.cpp /Fems.exe /EHa /Za /W4 /MTd /WX /D_CRT_SECURE_NO_DEPRECATE
+</pre></blockquote>
+</li>
+
+</ul>
+
+</li><li>Timings for the stress test <tt>TestBig(2000, 50)</tt>: 
+  Here is a Windows 64-bit executable: <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/ms64-no-opt.exe">No optimizations</a> &nbsp;&nbsp;
+  <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/ms64-opt.exe">With optimizations</a>   for you to time on your own computer.
+  <ul>
+    <li><b>maya</b> (Linux) - about 1 second</li>
+    <li><b>olga</b> (Linux) - about 1.8 seconds</li>
+    <li>Edison computer - (Win7) - about 1 second</li>
+  </ul>
+  <p>
+Information about the computer specs (<b>maya</b> and <b>olga</b>) can be
+found <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/computer-specs.html">here</a>.
+Some of you may remember these from my CS180 course. 
+These are both Linux computers using GNU 64-bit <tt>g++</tt> version 4.8.2 
+(with <tt>-O2</tt>). For Windows use <tt>/MT /O2</tt> for optimizations.
+</p></li>
+<p>
+</p><li>To experiment with the <a href="http://www.graphviz.org/">Graphviz</a> package on your own computer, you'll need to install it.
+<ul>
+  <li>Here's another <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/GVizEd.exe">GUI front-end</a> that I created. It's more convenient (IMO) than the one that comes with the Graphviz package.
+    (It's still a work-in-progress, though.)
+    
+</li></ul>
+
+<p>
+</p></li><li>Using the <b><tt>dot</tt></b> command-line tool from the 
+  <a href="http://www.graphviz.org/">Graphviz</a> package:</li>
+<blockquote><pre><b>dot</b> -T <i>graphic-type</i> -o <i>output-file</i> <i>input-file</i>
+</pre></blockquote>
+For example, assume you have the graph definition in a text file named <tt>graph.txt</tt> and you 
+want to create a PNG file
+called <tt>graph.png</tt>. This is the command:
+<blockquote><pre><b>dot</b> -T png -o graph.png graph.txt
+</pre></blockquote>
+
+
+<!--
+<li>Sample stress timings: (density = 100%)
+  
+<blockquote><pre>
+Elapsed time for 100 nodes and 9900 edges: Create = 15 ms, Search = 0 ms, Total = 15 ms
+Elapsed time for 500 nodes and 249500 edges: Create = 250 ms, Search = 312 ms, Total = 562 ms
+Elapsed time for 1000 nodes and 999000 edges: Create = 1015 ms, Search = 1610 ms, Total = 2625 ms
+Elapsed time for 1500 nodes and 2248500 edges: Create = 2296 ms, Search = 4344 ms, Total = 6640 ms
+</pre></blockquote>
+
+<li>Fixed "inefficiency" in above timings:
+<blockquote><pre>
+Elapsed time for 100 nodes and 9900 edges: Create = 15 ms, Search = 0 ms, Total = 15 ms
+Elapsed time for 500 nodes and 249500 edges: Create = 250 ms, Search = 78 ms, Total = 328 ms
+Elapsed time for 1000 nodes and 999000 edges: Create = 1000 ms, Search = 406 ms, Total = 1406 ms
+Elapsed time for 1500 nodes and 2248500 edges: Create = 2297 ms, Search = 1172 ms, Total = 3469 ms
+</pre></blockquote>
+
+<li>More timings (different implementation):
+<blockquote><pre>
+Elapsed time for 100 nodes and 9900 edges: Create = 15 ms, Search = 16 ms, Total = 31 ms
+Elapsed time for 500 nodes and 249500 edges: Create = 484 ms, Search = 234 ms, Total = 718 ms
+Elapsed time for 1000 nodes and 999000 edges: Create = 2000 ms, Search = 1000 ms, Total = 3000 ms
+Elapsed time for 1500 nodes and 2248500 edges: Create = 4656 ms, Search = 2406 ms, Total = 7062 ms
+</pre></blockquote>
+
+<li>All timings were done in release mode on a 2.6 GHz computer with 512 MB or RAM.  (From the command line for Microsoft, change <tt><b>/MTd</b></tt> to <tt><b>/MT</b></tt> and add <tt><b>/O2</b></tt>)
+<li>Latest timings with Microsoft's 9.0 compiler (on the same hardware):
+<blockquote><pre>
+Elapsed time for 100 nodes and 9900 edges: Create = 0 ms, Search = 15 ms, Total = 15 ms
+Elapsed time for 500 nodes and 249500 edges: Create = 203 ms, Search = 63 ms, Total = 266 ms
+Elapsed time for 1000 nodes and 999000 edges: Create = 844 ms, Search = 266 ms, Total = 1110 ms
+Elapsed time for 1500 nodes and 2248500 edges: Create = 2000 ms, Search = 594 ms, Total = 2594 ms
+Elapsed time for 2000 nodes and 3998000 edges: Create = 3954 ms, Search = 1140 ms, Total = 5094 ms
+
+<b>Edison computer:</b>
+Elapsed time for 100 nodes and 9900 edges: Create = 0 ms, Search = 0 ms, Total = 0 ms
+Elapsed time for 500 nodes and 249500 edges: Create = 125 ms, Search = 62 ms, Total = 187 ms
+Elapsed time for 1000 nodes and 999000 edges: Create = 578 ms, Search = 281 ms, Total = 859 ms
+Elapsed time for 1500 nodes and 2248500 edges: Create = 1359 ms, Search = 735 ms, Total = 2094 ms
+Elapsed time for 2000 nodes and 3998000 edges: Create = 2703 ms, Search = 1343 ms, Total = 4046 ms
+</pre></blockquote>
+-->
+
+<!--
+<li>Latest timings with Microsoft's 8.0 compiler (on the same hardware):
+<b>2.4 GHz Intel Core 2 Duo with 2 GB of RAM:</b>
+Elapsed time for 100 nodes and 9900 edges: Create = 15 ms, Search = 0 ms, Total = 15 ms
+Elapsed time for 500 nodes and 249500 edges: Create = 312 ms, Search = 78 ms, Total = 390 ms
+Elapsed time for 1000 nodes and 999000 edges: Create = 1234 ms, Search = 422 ms, Total = 1656 ms
+Elapsed time for 1500 nodes and 2248500 edges: Create = 2875 ms, Search = 1203 ms, Total = 4078 ms 
+
+Elapsed time for 100 nodes and 9900 edges: Create = 0 ms, Search = 15 ms, Total = 15 ms
+Elapsed time for 500 nodes and 249500 edges: Create = 203 ms, Search = 47 ms, Total = 250 ms
+Elapsed time for 1000 nodes and 999000 edges: Create = 812 ms, Search = 234 ms, Total = 1046 ms
+Elapsed time for 1500 nodes and 2248500 edges: Create = 1843 ms, Search = 657 ms, Total = 2500 ms
+Elapsed time for 2000 nodes and 3998000 edges: Create = 3281 ms, Search = 1187 ms, Total = 4468 ms
+
+<b>Pascal computer:</b>
+Elapsed time for 1500 nodes and 2248500 edges: Create = 3093 ms, Search = 891 ms, Total = 3984 ms
+
+-->
+
+<!--
+<li><a href="output-Stress-1500-1.txt">Output for 1550 nodes</a> This is from Microsoft's compiler only.
+-->
+
+<li>Note the ordering of the egdes in the adjacency list for Dijkstra4 below. The edges are first sorted
+  by weight, and if there are duplicates, they are sorted by destination node ID. 
+  
+</li></ul>
+
+
+
+<p class="SectionHeader">
+C++ and STL Information
+</p>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+Using the STL will greatly simplify your tasks. However, if you've not used the STL much outside 
+of CS170 and CS225, you may run into some problems with your coding.
+<p>
+  
+</p><ol>
+<li>Creating a priority queue with the default behavior is trivial:
+
+<blockquote><pre>  <font color="#003399"><i>// Create a PQ that uses the default std::less&lt;&gt; class.</i></font>
+  <font color="#003399"><i>// std::less uses operator&lt; so whatever you place in the PQ</i></font>
+  <font color="#003399"><i>// must support operator&lt; (the MyAdjInfo implements this).</i></font>
+std::priority_queue&lt;MyAdjInfo&gt; edges;
+</pre></blockquote>
+
+This priority queue will keep things sorted from smallest to largest.
+<p>
+
+</p></li><li>Creating a priority queue that provides a different behavior requires slightly more effort:
+
+<blockquote><pre>  <font color="#003399"><i>// Create a comparison functor to override the default behavior.</i></font>
+  <font color="#003399"><i>// We can use std::greater to get the correct behavior. MyAdjInfo</i></font>
+  <font color="#003399"><i>// also must implement operator&gt; for this.</i></font>
+std::greater&lt;MyAdjInfo&gt; cmp;
+
+  <font color="#003399"><i>// Create a PQ using the functor above. Since you are providing a value for</i></font>
+  <font color="#003399"><i>// the 3rd template parameter, you must provide all three parameters. </i></font>
+  <font color="#003399"><i>// (Remember, default parameters in C++ must be defaulted right-to-left.) </i></font>
+  <font color="#003399"><i>// You must also pass the comparison functor to the constructor.</i></font>
+std::priority_queue&lt;MyAdjInfo, std::vector&lt;MyAdjInfo&gt;, std::greater&lt;MyAdjInfo&gt; &gt; edges( cmp );
+</pre></blockquote>
+
+Now the queue will sort in the reverse order. You can use these priority queues to help implement the algorithms.
+<p>
+</p></li><li>Creating the same interface for stacks and queues
+
+	
+<blockquote><pre>// This "fixes" the problem where the STL has a different method
+// for removing from queues and stacks. Now, they both have the
+// std::stack interface: the top() method simply calls front()
+	
+<font color="#003399"><i>// Inheritance - Just add a top method and forward to front</i></font>
+<b>template</b>&lt;<b>typename</b> T&gt;
+<b>class</b> My_queue : <b>public</b> std::queue&lt;T&gt;
+{
+  <b>public</b>:
+      <font color="#003399"><i> // <b>this</b> is required when calling a base class method in a templated hierarchy</i></font>  
+    T top() { <b>return</b> <b>this</b>-&gt;front(); }
+};
+</pre></blockquote>
+
+or
+
+<blockquote><pre><font color="#003399"><i>// Aggregation - Forward all calls to the internal queue object</i></font>
+<b>template</b>&lt;<b>typename</b> T&gt;
+<b>class</b> My_queue 
+{
+  <b>public</b>:
+    T top() { <b>return</b> q.front(); }
+    <b>void</b> push(T item) { q.push(item); }
+    <b>bool</b> empty() { <b>return</b> q.empty(); }
+    <b>void</b> pop() { q.pop(); }
+  <b>private</b>:
+    std::queue&lt;T&gt; q;
+};
+</pre></blockquote>
+
+<p>
+	
+</p></li><li>Some pseudo-code showing the structure of the extra credit:
+	
+<blockquote><pre>std::vector&lt;<b>unsigned</b>&gt; ALGraph::SearchFrom(<b>unsigned</b> start_node, TRAVERSAL_METHOD method) <b>const</b>
+{
+  <b>if</b> (method == DEPTH_FIRST)
+  {
+    <font color="#003399"><i>// Set up necessary containers and functors for depth-first searching</i></font>
+  }
+  <b>else</b>
+  {
+    <font color="#003399"><i>// Set up necessary containers and functors for breadth-first searching</i></font>
+  }
+
+  <font color="#003399"><i>// Call the templated <b>Traverse</b> function with the proper arguments</i></font>
+
+  <font color="#003399"><i>// Put the results from the search into the proper vector and return it</i></font>
+}
+</pre></blockquote>
+
+</li><li>Setting up infinity in C++ code. Put this in your .cpp file. 
+  <b>DO NOT USE MAGIC NUMBERS.</b>
+
+<blockquote><pre><b>const unsigned</b> INFINITY_ = <b>static_cast</b>&lt;<b>unsigned</b>&gt;(-1);
+</pre></blockquote>
+I use the underscore because I've discovered that some libraries have already defined <tt>INFINITY</tt>.
+
+
+</li></ol>
+
+<blockquote><pre></pre></blockquote>
+
+<p class="SectionHeader">
+Example Diagrams for Dijkstra's Algorithm
+</p>
+<ol>
+  
+<li>An undirected, weighted graph with 6 vertices and 10 edges: (<tt>Dijkstra1</tt> in the driver)
+<p>
+<table border="0" cellpadding="30">
+<tbody><tr>
+<td>
+<blockquote>
+<img src="./Handout_2_files/Graphs-Dijkstra-1.gif">
+</blockquote>
+</td>
+<td valign="top">
+<pre>ALGraph g(6);
+
+g.AddUEdge(1, 2, 8);
+g.AddUEdge(1, 3, 16);
+g.AddUEdge(1, 5, 13);
+g.AddUEdge(2, 3, 7);
+g.AddUEdge(2, 4, 17);
+g.AddUEdge(2, 5, 11);
+g.AddUEdge(2, 6, 10);
+g.AddUEdge(3, 4, 5);
+g.AddUEdge(4, 5, 14);
+g.AddUEdge(4, 6, 6);
+</pre>  
+</td>
+</tr></tbody></table>
+</p><p>
+
+</p><h3>Output:</h3>
+<p>
+
+</p><blockquote><pre>Adjacency list:
+-------------------------------
+ID: [ 1] --   8 --&gt; [ 2] --  13 --&gt; [ 5] --  16 --&gt; [ 3]
+ID: [ 2] --   7 --&gt; [ 3] --   8 --&gt; [ 1] --  10 --&gt; [ 6] --  11 --&gt; [ 5] --  17 --&gt; [ 4]
+ID: [ 3] --   5 --&gt; [ 4] --   7 --&gt; [ 2] --  16 --&gt; [ 1]
+ID: [ 4] --   5 --&gt; [ 3] --   6 --&gt; [ 6] --  14 --&gt; [ 5] --  17 --&gt; [ 2]
+ID: [ 5] --  11 --&gt; [ 2] --  13 --&gt; [ 1] --  14 --&gt; [ 4]
+ID: [ 6] --   6 --&gt; [ 4] --  10 --&gt; [ 2]
+
+Cost to reach all nodes from node 1:
+------------------------------------
+Node:  1:  Cost:   0  Path:  1
+Node:  2:  Cost:   8  Path:  1  2
+Node:  3:  Cost:  15  Path:  1  2  3
+Node:  4:  Cost:  20  Path:  1  2  3  4
+Node:  5:  Cost:  13  Path:  1  5
+Node:  6:  Cost:  18  Path:  1  2  6
+</pre></blockquote>
+
+<p>
+</p><hr width="90%">
+<p>
+
+</p><blockquote><pre></pre></blockquote>
+  
+</li><li>A directed, weighted graph with 16 vertices and 33 edges: (<tt>Dijkstra4</tt> in the driver).
+<p>
+<font color="blue">Pay attention to the order of the edges in the adjacency list when there are multiple edges with the same weight.</font>  
+</p><p>
+<table border="0" cellpadding="30">
+<tbody><tr>
+<td>
+<blockquote>
+<img src="./Handout_2_files/Graphs-Dijkstra-4-1.gif">
+</blockquote>
+</td>
+<td valign="top">
+<pre>ALGraph g(16);
+
+g.AddDEdge(1, 2, 1);
+g.AddDEdge(1, 5, 3);
+g.AddDEdge(2, 3, 2);
+g.AddDEdge(2, 5, 1);
+g.AddDEdge(3, 4, 3);
+g.AddDEdge(3, 7, 5);
+g.AddDEdge(4, 8, 2);
+g.AddDEdge(5, 6, 3);
+g.AddDEdge(5, 9, 2);
+g.AddDEdge(5, 10, 1);
+g.AddDEdge(6, 2, 6);
+g.AddDEdge(6, 10, 1);
+g.AddDEdge(7, 2, 2);
+<font color="blue"><b>g.AddDEdge(7, 8, 1);</b></font>
+<font color="blue"><b>g.AddDEdge(7, 6, 1);</b></font>
+<font color="blue"><b>g.AddDEdge(7, 10, 1);</b></font>
+g.AddDEdge(8, 3, 1);
+g.AddDEdge(9, 13, 4);
+g.AddDEdge(9, 14, 5);
+g.AddDEdge(10, 9, 2);
+g.AddDEdge(10, 14, 1);
+g.AddDEdge(11, 7, 3);
+<font color="blue"><b>g.AddDEdge(11, 10, 2);</b></font>
+<font color="blue"><b>g.AddDEdge(11, 12, 2);</b></font>
+g.AddDEdge(12, 7, 2);
+g.AddDEdge(12, 8, 3);
+g.AddDEdge(12, 16, 1);
+g.AddDEdge(14, 13, 2);
+g.AddDEdge(14, 15, 1);
+g.AddDEdge(15, 10, 5);
+g.AddDEdge(15, 11, 2);
+g.AddDEdge(16, 11, 3);
+g.AddDEdge(16, 15, 2);
+</pre>  
+</td>
+</tr></tbody></table>
+</p><p>
+  
+</p><h3>Output:</h3>
+<p>
+  
+</p><blockquote><pre>Adjacency list:
+-------------------------------
+ID: [ 1] --   1 --&gt; [ 2] --   3 --&gt; [ 5]
+ID: [ 2] --   1 --&gt; [ 5] --   2 --&gt; [ 3]
+ID: [ 3] --   3 --&gt; [ 4] --   5 --&gt; [ 7]
+ID: [ 4] --   2 --&gt; [ 8]
+ID: [ 5] --   1 --&gt; [10] --   2 --&gt; [ 9] --   3 --&gt; [ 6]
+ID: [ 6] --   1 --&gt; [10] --   6 --&gt; [ 2]
+ID: [ 7] <font color="blue"><b>--   1 --&gt; [ 6] --   1 --&gt; [ 8] --   1 --&gt; [10]</b></font> --   2 --&gt; [ 2]
+ID: [ 8] --   1 --&gt; [ 3]
+ID: [ 9] --   4 --&gt; [13] --   5 --&gt; [14]
+ID: [10] --   1 --&gt; [14] --   2 --&gt; [ 9]
+ID: [11] <font color="blue"><b>--   2 --&gt; [10] --   2 --&gt; [12]</b></font> --   3 --&gt; [ 7]
+ID: [12] --   1 --&gt; [16] --   2 --&gt; [ 7] --   3 --&gt; [ 8]
+ID: [13]
+ID: [14] --   1 --&gt; [15] --   2 --&gt; [13]
+ID: [15] --   2 --&gt; [11] --   5 --&gt; [10]
+ID: [16] --   2 --&gt; [15] --   3 --&gt; [11]
+
+Cost to reach all nodes from node 1:
+------------------------------------
+Node:  1:  Cost:   0  Path:  1
+Node:  2:  Cost:   1  Path:  1  2
+Node:  3:  Cost:   3  Path:  1  2  3
+Node:  4:  Cost:   6  Path:  1  2  3  4
+Node:  5:  Cost:   2  Path:  1  2  5
+Node:  6:  Cost:   5  Path:  1  2  5  6
+Node:  7:  Cost:   8  Path:  1  2  3  7
+Node:  8:  Cost:   8  Path:  1  2  3  4  8
+Node:  9:  Cost:   4  Path:  1  2  5  9
+Node: 10:  Cost:   3  Path:  1  2  5 10
+Node: 11:  Cost:   7  Path:  1  2  5 10 14 15 11
+Node: 12:  Cost:   9  Path:  1  2  5 10 14 15 11 12
+Node: 13:  Cost:   6  Path:  1  2  5 10 14 13
+Node: 14:  Cost:   4  Path:  1  2  5 10 14
+Node: 15:  Cost:   5  Path:  1  2  5 10 14 15
+Node: 16:  Cost:  10  Path:  1  2  5 10 14 15 11 12 16  
+</pre></blockquote>
+ 
+</li></ol>
+
+<!--
+<a name="GRAPHVIZ">
+<p class="SectionHeader">
+Graphviz Information
+</p>
+</a>
+<ul>
+	
+<li>To experiment with the <a href="http://www.graphviz.org/">Graphviz</a> package yourself, add 
+<a href="Graphviz-code.cpp">this code</a> to the top of the driver file:
+
+<pre class="sourcecode"><code>
+<b>enum</b> GType { gtUndirected, gtDirected };
+<b>void</b> MakeGraphvizFile(<b>const</b> <b>char</b> *filename, GType type, <b>const</b> ALIST&amp; alist)
+{
+  std::ofstream viz(filename);
+  <b>if</b> (!viz.is_open())
+  {
+    std::cout &lt;&lt; <font color="#9933CC">&quot;Couldn't open &quot;</font> &lt;&lt; filename &lt;&lt; std::endl;
+    <b>return</b>;
+  }
+
+  <b>const</b> <b>char</b> *edge;
+  <b>const</b> <b>char</b> *gtype;
+  <b>if</b> (type == gtUndirected)
+  {
+    edge = <font color="#9933CC">&quot;--&quot;</font>;
+    gtype = <font color="#9933CC">&quot;strict graph&quot;</font>;
+  }
+  <b>else</b>
+  {
+    edge = <font color="#9933CC">&quot;-&gt;&quot;</font>;
+    gtype = <font color="#9933CC">&quot;digraph&quot;</font>;
+  }
+
+  viz &lt;&lt; gtype &lt;&lt; <font color="#9933CC">&quot; {\n&quot;</font>;
+    ALIST::const_iterator it = alist.begin();
+    <b>int</b> count = 1;
+    <b>while</b> (it != alist.end())
+    {
+      <b>const</b> std::vector&lt;AdjacencyInfo&gt; list = *it;
+      <b>for</b> (std::vector&lt;AdjacencyInfo&gt;::const_iterator it2 = list.begin(); it2 != list.end(); ++it2)
+      {
+        AdjacencyInfo info = *it2;
+        viz &lt;&lt; std::setw(6) &lt;&lt; count &lt;&lt; <font color="#9933CC">&quot; &quot;</font> &lt;&lt; edge &lt;&lt; <font color="#9933CC">&quot; &quot;</font> &lt;&lt; std::setw(3) &lt;&lt; info.id;
+        viz &lt;&lt; <font color="#9933CC">&quot; [ label = \&quot;</font><font color="#9933CC">&quot; &lt;&lt; info.weight &lt;&lt; &quot;</font>\<font color="#9933CC">&quot;];\n&quot;</font>;
+      }
+      ++it;
+      count++;
+    }
+  viz &lt;&lt; <font color="#9933CC">&quot;}\n&quot;</font>;
+}
+</code></pre>
+
+<li>Then, add calls to the <i>MakeGraphvizFile</i> function at the appropriate places. The easiest place is to add
+the call after a call to the <i>DumpAList</i> function. This example is from the function <i>Dijkstra0</i>:
+
+<blockquote><pre>
+<b>if</b> (dump_alist)
+{
+  ALIST alist = g.GetAList();
+  DumpAList(alist);
+  MakeGraphvizFile(<font color="#9933CC">&quot;Dijkstra0-gviz.txt&quot;</font>, gtUndirected, alist);
+}
+</pre></blockquote>
+
+<li>The parameters to the <i>MakeGraphvizFile</i> are:
+<ol>
+<li>The output filename
+<li>The type of graph (gtUndirected or gtDirected)
+<li>The adjacency list that was returned from you <i>GetAList</i> method.
+</ol>
+
+<p>
+<li>Now, when you run any of the driver function containing this call, you will generate a Graphviz-compatible
+text file in the same directory as the executable.
+-->
+
+<blockquote><pre></pre></blockquote>
+
+
+
+
+<hr>
+
+
+
+
+<blockquote><pre></pre></blockquote>
+
+</body></html>

@@ -1,0 +1,1361 @@
+
+<!-- saved from url=(0067)http://azrael.digipen.edu/~mmead/www/Courses/CS170/Functions-2.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./Functions 2_files/new.css">
+<title>Functions 2</title>
+</head>
+
+<body>  
+<center><h1>Functions, Part 2</h1></center>
+
+<!--
+<blockquote>
+<i>
+"The road to hell is paved with global variables"</i> -- Steve McConnell
+</blockquote>
+-->
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Brief Pointer and Memory Review
+</p>
+
+Here's a brief review of pointers and memory:
+<p>
+We can declare pointer variables easily:
+
+</p><blockquote><pre><b>void</b> foo()
+{
+  <b>int</b> i;  <font color="#003399"><i>/* i can only store integer values            */</i></font>
+          <font color="#003399"><i>/* The value of i is undefined at this point  */</i></font>
+
+  <b>int</b> *p; <font color="#003399"><i>/* p can only store the address of an integer */</i></font>
+          <font color="#003399"><i>/* The value of p is undefined at this point  */</i></font>
+
+  p = &amp;i; <font color="#003399"><i>/* The value of p is now the address of i     */</i></font>
+  i = 10; <font color="#003399"><i>/* The value of i is now 10                   */</i></font>
+}
+</pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+This is the notation that will be used when talking about variables in memory:
+
+<blockquote><pre><img src="./Functions 2_files/PointerNotation.png">
+</pre></blockquote>
+
+<ul>
+<li><b>variable</b> - The name of the variable
+</li><li><b>address</b> - The arbitrary address (the actual values are meaningless, but are good for discussion purposes)
+</li><li><b>contents</b> - The value stored at this location. ???? means it is undefined.
+</li></ul>
+<p>
+
+Visualizing the code above:
+
+</p><blockquote>
+<table border="0" cellspacing="0" cellpadding="10">
+<tbody><tr><th>After declarations for i and p</th><th>After assignment to p</th><th>After assignment to i</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><img src="./Functions 2_files/Pointers-PI-1.png">
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><img src="./Functions 2_files/Pointers-PI-2.png">
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><img src="./Functions 2_files/Pointers-PI-3.png">
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+One important thing to realize is that once you name a memory location, that name can not be used for 
+another memory location (in the same scope). In other words, once you <i>bind</i> a name to a memory location,
+you can't unbind it:
+
+<blockquote><pre><b>int</b> i;   <font color="#003399"><i>/* i is the name of this memory location                        */</i></font>
+<b>float</b> i; <font color="#003399"><i>/* i is now attempting to name this memory location (not legal) */ </i></font>
+</pre></blockquote>
+
+In the diagrams above, you can see that it is possible to modify i's value in two different ways.
+<ul>
+<li>Through the variable <tt>i</tt> itself:
+<blockquote><pre>  i = 20;  <font color="#003399"><i>/* The value of i is now 20 */</i></font>
+</pre></blockquote>
+</li><li>Through the pointer <tt>p</tt>:
+<blockquote><pre>  *p = 30; <font color="#003399"><i>/* The value of i is now 30 */</i></font>
+</pre></blockquote>
+
+In fact, we can have any number of pointers pointing to <tt>i</tt>:
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th><th></th></tr>
+<tr valign="center">
+<td>
+<blockquote><pre><b>int</b> i = 10;
+
+<b>int</b> *p1 = &amp;i;
+<b>int</b> *p2 = &amp;i;
+<b>int</b> *p3 = &amp;i;
+<b>int</b> *p4 = &amp;i;
+<b>int</b> *p5 = &amp;i;
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><img src="./Functions 2_files/Pointers-Multiple-1.png">
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<ul>	
+<li>Each of these pointers can be used to modify <tt>i</tt>.
+</li><li>Each pointer itself can be modified to point at something else.
+</li><li>Each pointer requires an additional 4 or 8 bytes (size of a 32-bit or 64 bit pointer) in the program.
+</li><li>We have seen that pointers are useful when we need to pass something to a function and 
+  have that function <i>modify the original</i> and not a copy.
+</li></ul>
+
+</li></ul>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">References
+</p>
+
+In someway, <i>references</i> are similar to pointers, but with a cleaner syntax. A reference
+can be thought of as an <i>alias</i> for another variable (i.e. a memory location). 
+This means that a reference, unlike a pointer, does not take up any additional memory.
+An example with a diagram will make it clearer:
+
+<blockquote><pre><b>int</b> i = 10;   <font color="#003399"><i>// i represents an address, requires 4 bytes, holds the value 10 </i></font>
+<b>int</b> *pi = &amp;i; <font color="#003399"><i>// pi is a pointer, requires 4 or 8 bytes bytes, holds the address of i</i></font>
+<b>int</b> &amp;ri = i;  <font color="#003399"><i>// ri is an alias (another name) for i, requires no storage</i></font>
+              <font color="#003399"><i>//    we call this alias a <b>reference</b></i></font>
+</pre></blockquote>
+
+Diagram:
+<blockquote><pre><img src="./Functions 2_files/References-1.png">
+</pre></blockquote>
+
+<ul>
+<li>The symbol <tt>ri</tt> is not a new variable or a new storage location, it is another name for <tt>i</tt>.
+</li><li>The diagram shows how <tt>ri</tt> is really an just another name for the memory also known as <tt>i</tt>.
+</li><li>What we have done was to <i>bind</i> the name <tt>ri</tt> to the memory location also known as <tt>i</tt>.
+</li><li><tt>ri</tt> can be used anywhere that <tt>i</tt> is used and in the same exact way.
+</li><li>You do not (and cannot) dereference <tt>ri</tt>, since it is not a pointer.
+</li><li>All of these statements modify the value stored at <tt>i</tt> (a.k.a. <tt>ri</tt>):
+<blockquote><pre>i = 20;   <font color="#003399"><i>// i (and ri) is now 20</i></font>
+ri = 30;  <font color="#003399"><i>// i (and ri) is now 30</i></font>
+*pi = 40; <font color="#003399"><i>// i (and ri) is now 40</i></font>
+</pre></blockquote>
+</li></ul>
+	
+You can see that <tt>i</tt> and <tt>ri</tt> do, in fact, represent the same piece of memory:
+
+<blockquote><pre>std::cout &lt;&lt; <font color="#9933CC">" i is "</font> &lt;&lt; i &lt;&lt; std::endl;
+std::cout &lt;&lt; <font color="#9933CC">"ri is "</font> &lt;&lt; ri &lt;&lt; std::endl;
+
+std::cout &lt;&lt; <font color="#9933CC">"address of  i is "</font> &lt;&lt; &amp;i &lt;&lt; std::endl;
+std::cout &lt;&lt; <font color="#9933CC">"address of ri is "</font> &lt;&lt; &amp;ri &lt;&lt; std::endl;
+</pre></blockquote>
+
+Output:
+
+<blockquote><pre> i is 40
+ri is 40
+address of  i is 0012FE00
+address of ri is 0012FE00
+</pre></blockquote>
+
+
+Compare that with <tt>pi</tt>, which is a separate entity in the program:
+<blockquote><pre>std::cout &lt;&lt; <font color="#9933CC">"pi is "</font> &lt;&lt; pi &lt;&lt; std::endl;
+std::cout &lt;&lt; <font color="#9933CC">"*pi is "</font> &lt;&lt; *pi &lt;&lt; std::endl;
+std::cout &lt;&lt; <font color="#9933CC">"address of pi is "</font> &lt;&lt; &amp;pi &lt;&lt; std::endl;
+</pre></blockquote>
+
+Output:
+<blockquote><pre>pi is 0012FE00
+*pi is 40
+address of pi is 0012FDF4
+</pre></blockquote>
+
+When you declare a reference, you must initialize it. You can't have any unbound references (or variables for that matter). 
+In this respect, it is much like a constant pointer that must point to something when it is declared:
+
+<blockquote><pre><b>int</b> i;         <font color="#003399"><i>// i is bound to a memory location by the compiler</i></font>
+<b>int</b> &amp;r1 = i;   <font color="#003399"><i>// r1 is bound to the same memory location as i</i></font>
+<b>int</b> &amp;r2;       <font color="#003399"><i>// error: r2 is not bound to anything</i></font>
+
+<b>int</b> * <b>const</b> p1 = &amp;i;  <font color="#003399"><i>// Ok, p1 points to i</i></font>
+<b>int</b> * <b>const</b> p2;       <font color="#003399"><i>// error, p2 must be initialized</i></font>
+p1 = &amp;i;              <font color="#003399"><i>// error, p1 is a constant so you can't modify it</i></font>
+</pre></blockquote>
+
+The error message for the uninitialized reference will be something like this:
+<blockquote><pre>main.cpp:37: error: 'r2' declared as reference but not initialized
+</pre></blockquote>
+
+
+Some more subtle issues with references, mostly pertaining to constant references:
+
+<blockquote><pre><b>int</b> i = 10;
+<b>int</b> j = 20;
+
+<b>int</b> &amp;r1 = 5;       <font color="#003399"><i>// Error. How do you change '5'? </i></font>
+<b>const</b> <b>int</b> &amp;r2 = 5; <font color="#003399"><i>// Ok, r2 is const (5 is put into a temporary by the compiler)</i></font>
+
+<b>int</b> &amp;r3 = i;           <font color="#003399"><i>// Ok</i></font>
+<b>int</b> &amp;r4 = i + j;       <font color="#003399"><i>// Error, i + j is in temporary (probably a register on the CPU)</i></font>
+<b>const</b> <b>int</b> &amp;r5 = i + j; <font color="#003399"><i>// Ok, i + j is in temp but r5 is const</i></font>
+</pre></blockquote>
+
+We will see more of these issues when dealing with functions and reference parameters.
+<p>
+Of course, just like when you first learned about pointers, your response was: <i>"Yeah, so what?"</i>
+</p><p>
+Recall this example:
+
+</p><blockquote><pre><b>int</b> i;         <font color="#003399"><i>// i is bound to a memory location by the compiler</i></font>
+<b>int</b> &amp;r1 = i;   <font color="#003399"><i>// r1 is bound to the same memory location as i</i></font>
+</pre></blockquote>
+
+The results of the definitions above are 100% identical to this:
+
+<blockquote><pre><b>int</b> ri;       <font color="#003399"><i>// ri is bound to a memory location by the compiler</i></font>
+<b>int</b> &amp;i = ri;  <font color="#003399"><i>// i is bound to the same memory location as ri</i></font>
+</pre></blockquote>
+
+
+<b>Note:</b>
+<blockquote>
+<p class="technote">
+  In the examples above, there is absolutely, positively, <b>no difference</b> between <i>i</i>
+  and <i>ri</i>. None. Nada. Zero. Zip. They are just two different names for the same thing.
+  Please remember that!
+</p>
+</blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<a name="SWAP">
+<p class="SectionHeader">Reference Parameters
+</p>
+</a>
+
+We don't often create a reference (alias) for another variable since it rarely provides any benefit.
+The real benefit comes from using references as parameters to functions.
+<p>
+We know that, by default, parameters are passed by value. If we want the function to modify the parameters,
+we need to pass the address of the data we want modified. The <tt><b>scanf</b></tt> function is a classic example:
+
+</p><blockquote><pre><b>int</b> a, b, c;
+scanf(<font color="#9933CC">"%d%d%d"</font>, &amp;a, &amp;b, &amp;c); <font color="#003399"><i>// scanf can modify a, b, and c</i></font>
+</pre></blockquote>
+
+Another classic example is the <tt>swap</tt> function. This function is "broken", because it passes by value. 
+
+<p>
+	
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>int</b> main()
+{
+  <b>int</b> x = 10;
+  <b>int</b> y = 20;
+
+  printf(<font color="#9933CC">"Before: x = %i, y = %i\n"</font>, x, y);
+  swapv(x, y);
+  printf(<font color="#9933CC">" After: x = %i, y = %i\n"</font>, x, y);
+
+  <b>return</b> 0;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><font color="#003399"><i>/* Pass the parameters by value */</i></font>
+<b>void</b> swapv(<b>int</b> a, <b>int</b> b)
+{
+  <b>int</b> temp = a; <font color="#003399"><i>/* Save a for later      */</i></font>
+  a = b;        <font color="#003399"><i>/* a gets value of b     */</i></font>
+  b = temp;     <font color="#003399"><i>/* b gets old value of a */</i></font>
+}
+
+<font color="blue">
+<b>Output:
+Before swap: x = 10, y = 20
+ After swap: x = 10, y = 20
+</b></font>
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+We fixed this in C by passing the address:
+
+</p><p>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>int</b> main()
+{
+  <b>int</b> x = 10;
+  <b>int</b> y = 20;
+
+  printf(<font color="#9933CC">"Before swap: x = %i, y = %i\n"</font>, x, y);
+  swapp(&amp;x, &amp;y);
+  printf(<font color="#9933CC">" After swap: x = %i, y = %i\n"</font>, x, y);
+
+  <b>return</b> 0;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><font color="#003399"><i>/* Pass the parameters by address (need to dereference now) */</i></font>
+<b>void</b> swapp(<b>int</b> *a, <b>int</b> *b)
+{
+  <b>int</b> temp = *a; <font color="#003399"><i>/* Save a for later      */</i></font>
+  *a = *b;       <font color="#003399"><i>/* a gets value of b     */</i></font>
+  *b = temp;     <font color="#003399"><i>/* b gets old value of a */</i></font>
+}
+
+<font color="blue">
+<b>Output:
+Before swap: x = 10, y = 20
+ After swap: x = 20, y = 10
+</b></font>
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+In C++, we can pass by reference, which acts kind of like pass by address. The only thing that has changed 
+between this and the first pass-by-value function is the &amp; in the parameters to the <tt>swap</tt> function.
+</p><p>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>int</b> main()
+{
+  <b>int</b> x = 10;
+  <b>int</b> y = 20;
+
+  printf(<font color="#9933CC">"Before: x = %i, y = %i\n"</font>, x, y);
+  swapr(x, y);
+  printf(<font color="#9933CC">" After: x = %i, y = %i\n"</font>, x, y);
+
+  <b>return</b> 0;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><font color="#003399"><i>/* Pass the parameters by reference (no need to dereference) */</i></font>
+<b>void</b> swapr(<b>int</b> &amp;a, <b>int</b> &amp;b)
+{
+  <b>int</b> temp = a; <font color="#003399"><i>/* Save a for later      */</i></font>
+  a = b;        <font color="#003399"><i>/* a gets value of b     */</i></font>
+  b = temp;     <font color="#003399"><i>/* b gets old value of a */</i></font>
+}
+
+<font color="blue">
+<b>Output:
+Before swap: x = 10, y = 20
+ After swap: x = 20, y = 10
+</b></font>
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+</p><p class="technote">
+<b>Note</b>: 
+When you pass a parameter by reference, you are actually passing an address to the function. Roughly speaking,
+you get pass-by-address <i>semantics</i> with pass-by-value <i>syntax</i>. The compiler is doing all of the
+necessary dereferencing for you behind the scenes.
+</p>
+
+<p>
+</p><hr width="90%">
+<p>
+	
+This example allows us to return two values from a function. We'll be evaluating the <i>quadratic formula</i>:
+
+</p><blockquote>
+<img src="./Functions 2_files/Quadratic-1a.gif">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="./Functions 2_files/Quadratic-2.gif">
+</blockquote>
+
+The code:
+<blockquote><pre><font color="#003399"><i>// Helper function</i></font>
+<b>float</b> calculate_discriminant(<b>float</b> a, <b>float</b> b, <b>float</b> c)
+{
+  <b>return</b> b * b - 4 * a * c;
+}
+
+<b>void</b> calculate_quadratic(<b>float</b> a, <b>float</b> b, <b>float</b> c, <b>float</b> &amp;root1, <b>float</b> &amp;root2)
+{
+  <b>float</b> discriminant = calculate_discriminant(a, b, c);
+
+  <b>float</b> pos_numerator = -b + std::sqrt(discriminant);
+  <b>float</b> neg_numerator = -b - std::sqrt(discriminant);
+  <b>float</b> denominator = 2 * a;
+
+    <font color="#003399"><i>// root1 and root2 were passed in as references</i></font>
+  root1 = pos_numerator / denominator;
+  root2 = neg_numerator / denominator;
+}
+</pre></blockquote>
+
+Calling the function:
+<blockquote><pre><b>float</b> a = 1.0f, b = 4.0f, c = 2.0f;
+<b>float</b> root1, root2; <font color="#003399"><i>// These are NOT references!</i></font>
+
+  <font color="#003399"><i>// Calculate both roots (root1 and root2 are passed by reference)</i></font>
+calculate_quadratic(a, b, c, root1, root2);
+
+std::cout &lt;&lt; <font color="#9933CC">"a = "</font> &lt;&lt; a &lt;&lt; <font color="#9933CC">", b = "</font> &lt;&lt; b;
+std::cout &lt;&lt; <font color="#9933CC">", c = "</font> &lt;&lt; c &lt;&lt; std::endl;
+std::cout &lt;&lt; <font color="#9933CC">"root1 = "</font> &lt;&lt; root1 &lt;&lt; std::endl;
+std::cout &lt;&lt; <font color="#9933CC">"root2 = "</font> &lt;&lt; root2 &lt;&lt; std::endl;
+
+<b>Output:</b>
+
+a = 1, b = 4, c = 2
+root1 = -0.585786
+root2 = -3.41421
+</pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+
+<p>
+</p><hr width="90%">
+<p>
+
+
+Another example:
+</p><p>
+Using values:
+
+</p><blockquote><pre><font color="#003399"><i>/* Assumes there is at least one element in the array  */</i></font>
+<b>int</b> find_largest1(<b>int</b> a[], <b>int</b> size)
+{
+  <b>int</b> i;
+  <b>int</b> max = a[0]; <font color="#003399"><i>/* assume 1st is largest */</i></font>
+
+  <b>for</b> (i = 1; i &lt; size; i++)
+    <b>if</b> (a[i] &gt; max) 
+      max = a[i]; <font color="#003399"><i>/* found a larger one */</i></font>
+
+  <b>return</b> max;     <font color="#003399"><i>/* max is the largest */</i></font>
+}
+</pre></blockquote>
+
+Call the function:
+
+<blockquote><pre><b>int</b> a[] = {4, 5, 3, 9, 5, 2, 7, 6};
+<b>int</b> size = <b>sizeof</b>(a) / <b>sizeof</b>(*a);
+
+<b>int</b> largest = find_largest1(a, size);
+std::cout &lt;&lt; <font color="#9933CC">"Largest value is "</font> &lt;&lt; largest &lt;&lt; std::endl;
+</pre></blockquote>
+
+
+<p>
+</p><hr width="50%">
+<p>
+
+Using pointers:
+
+</p><blockquote><pre><font color="#003399"><i>/* Assumes there is at least one element in the array  */</i></font>
+<b>int</b>* find_largest2(<b>int</b> a[], <b>int</b> size)
+{
+  <b>int</b> i;
+  <b>int</b> max = 0;  <font color="#003399"><i>/* assume 1st is largest */</i></font>
+
+  <b>for</b> (i = 1; i &lt; size; i++)
+    <b>if</b> (a[i] &gt; a[max]) 
+      max = i;   <font color="#003399"><i>/* found a larger one */</i></font>
+
+  <b>return</b> &amp;a[max]; <font color="#003399"><i>/* return the largest */</i></font>
+}
+</pre></blockquote>
+
+
+Calling the function:
+<blockquote><pre>  <font color="#003399"><i>// Have to dereference the returned pointer</i></font>
+largest = *find_largest2(a, size);
+std::cout &lt;&lt; <font color="#9933CC">"Largest value is "</font> &lt;&lt; largest &lt;&lt; std::endl;
+</pre></blockquote>
+
+<p>
+</p><hr width="50%">
+<p>
+	
+Using references:
+
+</p><blockquote><pre><font color="#003399"><i>/* Assumes there is at least one element in the array  */</i></font>
+<b>int</b>&amp; find_largest3(<b>int</b> a[], <b>int</b> size)
+{
+  <b>int</b> i;
+  <b>int</b> max = 0;  <font color="#003399"><i>/* assume 1st is largest */</i></font>
+
+  <b>for</b> (i = 1; i &lt; size; i++)
+    <b>if</b> (a[i] &gt; a[max]) 
+      max = i;   <font color="#003399"><i>/* found a larger one */</i></font>
+
+  <b>return</b> a[max]; <font color="#003399"><i>/* return the largest */</i></font>
+}
+</pre></blockquote>
+
+
+Calling the function:
+<blockquote><pre>largest = find_largest3(a, size);
+std::cout &lt;&lt; <font color="#9933CC">"Largest value is "</font> &lt;&lt; largest &lt;&lt; std::endl;
+</pre></blockquote>
+
+
+Notes:
+<ul>
+<li>With small data objects (like integers), passing by reference is not a huge win.
+</li><li>When the data objects are large (like structures), references can be a significant improvement.
+</li><li>References also give you the original data, not a copy, which may be required.
+</li><li>Sometimes a reference is needed as an l-value and a copy (r-value) won't work.
+</li></ul>
+
+<blockquote><pre></pre></blockquote>
+
+
+<p class="SectionHeader">
+Some Issues with References
+</p>
+
+<ul>
+<li>When looking at your code, it is not immediately obvious that you are actually changing the original value of a parameter.
+	<ul>
+		<li>It's pretty obvious with pointers. (You have to dereference pointers to get at the data.)
+		</li><li>The syntax for references and values is the same. (This is on purpose and is the whole point of references.)
+	</li></ul>
+	<p>
+</p></li><li>References must bind to an address. Consider these calls to <tt>swapr</tt>:
+<blockquote><pre>swapr(a, b);     <font color="#003399"><i>// Swap a and b</i></font>
+swapr(a + 3, b); <font color="#003399"><i>// ???</i></font>
+swapr(3, 5);     <font color="#003399"><i>// ???</i></font>
+</pre></blockquote>
+
+Error message from the invalid code above:	
+<blockquote><pre>error: invalid initialization of non-const reference of type 'int&amp;' from an rvalue of type 'int'
+</pre></blockquote>
+
+</li><li>Passing a large amount of data:
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>  <font color="#003399"><i>// On-screen graphic</i></font>
+<b>struct</b> Sprite
+{
+  <b>double</b> x;
+  <b>double</b> y;
+  <b>int</b> weight; <!--<b>int</b> color;-->
+  <b>int</b> level;
+  <b>char</b> name[20];
+};
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>  <font color="#003399"><i>// Pass by value</i></font>
+<b>void</b> DisplaySprite(Sprite sprite)
+{
+  std::cout &lt;&lt; <font color="#9933CC">"x position: "</font> &lt;&lt; sprite.x &lt;&lt; std::endl;
+  std::cout &lt;&lt; <font color="#9933CC">"y position: "</font> &lt;&lt; sprite.y &lt;&lt; std::endl;
+  std::cout &lt;&lt; <font color="#9933CC">"    weight: "</font> &lt;&lt; sprite.weight &lt;&lt; std::endl;
+  std::cout &lt;&lt; <font color="#9933CC">"     level: "</font> &lt;&lt; sprite.level &lt;&lt; std::endl;
+  std::cout &lt;&lt; <font color="#9933CC">"      name: "</font> &lt;&lt; sprite.name &lt;&lt; std::endl;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+	
+
+<blockquote><pre>  <font color="#003399"><i>// Pass by reference</i></font>
+<b>void</b> DisplaySprite(Sprite &amp;sprite)
+{
+  <font color="#003399"><i>// Other code...</i></font>
+  sprite.level = 100; <font color="#003399"><i>// Oops.</i></font>
+}
+</pre></blockquote>
+	
+<blockquote><pre>  <font color="#003399"><i>// Pass by const reference</i></font>
+<b>void</b> DisplaySprite(<b>const</b> Sprite &amp;sprite)
+{
+  <font color="#003399"><i>// Other code...</i></font>
+  sprite.level = 100; <font color="#003399"><i>// Error. Compiler will catch this now.</i></font>
+}
+</pre></blockquote>
+	
+</li><li>Returning a reference to local data:
+
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><font color="#003399"><i>// Return by value (OK)</i></font>
+Sprite MakeSprite()
+{
+  Sprite s = {5.25, 2.8, 50, 1, <font color="#9933CC">"Pebbles"</font>};
+  <b>return</b> s;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><font color="#003399"><i>// Return by reference (Not OK)</i></font>
+Sprite&amp; MakeSprite2()
+{
+  Sprite s = {15.0, 2.9, 100, 6, <font color="#9933CC">"BamBam"</font>};
+  <b>return</b> s;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+Warning/Error? (What does each compiler say about returning the local reference?)
+<blockquote><pre>GNU g++ - warning: reference to local variable 's' returned
+Clang++ - warning: reference to stack memory associated with local variable 's' returned
+Borland - error: Attempting to return a reference to local variable 's' in function MakeSprite2()
+Microsoft - warning: returning address of local variable or temporary
+</pre></blockquote>
+
+<!--
+g++
+borland
+ms 7.1, 8.0
+-->
+
+Calling the functions (What does each executable output for the second one?)
+<blockquote><pre>Sprite a = MakeSprite();   <font color="#003399"><i>// ???</i></font>
+Sprite&amp; b = MakeSprite2(); <font color="#003399"><i>// ???</i></font>
+</pre></blockquote>
+
+Output:
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th>GNU 32-bit g++ (64-bit fails):</th><th>Borland:</th><th>Microsoft:</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>x position: 15
+y position: 2.9
+    weight: 100
+     level: 6
+      name: BamBam
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>	Failed to compile
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>x position: 15
+y position: 4.24399e-315
+    weight: 1076756480
+     level: 0
+      name:      
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+   
+      
+<!--
+Compiler #1: g++
+x position: 15
+y position: 2.9
+    weight: 100
+     level: 6
+      name: BamBam
+   
+Compiler #3: ms  
+x position: 15
+y position: 4.24399e-315
+    weight: 1076756480
+     level: 0
+      name:      
+      
+borland won't compile
+-->
+</li></ul>
+
+
+<p class="technote"><b>Q:</b> Why would you use pass-by-reference instead of pass-by-address?<br>
+	<b>A:</b> When we start working with classes and objects, we'll see that references are much more natural than pointers.
+	<br><br>
+	Also, with references, the caller can't tell the difference between passing by value and passing by reference. This 
+	allows the caller to <i>always</i> use the same syntax and let the function decide the optimal way to receive the data.
+</p>
+
+
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Default Parameters
+</p>
+
+Examples:
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Function</th><th>Calling function</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>void</b> print_array(<b>int</b> a[], <b>int</b> size)
+{
+  <b>for</b> (<b>int</b> i = 0; i &lt; size; i++)
+  {
+    std::cout &lt;&lt; a[i];
+    <b>if</b> (i &lt; size - 1)
+      std::cout &lt;&lt; <font color="#9933CC">", "</font>;
+  }
+  std::cout &lt;&lt; std::endl;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>int</b> a[] = {4, 5, 3, 9, 5, 2, 7, 6};
+<b>int</b> size = <b>sizeof</b>(a) / <b>sizeof</b>(*a);
+
+print_array(a, size);
+
+
+
+
+
+<b>Output:</b>
+4, 5, 3, 9, 5, 2, 7, 6
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+Change the formatting:
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Function</th><th>Calling function</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>void</b> print_array2(<b>int</b> a[], <b>int</b> size)
+{
+  <b>for</b> (<b>int</b> i = 0; i &lt; size; i++)
+    std::cout &lt;&lt; a[i] &lt;&lt; std::endl;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>int</b> a[] = {4, 5, 3, 9, 5, 2, 7, 6};
+<b>int</b> size = <b>sizeof</b>(a) / <b>sizeof</b>(*a);
+
+print_array2(a, size);
+
+<b>Output:</b>
+4
+5
+3
+9
+5
+2
+7
+6
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+
+Adding a default parameter to the function:
+
+<blockquote><pre><b>void</b> print_array(<b>int</b> a[], <b>int</b> size, <b>bool</b> newlines = <b>false</b>)
+{
+  <b>for</b> (<b>int</b> i = 0; i &lt; size; i++)
+  {
+    std::cout &lt;&lt; a[i];
+    <b>if</b> (i &lt; size - 1)
+      <b>if</b> (newlines)
+        std::cout &lt;&lt; std::endl;
+      <b>else</b>
+        std::cout &lt;&lt; <font color="#9933CC">", "</font>;
+  }
+  std::cout &lt;&lt; std::endl;
+}
+</pre></blockquote>
+
+Calling the function with/without the default parameter:
+<blockquote><pre>  // Calls with (a, size, <b>false</b>)
+print_array(a, size); 
+print_array(a, size, <b>false</b>); 
+
+  // Calls with (a, size, true)
+print_array(a, size, <b>true</b>);
+</pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+Another example:
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Function</th><th>Calling code</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>int</b>&amp; Inc(<b>int</b>&amp; value, <b>int</b> amount)
+{
+  value += amount;
+  <b>return</b> value;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>int</b> i = 10;
+std::cout &lt;&lt; Inc(i, 1) &lt;&lt; std::endl;
+std::cout &lt;&lt; Inc(i, 1) &lt;&lt; std::endl;
+std::cout &lt;&lt; Inc(i, 2) &lt;&lt; std::endl;
+std::cout &lt;&lt; Inc(i, 4) &lt;&lt; std::endl;
+std::cout &lt;&lt; Inc(i, 5) &lt;&lt; std::endl;
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+
+Using default parameters:
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Function</th><th>Calling code</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>int</b>&amp; Inc(<b>int</b>&amp; value, <b>int</b> amount = 1)
+{
+  value += amount;
+  <b>return</b> value;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>int</b> i = 10;
+std::cout &lt;&lt; Inc(i) &lt;&lt; std::endl;
+std::cout &lt;&lt; Inc(i) &lt;&lt; std::endl;
+std::cout &lt;&lt; Inc(i, 2) &lt;&lt; std::endl;
+std::cout &lt;&lt; Inc(i, 4) &lt;&lt; std::endl;
+std::cout &lt;&lt; Inc(i, 5) &lt;&lt; std::endl;
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+Output:
+<blockquote><pre>11
+12
+14
+18
+23
+</pre></blockquote>
+
+<b>Bonus Question</b>: What is the output from this? (Try it with all compilers and see what you get.)
+
+<blockquote><pre><b>int</b> i = 10;
+
+  <font color="#003399"><i>// This is a single statement</i></font>
+std::cout &lt;&lt; Inc(i) &lt;&lt; std::endl
+          &lt;&lt; Inc(i) &lt;&lt; std::endl
+          &lt;&lt; Inc(i, 2) &lt;&lt; std::endl
+          &lt;&lt; Inc(i, 4) &lt;&lt; std::endl;
+</pre></blockquote>
+
+
+<!--
+Undefined:
+g++  Bor/MS Clang
+18    18      11
+17    17      12
+16    16      14
+14    14      18
+
+older g++ used to give 18 for all
+-->
+
+
+Given these two lines of C++ code:
+
+<blockquote><pre>Inc(i);
+Inc(i, 5);
+</pre></blockquote>
+
+
+This is what the assembly code might look like:
+
+<blockquote><pre>  <b>Inc(i);</b>
+0041E7F8  push        1             <font color="#003399"><i>; push 1 on the stack</i></font>
+0041E7FA  lea         eax,[i]       <font color="#003399"><i>; get address of i</i></font>
+0041E7FD  push        eax           <font color="#003399"><i>; and push it on the stack</i></font>
+0041E7FE  call        Inc (41BC0Dh) <font color="#003399"><i>; call the function</i></font>
+0041E803  add         esp,8         <font color="#003399"><i>; remove parameters from stack</i></font>
+
+  <b>Inc(i, 5);</b>
+0041E806  push        5             <font color="#003399"><i>; push 5 on the stack</i></font>
+0041E808  lea         eax,[i]       <font color="#003399"><i>; get address of i</i></font>
+0041E80B  push        eax           <font color="#003399"><i>; and push it on the stack</i></font>
+0041E80C  call        Inc (41BC0Dh) <font color="#003399"><i>; call the function</i></font>
+0041E811  add         esp,8         <font color="#003399"><i>; remove parameters from stack</i></font>
+</pre></blockquote>
+
+You can have multiple default parameters:
+<p>
+<table border="0" cellspacing="0" cellpadding="0">
+<tbody><tr><th></th><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>void</b> foo(<b>int</b> a, <b>int</b> b, <b>int</b> c = 10);
+
+foo(1, 2);    <font color="#003399"><i>// foo(1, 2, 10)</i></font>
+foo(1, 2, 9); <font color="#003399"><i>// foo(1, 2, 9)</i></font>
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>void</b> foo(<b>int</b> a, <b>int</b> b = 8, <b>int</b> c = 10);
+
+foo(1);       <font color="#003399"><i>// foo(1, 8, 10)</i></font>
+foo(1, 2);    <font color="#003399"><i>// foo(1, 2, 10)</i></font>
+foo(1, 2, 9); <font color="#003399"><i>// foo(1, 2, 9)</i></font>
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>void</b> foo(<b>int</b> a = 5, <b>int</b> b = 8, <b>int</b> c = 10);
+
+foo();        <font color="#003399"><i>// foo(5, 8, 10)</i></font>
+foo(1);       <font color="#003399"><i>// foo(1, 8, 10)</i></font>
+foo(1, 2);    <font color="#003399"><i>// foo(1, 2, 10)</i></font>
+foo(1, 2, 9); <font color="#003399"><i>// foo(1, 2, 9)</i></font>
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</p><p>
+	
+These two functions are illegal because of the ordering of the default parameters:
+
+</p><blockquote><pre><b>void</b> foo(<b>int</b> a, <b>int</b> b = 8, <b>int</b> c);
+<b>void</b> foo(<b>int</b> a = 5, <b>int</b> b, <b>int</b> c = 10);
+</pre></blockquote>
+
+
+
+<blockquote><pre></pre></blockquote>
+
+
+Notes:
+<ul>
+<li>Functions that use default parameters will <b>always</b> get parameters. (They will never be "missing".)
+</li><li>If the programmer doesn't pass them (by explicitly putting them in the function call), the compiler will pass them. Period.
+</li><li>Your code will never need to worry about "Oh, no! What happens if they don't pass me anything?!?!?! OMGWTFBBQ!!!".
+</li><li>When using default parameters, you can only use defaults from right to left (as shown above).
+</li><li>You need to put the default parameters in the prototype, not the implementation. (The compiler needs them, not the linker)	
+</li></ul>
+	
+	
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Overloaded Functions
+</p>
+
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>int</b> cube(<b>int</b> n)
+{
+  <b>return</b> n * n * n;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>int</b> i = 8;
+<b>long</b> l = 50L;
+<b>float</b> f = 2.5F;
+<b>double</b> d = 3.14;
+
+  <font color="#003399"><i>// Works fine: 512</i></font>
+std::cout &lt;&lt; cube(i) &lt;&lt; std::endl;
+
+  <font color="#003399"><i>// May or may not work: 125000</i></font>
+std::cout &lt;&lt; cube(l) &lt;&lt; std::endl;
+
+  <font color="#003399"><i>// Not quite what we want: 8</i></font>
+std::cout &lt;&lt; cube(f) &lt;&lt; std::endl;
+
+  <font color="#003399"><i>// Not quite what we want: 27</i></font>
+std::cout &lt;&lt; cube(d) &lt;&lt; std::endl;
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+First attempt, "old skool" fix in C:
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>int</b> cube_int(<b>int</b> n)
+{
+  <b>return</b> n * n * n;
+}
+
+<b>float</b> cube_float(<b>float</b> n)
+{
+  <b>return</b> n * n * n;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>double</b> cube_double(<b>double</b> n)
+{
+  <b>return</b> n * n * n;
+}
+
+<b>long</b> cube_long(<b>long</b> n)
+{
+  <b>return</b> n * n * n;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+It will work as expected:
+
+<blockquote><pre>  <font color="#003399"><i>// Works fine: 512</i></font>
+std::cout &lt;&lt; cube_int(i) &lt;&lt; std::endl;
+
+  <font color="#003399"><i>// Works fine: 125000</i></font>
+std::cout &lt;&lt; cube_long(l) &lt;&lt; std::endl;
+
+  <font color="#003399"><i>// Works fine: 15.625</i></font>
+std::cout &lt;&lt; cube_float(f) &lt;&lt; std::endl;
+
+  <font color="#003399"><i>// Works fine: 30.9591</i></font>
+std::cout &lt;&lt; cube_double(d) &lt;&lt; std::endl;
+</pre></blockquote>
+
+This quickly becomes tedious and unmanageable as we write other functions to handle other
+types such as <b>unsigned int, unsigned long, char</b>, as well as user-defined types that might come along.
+<p>
+
+
+</p><p>
+</p><hr width="90%">
+<p>
+
+
+Using overloaded functions in C++:
+
+</p><blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>int</b> cube(<b>int</b> n)
+{
+  <b>return</b> n * n * n;
+}
+
+<b>float</b> cube(<b>float</b> n)
+{
+  <b>return</b> n * n * n;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>double</b> cube(<b>double</b> n)
+{
+  <b>return</b> n * n * n;
+}
+
+<b>long</b> cube(<b>long</b> n)
+{
+  <b>return</b> n * n * n;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+It will also work as expected without the user needing to choose the right function:
+
+<blockquote><pre>  <font color="#003399"><i>// Works fine, calls cube(<b>int</b>): 512</i></font>
+std::cout &lt;&lt; cube(i) &lt;&lt; std::endl;
+
+  <font color="#003399"><i>// Works fine, calls cube(<b>long</b>): 125000</i></font>
+std::cout &lt;&lt; cube(l) &lt;&lt; std::endl;
+
+  <font color="#003399"><i>// Works fine, calls cube(<b>float</b>): 15.625</i></font>
+std::cout &lt;&lt; cube(f) &lt;&lt; std::endl;
+
+  <font color="#003399"><i>// Works fine, calls cube(<b>double</b>): 30.9591</i></font>
+std::cout &lt;&lt; cube(d) &lt;&lt; std::endl;
+</pre></blockquote>
+
+Now, if we decide we need to handle another data type, we simply <i>overload</i> the <b>cube</b> function
+to handle the new type. The users (clients) of our code have no idea that we implement the cube function
+as separate functions.
+<p>
+More example uses:
+
+</p><pre class="sourcecode"><code><b>int</b> i = cube(2);           <font color="#003399"><i>// calls cube(int), i is 8</i></font>
+<b>long</b> l = cube(100L);       <font color="#003399"><i>// calls cube(long), l is 1000000L</i></font>
+<b>float</b> f = cube(2.5f);      <font color="#003399"><i>// calls cube(float), f is 15.625f</i></font>
+<b>double</b> d = cube(2.34e25);  <font color="#003399"><i>// calls cube(double), d is 1.2812904e+76</i></font></code></pre>
+
+
+Notes
+<ul>
+<li>Overloaded functions have the same name but different parameters.
+</li><li>There are three attributes to the parameters: type, order, and number. These are all valid overloads for <b>foo</b>:
+<blockquote><pre><b>void</b> foo(<b>double</b>);
+<b>void</b> foo(<b>int</b>); 
+<b>void</b> foo(<b>int</b>, <b>int</b>);
+<b>void</b> foo(<b>int</b>, <b>double</b>);
+<b>void</b> foo(<b>double</b>, <b>int</b>); 
+<b>void</b> foo();  <font color="#003399"><i>// Same as <b>void</b> foo(<b>void</b>) in C</i></font>
+</pre></blockquote>
+
+
+</li><li>The return value is <b>not</b> used to distinguish between overloaded functions.
+
+<blockquote><pre><b>int</b> foo(<b>double</b>);
+<b>float</b> foo(<b>double</b>); <font color="#003399"><i>// Ambiguous</i></font>
+</pre></blockquote>
+
+An error message:
+
+<blockquote><pre>error: new declaration 'float foo(double)'
+error: ambiguates old declaration 'int foo(double)'
+</pre></blockquote>
+
+</li><li>Ambiguity can be a problem:
+
+<blockquote><pre><b>void</b> foo(<b>double</b>);
+<b>void</b> foo(<b>float</b>);
+
+foo(1.0F); <font color="#003399"><i>// Calls foo(float)</i></font>
+foo(1.0);  <font color="#003399"><i>// Calls foo(double)</i></font>
+foo(1);    <font color="#003399"><i>// Which one?</i></font>
+
+error: call of overloaded 'foo(int)' is ambiguous
+note: candidates are: void foo(double)
+note:  void foo(float)
+</pre></blockquote>
+
+These are not technically ambiguous. The problem is that the second one is a <i>redefinition</i> of the first one. (They are considered the same.)
+<blockquote><pre><b>void</b> foo(<b>const</b> <b>int</b>); 
+<b>void</b> foo(<b>int</b>); 
+</pre></blockquote>
+
+The compiler can distinguish between these two:
+<blockquote><pre><b>void</b> foo(<b>int</b>&amp;);
+<b>void</b> foo(<b>const</b> <b>int</b>&amp;);
+</pre></blockquote>
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="10">
+<tbody><tr><th></th><th>Implementations</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>int</b> i = 1;
+<b>const</b> <b>int</b> j = 2;
+
+foo(5);       <font color="#003399"><i>// Which one?</i></font>
+foo(i);       <font color="#003399"><i>// Which one?</i></font>
+foo(j);       <font color="#003399"><i>// Which one?</i></font>
+foo(i + j);   <font color="#003399"><i>// Which one?</i></font>
+foo((<b>int</b>&amp;)j); <font color="#003399"><i>// Which one?</i></font>
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>void</b> foo(<b>int</b>&amp;) 
+{ 
+  std::cout &lt;&lt; <font color="#9933CC">"int&amp;\n"</font>; 
+}
+
+<b>void</b> foo(<b>const</b> <b>int</b>&amp;) 
+{ 
+  std::cout &lt;&lt; <font color="#9933CC">"const int&amp;\n"</font>; 
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<!--
+g++ and MS:
+============
+const int&
+int&
+const int&
+const int&
+int&
+
+Borland (4th one is different)
+==============
+const int&
+int&
+const int&
+int&
+int&
+-->
+
+These are also different:
+<blockquote><pre><b>void</b> foo2(<b>int</b>&amp;) { std::cout &lt;&lt; <font color="#9933CC">"int&amp;\n"</font>; }
+<b>void</b> foo2(<b>int</b>) { std::cout &lt;&lt; <font color="#9933CC">"int\n"</font>; }
+</pre></blockquote>
+
+Some compilers will complain about some of this code. Which lines are valid/invalid with your compilers? Which functions are called?
+<blockquote><pre>foo2(5);      <font color="#003399"><i>// Which one?</i></font>
+foo2(i + j);  <font color="#003399"><i>// Which one?</i></font>
+foo2(j);      <font color="#003399"><i>// Which one?  </i></font>
+foo2(i);      <font color="#003399"><i>// Which one?</i></font>
+</pre></blockquote>
+
+<!--
+g++
+int
+int
+int
+int
+
+ms
+int
+int
+int
+error, ambiguous
+
+bor
+int
+error, ambiguous
+int
+error, ambiguous
+-->
+
+Finally, we can have problems when mixing overloading and defaults:
+
+<blockquote><pre><b>void</b> foo3(<b>int</b> a, <b>int</b> b = 10);
+<b>void</b> foo3(<b>int</b> a);
+
+foo3(5, 6); <font color="#003399"><i>// Ok</i></font>
+foo3(5);    <font color="#003399"><i>// Ambiguous</i></font>
+</pre></blockquote>
+
+</li></ul>
+
+<p>
+</p><hr width="90%">
+<p>
+
+<b>Understanding the Big Picture™</b>
+</p><p>
+What problems are solved by 
+
+</p><ol>
+<li>references? 
+</li><li>reference parameters?
+</li><li>default parameters?
+</li><li>overloaded functions?
+</li></ol>
+<p></p>
+<br><br>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<!--
+<p class="SectionHeader">Inline Functions
+</p>
+-->
+
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+
+
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<tt><b></b></tt>
+
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+
+</body></html>

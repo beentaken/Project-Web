@@ -1,0 +1,827 @@
+
+<!-- saved from url=(0069)http://azrael.digipen.edu/~mmead/www/Courses/CS180/FileSystems-1.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./File Systems_files/new.css">
+<title>File Systems</title>
+
+<style type="text/css">
+dl {
+	width:100%;
+	overflow:hidden;
+}
+dt {
+	float:left;
+	width:10%; /* adjust the width; make sure the total of both is 100% */
+	clear: left;
+	font-weight:bold;
+}
+dd {
+	float:left;
+	width:90%; /* adjust the width; make sure the total of both is 100% */
+	margin:0;
+}
+</style>
+
+</head>
+
+<body>  
+
+<center><h1>
+File Systems
+</h1></center>
+<!--
+<dl>
+<dt>One</dt> <dd>is not part of the script. This was done manually for experimentation using the defaults.
+Surprisingly (or maybe not), when compression was turned on, the time was about 22.5 seconds
+to copy the Linux kernel source.</dd>
+<dt>Two</dt> <dd>the reason for its poor performance is due to the fact that I'm using ZFS in FUSE mode
+	(Filesystem in User Space), which has a lot of overhead. A native-Linux port is in progress
+	and will hopefully be widely available soon.</dd>
+<dt>Three</dt>
+<dt>Four</dt> <dd>With a bun lakdf ala ldfka sldfasklfal dkadfkad fladfkla lfka ldkl dkald kjadlkjla
+alkdfj alkdfjalkd laf alkdf aldjflkadjf lakdjfa l</dd>
+</dl>
+-->
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<p class="sectionheader">
+Files
+</p>
+
+Some important questions first:
+<ul>
+	<li>What is a file?</li>
+	<li>What determines the type of the file?</li>
+	<li>How do you name a file?</li>
+	<li>Where do files live?</li>
+	<li>What is the structure of a file?</li>
+	<li>What kinds of operations can you perform on a file?</li>
+</ul>
+	
+<b>The file concept</b>
+<ul>
+	<li>The computer needs a way to <i>persist</i> data.</li>
+	<li>When the computer is powered off, all data/code in memory is lost.</li>
+	<li>Files are storage units that exist on an external medium (hard drives, USB drives, floppies, CD/DVD, tape, etc.)</li>
+	<li>Files are a collection of bytes stored on secondary storage.</li>
+	<li>Files can contain anything; it's up to the consumer of the file to understand the format.</li>
+	<ul>
+		<li>C/C++ source code</li>
+		<li>executable files (<span id="wpurl"><a class="wplabel">ELF</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Executable_and_Linkable_Format">ELF</a>
+			and <a href="http://msdn.microsoft.com/en-us/library/ms809762.aspx">PE</a>)</li>
+			<ul>
+				<li><span id="wpurl"><a class="wplabel">Comparison</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Comparison_of_executable_file_formats">Comparison</a>
+					of executable file formats.</li>
+			</ul>
+		<li>graphic files (JPEG, PNG, GIF, etc.)</li>
+		<li>audio files (WAV, MP3, FLAC, etc.) </li>
+		<li>movie files (MPEG, AVI, etc.)</li>
+		<li>word processor documents</li>
+		<li>spreadsheets</li>
+		<li>text files</li>
+		<li>game assets</li>
+		<li>... an infinite variety ...</li>
+	</ul>
+	<li>Some files have a very simple structure (e.g. text files), some are very complex (e.g. word processor documents)</li>	
+	<li>The program <tt><a href="http://linux.die.net/man/1/file">file</a></tt> is one way to detect the type of file.
+		(<tt>/etc/magic</tt>, <tt>/usr/share/file/magic.mgc</tt>)</li>
+	<li>Since all storage devices are different (sometimes radically different), we need a consistent way of dealing with files.</li>
+	<ul>
+		<li>Essentially, we need some kind of "file API" to manipulate files (wherever and however they are stored).</li>
+	</ul>
+</ul>
+
+
+<b>File attributes</b> (metadata)
+<ul>
+	<li><b>name</b> - The most basic attribute would be the name. (This is for humans only; OS doesn't use it.)</li>
+	<ul>
+		<li>Each operating system has its own convention and rules for naming files.</li>
+		<li>Upper case vs. lower case, file extensions, legal/illegal characters, etc.</li>
+	</ul>
+	<li><b>id</b> - Some unique way of referencing the file.</li>
+	<li><b>location</b> - Information about where the file is stored.</li>
+	<li><b>size</b> - The number of bytes required to contain all of the file's information</li>
+	<li><b>time and date</b> - Various timestamps (create, modified, accessed)</li>
+	<li><b>type</b> - Maybe some information describing the kind of data stored in the file.</li>
+	<li><b>protection</b> - Some files should not be accessible to all users or some users should have limited access.</li>
+</ul>
+
+<p>
+
+</p><p>
+		
+
+<b>File names (on Windows)</b>
+	</p><ul>
+		<li>A <span id="wpurl"><a class="wplabel">UNC</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Uniform_Naming_Convention#Uniform_Naming_Convention">UNC</a> path (Universal Naming Convention) looks like this</li>
+		<ul>
+			<p>
+			<tt>\\server\volume\directory\...\file</tt></p><p>
+			or the longer version that some Windows systems support:
+			</p><p>
+			<tt>\\?\UNC\server\volume\directory\...\file</tt>
+			</p><p>
+		</p></ul>
+		<li>Each component of the UNC is separated by a backslash (not a forward slash).</li>
+		<li><b>server</b> is the name of a machine on the network</li>
+		<li><font color="blue"><b>volume</b></font> is the name under which some directory is shared as</li>
+		<ul>
+			<li>any directory can be shared (made available to other machines)</li>
+			<li>under any name (the default name is the directory name)</li>
+		</ul>
+		<li>then comes a sequence of <font color="red"><b>directory names</b></font></li>
+		<li>finally comes the <font color="magenta"><b>name of the file</b></font></li>
+	<li>Example:</li>
+	<ul>
+		<p>
+<tt>dir \\<font color="black"><b>jessica</b></font>\<font color="blue"><b>games</b></font>\<font color="red"><b>COD2</b></font>\<font color="red"><b>main</b></font>\<font color="red"><b>players</b></font>\<font color="red"><b>Bubba</b></font></tt>
+		</p><blockquote><pre><!--C:\Sandbox\cs180>dir \\jessica\games\COD2\main\players\Bubba-->
+ Volume in drive \\jessica\games is Games
+ Volume Serial Number is E8F5-FE0F
+
+ Directory of \\jessica\games\COD2\main\players\Bubba
+
+12/04/2005  08:49 AM    &lt;DIR&gt;          .
+12/04/2005  08:49 AM    &lt;DIR&gt;          ..
+12/04/2005  06:46 AM             5,952 config.cfg
+04/02/2006  02:18 PM             4,859 config_mp.cfg
+12/04/2005  08:49 AM    &lt;DIR&gt;          save
+               2 File(s)         10,811 bytes
+               3 Dir(s)  12,248,276,992 bytes free
+</pre></blockquote>
+<li>All of the parts together make up the <b>path</b> of the file (e.g. <tt>config.cfg</tt>)</li>
+<p></p><blockquote>
+<tt>\\<font color="black"><b>jessica</b></font>\<font color="blue"><b>games</b></font>\<font color="red"><b>COD2</b></font>\<font color="red"><b>main</b></font>\<font color="red"><b>players</b></font>\<font color="red"><b>Bubba</b></font>\<font color="magenta"><b>config.cfg</b></font></tt>
+</blockquote>
+		
+		
+	</ul>
+<li>Windows also has a concept of a <i>drive</i> that is mapped to the local machine and given a single-character name.</li>
+<li>The above UNC might look like this on the local computer (in this example, <b>jessica</b>):</li>
+<blockquote>
+	<tt>G:\Data\Games\COD2\main\players\Bubba\config.cfg</tt>
+</blockquote>
+<li>The local path <tt>G:\Data\Games</tt> is shared as <tt><font color="blue"><b>games</b></font></tt> and this is what other computers see.</li>
+<li>Recent versions of Windows are no longer required to use drive letters for each physical drive.</li>
+<li>In some cases you can use forward slashes instead of backslashes when using the driver-letter technique.</li>
+</ul>
+
+<b>File names (on Unix):</b>
+<p>
+
+</p><ul>
+	<li>Follow a simliar, and somewhat more consistent pattern</li>
+	<li>A path looks like this:</li>
+	<ul>
+		<p>
+		<tt>/dir1/dir2/dir3/.../file</tt>
+		</p><p>
+	
+		</p><li>the first <tt>/</tt> is the root of all files on the system</li>
+		<li>then comes a sequence of directory names</li>
+		<li>finally the file name is specified</li>
+	</ul>
+	<li>Unix does not have the concept of a local drive with a single-character name.</li>
+	<li>All files are accessed like the example above</li>
+</ul>
+	<p>
+<b>Remote (network) files</b>
+</p><ul>
+	<li>Networking is ubiquitous, even for casual or non-technical users.</li>
+	<li>How do we access remote files?</li>
+	<li>There are many ways, for example:</li>
+	<ul>
+		<li><span id="wpurl"><a class="wplabel">NFS</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Network_File_System_(protocol)">NFS</a> (Network File System)</li>
+		<li><span id="wpurl"><a class="wplabel">SAMBA</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/SAMBA">SAMBA</a> 
+			(<span id="wpurl"><a class="wplabel">SMB/CIFS</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Server_Message_Block">SMB/CIFS</a> networking protocol)</li>
+		<li><span id="wpurl"><a class="wplabel">SSHFS</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/SSHFS">SSHFS</a> (Secure Shell File System)</li>
+	</ul>
+	<li>These allow transparent access to remote files.</li>
+	<li>One way they achieve this:</li>
+	<ul>
+		<li>A remote machine <b>exports</b> a directory</li>
+		<li>Local machine <b>mounts</b> remote directory over a local directory</li>
+		<li>For example, local machine mounts XYZ's exported home directory on a local directory <tt>/mnt/xyz/home</tt>.</li>
+		<li>then <tt>/mnt/xyz/home/...</tt> access a file on the remote machine.</li>
+		<li>From the user's perspective, all of the files in <tt>/mnt/xyz/home/</tt> appear to be on the local drive.</li>
+	</ul>
+</ul>			
+		
+<p>
+
+	
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+</p><p class="sectionheader">
+File systems
+</p>
+<b>Overview</b>
+
+<ul>	
+	<li>Files are a collection of bytes stored on secondary storage, but the questions is:</li>
+	<ul>
+		<li>How are they stored and accessed?</li>
+	</ul>
+	<li>The answer is determined by the particulars of the “file system”.</li>
+	<li>A file system provides methods to:</li>
+	<ul>
+		<li>create and delete files</li>
+		<li>allocate and free blocks of bytes to files.</li>
+		<li>assign names to files.</li>
+		<li>organize files into directories.</li>
+		<li>read and write contents of files.</li>
+	</ul>
+	<li>There are probably 100 different types of file systems</li>
+	<li>Linux (by default) provides more than 40 types!</li>
+	<li>Some popular file systems:</li>	
+	<ul>
+		<li>Window's systems:</li>
+		<ul>
+			<li><span id="wpurl"><a class="wplabel">FAT</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/File_Allocation_Table">FAT</a> (old DOS, smaller USB drives)</li>
+			<ul>
+				<li>8.3 file names</li>
+				<li>No permissions</li>
+				<li>RASH attributes (Use the <tt>attrib</tt> command to view them.)</li>
+			</ul>
+			<li><span id="wpurl"><a class="wplabel">FAT32</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/File_Allocation_Table#FAT32">FAT32</a> (32-bit version for Windows, larger USB drives)</li>
+			<ul>
+				<li>FAT12, FAT16, FAT32, VFAT</li>
+				<li>Extensions (e.g. longer filenames, larger files)</li>
+			</ul>
+			<li><span id="wpurl"><a class="wplabel">NTFS</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/NTFS">NTFS</a> (Modern Windows)</li>
+			<ul>
+				<li>Completely different</li>
+				<li>Very powerful and modern: compression, quotas, journaling, encryption, etc.</li>
+				<li>All NT-based systems, i.e. NT, 2000, XP, Vista, 7, 8 etc.</li>
+			</ul>
+		</ul>
+		<li>Linux:</li>
+		<ul>
+			<li><span id="wpurl"><a class="wplabel">ext2</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Ext2">ext2</a> 
+				(second extended file system, standard until several years ago, no journaling; still good for flash drives)</li>
+				<!-- ext2 good for flash because no journaling means less writes -->
+			<li><span id="wpurl"><a class="wplabel">ext3</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Ext3">ext3</a> (ext2+journaling)</li>
+		<li><span id="wpurl"><a class="wplabel">ext4</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Ext4">ext4</a> (enhanced ext3)
+			</li><li>Plus about 40 others including FAT and NTFS</li>
+			<li>Other popular file systems:</li>
+			<ul>
+				<li><span id="wpurl"><a class="wplabel">Btrfs</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Btrfs">Btrfs</a>
+					B-tree file system using copy-on-write, created by Oracle Corporation for Linux. </li>
+				<ul>
+					<li>Here's a <a href="https://plus.google.com/photos/105274031445877094012/albums/5781484353677791345/5781484358094855826">video</a> that
+						shows where Btrfs puts files on spinning media.</li>
+				</ul>
+				<li><span id="wpurl"><a class="wplabel">JFS</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/IBM_Journaled_File_System_2_(JFS2)">JFS</a>
+					Journaled File System, created by IBM for their AIX operating system.</li>
+				<li><span id="wpurl"><a class="wplabel">ReiserFS</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/ReiserFS">ReiserFS</a>
+					A general-purpose journaled file system created by Hans Reiser.</li>
+			  <li><span id="wpurl"><a class="wplabel">XFS</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/XFS">XFS</a>
+			  	Extents File System, a high-performance journaling file system created by Silicon Graphics for their IRIX operating system.</li>
+				<li><span id="wpurl"><a class="wplabel">ZFS</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/ZFS">ZFS</a>
+					Zettabyte File System, created by Sun Microsystems and so named because it could store up to 2<sup>70</sup> bytes (about 10<sup>21</sup> bytes).
+					ZFS focuses on data integrity.</li>
+				<li>All of these file systems are supported on Linux.</li>
+			</ul>
+		</ul>
+		<li>Mac OS X:</li>
+		<ul>
+			<li><span id="wpurl"><a class="wplabel">HFS+</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/HFS_Plus">HFS+</a> (successor to HFS)</li>
+			<li>Linus Torvalds has <a href="http://www.itworld.com/article/2868393/linus-torvalds-apples-hfs-is-probably-the-worst-file-system-ever.html">
+				an opinion</a> about HFS+. (Caution: Linus uses a lot of <i>colorful</i> words in his opinions!)</li>
+		</ul>
+		<li>Common systems:</li>
+		<ul>
+			<li>CD (<span id="wpurl"><a class="wplabel">ISO9660</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/ISO_9660">ISO 9660</a>)</li>
+			<li>DVD file systems (<span id="wpurl"><a class="wplabel">Universal Disk Format</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Universal_Disk_Format">Universal Disk Format</a>, UDF)</li>
+			<li>USB mass storage devices</li>
+			<li>Others (lots of others)</li>
+			<ul>
+				<li><a href="http://en.wikipedia.org/wiki/List_of_file_systems">List</a> of file systems.</li> 
+				<li><a href="http://en.wikipedia.org/wiki/Comparison_of_file_systems">Comparison</a> of file systems.</li>
+		 </ul>
+		</ul>
+		<li>Flash-friendly file systems</li>
+		<ul>
+			<li><span id="wpurl"><a class="wplabel">F2FS</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/F2FS">F2FS</a>
+			- A new filesystem (developed by Samsung) that is targetted at flash-based media (flash drives, SSDs, SD cards, etc.)</li>
+			<li>Many optimizations in filesystems are done to deal with head movement and rotational latency, which
+				don't exist in solid-state media.</li>
+			<li>More detailed information:</li>
+			<ul>
+				<li><a href="http://lwn.net/Articles/428584/">Optimizing Linux with cheap flash drives</a> - Introduces F2FS.</li>
+				<li><a href="http://lwn.net/Articles/518988/">An F2FS teardown</a> - Lots more details about the filesystem.</li>
+			</ul>
+		</ul>
+		<li>Some features of advanced file systems: (these used to be "add-ons" to some filesystems)</li>
+		<ul>
+			<li>copy-on-write</li>
+			<li>transparent compression</li>
+			<li>encryption</li>
+			<li>built-in RAID</li>
+			<li>defragmentation</li>
+			<li>transactions and roll back</li>
+			<li>variable block sizes</li>
+			<li>snapshots	</li>
+		</ul>
+		<li>Some very simple benchmarks (using <a href="http://rsync.samba.org/">rsync</a> and this <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/benchfs.html">script</a>):</li>
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="10">
+<tbody><tr><th>Copying a 2 GB file<br>(2,147,483,648)</th><th>Copying ~500 MB of files<br>Linux kernel 3.2.34 (~40,000)</th></tr>
+<tr valign="top">
+<td>
+<pre>          Time   MB/s
+---------------------
+xfs       0:19   110
+btrfs     0:19   110
+hfs+      0:19   110
+ext4      0:21    95
+ext2      0:22    95
+jfs       0:24    87
+FAT32     0:25    84
+reiserfs  0:25    84
+ext3      0:27    78
+NTFS      0:40    53
+zfs       0:47    45
+</pre>
+</td>
+<td>
+<pre>          Time   MB/s
+---------------------
+btrfs     0:05    79
+ext4      0:07    58
+hfs+      0:12    35
+FAT32     0:14    30
+reiserfs  0:14    30
+jfs       0:18    25
+zfs       0:24    18
+ext3      0:25    18
+ext2      0:25    17
+xfs       0:27    15
+NTFS      2:23     3
+</pre>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+
+<li> ZFS is not part of the script. This was done manually for experimentation using the defaults.
+Surprisingly (or maybe not), when compression was turned on, the time was about 22.5 seconds
+to copy the Linux kernel source.</li>
+<li>Also, the reason for its poor performance is due to the fact that I'm using ZFS in FUSE mode
+	(Filesystem in User Space), which has a lot of overhead. A native-Linux port is in progress
+	and will hopefully be widely available soon.</li>
+
+</ul>
+</ul>
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<p class="sectionheader">
+A basic API for file manipulation
+</p>
+	
+<ul>
+	<li>Some basic file operations are open, read, write, seek, delete, truncate.</li>
+
+<blockquote>
+<table border="1" cellpadding="5" cellspacing="0">
+<tbody><tr><th>Operation</th><th>System call</th></tr>
+
+<tr valign="top">
+<td>
+Create a file
+</td>
+<td>
+open
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+Read from a file
+</td>
+<td>
+read
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+Write to a file
+</td>
+<td>
+write
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+Move the file cursor
+</td>
+<td>
+lseek
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+Delete a file
+</td>
+<td>
+unlink
+</td>
+</tr>
+
+<!--
+<tr valign="top">
+<td>
+Truncate a file
+</td>
+<td>
+truncate
+</td>
+</tr>
+-->
+
+</tbody></table>
+</blockquote>
+
+	<li><a href="http://pubs.opengroup.org/onlinepubs/009695399/functions/open.html">open</a> - Open an existing file or create a new file.</li>
+	<ul>
+		<li>First, space in the file system must be found for the file,</li>
+		<li>Second, an entry for the new file must be made in the directory.</li>
+		<li>The directory entry records the name of the file and the location in the file system.</li>
+		<li>There is a "cursor" which keeps track of where the next read/write will take place.</li>
+		<pre>int open(const char *path, int oflag, ... );</pre>
+	</ul>
+	<li><a href="http://pubs.opengroup.org/onlinepubs/009695399/functions/read.html">read</a></li>
+	<ul>
+		<li>Uses an open file's file descriptor.</li>
+		<li>Reads in the specified number of bytes.</li>
+		<li>Once the read has taken place, the cursor is updated.</li>
+		<pre>ssize_t read(int fildes, void *buf, size_t nbyte);</pre>
+	</ul>
+	<li><a href="http://pubs.opengroup.org/onlinepubs/009695399/functions/write.html">write</a></li>
+	<ul>
+		<li>Uses an open file's file descriptor.</li>
+		<li>Writes the specified number of bytes.</li>
+		<li>Once the write has taken place, the cursor is updated.</li>
+		<pre>ssize_t write(int fildes, const void *buf, size_t nbyte);</pre>
+	</ul>
+	<li><a href="http://pubs.opengroup.org/onlinepubs/009695399/functions/lseek.html">lseek</a></li>
+	<ul>
+		<li>Moves the cursor the specified number of bytes through the open file.</li>
+		<li>The cursor is bidirectional so can move forward and backward through the file.</li>
+		<pre>off_t lseek(int fildes, off_t offset, int whence);</pre>
+	</ul>
+	<li><a href="http://pubs.opengroup.org/onlinepubs/009695399/functions/unlink.html">unlink</a></li>
+	<ul>
+		<li>Used to delete a file from the filesystem.</li>
+		<li>May not actually delete the file if the file is in use.</li>
+		<li>When the number of references to a file is 0, the file is deleted from the system.</li>
+		<pre>int unlink(const char *path);</pre>
+	</ul>
+	<!--
+	<li><a href="http://pubs.opengroup.org/onlinepubs/009695399/functions/truncate.html">truncate</a></li>
+	<ul>
+		<li>Used to resize the file.</li>
+		<li>If the size specified is greater than the current size, the file is grown with zero-filled bytes.</li>
+		<li>If the size length specified is less than the current size, the file is truncated and the space is freed (given back to the file system).</li>
+		<pre>int truncate(const char *path, off_t length);</pre>
+	</ul>
+-->
+</ul>	
+
+
+	
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<p class="sectionheader">
+Virtual File System Layer
+</p>
+<ul>	
+	<li>Every file system type provides its own API (Application Program Interface) for operations.</li>
+	<ul>
+		<li>And they're all different!</li>
+	</ul>
+	<li>But we (programmers and users) don't want to deal with those differences.</li>
+	<li>We want a file to be a file (a collection of bytes) anywhere with a few generic operations.</li>
+	<li>To tame this potential for chaos, the OS provides one generic interface</li>
+	<ul>
+		<li>to ALL files</li>
+		<li>on ANY file system</li>
+		<li>on ANY device</li>
+	</ul>
+	<li>We'll call that interface the “Virtual File System”.</li>
+</ul>
+
+<p>
+
+</p><blockquote>
+<table border="0" cellspacing="0" cellpadding="2">
+	<tbody><tr><td><img src="./File Systems_files/VFS-11-4.jpg"></td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne ©2009&nbsp;&nbsp;</span></td></tr>
+</tbody></table>
+</blockquote>
+<p></p>
+
+
+<ul>
+	<li>A top level API presents a unified view of files and operations on files. (<tt>open</tt>, <tt>read</tt>, etc.)</li>
+	<li>A “virtual file system” level will translate operations into specific operations for any type of file system.</li>
+	<li>As we've seen, there are many file system types.</li>
+</ul>
+
+<b>Hardware view of a file</b>
+<ul>
+	<li>A file is a sequence of blocks.</li>
+	<ul>
+		<li>A block is fixed length, often 512 or 4096 bytes.</li>
+	</ul>
+	<li>Operations are all block operations:</li>
+	<ul>
+		<li>Allocate or free blocks for a file's sequence of blocks.</li>
+		<li>Read block <i>X</i>.</li>
+		<li>Write block <i>X</i>.</li>
+	</ul>
+	<li>But programmers want:</li>
+	<ul>
+		<li>byte oriented, not block oriented files</li>
+		<li>sequential access (both reads and writes)</li>
+	</ul>
+</ul>
+
+<b>Software view of a file</b>
+<ul>
+	<li>A file is (logically) a sequence of bytes.</li>
+	<li>An <b>open</b> file:</li>
+	<ul>
+		<li>Has one or more blocks cached in memory by the OS</li>
+		<li>Has a <b>current position</b> byte pointer.</li>
+		<li>Reads, writes, seeks, ... act at the <b>current position</b> on the “in memory” cached blocks.</li>
+		<li>The OS takes care of reading/writing blocks.</li>
+	</ul>
+	<li>The <b>current position</b> is a property of an <b>open</b> file, not of the file itself.</li>
+<p>
+</p><blockquote>
+<table border="0" cellspacing="0" cellpadding="2">
+	<tbody><tr><td><img src="./File Systems_files/FilePosition-10-14.jpg"></td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne ©2009&nbsp;&nbsp;</span></td></tr>
+</tbody></table>
+</blockquote>
+
+<p></p>
+
+<!--
+<p>
+	<blockquote>
+		<img src="FilePosition2-10-14.jpg">
+	</blockquote>
+</p>
+-->
+	
+</ul>
+	
+<b>Structure of a file</b>
+<ul>
+	<li>Somewhere on disk is a FCB (File Control Block), which is a structure containing various pieces of file information.</li>
+	<ul>
+		<li>Unix stores this info in a structure called an <b><span id="wpurl"><a class="wplabel">inode</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Inode">inode</a></b>.
+			(<span id="wpurl"><a class="wplabel">structure</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Inode_pointer_structure">structure</a>)
+			(<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/inode.html">struct inode</a> from linux source: <tt>include/linux/fs.h</tt>)</li>
+		<ul>
+			<li>You can retrieve information about the inode using the <span id="wpurl"><a class="wplabel">stat</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Stat_(Unix)">stat</a> command.</li>
+		</ul>
+		<li>Windows stores this info as an entry (a row) in the <b><span id="wpurl"><a class="wplabel">Master File Table</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Master_File_Table#Internals">Master File Table</a></b> (MFT)</li>
+	</ul>
+	<li>The contents of a file are stored in one or more (often MANY more) blocks on the disk.</li>
+	<li>The FCB must provide some way to record and access those blocks.</li>
+	<li>There are various ways:</li>
+	<ul>
+		<li><b>Contiguous allocation</b> – generally a bad idea</li>
+		<ul>
+			<li>Growing a file will run into a limit.</li>
+			<li>Deleting or shrinking a file will fragment the disk.</li>
+			<li>Size must be declared when created.</li>
+			<li>Requires a scheme to compact free space (otherwise there is external fragmentation).</li>
+			<li>However, the advantages are efficient access to a file's contents (random access) and easy disk management.</li>
+			<li>Kind of like arrays in C/C++. (One-time allocations, random access, can't grow)</li>
+			<p>
+</p><blockquote>
+<table border="0" cellspacing="0" cellpadding="2">
+	<tbody><tr><td><img src="./File Systems_files/ContiguousAllocation-1.jpg"></td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne ©2009&nbsp;&nbsp;</span></td></tr>
+</tbody></table>
+</blockquote>
+				
+		</ul>			
+		<li><b>Linked allocation</b> – generally works well (like a linked list)</li>
+		<ul>
+			<!--<li>Eliminates (external) fragmentation.</li>-->
+			<li>Files can grow or shrink with almost no limit.</li>
+			<li>File size need not be declared when created.</li>
+			<li>One disadvantage is that direct access to ANY block is not possible (no random access), only sequential access is supported (just like linked lists).</li>
+			<li>Some implementations don't need an ending block number because the <i>next block pointer</i> in that block won't point to anything.</li>
+			<ul>
+				<li>However, having a <i>"tail pointer"</i> may make appending to the file faster.
+				(You don't have to walk the entire list looking for the end.)
+				</li>
+			</ul>
+			<p>
+</p><blockquote>
+<table border="0" cellspacing="0" cellpadding="2">
+	<tbody><tr><td><img src="./File Systems_files/LinkedAllocation-1a.jpg"></td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne ©2009&nbsp;&nbsp;</span></td></tr>
+</tbody></table>
+</blockquote>
+		</ul>
+		<li><b>Indexed allocation</b> – put all pointers together into an index block.</li>
+		<ul>
+			<li>All the advantages of linked allocation <i>plus</i> direct access to any block.</li>
+			<!--<li>However, may need LOTS and LOTS of index blocks which could potentially waste space. (Disk space is cheap.)</li>-->
+			<li>Allows random access to any block/byte of the file when using fixed-size blocks (the norm).</li>
+			<p>
+</p><blockquote>
+<table border="0" cellspacing="0" cellpadding="2">
+	<tbody><tr><td><img src="./File Systems_files/IndexedAllocation-1.jpg" border="2"></td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne ©2009&nbsp;&nbsp;</span></td></tr>
+</tbody></table>
+</blockquote>
+		</ul>			
+</ul>
+</ul>
+
+<br>
+<b>Unix/Linux/Mac OS X example</b>
+<ul>
+	<li>An inode has a fixed size.</li>
+	<li>It has room to reference a fixed (small) number of data blocks. (Direct pointers to data)</li>
+	<li>Then it uses a pointer to an index block of pointers to data blocks. (Single-indirection, pointer to pointer to data)</li>
+	<li>Then it uses a pointer to an index block of pointers to index blocks of pointers to data blocks. (Double-indirection, pointer to pointer to pointer to data)</li>
+	<li>Then it uses a pointer to an index block of pointers to index blocks of pointers to index blocks of pointers to data blocks. (Triple-indirection, pointer to pointer to pointer to pointer to data)</li>
+	<li>Simplified view of an inode and its data blocks:
+		(<span id="wpurl"><a class="wplabel">structure</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Inode_pointer_structure">structure</a>)
+		(<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/inode.html">struct inode</a>)
+	</li>
+	<p>
+</p><blockquote>
+<table border="0" cellspacing="0" cellpadding="2">
+	<tbody><tr><td><img src="./File Systems_files/UnixInode-11-27.jpg" border="3"></td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne ©2009&nbsp;&nbsp;</span></td></tr>
+</tbody></table>
+</blockquote>
+		
+	<li>Typically, there are 15 pointers in the inode: 12 direct pointers, 1 single-, 1 double-, and one
+		triple-indirect pointers.
+	</li><li>The size of the largest file is dependent on the size of a block and the size of a block pointer.</li>
+	<ul>
+		<li>For example, having 8K (8192 bytes) blocks and 8-byte block pointers, the number of pointers
+			in a block is 8192 / 8 = 1024.</li>
+		</ul>
+	<li>Having "only" triple indirection puts <span id="wpurl"><a class="wplabel">size limits</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Ext3#Size_limits">size limits</a> on the file system.</li>
+
+</ul>
+
+<b>Directories</b>
+<ul>
+	<li>A directory is a file just like any other "plain" file.</li>
+	<ul>
+		<li>It has bytes stored in scattered blocks (like any other file).</li>
+		<li>It is described by a FCB (like any other file)</li>
+		<li>However, it is marked as type “directory” rather than “plain file”, so it responds to special directory operations rather than read/write operations.</li>
+	</ul>
+	<li>Logically, a directory file contains a list of pairs of file name and file info:</li>
+	<ul>
+		<li>filename1: pointer to a FCB (inode or MFT entry)</li>
+		<li>filename2: pointer to a FCB (inode or MFT entry)</li>
+		<li>The "files" in the diagram below represent the inode. (The inodes point to the actual data blocks on the disk.)</li>
+	</ul>
+		<p>
+</p><blockquote>
+<table border="0" cellspacing="0" cellpadding="2">
+	<tbody><tr><td><img src="./File Systems_files/Directories-1.jpg" border="0"></td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne ©2009&nbsp;&nbsp;</span></td></tr>
+</tbody></table>
+</blockquote>
+			
+		
+		<li>A hierarchical view of a directory structure:</li>
+		<p>
+</p><blockquote>
+<table border="0" cellspacing="0" cellpadding="2">
+	<tbody><tr><td><img src="./File Systems_files/Directories-2.jpg" border="0"></td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne ©2009&nbsp;&nbsp;</span></td></tr>
+</tbody></table>
+</blockquote>
+		
+</ul>
+
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<p class="sectionheader">
+References
+</p>
+
+
+<dl>
+	<li><a href="http://en.wikipedia.org/wiki/List_of_file_systems">List</a> of file systems.</li> 
+	<li><a href="http://en.wikipedia.org/wiki/Comparison_of_file_systems">Comparison</a> of file systems.</li>
+	<li>The Unix (or Cygwin) <a href="http://en.wikipedia.org/wiki/Stat_(Unix)">stat</a> command.</li>
+	<li>Nice introduction to <a href="http://www.funtoo.org/wiki/BTRFS_Fun">BtrFS</a> with lots of good 
+		information. Great place to start.</li>
+	<li><a href="https://btrfs.wiki.kernel.org/index.php/Main_Page">More btrfs</a> information.
+	</li><li>A good article about how to <a href="http://www.ibm.com/developerworks/library/l-zfs/">Run ZFS on Linux</a>
+	from IBM's website.</li>	
+	<li><a href="http://zfsonlinux.org/">ZFS on Linux</a> home page.
+	</li><li>Why <a href="http://distrowatch.com/weekly.php?issue=20130415#qa">ZFS and Btrfs</a> are better than ext4.</li>
+	<li><a href="http://www.sleuthkit.org/sleuthkit/">SleuthKit</a>The Sleuth Kit<sup>™</sup> (TSK) is a library and collection 
+		of command line tools that allow you to investigate disk images.
+		<a href="http://wiki.sleuthkit.org/index.php?title=TSK_Tool_Overview">Overview</a> </li>
+	<li>Facebook hires several Btrfs developers, <a href="http://www.phoronix.com/scan.php?page=news_item&px=MTY0NDk">
+		starts using it now</a>. openSUSE 13.2 is also using it as <a href="http://www.phoronix.com/scan.php?page=news_item&px=MTYzNjA">
+		the default filesystem</a>.</li>
+
+	
+<!--<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>-->
+
+
+
+<blockquote><pre></pre></blockquote>
+  
+  
+<blockquote><pre></pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<tt><b></b></tt>
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<!--
+
+<big>&rarr;</big>
+
+	<span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne &copy;2009</span>
+	
+<blockquote>
+<table border=0 cellspacing=0 cellpadding=2>
+	<tr><td><img src="ComputerComponents-1.png"></td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne &copy;2009&nbsp;&nbsp;</span></td></tr>
+</table>
+</blockquote>
+	
+-->
+</dl></body></html>

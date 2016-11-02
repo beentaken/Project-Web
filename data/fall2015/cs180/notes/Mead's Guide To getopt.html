@@ -1,0 +1,1760 @@
+
+<!-- saved from url=(0062)http://azrael.digipen.edu/~mmead/www/Courses/CS180/getopt.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./Mead's Guide To getopt_files/new.css">
+<link rel="stylesheet" type="text/css" href="./Mead's Guide To getopt_files/styles.css">
+
+<title>Mead's Guide To getopt</title>
+
+</head>
+
+<body>  
+
+<center><h1>
+Mead's Guide to getopt
+</h1></center>
+
+<!--
+Ctrl .         href
+Crlt+Shift+M   wiki-ize
+-->
+
+<b>Quick links:</b>
+<table border="0" cellspacing="0" cellpadding="5">
+<tbody><tr valign="top">
+
+<td>
+<ol>
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/getopt.html#INTRO">Introduction</a></li>
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/getopt.html#USING">Using getopt</a></li>
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/getopt.html#OPTARGS">Option arguments</a></li>
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/getopt.html#UNKNOWN">Unknown and missing option arguments</a></li>
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/getopt.html#NONOPTARGS">Non-option arguments</a></li>
+</ol>
+</td>
+
+<td width="10">&nbsp;</td>
+
+<td>
+<ol start="6">
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/getopt.html#OPTOPTARGS">Optional option arguments</a></li>
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/getopt.html#LONGOPTS">Long options</a><a></a></li><a>
+</a><li><a></a><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/getopt.html#FLAGS">Long options and flags</a><a></a></li><a>
+</a><li><a></a><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/getopt.html#SUMMARY">Summary</a><a></a></li><a>
+</a><li><a></a><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/getopt.html#OTHER">Other uses for command line arguments</a><a></a></li><a>
+</a></ol><a>
+</a></td></tr></tbody></table>
+
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<a name="INTRO"></a>
+<p class="sectionheader">
+Introduction
+</p>
+
+
+
+Most command line programs can have their behavior altered by supplying <i>options</i> to the command
+when it is invoked. Consider a typical command line to compile a C program:
+
+<blockquote><pre>gcc -Wall -Wextra main.c foo.c bar.c -O -o program -ansi -pedantic -Werror 
+</pre></blockquote>
+
+Before <tt>gcc</tt> can even begin compiling the source files, it first must parse the entire command line
+so as to understand exactly how the programmer expects the compiler to behave.
+
+Imagine having to deal with hundreds of options like the 
+<a href="http://gcc.gnu.org/onlinedocs/gcc-4.7.2/gcc/Invoking-GCC.html#Invoking-GCC">gcc command options</a>.
+This <a href="http://gcc.gnu.org/onlinedocs/gcc-4.7.2/gcc/Option-Summary.html#Option-Summary">summary of options</a>
+shows hundreds of options alone. And don't believe for a minute that they are only for command-line
+apps. All "real" games have hundreds of them:
+<ul>
+  <li><a href="https://developer.valvesoftware.com/wiki/Command_Line_Options">Valve's command line options</a></li>
+  <li><a href="http://www.quakewiki.net/archives/console/commands/quake.html#h-4">Quake's options</a> One
+    of the best games of all time!</li>
+  <li><a href="https://docs.unrealengine.com/latest/INT/Programming/Basics/CommandLineArguments/index.html">
+    Unreal options</a></li>
+</ul>
+<p>
+It isn't hard to imagine that a program that accepts a lot of arguments, options, and option arguments
+will need to include a lot of code just to parse the command line. Writing the code yourself is certainly
+possible, but having to do that for every program is not only tedious, but is very repetitive and inefficient.
+</p><p>
+Fortunately, there are many libraries and APIs (<b>A</b>pplication <b>P</b>rogramming <b>I</b>nterface) 
+that are designed specifically for that task. One of those 
+APIs is a function called <tt><b>getopt</b></tt>.
+</p><p>
+Before looking at <tt><b>getopt</b></tt>, a brief review of command line arguments is in order.
+
+</p><p></p><hr width="90%"><p>
+
+Usually, we see <b>main</b> prototyped as:
+
+</p><blockquote><pre><b>int</b> main(<b>void</b>);
+</pre></blockquote>
+
+However, <b>main</b> is sort of <i>overloaded</i> to take parameters as well:
+
+<blockquote><pre>  <font color="#9933CC"> /* These prototypes are the same */</font> 	
+<b>int</b> main(<b>int</b> argc, <b>char</b> *argv[]);
+<b>int</b> main(<b>int</b> argc, <b>char</b> **argv);
+</pre></blockquote>
+
+As we've seen with arrays as parameters, the declarations above are equivalent.
+
+<ul>
+<li><i>argc</i> - The number of arguments passed to <b>main</b> (the program).
+</li><li><i>argv</i> - An array of pointers to NUL-terminated strings (the arguments).
+</li><li>The <i>caller</i> passes the arguments; the caller of main is the C runtime system.
+</li><li>The first element in <i>argv</i> (argv[0]) is the name of the program.
+</li></ul>
+
+This trivial program simply prints out each argument:
+
+<pre class="sourcecode"><code><b>int</b> main(<b>int</b> argc, <b>char</b> *argv[])
+{
+  <b>int</b> i;
+  
+  <b>for</b> (i = 0; i &lt; argc; i++)
+    printf(<font color="#9933CC">"arg%i = %s\n"</font>, i, argv[i]);
+    
+  <b>return</b> 0;
+}
+</code></pre>
+
+If our program was named <i>foo</i> and we were to invoke the program like this:
+
+<blockquote><pre><u>foo</u> one two three 911
+</pre></blockquote>
+
+we would see something like this printed out:
+
+<blockquote><pre>foo
+one
+two
+three
+911
+</pre></blockquote>
+
+Another example:
+
+<blockquote><pre><u>foo</u> one "two three" four 911
+</pre></blockquote>
+
+
+<blockquote><pre>foo
+one
+two three
+four
+911
+</pre></blockquote>
+
+
+Another way of printing the arguments using pointers instead of subscripts:
+
+<pre class="sourcecode"><code><b>int</b> main(<b>int</b> argc, <b>char</b> **argv)
+{
+  <b>while</b> (*argv)
+    printf(<font color="#9933CC">"%s\n"</font>, *argv++);
+
+  <b>return</b> 0;
+}
+</code></pre>
+
+<br>
+
+Diagram of the arguments when invoked as: 
+
+<blockquote><pre><u>foo</u> one "two three" four 911
+</pre></blockquote>
+
+<blockquote><pre><img src="./Mead's Guide To getopt_files/ArgcArgv-1.gif">
+</pre></blockquote>
+
+The character between the strings <b>Two</b> and <b>Three</b> in the diagram above is the space character, ASCII 32.
+Also, notice that the double-quote characters are not passed to the program.
+<p>
+
+<b>Note:</b> Because <b>argv</b> is an array of pointers to characters (strings), you can only pass strings
+to a program. If you want to use the parameter as a number, you will have to convert it from
+a string to a number yourself. See the <i>Data Conversion</i> section in the C Runtime Library, specifically
+the <a href="http://www.linuxmanpages.com/man3/atoi.3.php">atoi</a> function.
+</p><p>
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<a name="USING"></a>
+</p><p class="sectionheader">
+Using getopt
+</p>
+
+The <tt>getopt</tt> function is prototyped like this (in <tt>getopt.h</tt>):
+<blockquote><pre><b>int</b> getopt(<b>int</b> argc, <b>char</b> *<b>const</b> argv[], <b>const</b> <b>char</b> *optstring);
+</pre></blockquote>
+
+The first two parameters are exactly like <tt>main</tt> and are usually just passed from <tt>main</tt> to
+<tt>getopt</tt> as-is.
+
+<p class="info">
+According to the documentation for <b>getopt</b>, you are supposed to include <b>unist.h</b>. However, I've recently
+discovered that this doesn't work on all systems. Using <b>getopt.h</b> instead of <b>unistd.h</b> appears to fix
+the problem.
+</p>
+
+<p>
+There are also a few global variables defined within the API:
+</p><blockquote><pre><b>extern</b> <b>char</b> *optarg;
+<b>extern</b> <b>int</b> optind, opterr, optopt;
+</pre></blockquote>
+
+The interesting part of the function is the last parameter:
+<blockquote><pre><b>const</b> <b>char</b> *optstring
+</pre></blockquote>
+
+This string is an <i>encoding</i> (of sorts) that contains all of the single-letter options that a program
+wants to accept. For example, if the program want's to accept these options:
+
+<blockquote><pre>-a   -b   -X
+</pre></blockquote>
+
+then <tt>optstring</tt> would simply contain the string: <tt>"abX"</tt> (the order doesn't matter). The
+program would contain code similar to this:
+
+<pre class="sourcecode"><code><font color="990099">#include &lt;stdio.h&gt;  /* printf     */</font>
+<font color="990099">#include &lt;getopt.h&gt; /* getopt API */</font>
+
+<b>int</b> main(<b>int</b> argc, <b>char</b> *argv[])
+{
+  <b>int</b> opt;
+
+  <b>while</b> ((opt = getopt(argc, argv, <font color="#9933CC">"abX"</font>)) != -1) 
+  {
+     <b>switch</b> (opt) 
+     {
+      <b>case</b> <font color="#9933CC">'a'</font>:
+        printf(<font color="#9933CC">"Option a was provided\n"</font>);
+        <b>break</b>;
+      <b>case</b> <font color="#9933CC">'b'</font>:
+        printf(<font color="#9933CC">"Option b was provided\n"</font>);
+        <b>break</b>;
+      <b>case</b> <font color="#9933CC">'X'</font>:
+        printf(<font color="#9933CC">"Option X was provided\n"</font>);
+        <b>break</b>;
+     }
+  }
+  
+  <b>return</b> 0;
+}
+</code></pre>
+
+Sample runs (assume the program has been compiled to <tt><b>a.out</b></tt>):
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="5">
+<tbody><tr align="center" valign="top"><th>Command line options</th><th>Output</th></tr>
+
+<tr valign="top">
+<td>
+<pre>./a.out -b
+</pre>
+</td>
+<td>
+<pre>Option b was provided
+</pre>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<pre>./a.out -b -X -a
+</pre>
+</td>
+<td>
+<pre>Option b was provided	
+Option X was provided	
+Option a was provided
+</pre>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<pre>./a.out -bXa
+</pre>
+</td>
+<td>
+<pre>Option b was provided 
+Option X was provided 
+Option a was provided
+</pre>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<pre>./a.out -a b X
+</pre>
+</td>
+<td>
+<pre>Option a was provided	
+</pre>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<pre>./a.out -t	
+</pre>
+</td>
+<td>
+<pre>./a.out: invalid option -- 't'	
+</pre>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<pre>./a.out a b c
+</pre>
+</td>
+<td>
+<pre></pre>
+</td>
+</tr>
+
+
+</tbody></table>
+</blockquote>
+
+
+
+<p class="info">
+Of course, in a real program, the programmer would actually <i>do something</i> with the options rather 
+than just print out the information. However, this demonstrates how the <b>getopt</b> function behaves.
+</p>
+
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<a name="OPTARGS"></a>
+<p class="sectionheader">
+Option Arguments
+</p>
+
+Below is a simple <tt>gcc</tt> compile command:
+<blockquote><pre><u>gcc</u> foo.c -o bar.o -c
+</pre></blockquote>
+
+This command will compile only (<tt>-c</tt>) the file <b>foo.c</b> into <b>bar.o</b> (<tt>-o bar.o</tt>).
+The <tt>-o</tt> option is different than the <tt>-c</tt> option in that it requires an argument itself. 
+If you want your options to accept an argument, you must provide <tt>getopt</tt> with that information.
+<p>
+Let's assume we want the <tt>a</tt> and <tt>b</tt> options to accept an argument. This is how <tt>optstring</tt>
+would look now:
+
+</p><blockquote><pre>"a:b:X"
+</pre></blockquote>
+
+The colon after the letter tells <tt>getopt</tt> to expect an argument after the option. Now the code looks
+like this (partial):
+
+<blockquote><pre><b>while</b> ((opt = getopt(argc, argv, <font color="#9933CC">"a:b:X"</font>)) != -1) 
+{
+   <b>switch</b> (opt) 
+   {
+    <b>case</b> <font color="#9933CC">'a'</font>:
+      printf(<font color="#9933CC">"Option a has arg: %s\n"</font>, optarg);
+      <b>break</b>;
+    <b>case</b> <font color="#9933CC">'b'</font>:
+      printf(<font color="#9933CC">"Option b has arg: %s\n"</font>, optarg);
+      <b>break</b>;
+    <b>case</b> <font color="#9933CC">'X'</font>:
+      printf(<font color="#9933CC">"Option X was provided\n"</font>);
+      <b>break</b>;
+   }
+}
+</pre></blockquote>
+
+If the option requires an argument, the external variable <tt>optarg</tt> is a pointer to the argument.
+Recall this global variables defined in <i>getopt.h</i>:
+<blockquote><pre><b>extern</b> <b>char</b> *<u>optarg</u>;
+<b>extern</b> <b>int</b> optind, opterr, optopt;
+</pre></blockquote>
+
+<p>
+Sample runs (assume the program has been compiled to <tt><b>a.out</b></tt>):
+</p><blockquote>
+<table border="1" cellspacing="0" cellpadding="5">
+<tbody><tr align="center" valign="top"><th>Command line options</th><th>Output</th></tr>
+
+<tr valign="top">
+<td>
+<pre>./a.out -a one -b two -X
+</pre>
+</td>
+<td>
+<pre>Option a has arg: one
+Option b has arg: two
+Option X was provided
+</pre>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<pre>./a.out -aone -btwo
+</pre>
+</td>
+<td>
+<pre>Option a has arg: one
+Option b has arg: two
+</pre>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<pre>./a.out -X -a
+</pre>
+</td>
+<td>
+<pre>Option X was provided
+./a.out: option requires an argument -- 'a'
+</pre>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<pre>./a.out -a -X
+</pre>
+</td>
+<td>
+<pre>Option a has arg: -X
+</pre>
+</td>
+</tr>
+
+</tbody></table>
+</blockquote>
+
+
+<p class="info">
+When using single-letter options that require an argument, as in <tt>-a</tt> and <tt>-b</tt>
+above, white space between the option and the argument is optional. The first string
+following the option will be used as the argument (regardless of whether or not it starts
+with a minus sign).
+</p>
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<a name="UNKNOWN"></a>
+<p class="sectionheader">
+Unknown Options and Missing Option Arguments
+</p>
+By default, <tt>getopt</tt> prints errors that it encounters. This is sometimes helpful, but we'd
+rather deal with the errors ourselves.
+To disable the automatic error printing, simply put a colon as the first character in <tt>optstring</tt>:
+
+<blockquote><pre>":a:b:X"
+</pre></blockquote>
+
+Now, we need to handle two error conditions:
+<ol>
+	<li>The user has provided an unknown option, e.g.: <tt>./a.out -t</tt></li>
+	<li>The user has failed to provide a required argument for an option, e.g.: <tt>./a.out -a</tt></li>
+</ol>
+
+The code (partial) looks like this:
+<blockquote><pre><b>while</b> ((opt = getopt(argc, argv, <font color="#9933CC">":a:b:X"</font>)) != -1) 
+{
+   <b>switch</b> (opt) 
+   {
+    <b>case</b> <font color="#9933CC">'a'</font>:
+      printf(<font color="#9933CC">"Option a has arg: %s\n"</font>, optarg);
+      <b>break</b>;
+    <b>case</b> <font color="#9933CC">'b'</font>:
+      printf(<font color="#9933CC">"Option b has arg: %s\n"</font>, optarg);
+      <b>break</b>;
+    <b>case</b> <font color="#9933CC">'X'</font>:
+      printf(<font color="#9933CC">"Option X was provided\n"</font>);
+      <b>break</b>;
+    <b>case</b> <font color="#9933CC">'?'</font>:
+      printf(<font color="#9933CC">"Unknown option: %c\n"</font>, optopt);
+      <b>break</b>;
+    <b>case</b> <font color="#9933CC">':'</font>:
+      printf(<font color="#9933CC">"Missing arg for %c\n"</font>, optopt);
+      <b>break</b>;
+   }
+}
+</pre></blockquote>
+
+Recall these global variables from <i>getopt.h</i>:
+<blockquote><pre><b>extern</b> <b>char</b> *optarg;
+<b>extern</b> <b>int</b> optind, opterr, <u>optopt</u>;
+</pre></blockquote>
+
+Sample runs (assume the program has been compiled to <tt><b>a.out</b></tt>):
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="10">
+<tbody><tr align="center" valign="top"><th>Command line options</th><th>Output</th></tr>
+
+<tr valign="top">
+<td>
+<pre>./a.out -a
+</pre>
+</td>
+<td>
+<pre>Missing arg for a
+</pre>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<pre>./a.out -t
+</pre>
+</td>
+<td>
+<pre>Unknown option: t
+</pre>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<pre>./a.out -a one -t -X -b
+</pre>
+</td>
+<td>
+<pre>Option a has arg: one
+Unknown option: t
+Option X was provided
+Missing arg for b
+</pre>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<pre>./a.out -a one,two,three
+</pre>
+</td>
+<td>
+<pre>Option a has arg: one,two,three
+</pre>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<pre>./a.out -a "one two three"
+</pre>
+</td>
+<td>
+<pre>Option a has arg: one two three
+</pre>
+</td>
+</tr>
+
+</tbody></table>
+</blockquote>
+
+A note about the last two examples above: 
+<ul>
+	<li>If you want the option to have multiple arguments, you must not have any spaces between them.</li>
+	<li>If you do have spaces, you must enclose them in quotes.</li>
+	<li>It is up to the programmer to then parse the multiple arguments, as <tt>getopt</tt> does not have
+		that capability.</li>
+</ul>
+
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<a name="NONOPTARGS"></a>
+<p class="sectionheader">
+Non-Option Arguments
+</p>
+
+Again, a sample <tt>gcc</tt> compile command:
+<blockquote><pre><u>gcc</u> <font color="blue">-Wall -Wextra</font> <b>main.c foo.c bar.c</b> <font color="blue">-O -o</font> <font color="red">program</font> <font color="blue">-ansi -pedantic -Werror</font>
+</pre></blockquote>
+
+This command line has:
+<ul>
+  <li>1 <u>command</u>
+<blockquote><pre><u>gcc</u>
+</pre></blockquote>
+	</li><li>7 <font color="blue">options</font>
+<blockquote><pre><font color="blue">-Wall  -Wextra  -O  -o  -ansi  -pedantic  -Werror</font>
+</pre></blockquote>
+	</li><li>1 <font color="red">option argument</font> for the <tt>-o</tt> option (which is the output file name):</li>
+<blockquote><pre><font color="red">program</font>
+</pre></blockquote>
+<li>3 <b>non-option arguments</b> (or simply arguments):
+<blockquote><pre><b>main.c  foo.c  bar.c</b>
+</pre></blockquote>
+which are the files that the compiler will actually compile.
+</li></ul>
+
+<blockquote>
+<p class="technote">
+<big>Before going any further, make sure that you <i>really</i> understand what every string in the example above means. In other
+words, which strings are <b>commands</b>, <b>options</b>, <b>arguments</b>, or <b>option arguments</b> and <i>why</i>.
+This will tell you if you understand how the command line works.</big>
+</p>
+</blockquote>
+
+Up until now, we've only focused on the options. What about the <i>real</i> arguments to <tt>gcc</tt>?
+<tt>getopt</tt> behaves in two different ways, as this code demonstrates:
+
+<pre class="sourcecode"><code><font color="990099">#include &lt;stdio.h&gt;  /* printf */</font>
+<font color="990099">#include &lt;getopt.h&gt; /* getopt */</font>
+
+<b>int</b> main(<b>int</b> argc, <b>char</b> *argv[])
+{
+  <b>int</b> opt;
+
+  <b>while</b> ((opt = getopt(argc, argv, <font color="#9933CC">":a:b:X"</font>)) != -1) 
+  {
+     <b>switch</b> (opt) 
+     {
+      <b>case</b> <font color="#9933CC">'a'</font>:
+        printf(<font color="#9933CC">"Option a has arg: %s\n"</font>, optarg);
+        <b>break</b>;
+      <b>case</b> <font color="#9933CC">'b'</font>:
+        printf(<font color="#9933CC">"Option b has arg: %s\n"</font>, optarg);
+        <b>break</b>;
+      <b>case</b> <font color="#9933CC">'X'</font>:
+        printf(<font color="#9933CC">"Option X was provided\n"</font>);
+        <b>break</b>;
+      <b>case</b> <font color="#9933CC">'?'</font>:
+        printf(<font color="#9933CC">"Unknown option: %c\n"</font>, optopt);
+        <b>break</b>;
+      <b>case</b> <font color="#9933CC">':'</font>:
+        printf(<font color="#9933CC">"Missing arg for %c\n"</font>, optopt);
+        <b>break</b>;
+     }
+  }
+
+  <b>if</b> (optind &lt; argc) 
+  {
+    printf(<font color="#9933CC">"Non-option args: "</font>);
+    <b>while</b> (optind &lt; argc)
+      printf(<font color="#9933CC">"%s "</font>, argv[optind++]);
+    printf(<font color="#9933CC">"\n"</font>);
+  }
+  
+  <b>return</b> 0;
+}
+</code></pre>
+
+Again, the global variables from <i>getopt.h</i>:
+<blockquote><pre><b>extern</b> <b>char</b> *optarg;
+<b>extern</b> <b>int</b> <u>optind</u>, opterr, optopt;
+</pre></blockquote>
+
+
+Sample runs (assume the program has been compiled to <tt><b>a.out</b></tt>):
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="10">
+<tbody><tr align="center" valign="top"><th>Command line options</th><th>Output</th></tr>
+
+<tr valign="top">
+<td>
+<pre>./a.out x -a one y -X z
+</pre>
+</td>
+<td>
+<pre>Option a has arg: one
+Option X was provided
+Non-option args: x y z 
+</pre>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<pre>./a.out x y z -a one -b two
+</pre>
+</td>
+<td>
+<pre>Option a has arg: one
+Option b has arg: two
+Non-option args: x y z 
+</pre>
+</td>
+</tr>
+
+</tbody></table>
+</blockquote>
+
+As you can see, the default behavior for <tt>getopt</tt> is to move all of the non-option arguments to the
+end of the array. When <tt>getopt</tt> has no more options to parse, it returns -1 and the <b>while</b> 
+loop ends. The external variable <tt>optind</tt> is used as an index into <tt>argv</tt> so we can retrieve
+the remaining arguments.
+<p>
+If you want to have <tt>getopt</tt> parse and return the non-option arguments in the <b>while</b> 
+loop (in the order specified), you
+must direct it to do so by putting a minus (<tt>-</tt>) in front of the <tt>optstring</tt>:
+
+</p><blockquote><pre>"-:a:b:X"
+</pre></blockquote>
+
+<p class="info">
+Note: When supplying both <tt>-</tt> and <tt>:</tt> at the front of the string, the minus must come first.
+<br><br>
+Sometimes, having <b>getopt</b> rearrange the non-option arguments is problematic, especially when
+some of the options apply only to specific non-option arguments.
+</p><p>
+
+Sample code:
+
+</p><pre class="sourcecode"><code><font color="990099">#include &lt;stdio.h&gt;  /* printf */</font>
+<font color="990099">#include &lt;getopt.h&gt; /* getopt */</font>
+
+<b>int</b> main(<b>int</b> argc, <b>char</b> *argv[])
+{
+  <b>int</b> opt;
+
+  <b>while</b> ((opt = getopt(argc, argv, <font color="#9933CC">"-:a:b:X"</font>)) != -1) 
+  {
+     <b>switch</b> (opt) 
+     {
+      <b>case</b> <font color="#9933CC">'a'</font>:
+        printf(<font color="#9933CC">"Option a has arg: %s\n"</font>, optarg);
+        <b>break</b>;
+      <b>case</b> <font color="#9933CC">'b'</font>:
+        printf(<font color="#9933CC">"Option b has arg: %s\n"</font>, optarg);
+        <b>break</b>;
+      <b>case</b> <font color="#9933CC">'X'</font>:
+        printf(<font color="#9933CC">"Option X was provided\n"</font>);
+        <b>break</b>;
+      <b>case</b> <font color="#9933CC">'?'</font>:
+        printf(<font color="#9933CC">"Unknown option: %c\n"</font>, optopt);
+        <b>break</b>;
+      <b>case</b> <font color="#9933CC">':'</font>:
+        printf(<font color="#9933CC">"Missing arg for %c\n"</font>, optopt);
+        <b>break</b>;
+      <b>case</b> 1:
+        printf(<font color="#9933CC">"Non-option arg: %s\n"</font>, optarg);
+        <b>break</b>;
+     }
+  }
+  
+  <b>return</b> 0;
+}
+</code></pre>
+
+Sample runs:
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="10">
+<tbody><tr align="center" valign="top"><th>Command line options</th><th>Output</th></tr>
+
+<tr valign="top">
+<td>
+<pre>./a.out x y z -a foo
+</pre>
+</td>
+<td>
+<pre>Non-option arg: x
+Non-option arg: y
+Non-option arg: z
+Option a has arg: foo
+</pre>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<pre>./a.out x -a foo y -b bar z -X w
+</pre>
+</td>
+<td>
+<pre>Non-option arg: x
+Option a has arg: foo
+Non-option arg: y
+Option b has arg: bar
+Non-option arg: z
+Option X was provided
+Non-option arg: w
+</pre>
+</td>
+</tr>
+
+</tbody></table>
+</blockquote>
+
+Putting it all together using this call:
+
+<blockquote><pre>getopt(argc, argv, "-:a:b:X")
+</pre></blockquote>
+
+and running the program:
+<blockquote><pre>./a.out -t x -a foo -M y -b bar z -X w -b
+</pre></blockquote>
+
+Output:
+<blockquote><pre>Unknown option: t
+Non-option arg: x
+Option a has arg: foo
+Unknown option: M
+Non-option arg: y
+Option b has arg: bar
+Non-option arg: z
+Option X was provided
+Non-option arg: w
+Missing arg for b
+</pre></blockquote>
+
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<a name="OPTOPTARGS"></a>
+<p class="sectionheader">
+Optional Option Arguments
+</p>
+Sometimes an option may not <i>require</i> an argument, but it allows an <i>optional</i> argument. There is
+a syntax for that, as well: Two colons (<tt>::</tt>) must follow the letter in <tt>optstring</tt>:
+
+<blockquote><pre>":a::b:X"
+</pre></blockquote>
+
+In the string above, option <tt>a</tt> will accept an optional argument. (Option <tt>b</tt> <i>requires</i> an argument)  Usage:
+
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="5">
+<tbody><tr><th>Option syntax</th><th>Meaning</th></tr>
+
+<tr valign="top">
+<td>
+<pre>-a
+</pre>
+</td>
+<td>
+OK, No argument provided (optional).
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<pre>-afoo
+</pre>
+</td>
+<td>
+OK, argument is <tt>foo</tt>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<pre>-a foo
+</pre>
+</td>
+<td>
+<font color="red">Wrong, no space allowed with optional arguments.<br><tt>foo</tt> is considered a non-option argument.</font>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<pre>-bfoo
+</pre>
+</td>
+<td>
+OK, argument is <tt>foo</tt> (required).
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<pre>-b foo
+</pre>
+</td>
+<td>
+OK, argument is <tt>foo</tt> (required).
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<pre>-b
+</pre>
+</td>
+<td>
+<font color="red">Wrong, option <tt>b</tt> requires an argument.</font>
+</td>
+</tr>
+
+
+</tbody></table>
+</blockquote>
+
+Since the argument is optional, you will have to check the value of <tt>optarg</tt> to see if it is a valid
+pointer (otherwise, it's NULL).
+<p>
+Code sample:
+
+</p><blockquote><pre><b>while</b> ((opt = getopt(argc, argv, <font color="#9933CC">"-:a::b:X"</font>)) != -1) 
+{
+   <b>switch</b> (opt) 
+   {
+    <b>case</b> <font color="#9933CC">'a'</font>:
+      printf(<font color="#9933CC">"Option a has arg: %s\n"</font>, optarg ? optarg : <font color="#9933CC">"(none)"</font>);
+      <b>break</b>;
+    <b>case</b> <font color="#9933CC">'b'</font>:
+      printf(<font color="#9933CC">"Option b has arg: %s\n"</font>, optarg);
+      <b>break</b>;
+    <b>case</b> <font color="#9933CC">'X'</font>:
+      printf(<font color="#9933CC">"Option X was provided\n"</font>);
+      <b>break</b>;
+    <b>case</b> <font color="#9933CC">'?'</font>:
+      printf(<font color="#9933CC">"Unknown option: %c\n"</font>, optopt);
+      <b>break</b>;
+    <b>case</b> <font color="#9933CC">':'</font>:
+      printf(<font color="#9933CC">"Missing arg for %c\n"</font>, optopt);
+      <b>break</b>;
+    <b>case</b> 1:
+      printf(<font color="#9933CC">"Non-option arg: %s\n"</font>, optarg);
+      <b>break</b>;
+   }
+}
+</pre></blockquote>
+
+Sample output:
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="5">
+<tbody><tr><th>Command line</th><th>Output</th></tr>
+<tr valign="top">
+<td>
+<pre>./a.out -a -b bar -X
+</pre>
+</td>
+<td>
+<pre>Option a has arg: (none)
+Option b has arg: bar
+Option X was provided
+</pre>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<pre>./a.out -afoo -b bar -X
+</pre>
+</td>
+<td>
+<pre>Option a has arg: foo
+Option b has arg: bar
+Option X was provided
+</pre>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<pre>./a.out -a foo -b bar -X
+</pre>
+</td>
+<td>
+<pre>Option a has arg: (none)
+Non-option arg: foo
+Option b has arg: bar
+Option X was provided
+</pre>
+</td>
+</tr>
+</tbody></table>
+</blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<a name="LONGOPTS"></a>
+<p class="sectionheader">
+Long Options
+</p>
+There are some problems with the short, single-character options:
+<ul>
+  <li>There are a limited number of single-characters. For small programs, this is probably
+    not a problem.</li>
+  <li>It can be very difficult to remember what each option does. Sure, if <tt>-a</tt> is for add
+    and <tt>-d</tt> is for delete, what about options for altering, assigning, aardvarking, etc?</li>
+</ul>
+
+Just look at the number of options for <!--<a href="gcc-help.txt">gcc</a>,-->
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/rsync-help.txt">rsync</a> and <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/wget-help.txt">wget</a>. They have tons of 
+options. Having the ability to use more than just a single character gives us virtually unlimited
+options. An example of a long option in <tt>diff</tt>:
+
+<blockquote><pre>diff file1.txt file2.txt <b>--strip-trailing-cr</b>
+</pre></blockquote>
+
+There are <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/diff-help.txt">many options</a> for <tt>diff</tt>. So, not only do we have 
+unlimited option names with longer names, but they can be self-explanatory. Consider this:
+
+<blockquote><pre>diff file1.txt file2.txt <b>-Z</b>
+</pre></blockquote>
+
+Do you know what <tt>-Z</tt> does? Probably not, unless you are an expert with <tt>diff</tt>. How about this:
+
+<blockquote><pre>diff file1.txt file2.txt <b>--ignore-trailing-space</b>
+</pre></blockquote>
+
+I'm pretty sure that most programmers know what this does, or have a good idea of what it does.
+(<tt>-Z</tt> is short for <tt>--ignore-trailing-space</tt>. Who knew?)
+<p>
+This is the prototype for the long option function:
+
+</p><blockquote><pre><b>int</b> getopt_long(<b>int</b> argc, <b>char</b> * <b>const</b> argv[], <b>const</b> <b>char</b> *optstring, 
+                <b>const</b> <b>struct</b> option *longopts, <b>int</b> *longindex);
+</pre></blockquote>
+
+The first three options are the same as the short version. The last two parameters are new. This is what
+an <tt>option</tt> <tt><b>struct</b></tt> looks like:
+
+
+<blockquote><pre>struct option 
+{
+  const char *name;    /* name without -- in front                                  */
+  int         has_arg; /* one of: no_argument, required_argument, optional_argument */
+  int        *flag;    /* how the results are returned                              */
+  int         val;     /* the value to return or to put in flag                     */
+};
+</pre></blockquote>
+
+An example (from the <a href="http://linux.die.net/man/3/getopt">man page</a>):
+
+<pre class="sourcecode"><code><font color="990099">#include &lt;getopt.h&gt; /* getopt */</font>
+<font color="990099">#include &lt;stdlib.h&gt; /* exit   */</font>
+<font color="990099">#include &lt;stdio.h&gt;  /* printf */</font>
+
+<b>int</b> main(<b>int</b> argc, <b>char</b> **argv)
+{
+  <b>int</b> c;
+
+  <b>while</b> (1) 
+  {
+      <b>int</b> option_index = 0;
+      <b>static</b> <b>struct</b> option long_options[] = 
+      {
+          {<font color="#9933CC">"add"</font>,     required_argument, NULL,  0 },
+          {<font color="#9933CC">"append"</font>,  no_argument,       NULL,  0 },
+          {<font color="#9933CC">"delete"</font>,  required_argument, NULL,  0 },
+          {<font color="#9933CC">"verbose"</font>, no_argument,       NULL,  0 },
+          {<font color="#9933CC">"create"</font>,  required_argument, NULL,  0 },
+          {<font color="#9933CC">"file"</font>,    optional_argument, NULL,  0 },
+          {NULL,      0,                 NULL,  0 }
+      };
+
+      c = getopt_long(argc, argv, <font color="#9933CC">"-:abc:d::"</font>, long_options, &amp;option_index);
+      <b>if</b> (c == -1)
+           <b>break</b>;
+
+      <b>switch</b> (c) 
+      {
+        <b>case</b> 0:
+          printf(<font color="#9933CC">"long option %s"</font>, long_options[option_index].name);
+          <b>if</b> (optarg)
+             printf(<font color="#9933CC">" with arg %s"</font>, optarg);
+          printf(<font color="#9933CC">"\n"</font>);
+          <b>break</b>;
+
+        <b>case</b> 1:
+          printf(<font color="#9933CC">"regular argument '%s'\n"</font>, optarg); <font color="990099">/* non-option arg */</font>
+          <b>break</b>;
+
+        <b>case</b> <font color="#9933CC">'a'</font>:
+          printf(<font color="#9933CC">"option a\n"</font>);
+          <b>break</b>;
+
+       <b>case</b> <font color="#9933CC">'b'</font>:
+          printf(<font color="#9933CC">"option b\n"</font>);
+          <b>break</b>;
+
+        <b>case</b> <font color="#9933CC">'c'</font>:
+          printf(<font color="#9933CC">"option c with value '%s'\n"</font>, optarg);
+          <b>break</b>;
+
+        <b>case</b> <font color="#9933CC">'d'</font>:
+          printf(<font color="#9933CC">"option d with value '%s'\n"</font>, optarg ? optarg : <font color="#9933CC">"NULL"</font>);
+          <b>break</b>;
+
+        <b>case</b> <font color="#9933CC">'?'</font>:
+          printf(<font color="#9933CC">"Unknown option %c\n"</font>, optopt);
+          <b>break</b>;
+
+        <b>case</b> <font color="#9933CC">':'</font>:
+          printf(<font color="#9933CC">"Missing option for %c\n"</font>, optopt);
+          <b>break</b>;
+
+        <b>default</b>:
+          printf(<font color="#9933CC">"?? getopt returned character code 0%o ??\n"</font>, c);
+       }
+  }
+
+  <b>return</b> 0;
+}
+</code></pre>
+
+
+Sample output:
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="5">
+<tbody><tr><th>Command line</th><th>Output</th></tr>
+<tr valign="top">
+<td>
+<pre>./a.out --delete=foo -c5 --add=yes --append
+</pre>
+</td>
+<td>
+<pre>long option delete with arg foo
+option c with value '5'
+long option add with arg yes
+long option append
+</pre>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<pre>./a.out --d=foo --ad=yes --ap --a
+</pre>
+</td>
+<td>
+<pre>long option delete with arg foo
+long option add with arg yes
+long option append
+Unknown option
+</pre>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<pre>./a.out --create=5 --create 6 --c=7 --c 8  
+</pre>
+</td>
+<td>
+<pre>long option create with arg 5
+long option create with arg 6
+long option create with arg 7
+long option create with arg 8
+</pre>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<pre>./a.out --file=5 --file 6 --file7
+</pre>
+</td>
+<td>
+<pre>long option file with arg 5
+long option file
+regular argument '6'
+Unknown option 
+</pre>
+</td>
+</tr>
+</tbody></table>
+</blockquote>
+
+<p class="info">
+With the long option, you don't have to provide the entire string. If <tt>getopt</tt> can deduce what the option is with only a few 
+characters, it will match that option. In the example above, <tt>--d</tt> matches <tt>--delete</tt> because it is the only option
+that begins with <tt>--d</tt>. In the case of <tt>--add</tt> and <tt>--append</tt>, two characters are necessary to disambiguate
+between them because they both begin with <tt>--a</tt>.
+</p><p>
+
+
+</p><blockquote><pre></pre></blockquote>
+
+Another example (partial). This example shows how to associate a short option with the long option. Note the fourth field of 
+the <tt><b>struct</b></tt> is not <tt><b>0</b></tt>, but is the associated short option:
+
+<pre class="sourcecode"><code><b>while</b> (1) 
+{
+    <b>int</b> option_index = 0;
+    <b>static struct</b> option long_options[] = 
+    {
+        {<font color="#9933CC">"add"</font>,     required_argument, NULL,  <font color="#9933CC">'a'</font>},
+        {<font color="#9933CC">"append"</font>,  no_argument,       NULL,  <font color="#9933CC">'p'</font>},
+        {<font color="#9933CC">"delete"</font>,  required_argument, NULL,  <font color="#9933CC">'d'</font>},
+        {<font color="#9933CC">"verbose"</font>, no_argument,       NULL,  <font color="#9933CC">'v'</font>},
+        {<font color="#9933CC">"create"</font>,  required_argument, NULL,  <font color="#9933CC">'c'</font>},
+        {<font color="#9933CC">"file"</font>,    optional_argument, NULL,  <font color="#9933CC">'f'</font>},
+        {NULL,      0,                 NULL,    0}
+    };
+
+    c = getopt_long(argc, argv, <font color="#9933CC">"-:a:pd:vc:f::"</font>, long_options, &amp;option_index);
+    <b>if</b> (c == -1)
+         <b>break</b>;
+
+    <b>switch</b> (c) 
+    {
+      <b>case</b> 0:
+        printf(<font color="#9933CC">"long option %s"</font>, long_options[option_index].name);
+        <b>if</b> (optarg)
+           printf(<font color="#9933CC">" with arg %s"</font>, optarg);
+        printf(<font color="#9933CC">"\n"</font>);
+        <b>break</b>;
+
+      <b>case</b> 1:
+        printf(<font color="#9933CC">"regular argument '%s'\n"</font>, optarg);
+        <b>break</b>;
+
+      <b>case</b> <font color="#9933CC">'a'</font>:
+        printf(<font color="#9933CC">"option a with value '%s'\n"</font>, optarg);
+        <b>break</b>;
+
+     <b>case</b> <font color="#9933CC">'p'</font>:
+        printf(<font color="#9933CC">"option p\n"</font>);
+        <b>break</b>;
+
+      <b>case</b> <font color="#9933CC">'d'</font>:
+        printf(<font color="#9933CC">"option d with value '%s'\n"</font>, optarg);
+        <b>break</b>;
+
+     <b>case</b> <font color="#9933CC">'v'</font>:
+        printf(<font color="#9933CC">"option v\n"</font>);
+        <b>break</b>;
+
+      <b>case</b> <font color="#9933CC">'c'</font>:
+        printf(<font color="#9933CC">"option c with value '%s'\n"</font>, optarg);
+        <b>break</b>;
+
+      <b>case</b> <font color="#9933CC">'f'</font>:
+        printf(<font color="#9933CC">"option f with value '%s'\n"</font>, optarg ? optarg : <font color="#9933CC">"NULL"</font>);
+        <b>break</b>;
+
+      <b>case</b> <font color="#9933CC">'?'</font>:
+        printf(<font color="#9933CC">"Unknown option %c\n"</font>, optopt);
+        <b>break</b>;
+
+      <b>case</b> <font color="#9933CC">':'</font>:
+        printf(<font color="#9933CC">"Missing option for %c\n"</font>, optopt);
+        <b>break</b>;
+
+      <b>default</b>:
+        printf(<font color="#9933CC">"?? getopt returned character code 0%o ??\n"</font>, c);
+     }
+}
+</code></pre>
+
+
+Sample output. Notice that there are no longer any long options returned from <tt><b>getopt</b></tt> as they are all short options,
+even if the user provided a long option:
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="5">
+<tbody><tr><th>Command line</th><th>Output</th></tr>
+<tr valign="top">
+<td>
+<pre>./a.out --delete=foo -c5 --add=yes --append
+</pre>
+</td>
+<td>
+<pre>option d with value 'foo'
+option c with value '5'
+option a with value 'yes'
+option p
+</pre>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<pre>./a.out --d=foo --ad=yes --ap
+</pre>
+</td>
+<td>
+<pre>option d with value 'foo'
+option a with value 'yes'
+option p
+</pre>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<pre>./a.out --create=5 --create 6 --c=7 --c 8  
+</pre>
+</td>
+<td>
+<pre>option c with value '5'
+option c with value '6'
+option c with value '7'
+option c with value '8'
+</pre>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<pre>./a.out --file=5 --file 6 --file7
+</pre>
+</td>
+<td>
+<pre>option f with value '5'
+option f with value 'NULL'
+regular argument '6'
+Unknown option 
+</pre>
+</td>
+</tr>
+</tbody></table>
+</blockquote>
+
+Suppose we remove the <tt>v</tt> from the string, changing this:
+
+<blockquote><pre>"-:a:pd:vc:f::"
+</pre></blockquote>
+
+to this:
+
+<blockquote><pre>"-:a:pd:c:f::"
+</pre></blockquote>
+
+We still have this in our long options structure:
+<blockquote><pre>{<font color="#9933CC">"verbose"</font>, no_argument,       NULL,  <font color="#9933CC">'v'</font>},
+</pre></blockquote>
+
+Running this:
+<blockquote><pre>./a.out -v
+</pre></blockquote>
+
+produces this:
+<blockquote><pre>Unknown option v
+</pre></blockquote>
+
+Running this:
+<blockquote><pre>./a.out --verbose
+</pre></blockquote>
+
+produces this:
+<blockquote><pre>?? getopt returned character code 0166 ??
+</pre></blockquote>
+
+
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<a name="FLAGS"></a>
+<p class="sectionheader">
+Long Options and Flags
+</p>
+Sometimes, we just want a <b>true</b> or <b>false</b> value. We want to <i>enable</i>
+or <i>disable</i> something.
+<p>
+</p><ul>
+  <li>When a variable acts like a boolean (.e.g. a value of 0 or 1), we call 
+    that kind of variable a <i>flag</i>.</li>
+  <li>Some command line options are just flags to the program, meaning simply
+    enable or disable some functionality.</li>
+  <li>Flags generally default to 0, meaning "off".</li>
+  <li>The mere presence of a flag on the command line (without any arguments) sets
+    the flag to 1, meaning "on".</li>
+  <li>We've seen this quite often
+with <tt>gcc</tt>:
+<p>
+</p><blockquote><pre>gcc -c foo.c
+</pre></blockquote></li>
+
+The <tt>-c</tt> option is a <i>flag</i> because it simply tells the compiler to 
+compile the program, but not link. This is a boolean to <tt>gcc</tt>. If <tt>-c</tt>
+is specified, compile only (<b>true</b>), otherwise, compile and link (<b>false</b>).
+</ul>
+<p>
+The <tt>getopt_long</tt> provides a short-hand notation for setting flags as this example shows:
+
+</p><pre class="sourcecode"><code><font color="990099">#include &lt;getopt.h&gt; /* getopt */</font>
+<font color="990099">#include &lt;stdio.h&gt;  /* printf */</font>
+
+<font color="990099">/* File scope flags, all default to 0 */</font>
+<b>static</b> <b>int</b> f_add;
+<b>static</b> <b>int</b> f_append;
+<b>static</b> <b>int</b> f_create;
+<b>static</b> <b>int</b> f_delete;
+<b>static</b> <b>int</b> f_verbose;
+
+<b>int</b> main(<b>int</b> argc, <b>char</b> **argv)
+{
+  <b>int</b> c;
+
+  <b>while</b> (1) 
+  {
+    <b>int</b> option_index = 0;
+    <b>static struct</b> option long_options[] = 
+    {
+      {<font color="#9933CC">"add"</font>,     no_argument, &amp;f_add,     1},
+      {<font color="#9933CC">"append"</font>,  no_argument, &amp;f_append,  1},
+      {<font color="#9933CC">"create"</font>,  no_argument, &amp;f_create,  1},
+      {<font color="#9933CC">"delete"</font>,  no_argument, &amp;f_delete,  1},
+      {<font color="#9933CC">"verbose"</font>, no_argument, &amp;f_verbose, 1},
+      {NULL,      0,           NULL,       0}
+    };
+
+    c = getopt_long(argc, argv, <font color="#9933CC">"-:"</font>, long_options, &amp;option_index);
+    <b>if</b> (c == -1)
+      <b>break</b>;
+
+    <b>switch</b> (c) 
+    {
+      <b>case</b> 1:
+        printf(<font color="#9933CC">"regular argument '%s'\n"</font>, optarg);
+        <b>break</b>;
+
+      <b>case</b> <font color="#9933CC">'?'</font>:
+        printf(<font color="#9933CC">"Unknown option %c\n"</font>, optopt);
+        <b>break</b>;
+    }
+  }
+
+  printf(<font color="#9933CC">"    f_add: %i\n"</font>, f_add);
+  printf(<font color="#9933CC">" f_append: %i\n"</font>, f_append);
+  printf(<font color="#9933CC">" f_delete: %i\n"</font>, f_delete);
+  printf(<font color="#9933CC">" f_create: %i\n"</font>, f_create);
+  printf(<font color="#9933CC">"f_verbose: %i\n"</font>, f_verbose);
+
+  <b>return</b> 0;
+}
+</code></pre>
+
+Sample output:
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="5">
+<tbody><tr><th>Command line</th><th>Output</th></tr>
+<tr valign="top">
+<td>
+<pre>./a.out --verbose --create
+</pre>
+</td>
+<td>
+<pre>    f_add: 0
+ f_append: 0
+ f_delete: 0
+ f_create: 1
+f_verbose: 1
+</pre>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<pre>./a.out --verbose --append --create --add --delete
+</pre>
+</td>
+<td>
+<pre>    f_add: 1
+ f_append: 1
+ f_delete: 1
+ f_create: 1
+f_verbose: 1
+</pre>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<pre>./a.out --v --c --ap --ad --d
+</pre>
+</td>
+<td>
+<pre>    f_add: 1
+ f_append: 1
+ f_delete: 1
+ f_create: 1
+f_verbose: 1
+</pre>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<pre>./a.out -v -c -d -a
+</pre>
+</td>
+<td>
+<pre>Unknown option v
+Unknown option c
+Unknown option d
+Unknown option a
+    f_add: 0
+ f_append: 0
+ f_delete: 0
+ f_create: 0
+f_verbose: 0
+</pre>
+</td>
+</tr>
+</tbody></table>
+</blockquote>
+
+Recall the <tt>option</tt> structure:
+<blockquote><pre>struct option 
+{
+  const char *name;    /* name without -- in front                                  */
+  int         has_arg; /* one of: no_argument, required_argument, optional_argument */
+  int        *flag;    /* how the results are returned                              */
+  int         val;     /* the value to return or to put in flag                     */
+};
+</pre></blockquote>
+
+Notes:
+<ul>
+  <li>If the <i>flag</i> field is not <tt>NULL</tt>, then the variable represented by the pointer
+    will be used to store the value of the <i>val</i> field. This makes it convenient to
+    set flags, without having to do it in a <tt><b>case</b></tt> label in the <tt><b>switch</b></tt>
+    statement.</li>
+  <li>If you still want to handle the short options, you will have to include them in <tt>optstring</tt> and
+    handle them in the <tt><b>switch</b></tt> statement yourself.</li>
+  <li>The flag variables must be outside of the function, either global or (preferably) file scope. 
+    (They could be <tt>static</tt> inside of the function, but would be less useful.)
+    This is a limitation
+    of the initialization of the structure fields in C.</li>
+  <li>Using global or file scope variables is generally not a problem because the flags
+    will likely be used in other parts of the program, so they can't be local to this function.</li>
+  <li>The value of the <i>val</i> field can be any integer, but for flags, it's generally 1.</li>
+</ul>
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<a name="SUMMARY"></a>
+<p class="sectionheader">
+Summary
+</p>
+
+Behavior:
+<ul>
+  <li>Default behavior is to act like POSIX and require all options before args. 
+  Using a minus sign (<tt>-</tt>) as the first character disables this.</li>
+  
+  <li>Without the minus sign (<tt>-</tt>), all non-option args are moved to the end of the array
+  and will be processed outside of the while loop. (See code above.) 
+  <tt><b>getopt</b></tt> ignores them during the parsing.</li>
+
+  <li>With the minus sign (<tt>-</tt>), the non-options are parsed as they are found. <tt><b>getopt</b></tt> returns
+  1 when a non-option arg is found.</li>
+
+  <li>By default, you can't distinguish between an unknown option and a 
+  missing (required) option arg. <tt><b>getopt</b></tt> returns a question mark (<tt>?</tt>) in both cases.
+  Using a colon (<tt>:</tt>) as the first character causes <tt><b>getopt</b></tt> to:
+  <blockquote>
+    return <tt>?</tt> for an unknown option<br>
+    return <tt>:</tt> for a missing required option arg
+  </blockquote>
+  </li><li>When using both the minus sign (<tt>-</tt>) and colon (<tt>:</tt>) in the option string, the 
+    minus sign (<tt>-</tt>) must come before the colon (<tt>:</tt>) at the front of the string.</li>
+</ul>
+
+
+
+Summary for short options:
+<ul>
+  <li> If a short option has a <b>required</b> arg, you can use either of these first two:
+  <blockquote><pre>-ofoo   (OK, space is not required)
+-o foo  (OK, space is allowed)
+<font color="red">-o=foo  (incorrect, the arg will be interpreted as '=foo')</font>
+  </pre></blockquote>
+  </li>
+  <li> If a short option has an <b>optional</b> arg, you can use either of these first two:
+  <blockquote><pre>-o      (OK, no arg supplied, optarg is NULL)
+-ofoo   (OK, optional arg supplied, optarg points to 'foo')
+<font color="red">-o foo  (incorrect, foo is just a regular arg to the command)</font>
+  </pre></blockquote>
+  </li>
+</ul>
+
+Summary for long options:
+<ul>
+  <li> If a long option has a <b>required</b> arg, you can use either of these first two:
+  <blockquote><pre>--option=arg    (OK, equal sign with no spaces)
+--option arg    (OK, space is allowed)
+<font color="red">--option = arg  (incorrect, no spaces allowed with equal sign)</font>
+<font color="red">--optionarg     (incorrect, must have a space or an equal sign)</font>
+  </pre></blockquote>
+  </li>
+  <li> If a long option has an <b>optional</b> arg, you can use either of these first two:
+  <blockquote><pre>--option      (OK, no arg supplied, optarg is NULL)
+--option=arg  (OK, must use equal sign with no spaces)
+<font color="red">--option arg  (incorrect, must use equal sign with no spaces)</font>
+<font color="red">--optionarg   (incorrect, must use equal sign with no spaces)</font>
+  </pre></blockquote>
+  </li>
+</ul>
+
+Other points:
+<ul>
+  <li>Sometimes, you need to process the command line more than once. To do so, you must reset
+the global variable <tt>optind</tt> to 1 before calling <tt>getopt</tt>. Resetting this
+variable causes <tt>getopt</tt> to start over at the beginning of the command line.</li>
+<li>Using the long options, you can add some shortcuts by setting flag to the address
+  of a variable. Look at the end of section 2.3.3.1 in <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/getopt_ch02.pdf">this document</a>.</li>
+<li>Some shells (like bash) will do auto-complete for long options. For example, at a command prompt
+type '<tt>diff --str</tt>' (without the quotes) and then press the TAB key. Nice. Very Nice.</li>
+
+</ul>
+
+<blockquote><pre></pre></blockquote>
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<a name="OTHER"></a>
+<p class="sectionheader">
+Other Uses For Command Line Arguments
+</p>
+Even if you think that you aren't going to use the command line or that no one else is going
+to run your program from the command line, there are other reasons why supporting command line
+arguments will make your program much nicer to use.
+<p>
+<b>Uses in GUI Environments</b>
+</p><p>
+Have you ever dragged and dropped a file in Windows, Mac, Linux, or any other graphical environment? 
+(Of course you have.) Well, a lot of the functionality of drag and drop is implemented via command 
+line arguments. That's right, command line arguments.
+</p><p>
+If you drag and drop a file onto an executable (or shortcut) in a graphical environment, you will notice
+that the executable is launched (run) and it opens the file that was dropped. So, if you drop a file onto
+<b>Notepad.exe</b> in Windows, Notepad will run and open the file that was dropped. This doesn't happen
+automatically. It works because the people that programmed Notepad provided a command line interface, which
+can also be used by GUI environments. (It's actually just another way to communicate with the program.)
+</p><p>
+If you dropped a file named <b>foo.txt</b> onto <b>Notepad.exe</b>, the
+GUI environment is really doing something like this:
+
+</p><blockquote><pre>Notepad.exe foo.txt
+</pre></blockquote>
+
+which is very similar to how you would run <b>Notepad.exe</b> from the command line and pass the name
+of the file, <b>foo.txt</b>, to the program.
+
+<p>
+<b>Launching a Program from a Running Program</b>
+</p><p>
+Most students have learned a simple trick that executing a program from within their C/C++ code can be 
+done using the <tt>system</tt> function. If your program was running and you wanted to execute
+<b>Notepad.exe</b> (Windows, of course) from your program and have it edit <b>foo.txt</b>, you would do this:
+
+</p><blockquote><pre>system("Notepad foo.txt");
+</pre></blockquote>
+
+This will load <b>Notepad.exe</b> and pass the filename, <b>foo.txt</b>. to Notepad. <b>Notepad.exe</b>
+will parse the command line and realize that it is being asked to load the file <b>foo.txt</b>.
+
+<p class="info">
+It is often a good idea to have your programs support command line arguments, even if you don't think
+that you or anyone else will ever actually execute the program from a command line. Command line arguments are
+a very simple way for one process to communicate with another and are supported on all operating systems in
+pretty much the same way.
+</p>
+
+<blockquote><pre></pre></blockquote>
+
+<p></p><hr width="100%"><p>
+<b>Additional Information:</b>
+</p><p>
+</p><ul>
+<li><a href="http://linux.die.net/man/3/getopt">man page</a> for getopt .</li>
+<li><span id="wpurl"><a class="wplabel">getopt</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Getopt">getopt</a> on Wikipedia.</li>
+<li>An <a href="http://www.informit.com/articles/printerfriendly.aspx?p=175771">introduction to getopt</a> from Informit.
+(<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/getopt_ch02.pdf">PDF file</a>).</li>
+<li>A version for Windows can be found <a href="http://www.codeproject.com/Articles/157001/Full-getopt-Port-for-Unicode-and-Multibyte-Microso">here</a>.</li>
+</ul>
+<p>
+
+<!--<br><br><br><br><br>-->
+
+
+
+</p><blockquote><pre></pre></blockquote>
+  
+  
+<blockquote><pre></pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<tt><b></b></tt>
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<!--
+
+<big>&rarr;</big>
+
+	<span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne &copy;2009</span>
+	
+<blockquote>
+<table border=0 cellspacing=0 cellpadding=2>
+	<tr><td><img src="ComputerComponents-1.png"></td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne &copy;2009&nbsp;&nbsp;</span></td></tr>
+</table>
+</blockquote>
+	
+-->
+</body></html>

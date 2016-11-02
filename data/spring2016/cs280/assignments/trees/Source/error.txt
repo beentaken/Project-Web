@@ -1,0 +1,1085 @@
+In file included from driver-sample.cpp:11:0:
+BSTree.h:35:11: error: ‘typname’ has not been declared
+ template <typname T>
+           ^
+BSTree.h:43:7: error: ‘T’ does not name a type
+       T data;
+       ^
+BSTree.h:48:25: error: ‘T’ does not name a type
+       BinTreeNode(const T& value) : left(0), right(0), data(value), balance_factor(0), count(0) {};
+                         ^
+BSTree.h:48:28: error: ISO C++ forbids declaration of ‘value’ with no type [-fpermissive]
+       BinTreeNode(const T& value) : left(0), right(0), data(value), balance_factor(0), count(0) {};
+                            ^
+BSTree.h:57:31: error: ‘T’ does not name a type
+     virtual void insert(const T& value);
+                               ^
+BSTree.h:57:34: error: ISO C++ forbids declaration of ‘value’ with no type [-fpermissive]
+     virtual void insert(const T& value);
+                                  ^
+BSTree.h:58:31: error: ‘T’ does not name a type
+     virtual void remove(const T& value);
+                               ^
+BSTree.h:58:34: error: ISO C++ forbids declaration of ‘value’ with no type [-fpermissive]
+     virtual void remove(const T& value);
+                                  ^
+BSTree.h:70:29: error: ‘T’ does not name a type
+     BinTree make_node(const T& value);
+                             ^
+BSTree.h:70:32: error: ISO C++ forbids declaration of ‘value’ with no type [-fpermissive]
+     BinTree make_node(const T& value);
+                                ^
+BSTree.h:75:50: error: ‘T’ does not name a type
+     bool find_item   (BinTree const &tree, const T& Data, unsigned &compares) const;
+                                                  ^
+BSTree.h:75:53: error: ISO C++ forbids declaration of ‘Data’ with no type [-fpermissive]
+     bool find_item   (BinTree const &tree, const T& Data, unsigned &compares) const;
+                                                     ^
+BSTree.h:76:44: error: ‘T’ does not name a type
+     void delete_item (BinTree &tree, const T& Data);
+                                            ^
+BSTree.h:76:47: error: ISO C++ forbids declaration of ‘Data’ with no type [-fpermissive]
+     void delete_item (BinTree &tree, const T& Data);
+                                               ^
+BSTree.h:77:44: error: ‘T’ does not name a type
+     void insert_item (BinTree &tree, const T& value);
+                                            ^
+BSTree.h:77:47: error: ISO C++ forbids declaration of ‘value’ with no type [-fpermissive]
+     void insert_item (BinTree &tree, const T& value);
+                                               ^
+BSTree.h: In constructor ‘BSTree<T>::BinTreeNode::BinTreeNode()’:
+BSTree.h:47:46: error: class ‘BSTree<T>::BinTreeNode’ does not have any field named ‘data’
+       BinTreeNode(void) : left(0), right(0), data(0), balance_factor(0), count(0) {};
+                                              ^
+BSTree.h: In constructor ‘BSTree<T>::BinTreeNode::BinTreeNode(const int&)’:
+BSTree.h:48:56: error: class ‘BSTree<T>::BinTreeNode’ does not have any field named ‘data’
+       BinTreeNode(const T& value) : left(0), right(0), data(value), balance_factor(0), count(0) {};
+                                                        ^
+In file included from BSTree.h:87:0,
+                 from driver-sample.cpp:11:
+BSTree.cpp: At global scope:
+BSTree.cpp:5:9: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ BSTree<T>::BSTree(ObjectAllocator *OA, bool ShareOA)
+         ^
+BSTree.cpp:5:9: error:   expected a constant of type ‘int’, got ‘T’
+BSTree.cpp:5:52: error: declaration of template ‘template<class T> int BSTree(ObjectAllocator*, bool)’
+ BSTree<T>::BSTree(ObjectAllocator *OA, bool ShareOA)
+                                                    ^
+In file included from driver-sample.cpp:11:0:
+BSTree.h:36:7: error: conflicts with previous declaration ‘template<int T> class BSTree’
+ class BSTree
+       ^
+In file included from BSTree.h:87:0,
+                 from driver-sample.cpp:11:
+BSTree.cpp: In function ‘int BSTree(ObjectAllocator*, bool)’:
+BSTree.cpp:9:7: error: ‘objAllocator_’ was not declared in this scope
+       objAllocator_ = OA; // Use rhs' allocator
+       ^
+BSTree.cpp:10:7: error: ‘freeAllocator_’ was not declared in this scope
+       freeAllocator_ = false;            // We don't own it (won't free it)
+       ^
+BSTree.cpp:11:7: error: ‘shareAllocator_’ was not declared in this scope
+       shareAllocator_ = ShareOA;            // If a copy of 'this object' is made, share the allocator
+       ^
+BSTree.cpp:17:7: error: ‘objAllocator_’ was not declared in this scope
+       objAllocator_ = new ObjectAllocator(sizeof(BinTreeNode), config);
+       ^
+BSTree.cpp:17:50: error: ‘BinTreeNode’ was not declared in this scope
+       objAllocator_ = new ObjectAllocator(sizeof(BinTreeNode), config);
+                                                  ^
+BSTree.cpp:19:7: error: ‘freeAllocator_’ was not declared in this scope
+       freeAllocator_ = true;   // We own the allocator, we will have to free it
+       ^
+BSTree.cpp:20:7: error: ‘shareAllocator_’ was not declared in this scope
+       shareAllocator_ = ShareOA; // Do not share this allocator with any other list
+       ^
+BSTree.cpp:23:14: error: there are no arguments to ‘get_root’ that depend on a template parameter, so a declaration of ‘get_root’ must be available [-fpermissive]
+     get_root() = 0;
+              ^
+BSTree.cpp:23:14: note: (if you use ‘-fpermissive’, G++ will accept your code, but allowing the use of an undeclared name is deprecated)
+BSTree.cpp:24:1: warning: no return statement in function returning non-void [-Wreturn-type]
+ }  
+ ^
+BSTree.cpp: At global scope:
+BSTree.cpp:27:9: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ BSTree<T>::BSTree(const BSTree<T>& tree)
+         ^
+BSTree.cpp:27:9: error:   expected a constant of type ‘int’, got ‘T’
+BSTree.cpp:27:33: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ BSTree<T>::BSTree(const BSTree<T>& tree)
+                                 ^
+BSTree.cpp:27:33: error:   expected a constant of type ‘int’, got ‘T’
+BSTree.cpp:27:40: error: declaration of template ‘template<class T> int BSTree(const int&)’
+ BSTree<T>::BSTree(const BSTree<T>& tree)
+                                        ^
+In file included from driver-sample.cpp:11:0:
+BSTree.h:36:7: error: conflicts with previous declaration ‘template<int T> class BSTree’
+ class BSTree
+       ^
+In file included from BSTree.h:87:0,
+                 from driver-sample.cpp:11:
+BSTree.cpp: In function ‘int BSTree(const int&)’:
+BSTree.cpp:29:13: error: request for member ‘shareAllocator_’ in ‘tree’, which is of non-class type ‘const int’
+    if (tree.shareAllocator_)
+             ^
+BSTree.cpp:31:7: error: ‘objAllocator_’ was not declared in this scope
+       objAllocator_ = tree.objAllocator_; // Use rhs' allocator
+       ^
+BSTree.cpp:31:28: error: request for member ‘objAllocator_’ in ‘tree’, which is of non-class type ‘const int’
+       objAllocator_ = tree.objAllocator_; // Use rhs' allocator
+                            ^
+BSTree.cpp:32:7: error: ‘freeAllocator_’ was not declared in this scope
+       freeAllocator_ = false;            // We don't own it (won't free it)
+       ^
+BSTree.cpp:33:7: error: ‘shareAllocator_’ was not declared in this scope
+       shareAllocator_ = true;            // If a copy of 'this object' is made, share the allocator
+       ^
+BSTree.cpp:39:7: error: ‘objAllocator_’ was not declared in this scope
+       objAllocator_ = new ObjectAllocator(sizeof(BinTreeNode), config);
+       ^
+BSTree.cpp:39:50: error: ‘BinTreeNode’ was not declared in this scope
+       objAllocator_ = new ObjectAllocator(sizeof(BinTreeNode), config);
+                                                  ^
+BSTree.cpp:41:7: error: ‘freeAllocator_’ was not declared in this scope
+       freeAllocator_ = true;   // We own the allocator, we will have to free it
+       ^
+BSTree.cpp:42:7: error: ‘shareAllocator_’ was not declared in this scope
+       shareAllocator_ = false; // Do not share this allocator with any other list
+       ^
+BSTree.cpp:45:5: error: ‘root_’ was not declared in this scope
+     root_ = copy_tree(tree.root());
+     ^
+BSTree.cpp:45:28: error: request for member ‘root’ in ‘tree’, which is of non-class type ‘const int’
+     root_ = copy_tree(tree.root());
+                            ^
+BSTree.cpp:45:34: error: there are no arguments to ‘copy_tree’ that depend on a template parameter, so a declaration of ‘copy_tree’ must be available [-fpermissive]
+     root_ = copy_tree(tree.root());
+                                  ^
+BSTree.cpp:46:1: warning: no return statement in function returning non-void [-Wreturn-type]
+ }
+ ^
+BSTree.cpp: At global scope:
+BSTree.cpp:49:9: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ BSTree<T>& BSTree<T>::operator=(const BSTree<T>& rhs)
+         ^
+BSTree.cpp:49:9: error:   expected a constant of type ‘int’, got ‘T’
+BSTree.cpp:49:20: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ BSTree<T>& BSTree<T>::operator=(const BSTree<T>& rhs)
+                    ^
+BSTree.cpp:49:20: error:   expected a constant of type ‘int’, got ‘T’
+BSTree.cpp:49:47: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ BSTree<T>& BSTree<T>::operator=(const BSTree<T>& rhs)
+                                               ^
+BSTree.cpp:49:47: error:   expected a constant of type ‘int’, got ‘T’
+BSTree.cpp:49:53: error: ‘int& operator=(const int&)’ must be a nonstatic member function
+ BSTree<T>& BSTree<T>::operator=(const BSTree<T>& rhs)
+                                                     ^
+BSTree.cpp:58:9: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ BSTree<T>::BinTree BSTree<T>::copy_tree(BSTree<T>::BinTree tree)
+         ^
+BSTree.cpp:58:9: error:   expected a constant of type ‘int’, got ‘T’
+BSTree.cpp:58:20: error: expected initializer before ‘BSTree’
+ BSTree<T>::BinTree BSTree<T>::copy_tree(BSTree<T>::BinTree tree)
+                    ^
+BSTree.cpp:75:9: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ BSTree<T>::~BSTree()
+         ^
+BSTree.cpp:75:9: error:   expected a constant of type ‘int’, got ‘T’
+BSTree.cpp:86:14: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ bool BSTree<T>::ImplementedIndexing(void)
+              ^
+BSTree.cpp:86:14: error:   expected a constant of type ‘int’, got ‘T’
+BSTree.cpp:92:9: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ BSTree<T>::BinTree BSTree<T>::make_node(const T& value)
+         ^
+BSTree.cpp:92:9: error:   expected a constant of type ‘int’, got ‘T’
+BSTree.cpp:92:20: error: expected initializer before ‘BSTree’
+ BSTree<T>::BinTree BSTree<T>::make_node(const T& value)
+                    ^
+BSTree.cpp:107:14: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ void BSTree<T>::free_node(BSTree<T>::BinTree node)
+              ^
+BSTree.cpp:107:14: error:   expected a constant of type ‘int’, got ‘T’
+BSTree.cpp:107:35: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ void BSTree<T>::free_node(BSTree<T>::BinTree node)
+                                   ^
+BSTree.cpp:107:35: error:   expected a constant of type ‘int’, got ‘T’
+BSTree.cpp:107:46: error: expected ‘,’ or ‘...’ before ‘node’
+ void BSTree<T>::free_node(BSTree<T>::BinTree node)
+                                              ^
+BSTree.cpp: In function ‘void free_node(int)’:
+BSTree.cpp:109:2: error: ‘node’ was not declared in this scope
+  node->~BinTreeNode();
+  ^
+BSTree.cpp:110:2: error: ‘objAllocator_’ was not declared in this scope
+  objAllocator_->Free(node);
+  ^
+BSTree.cpp: At global scope:
+BSTree.cpp:114:14: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ void BSTree<T>::find_predecessor(BSTree<T>::BinTree tree, BSTree<T>::BinTree &predecessor) const
+              ^
+BSTree.cpp:114:14: error:   expected a constant of type ‘int’, got ‘T’
+BSTree.cpp:114:42: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ void BSTree<T>::find_predecessor(BSTree<T>::BinTree tree, BSTree<T>::BinTree &predecessor) const
+                                          ^
+BSTree.cpp:114:42: error:   expected a constant of type ‘int’, got ‘T’
+BSTree.cpp:114:53: error: expected ‘,’ or ‘...’ before ‘tree’
+ void BSTree<T>::find_predecessor(BSTree<T>::BinTree tree, BSTree<T>::BinTree &predecessor) const
+                                                     ^
+BSTree.cpp:114:92: error: non-member function ‘void find_predecessor(int)’ cannot have cv-qualifier
+ void BSTree<T>::find_predecessor(BSTree<T>::BinTree tree, BSTree<T>::BinTree &predecessor) const
+                                                                                            ^
+BSTree.cpp: In function ‘void find_predecessor(int)’:
+BSTree.cpp:116:2: error: ‘predecessor’ was not declared in this scope
+  predecessor = tree->left;
+  ^
+BSTree.cpp:116:16: error: ‘tree’ was not declared in this scope
+  predecessor = tree->left;
+                ^
+BSTree.cpp: At global scope:
+BSTree.cpp:122:14: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ void BSTree<T>::insert(const T& value)
+              ^
+BSTree.cpp:122:14: error:   expected a constant of type ‘int’, got ‘T’
+BSTree.cpp: In function ‘void insert(const T&)’:
+BSTree.cpp:124:15: error: ‘root_’ was not declared in this scope
+   insert_item(root_, value);
+               ^
+BSTree.cpp: At global scope:
+BSTree.cpp:128:14: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ void BSTree<T>::insert_item(BSTree<T>::BinTree &tree, const T &value)
+              ^
+BSTree.cpp:128:14: error:   expected a constant of type ‘int’, got ‘T’
+BSTree.cpp:128:37: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ void BSTree<T>::insert_item(BSTree<T>::BinTree &tree, const T &value)
+                                     ^
+BSTree.cpp:128:37: error:   expected a constant of type ‘int’, got ‘T’
+BSTree.cpp:128:48: error: expected ‘,’ or ‘...’ before ‘&’ token
+ void BSTree<T>::insert_item(BSTree<T>::BinTree &tree, const T &value)
+                                                ^
+BSTree.cpp: In function ‘void insert_item(int)’:
+BSTree.cpp:130:6: error: ‘tree’ was not declared in this scope
+  if (tree == 0)
+      ^
+BSTree.cpp:131:23: error: ‘value’ was not declared in this scope
+      tree = make_node(value);
+                       ^
+BSTree.cpp:131:28: error: there are no arguments to ‘make_node’ that depend on a template parameter, so a declaration of ‘make_node’ must be available [-fpermissive]
+      tree = make_node(value);
+                            ^
+BSTree.cpp:132:11: error: ‘value’ was not declared in this scope
+  else if (value < tree->data)
+           ^
+BSTree.cpp: At global scope:
+BSTree.cpp:141:14: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ void BSTree<T>::remove(const T& value)
+              ^
+BSTree.cpp:141:14: error:   expected a constant of type ‘int’, got ‘T’
+BSTree.cpp: In function ‘void remove(const T&)’:
+BSTree.cpp:143:14: error: ‘root_’ was not declared in this scope
+  delete_item(root_, value);
+              ^
+BSTree.cpp: At global scope:
+BSTree.cpp:147:14: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ void BSTree<T>::delete_item(BSTree<T>::BinTree &tree, const T& Data)
+              ^
+BSTree.cpp:147:14: error:   expected a constant of type ‘int’, got ‘T’
+BSTree.cpp:147:37: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ void BSTree<T>::delete_item(BSTree<T>::BinTree &tree, const T& Data)
+                                     ^
+BSTree.cpp:147:37: error:   expected a constant of type ‘int’, got ‘T’
+BSTree.cpp:147:48: error: expected ‘,’ or ‘...’ before ‘&’ token
+ void BSTree<T>::delete_item(BSTree<T>::BinTree &tree, const T& Data)
+                                                ^
+BSTree.cpp: In function ‘void delete_item(int)’:
+BSTree.cpp:149:7: error: ‘tree’ was not declared in this scope
+   if (tree == 0)
+       ^
+BSTree.cpp:151:12: error: ‘Data’ was not declared in this scope
+   else if (Data < tree->data)
+            ^
+BSTree.cpp:159:15: error: expected ‘;’ before ‘temp’
+       BinTree temp = tree;
+               ^
+BSTree.cpp:161:17: error: ‘temp’ was not declared in this scope
+       free_node(temp);
+                 ^
+BSTree.cpp:165:15: error: expected ‘;’ before ‘temp’
+       BinTree temp = tree;
+               ^
+BSTree.cpp:167:17: error: ‘temp’ was not declared in this scope
+       free_node(temp);
+                 ^
+BSTree.cpp:171:15: error: expected ‘;’ before ‘pred’
+       BinTree pred = 0;
+               ^
+BSTree.cpp:172:30: error: ‘pred’ was not declared in this scope
+       find_predecessor(tree, pred);
+                              ^
+BSTree.cpp: At global scope:
+BSTree.cpp:180:6: error: ‘template<int T> class BSTree’ used without template parameters
+ void BSTree::clear(void)
+      ^
+BSTree.cpp: In function ‘void clear()’:
+BSTree.cpp:182:14: error: ‘root_’ was not declared in this scope
+   clear_tree(root_);
+              ^
+BSTree.cpp:182:19: error: there are no arguments to ‘clear_tree’ that depend on a template parameter, so a declaration of ‘clear_tree’ must be available [-fpermissive]
+   clear_tree(root_);
+                   ^
+BSTree.cpp: At global scope:
+BSTree.cpp:186:14: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ void BSTree<T>::clear_tree(BSTree<T>::BinTree &tree)
+              ^
+BSTree.cpp:186:14: error:   expected a constant of type ‘int’, got ‘T’
+BSTree.cpp:186:36: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ void BSTree<T>::clear_tree(BSTree<T>::BinTree &tree)
+                                    ^
+BSTree.cpp:186:36: error:   expected a constant of type ‘int’, got ‘T’
+BSTree.cpp:186:47: error: expected ‘,’ or ‘...’ before ‘&’ token
+ void BSTree<T>::clear_tree(BSTree<T>::BinTree &tree)
+                                               ^
+BSTree.cpp: In function ‘void clear_tree(int)’:
+BSTree.cpp:188:6: error: ‘root_’ was not declared in this scope
+  if(!root_)
+      ^
+BSTree.cpp:191:9: error: ‘tree’ was not declared in this scope
+   while(tree->right)
+         ^
+BSTree.cpp:194:8: error: ‘tree’ was not declared in this scope
+  while(tree->left)
+        ^
+BSTree.cpp:197:10: error: ‘tree’ was not declared in this scope
+   remove(tree->data);
+          ^
+BSTree.cpp: At global scope:
+BSTree.cpp:201:14: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ bool BSTree<T>::find(const T& value, unsigned &compares) const
+              ^
+BSTree.cpp:201:14: error:   expected a constant of type ‘int’, got ‘T’
+BSTree.cpp:201:58: error: non-member function ‘bool find(const T&, unsigned int&)’ cannot have cv-qualifier
+ bool BSTree<T>::find(const T& value, unsigned &compares) const
+                                                          ^
+BSTree.cpp: In function ‘bool find(const T&, unsigned int&)’:
+BSTree.cpp:203:26: error: ‘root_’ was not declared in this scope
+  bool result = find_item(root_, value, compares);
+                          ^
+BSTree.cpp: At global scope:
+BSTree.cpp:208:14: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ bool BSTree<T>::find_item(BSTree<T>::BinTree const &tree, const T& Data, unsigned &compares) const
+              ^
+BSTree.cpp:208:14: error:   expected a constant of type ‘int’, got ‘T’
+BSTree.cpp:208:35: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ bool BSTree<T>::find_item(BSTree<T>::BinTree const &tree, const T& Data, unsigned &compares) const
+                                   ^
+BSTree.cpp:208:35: error:   expected a constant of type ‘int’, got ‘T’
+BSTree.cpp:208:46: error: expected ‘,’ or ‘...’ before ‘const’
+ bool BSTree<T>::find_item(BSTree<T>::BinTree const &tree, const T& Data, unsigned &compares) const
+                                              ^
+BSTree.cpp:208:94: error: non-member function ‘bool find_item(int)’ cannot have cv-qualifier
+ bool BSTree<T>::find_item(BSTree<T>::BinTree const &tree, const T& Data, unsigned &compares) const
+                                                                                              ^
+BSTree.cpp: In function ‘bool find_item(int)’:
+BSTree.cpp:210:7: error: ‘tree’ was not declared in this scope
+   if (tree == 0)
+       ^
+BSTree.cpp:212:5: error: ‘compares’ was not declared in this scope
+     compares++;
+     ^
+BSTree.cpp:215:12: error: ‘Data’ was not declared in this scope
+   else if (Data == tree->data)
+            ^
+BSTree.cpp:217:5: error: ‘compares’ was not declared in this scope
+     compares++;
+     ^
+BSTree.cpp:222:5: error: ‘compares’ was not declared in this scope
+     compares++;
+     ^
+BSTree.cpp:227:5: error: ‘compares’ was not declared in this scope
+     compares++;
+     ^
+BSTree.cpp: At global scope:
+BSTree.cpp:233:14: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ bool BSTree<T>::empty(void) const
+              ^
+BSTree.cpp:233:14: error:   expected a constant of type ‘int’, got ‘T’
+BSTree.cpp:233:29: error: non-member function ‘bool empty()’ cannot have cv-qualifier
+ bool BSTree<T>::empty(void) const
+                             ^
+BSTree.cpp: In function ‘bool empty()’:
+BSTree.cpp:235:5: error: ‘root_’ was not declared in this scope
+  if(root_ == NULL)
+     ^
+BSTree.cpp: At global scope:
+BSTree.cpp:242:22: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ unsigned int BSTree<T>::size(void) const
+                      ^
+BSTree.cpp:242:22: error:   expected a constant of type ‘int’, got ‘T’
+BSTree.cpp:242:36: error: non-member function ‘unsigned int size()’ cannot have cv-qualifier
+ unsigned int BSTree<T>::size(void) const
+                                    ^
+BSTree.cpp: In function ‘unsigned int size()’:
+BSTree.cpp:244:19: error: ‘root_’ was not declared in this scope
+  return tree_size(root_);
+                   ^
+BSTree.cpp:244:24: error: there are no arguments to ‘tree_size’ that depend on a template parameter, so a declaration of ‘tree_size’ must be available [-fpermissive]
+  return tree_size(root_);
+                        ^
+BSTree.cpp: At global scope:
+BSTree.cpp:248:21: error: ‘t’ was not declared in this scope
+ unsigned int BSTree<t>::tree_size(BSTree<T>::BinTree tree) const
+                     ^
+BSTree.cpp:248:22: error: template argument 1 is invalid
+ unsigned int BSTree<t>::tree_size(BSTree<T>::BinTree tree) const
+                      ^
+BSTree.cpp:248:43: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ unsigned int BSTree<t>::tree_size(BSTree<T>::BinTree tree) const
+                                           ^
+BSTree.cpp:248:43: error:   expected a constant of type ‘int’, got ‘T’
+BSTree.cpp:248:54: error: expected ‘,’ or ‘...’ before ‘tree’
+ unsigned int BSTree<t>::tree_size(BSTree<T>::BinTree tree) const
+                                                      ^
+BSTree.cpp:248:60: error: non-member function ‘unsigned int tree_size(int)’ cannot have cv-qualifier
+ unsigned int BSTree<t>::tree_size(BSTree<T>::BinTree tree) const
+                                                            ^
+BSTree.cpp: In function ‘unsigned int tree_size(int)’:
+BSTree.cpp:250:6: error: ‘tree’ was not declared in this scope
+  if (tree == 0)
+      ^
+BSTree.cpp: At global scope:
+BSTree.cpp:257:13: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ int BSTree<T>::height(void) const
+             ^
+BSTree.cpp:257:13: error:   expected a constant of type ‘int’, got ‘T’
+BSTree.cpp:257:29: error: non-member function ‘int height()’ cannot have cv-qualifier
+ int BSTree<T>::height(void) const
+                             ^
+BSTree.cpp: In function ‘int height()’:
+BSTree.cpp:259:21: error: ‘root_’ was not declared in this scope
+  return tree_height(root_);
+                     ^
+BSTree.cpp:259:26: error: there are no arguments to ‘tree_height’ that depend on a template parameter, so a declaration of ‘tree_height’ must be available [-fpermissive]
+  return tree_height(root_);
+                          ^
+BSTree.cpp: At global scope:
+BSTree.cpp:263:13: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ int BSTree<T>::tree_height(BSTree<T>::BinTree tree) const
+             ^
+BSTree.cpp:263:13: error:   expected a constant of type ‘int’, got ‘T’
+BSTree.cpp:263:36: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ int BSTree<T>::tree_height(BSTree<T>::BinTree tree) const
+                                    ^
+BSTree.cpp:263:36: error:   expected a constant of type ‘int’, got ‘T’
+BSTree.cpp:263:47: error: expected ‘,’ or ‘...’ before ‘tree’
+ int BSTree<T>::tree_height(BSTree<T>::BinTree tree) const
+                                               ^
+BSTree.cpp:263:53: error: non-member function ‘int tree_height(int)’ cannot have cv-qualifier
+ int BSTree<T>::tree_height(BSTree<T>::BinTree tree) const
+                                                     ^
+BSTree.cpp: In function ‘int tree_height(int)’:
+BSTree.cpp:265:8: error: ‘tree’ was not declared in this scope
+    if (tree == 0)
+        ^
+BSTree.cpp:268:20: error: ‘tree’ was not declared in this scope
+    if (tree_height(tree->left) > tree_height(tree->right))
+                    ^
+BSTree.cpp: At global scope:
+BSTree.cpp:275:9: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ BSTree<T>::BinTree BSTree<T>::root(void) const
+         ^
+BSTree.cpp:275:9: error:   expected a constant of type ‘int’, got ‘T’
+BSTree.cpp:275:20: error: expected initializer before ‘BSTree’
+ BSTree<T>::BinTree BSTree<T>::root(void) const
+                    ^
+BSTree.cpp:280:8: error: ‘T’ was not declared in this scope
+ BSTree<T>::BinTree& BSTree<T>::get_root(void)
+        ^
+BSTree.cpp:280:9: error: template argument 1 is invalid
+ BSTree<T>::BinTree& BSTree<T>::get_root(void)
+         ^
+BSTree.cpp:280:19: error: expected initializer before ‘&’ token
+ BSTree<T>::BinTree& BSTree<T>::get_root(void)
+                   ^
+driver-sample.cpp:26:46: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ void SetTreePositions(const typename BSTree<T>::BinTreeNode *tree, 
+                                              ^
+driver-sample.cpp:26:46: error:   expected a constant of type ‘int’, got ‘T’
+driver-sample.cpp:28:55: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+                       std::map<const typename BSTree<T>::BinTreeNode *, 
+                                                       ^
+driver-sample.cpp:28:55: error:   expected a constant of type ‘int’, got ‘T’
+driver-sample.cpp:28:70: error: expected template-argument before ‘*’ token
+                       std::map<const typename BSTree<T>::BinTreeNode *, 
+                                                                      ^
+driver-sample.cpp:28:70: error: expected ‘>’ before ‘*’ token
+driver-sample.cpp:29:43: error: wrong number of template arguments (1, should be 4)
+                       std::pair<int, int> >& NodePositions)
+                                           ^
+In file included from /usr/include/c++/4.8/map:61:0,
+                 from driver-sample.cpp:2:
+/usr/include/c++/4.8/bits/stl_map.h:96:11: error: provided for ‘template<class _Key, class _Tp, class _Compare, class _Alloc> class std::map’
+     class map
+           ^
+driver-sample.cpp:29:44: error: expected ‘::’ before ‘&’ token
+                       std::pair<int, int> >& NodePositions)
+                                            ^
+driver-sample.cpp:29:44: error: expected identifier before ‘&’ token
+driver-sample.cpp: In function ‘void SetTreePositions(const int*, int, int&)’:
+driver-sample.cpp:34:29: error: request for member ‘left’ in ‘tree->’, which is of non-class type ‘const int’
+   SetTreePositions<T>(tree->left, depth + 1, NodePositions);
+                             ^
+driver-sample.cpp:36:36: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+   std::pair<const typename BSTree<T>::BinTreeNode *, std::pair<int, int> > pr(tree, XY);
+                                    ^
+driver-sample.cpp:36:36: error:   expected a constant of type ‘int’, got ‘T’
+driver-sample.cpp:36:51: error: expected template-argument before ‘*’ token
+   std::pair<const typename BSTree<T>::BinTreeNode *, std::pair<int, int> > pr(tree, XY);
+                                                   ^
+driver-sample.cpp:36:51: error: expected ‘>’ before ‘*’ token
+driver-sample.cpp:36:74: error: wrong number of template arguments (1, should be 2)
+   std::pair<const typename BSTree<T>::BinTreeNode *, std::pair<int, int> > pr(tree, XY);
+                                                                          ^
+In file included from /usr/include/c++/4.8/bits/stl_algobase.h:64:0,
+                 from /usr/include/c++/4.8/bits/char_traits.h:39,
+                 from /usr/include/c++/4.8/ios:40,
+                 from /usr/include/c++/4.8/ostream:38,
+                 from /usr/include/c++/4.8/iostream:39,
+                 from driver-sample.cpp:1:
+/usr/include/c++/4.8/bits/stl_pair.h:96:12: error: provided for ‘template<class _T1, class _T2> struct std::pair’
+     struct pair
+            ^
+driver-sample.cpp:36:76: error: expected ‘::’ before ‘pr’
+   std::pair<const typename BSTree<T>::BinTreeNode *, std::pair<int, int> > pr(tree, XY);
+                                                                            ^
+driver-sample.cpp:36:78: error: invalid type in declaration before ‘(’ token
+   std::pair<const typename BSTree<T>::BinTreeNode *, std::pair<int, int> > pr(tree, XY);
+                                                                              ^
+driver-sample.cpp:36:87: error: expression list treated as compound expression in initializer [-fpermissive]
+   std::pair<const typename BSTree<T>::BinTreeNode *, std::pair<int, int> > pr(tree, XY);
+                                                                                       ^
+driver-sample.cpp:37:17: error: request for member ‘insert’ in ‘NodePositions’, which is of non-class type ‘int’
+   NodePositions.insert(pr);
+                 ^
+driver-sample.cpp:38:29: error: request for member ‘right’ in ‘tree->’, which is of non-class type ‘const int’
+   SetTreePositions<T>(tree->right, depth + 1, NodePositions);
+                             ^
+driver-sample.cpp: At global scope:
+driver-sample.cpp:43:37: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ void SetTreePositions(const BSTree<T> &tree, 
+                                     ^
+driver-sample.cpp:43:37: error:   expected a constant of type ‘int’, got ‘T’
+driver-sample.cpp:44:55: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+                       std::map<const typename BSTree<T>::BinTreeNode *, 
+                                                       ^
+driver-sample.cpp:44:55: error:   expected a constant of type ‘int’, got ‘T’
+driver-sample.cpp:44:70: error: expected template-argument before ‘*’ token
+                       std::map<const typename BSTree<T>::BinTreeNode *, 
+                                                                      ^
+driver-sample.cpp:44:70: error: expected ‘>’ before ‘*’ token
+driver-sample.cpp:45:43: error: wrong number of template arguments (1, should be 4)
+                       std::pair<int, int> >& NodePositions)
+                                           ^
+In file included from /usr/include/c++/4.8/map:61:0,
+                 from driver-sample.cpp:2:
+/usr/include/c++/4.8/bits/stl_map.h:96:11: error: provided for ‘template<class _Key, class _Tp, class _Compare, class _Alloc> class std::map’
+     class map
+           ^
+driver-sample.cpp:45:44: error: expected ‘::’ before ‘&’ token
+                       std::pair<int, int> >& NodePositions)
+                                            ^
+driver-sample.cpp:45:44: error: expected identifier before ‘&’ token
+driver-sample.cpp: In function ‘void SetTreePositions(const int&, int&)’:
+driver-sample.cpp:48:17: error: request for member ‘clear’ in ‘NodePositions’, which is of non-class type ‘int’
+   NodePositions.clear();
+                 ^
+driver-sample.cpp:49:28: error: request for member ‘root’ in ‘tree’, which is of non-class type ‘const int’
+   SetTreePositions<T>(tree.root(), 0, NodePositions);
+                            ^
+driver-sample.cpp: At global scope:
+driver-sample.cpp:53:46: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ std::vector<std::pair<const typename BSTree<T>::BinTreeNode *, int> >
+                                              ^
+driver-sample.cpp:53:46: error:   expected a constant of type ‘int’, got ‘T’
+driver-sample.cpp:53:61: error: expected template-argument before ‘*’ token
+ std::vector<std::pair<const typename BSTree<T>::BinTreeNode *, int> >
+                                                             ^
+driver-sample.cpp:53:61: error: expected ‘>’ before ‘*’ token
+driver-sample.cpp:53:67: error: wrong number of template arguments (1, should be 2)
+ std::vector<std::pair<const typename BSTree<T>::BinTreeNode *, int> >
+                                                                   ^
+In file included from /usr/include/c++/4.8/bits/stl_algobase.h:64:0,
+                 from /usr/include/c++/4.8/bits/char_traits.h:39,
+                 from /usr/include/c++/4.8/ios:40,
+                 from /usr/include/c++/4.8/ostream:38,
+                 from /usr/include/c++/4.8/iostream:39,
+                 from driver-sample.cpp:1:
+/usr/include/c++/4.8/bits/stl_pair.h:96:12: error: provided for ‘template<class _T1, class _T2> struct std::pair’
+     struct pair
+            ^
+driver-sample.cpp:53:69: error: expected ‘::’ before ‘>’ token
+ std::vector<std::pair<const typename BSTree<T>::BinTreeNode *, int> >
+                                                                     ^
+driver-sample.cpp:53:69: error: expected identifier before ‘>’ token
+driver-sample.cpp:53:69: error: template argument 1 is invalid
+driver-sample.cpp:53:69: error: template argument 2 is invalid
+driver-sample.cpp:54:1: error: expected ‘::’ before ‘GetNodesAtLevel’
+ GetNodesAtLevel(int level, 
+ ^
+driver-sample.cpp:55:49: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+                 std::map<const typename BSTree<T>::BinTreeNode *, 
+                                                 ^
+driver-sample.cpp:55:49: error:   expected a constant of type ‘int’, got ‘T’
+driver-sample.cpp:55:64: error: expected template-argument before ‘*’ token
+                 std::map<const typename BSTree<T>::BinTreeNode *, 
+                                                                ^
+driver-sample.cpp:55:64: error: expected ‘>’ before ‘*’ token
+driver-sample.cpp:56:37: error: wrong number of template arguments (1, should be 4)
+                 std::pair<int, int> >& NodePositions)
+                                     ^
+In file included from /usr/include/c++/4.8/map:61:0,
+                 from driver-sample.cpp:2:
+/usr/include/c++/4.8/bits/stl_map.h:96:11: error: provided for ‘template<class _Key, class _Tp, class _Compare, class _Alloc> class std::map’
+     class map
+           ^
+driver-sample.cpp:56:38: error: expected ‘::’ before ‘&’ token
+                 std::pair<int, int> >& NodePositions)
+                                      ^
+driver-sample.cpp:56:38: error: expected identifier before ‘&’ token
+driver-sample.cpp:56:53: error: ISO C++ forbids declaration of ‘GetNodesAtLevel’ with no type [-fpermissive]
+                 std::pair<int, int> >& NodePositions)
+                                                     ^
+driver-sample.cpp: In function ‘int GetNodesAtLevel(int, int&)’:
+driver-sample.cpp:58:48: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+   std::vector<std::pair<const typename BSTree<T>::BinTreeNode *, int> >nodes;
+                                                ^
+driver-sample.cpp:58:48: error:   expected a constant of type ‘int’, got ‘T’
+driver-sample.cpp:58:63: error: expected template-argument before ‘*’ token
+   std::vector<std::pair<const typename BSTree<T>::BinTreeNode *, int> >nodes;
+                                                               ^
+driver-sample.cpp:58:63: error: expected ‘>’ before ‘*’ token
+driver-sample.cpp:58:69: error: wrong number of template arguments (1, should be 2)
+   std::vector<std::pair<const typename BSTree<T>::BinTreeNode *, int> >nodes;
+                                                                     ^
+In file included from /usr/include/c++/4.8/bits/stl_algobase.h:64:0,
+                 from /usr/include/c++/4.8/bits/char_traits.h:39,
+                 from /usr/include/c++/4.8/ios:40,
+                 from /usr/include/c++/4.8/ostream:38,
+                 from /usr/include/c++/4.8/iostream:39,
+                 from driver-sample.cpp:1:
+/usr/include/c++/4.8/bits/stl_pair.h:96:12: error: provided for ‘template<class _T1, class _T2> struct std::pair’
+     struct pair
+            ^
+driver-sample.cpp:58:71: error: expected ‘::’ before ‘>’ token
+   std::vector<std::pair<const typename BSTree<T>::BinTreeNode *, int> >nodes;
+                                                                       ^
+driver-sample.cpp:58:71: error: expected identifier before ‘>’ token
+driver-sample.cpp:58:71: error: template argument 1 is invalid
+driver-sample.cpp:58:71: error: template argument 2 is invalid
+driver-sample.cpp:58:72: error: expected ‘::’ before ‘nodes’
+   std::vector<std::pair<const typename BSTree<T>::BinTreeNode *, int> >nodes;
+                                                                        ^
+driver-sample.cpp:58:77: error: invalid type in declaration before ‘;’ token
+   std::vector<std::pair<const typename BSTree<T>::BinTreeNode *, int> >nodes;
+                                                                             ^
+driver-sample.cpp:59:44: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+   typename std::map<const typename BSTree<T>::BinTreeNode *, std::pair<int, int> >::iterator it;
+                                            ^
+driver-sample.cpp:59:44: error:   expected a constant of type ‘int’, got ‘T’
+driver-sample.cpp:59:59: error: expected template-argument before ‘*’ token
+   typename std::map<const typename BSTree<T>::BinTreeNode *, std::pair<int, int> >::iterator it;
+                                                           ^
+driver-sample.cpp:59:59: error: expected ‘>’ before ‘*’ token
+driver-sample.cpp:59:82: error: wrong number of template arguments (1, should be 4)
+   typename std::map<const typename BSTree<T>::BinTreeNode *, std::pair<int, int> >::iterator it;
+                                                                                  ^
+In file included from /usr/include/c++/4.8/map:61:0,
+                 from driver-sample.cpp:2:
+/usr/include/c++/4.8/bits/stl_map.h:96:11: error: provided for ‘template<class _Key, class _Tp, class _Compare, class _Alloc> class std::map’
+     class map
+           ^
+driver-sample.cpp:59:96: error: invalid type in declaration before ‘;’ token
+   typename std::map<const typename BSTree<T>::BinTreeNode *, std::pair<int, int> >::iterator it;
+                                                                                                ^
+driver-sample.cpp:60:27: error: request for member ‘begin’ in ‘NodePositions’, which is of non-class type ‘int’
+   for (it = NodePositions.begin(); it != NodePositions.end(); ++it)
+                           ^
+driver-sample.cpp:60:56: error: request for member ‘end’ in ‘NodePositions’, which is of non-class type ‘int’
+   for (it = NodePositions.begin(); it != NodePositions.end(); ++it)
+                                                        ^
+driver-sample.cpp:62:31: error: base operand of ‘->’ is not a pointer
+     std::pair<int, int>XY = it->second;
+                               ^
+driver-sample.cpp:65:40: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+       std::pair<const typename BSTree<T>::BinTreeNode *, int> pr( it->first, XY.first);
+                                        ^
+driver-sample.cpp:65:40: error:   expected a constant of type ‘int’, got ‘T’
+driver-sample.cpp:65:55: error: expected template-argument before ‘*’ token
+       std::pair<const typename BSTree<T>::BinTreeNode *, int> pr( it->first, XY.first);
+                                                       ^
+driver-sample.cpp:65:55: error: expected ‘>’ before ‘*’ token
+driver-sample.cpp:65:61: error: wrong number of template arguments (1, should be 2)
+       std::pair<const typename BSTree<T>::BinTreeNode *, int> pr( it->first, XY.first);
+                                                             ^
+In file included from /usr/include/c++/4.8/bits/stl_algobase.h:64:0,
+                 from /usr/include/c++/4.8/bits/char_traits.h:39,
+                 from /usr/include/c++/4.8/ios:40,
+                 from /usr/include/c++/4.8/ostream:38,
+                 from /usr/include/c++/4.8/iostream:39,
+                 from driver-sample.cpp:1:
+/usr/include/c++/4.8/bits/stl_pair.h:96:12: error: provided for ‘template<class _T1, class _T2> struct std::pair’
+     struct pair
+            ^
+driver-sample.cpp:65:63: error: expected ‘::’ before ‘pr’
+       std::pair<const typename BSTree<T>::BinTreeNode *, int> pr( it->first, XY.first);
+                                                               ^
+driver-sample.cpp:65:65: error: invalid type in declaration before ‘(’ token
+       std::pair<const typename BSTree<T>::BinTreeNode *, int> pr( it->first, XY.first);
+                                                                 ^
+driver-sample.cpp:65:69: error: base operand of ‘->’ is not a pointer
+       std::pair<const typename BSTree<T>::BinTreeNode *, int> pr( it->first, XY.first);
+                                                                     ^
+driver-sample.cpp:65:86: error: expression list treated as compound expression in initializer [-fpermissive]
+       std::pair<const typename BSTree<T>::BinTreeNode *, int> pr( it->first, XY.first);
+                                                                                      ^
+driver-sample.cpp:66:13: error: request for member ‘push_back’ in ‘nodes’, which is of non-class type ‘int’
+       nodes.push_back(pr);
+             ^
+driver-sample.cpp: At global scope:
+driver-sample.cpp:73:55: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ bool SortNodes(const std::pair<const typename BSTree<T>::BinTreeNode *, int>&a, 
+                                                       ^
+driver-sample.cpp:73:55: error:   expected a constant of type ‘int’, got ‘T’
+driver-sample.cpp:73:70: error: expected template-argument before ‘*’ token
+ bool SortNodes(const std::pair<const typename BSTree<T>::BinTreeNode *, int>&a, 
+                                                                      ^
+driver-sample.cpp:73:70: error: expected ‘>’ before ‘*’ token
+driver-sample.cpp:73:76: error: wrong number of template arguments (1, should be 2)
+ bool SortNodes(const std::pair<const typename BSTree<T>::BinTreeNode *, int>&a, 
+                                                                            ^
+In file included from /usr/include/c++/4.8/bits/stl_algobase.h:64:0,
+                 from /usr/include/c++/4.8/bits/char_traits.h:39,
+                 from /usr/include/c++/4.8/ios:40,
+                 from /usr/include/c++/4.8/ostream:38,
+                 from /usr/include/c++/4.8/iostream:39,
+                 from driver-sample.cpp:1:
+/usr/include/c++/4.8/bits/stl_pair.h:96:12: error: provided for ‘template<class _T1, class _T2> struct std::pair’
+     struct pair
+            ^
+driver-sample.cpp:73:77: error: expected ‘::’ before ‘&’ token
+ bool SortNodes(const std::pair<const typename BSTree<T>::BinTreeNode *, int>&a, 
+                                                                             ^
+driver-sample.cpp:73:77: error: expected identifier before ‘&’ token
+driver-sample.cpp:74:55: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+                const std::pair<const typename BSTree<T>::BinTreeNode *, int>&b)
+                                                       ^
+driver-sample.cpp:74:55: error:   expected a constant of type ‘int’, got ‘T’
+driver-sample.cpp:74:70: error: expected template-argument before ‘*’ token
+                const std::pair<const typename BSTree<T>::BinTreeNode *, int>&b)
+                                                                      ^
+driver-sample.cpp:74:70: error: expected ‘>’ before ‘*’ token
+driver-sample.cpp:74:76: error: wrong number of template arguments (1, should be 2)
+                const std::pair<const typename BSTree<T>::BinTreeNode *, int>&b)
+                                                                            ^
+In file included from /usr/include/c++/4.8/bits/stl_algobase.h:64:0,
+                 from /usr/include/c++/4.8/bits/char_traits.h:39,
+                 from /usr/include/c++/4.8/ios:40,
+                 from /usr/include/c++/4.8/ostream:38,
+                 from /usr/include/c++/4.8/iostream:39,
+                 from driver-sample.cpp:1:
+/usr/include/c++/4.8/bits/stl_pair.h:96:12: error: provided for ‘template<class _T1, class _T2> struct std::pair’
+     struct pair
+            ^
+driver-sample.cpp:74:77: error: expected ‘::’ before ‘&’ token
+                const std::pair<const typename BSTree<T>::BinTreeNode *, int>&b)
+                                                                             ^
+driver-sample.cpp:74:77: error: expected identifier before ‘&’ token
+driver-sample.cpp: In function ‘bool SortNodes(const int&, const int&)’:
+driver-sample.cpp:76:9: error: request for member ‘second’ in ‘a’, which is of non-class type ‘const int’
+   if (a.second < b.second)
+         ^
+driver-sample.cpp:76:20: error: request for member ‘second’ in ‘b’, which is of non-class type ‘const int’
+   if (a.second < b.second)
+                    ^
+driver-sample.cpp: At global scope:
+driver-sample.cpp:86:58: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+   bool operator()(const std::pair<const typename BSTree<T>::BinTreeNode *, int>&a, 
+                                                          ^
+driver-sample.cpp:86:58: error:   expected a constant of type ‘int’, got ‘T’
+driver-sample.cpp:86:73: error: expected template-argument before ‘*’ token
+   bool operator()(const std::pair<const typename BSTree<T>::BinTreeNode *, int>&a, 
+                                                                         ^
+driver-sample.cpp:86:73: error: expected ‘>’ before ‘*’ token
+driver-sample.cpp:86:79: error: wrong number of template arguments (1, should be 2)
+   bool operator()(const std::pair<const typename BSTree<T>::BinTreeNode *, int>&a, 
+                                                                               ^
+In file included from /usr/include/c++/4.8/bits/stl_algobase.h:64:0,
+                 from /usr/include/c++/4.8/bits/char_traits.h:39,
+                 from /usr/include/c++/4.8/ios:40,
+                 from /usr/include/c++/4.8/ostream:38,
+                 from /usr/include/c++/4.8/iostream:39,
+                 from driver-sample.cpp:1:
+/usr/include/c++/4.8/bits/stl_pair.h:96:12: error: provided for ‘template<class _T1, class _T2> struct std::pair’
+     struct pair
+            ^
+driver-sample.cpp:86:80: error: expected ‘::’ before ‘&’ token
+   bool operator()(const std::pair<const typename BSTree<T>::BinTreeNode *, int>&a, 
+                                                                                ^
+driver-sample.cpp:86:80: error: expected identifier before ‘&’ token
+driver-sample.cpp:87:58: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+                   const std::pair<const typename BSTree<T>::BinTreeNode *, int>&b)
+                                                          ^
+driver-sample.cpp:87:58: error:   expected a constant of type ‘int’, got ‘T’
+driver-sample.cpp:87:73: error: expected template-argument before ‘*’ token
+                   const std::pair<const typename BSTree<T>::BinTreeNode *, int>&b)
+                                                                         ^
+driver-sample.cpp:87:73: error: expected ‘>’ before ‘*’ token
+driver-sample.cpp:87:79: error: wrong number of template arguments (1, should be 2)
+                   const std::pair<const typename BSTree<T>::BinTreeNode *, int>&b)
+                                                                               ^
+In file included from /usr/include/c++/4.8/bits/stl_algobase.h:64:0,
+                 from /usr/include/c++/4.8/bits/char_traits.h:39,
+                 from /usr/include/c++/4.8/ios:40,
+                 from /usr/include/c++/4.8/ostream:38,
+                 from /usr/include/c++/4.8/iostream:39,
+                 from driver-sample.cpp:1:
+/usr/include/c++/4.8/bits/stl_pair.h:96:12: error: provided for ‘template<class _T1, class _T2> struct std::pair’
+     struct pair
+            ^
+driver-sample.cpp:87:80: error: expected ‘::’ before ‘&’ token
+                   const std::pair<const typename BSTree<T>::BinTreeNode *, int>&b)
+                                                                                ^
+driver-sample.cpp:87:80: error: expected identifier before ‘&’ token
+driver-sample.cpp: In member function ‘bool fSortNodes<T>::operator()(const int&, const int&)’:
+driver-sample.cpp:89:11: error: request for member ‘second’ in ‘a’, which is of non-class type ‘const int’
+     if (a.second < b.second)
+           ^
+driver-sample.cpp:89:22: error: request for member ‘second’ in ‘b’, which is of non-class type ‘const int’
+     if (a.second < b.second)
+                      ^
+driver-sample.cpp: At global scope:
+driver-sample.cpp:98:29: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+ void PrintBST(const BSTree<T> &tree)
+                             ^
+driver-sample.cpp:98:29: error:   expected a constant of type ‘int’, got ‘T’
+driver-sample.cpp: In function ‘void PrintBST(const int&)’:
+driver-sample.cpp:100:35: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+   std::map<const typename BSTree<T>::BinTreeNode *, std::pair<int, int> > NodePositions;
+                                   ^
+driver-sample.cpp:100:35: error:   expected a constant of type ‘int’, got ‘T’
+driver-sample.cpp:100:50: error: expected template-argument before ‘*’ token
+   std::map<const typename BSTree<T>::BinTreeNode *, std::pair<int, int> > NodePositions;
+                                                  ^
+driver-sample.cpp:100:50: error: expected ‘>’ before ‘*’ token
+driver-sample.cpp:100:73: error: wrong number of template arguments (1, should be 4)
+   std::map<const typename BSTree<T>::BinTreeNode *, std::pair<int, int> > NodePositions;
+                                                                         ^
+In file included from /usr/include/c++/4.8/map:61:0,
+                 from driver-sample.cpp:2:
+/usr/include/c++/4.8/bits/stl_map.h:96:11: error: provided for ‘template<class _Key, class _Tp, class _Compare, class _Alloc> class std::map’
+     class map
+           ^
+driver-sample.cpp:100:75: error: expected ‘::’ before ‘NodePositions’
+   std::map<const typename BSTree<T>::BinTreeNode *, std::pair<int, int> > NodePositions;
+                                                                           ^
+driver-sample.cpp:100:88: error: invalid type in declaration before ‘;’ token
+   std::map<const typename BSTree<T>::BinTreeNode *, std::pair<int, int> > NodePositions;
+                                                                                        ^
+driver-sample.cpp:102:39: error: no matching function for call to ‘SetTreePositions(const int&, int&)’
+   SetTreePositions(tree, NodePositions);
+                                       ^
+driver-sample.cpp:102:39: note: candidates are:
+driver-sample.cpp:26:6: note: template<class T> void SetTreePositions(const int*, int, int&)
+ void SetTreePositions(const typename BSTree<T>::BinTreeNode *tree, 
+      ^
+driver-sample.cpp:26:6: note:   template argument deduction/substitution failed:
+driver-sample.cpp:102:39: note:   cannot convert ‘tree’ (type ‘const int’) to type ‘const int*’
+   SetTreePositions(tree, NodePositions);
+                                       ^
+driver-sample.cpp:43:6: note: template<class T> void SetTreePositions(const int&, int&)
+ void SetTreePositions(const BSTree<T> &tree, 
+      ^
+driver-sample.cpp:43:6: note:   template argument deduction/substitution failed:
+driver-sample.cpp:102:39: note:   couldn't deduce template parameter ‘T’
+   SetTreePositions(tree, NodePositions);
+                                       ^
+driver-sample.cpp:103:21: error: request for member ‘height’ in ‘tree’, which is of non-class type ‘const int’
+   int height = tree.height();
+                     ^
+driver-sample.cpp:108:50: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+     std::vector<std::pair<const typename BSTree<T>::BinTreeNode *, int> >nodes = GetNodesAtLevel<T> (i, NodePositions);
+                                                  ^
+driver-sample.cpp:108:50: error:   expected a constant of type ‘int’, got ‘T’
+driver-sample.cpp:108:65: error: expected template-argument before ‘*’ token
+     std::vector<std::pair<const typename BSTree<T>::BinTreeNode *, int> >nodes = GetNodesAtLevel<T> (i, NodePositions);
+                                                                 ^
+driver-sample.cpp:108:65: error: expected ‘>’ before ‘*’ token
+driver-sample.cpp:108:71: error: wrong number of template arguments (1, should be 2)
+     std::vector<std::pair<const typename BSTree<T>::BinTreeNode *, int> >nodes = GetNodesAtLevel<T> (i, NodePositions);
+                                                                       ^
+In file included from /usr/include/c++/4.8/bits/stl_algobase.h:64:0,
+                 from /usr/include/c++/4.8/bits/char_traits.h:39,
+                 from /usr/include/c++/4.8/ios:40,
+                 from /usr/include/c++/4.8/ostream:38,
+                 from /usr/include/c++/4.8/iostream:39,
+                 from driver-sample.cpp:1:
+/usr/include/c++/4.8/bits/stl_pair.h:96:12: error: provided for ‘template<class _T1, class _T2> struct std::pair’
+     struct pair
+            ^
+driver-sample.cpp:108:73: error: expected ‘::’ before ‘>’ token
+     std::vector<std::pair<const typename BSTree<T>::BinTreeNode *, int> >nodes = GetNodesAtLevel<T> (i, NodePositions);
+                                                                         ^
+driver-sample.cpp:108:73: error: expected identifier before ‘>’ token
+driver-sample.cpp:108:73: error: template argument 1 is invalid
+driver-sample.cpp:108:73: error: template argument 2 is invalid
+driver-sample.cpp:108:74: error: expected ‘::’ before ‘nodes’
+     std::vector<std::pair<const typename BSTree<T>::BinTreeNode *, int> >nodes = GetNodesAtLevel<T> (i, NodePositions);
+                                                                          ^
+driver-sample.cpp:108:80: error: invalid type in declaration before ‘=’ token
+     std::vector<std::pair<const typename BSTree<T>::BinTreeNode *, int> >nodes = GetNodesAtLevel<T> (i, NodePositions);
+                                                                                ^
+driver-sample.cpp:111:21: error: request for member ‘begin’ in ‘nodes’, which is of non-class type ‘int’
+     std::sort(nodes.begin(), nodes.end(), fSortNodes<T>());
+                     ^
+driver-sample.cpp:111:36: error: request for member ‘end’ in ‘nodes’, which is of non-class type ‘int’
+     std::sort(nodes.begin(), nodes.end(), fSortNodes<T>());
+                                    ^
+driver-sample.cpp:112:59: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+     typename std::vector<std::pair<const typename BSTree<T>::BinTreeNode *, int> >::iterator iter;
+                                                           ^
+driver-sample.cpp:112:59: error:   expected a constant of type ‘int’, got ‘T’
+driver-sample.cpp:112:74: error: expected template-argument before ‘*’ token
+     typename std::vector<std::pair<const typename BSTree<T>::BinTreeNode *, int> >::iterator iter;
+                                                                          ^
+driver-sample.cpp:112:74: error: expected ‘>’ before ‘*’ token
+driver-sample.cpp:112:80: error: wrong number of template arguments (1, should be 2)
+     typename std::vector<std::pair<const typename BSTree<T>::BinTreeNode *, int> >::iterator iter;
+                                                                                ^
+In file included from /usr/include/c++/4.8/bits/stl_algobase.h:64:0,
+                 from /usr/include/c++/4.8/bits/char_traits.h:39,
+                 from /usr/include/c++/4.8/ios:40,
+                 from /usr/include/c++/4.8/ostream:38,
+                 from /usr/include/c++/4.8/iostream:39,
+                 from driver-sample.cpp:1:
+/usr/include/c++/4.8/bits/stl_pair.h:96:12: error: provided for ‘template<class _T1, class _T2> struct std::pair’
+     struct pair
+            ^
+driver-sample.cpp:112:82: error: expected ‘::’ before ‘>’ token
+     typename std::vector<std::pair<const typename BSTree<T>::BinTreeNode *, int> >::iterator iter;
+                                                                                  ^
+driver-sample.cpp:112:82: error: expected identifier before ‘>’ token
+driver-sample.cpp:112:82: error: template argument 1 is invalid
+driver-sample.cpp:112:82: error: template argument 2 is invalid
+driver-sample.cpp:112:98: error: invalid type in declaration before ‘;’ token
+     typename std::vector<std::pair<const typename BSTree<T>::BinTreeNode *, int> >::iterator iter;
+                                                                                                  ^
+driver-sample.cpp:116:23: error: request for member ‘begin’ in ‘nodes’, which is of non-class type ‘int’
+     for (iter = nodes.begin(); iter != nodes.end(); ++iter)
+                       ^
+driver-sample.cpp:116:46: error: request for member ‘end’ in ‘nodes’, which is of non-class type ‘int’
+     for (iter = nodes.begin(); iter != nodes.end(); ++iter)
+                                              ^
+driver-sample.cpp:119:19: error: invalid type argument of unary ‘*’ (have ‘int’)
+       T value = (*iter).first->data;
+                   ^
+driver-sample.cpp:124:33: error: invalid type argument of unary ‘*’ (have ‘int’)
+         ss << value << "[" << (*iter).first->count << "]";
+                                 ^
+driver-sample.cpp:128:35: error: base operand of ‘->’ is not a pointer
+       offset = (height / 2) + iter->second * fudge;  // fudge factor (change to 4 for big numbers)
+                                   ^
+driver-sample.cpp: In function ‘void AVLStress()’:
+driver-sample.cpp:645:5: error: ‘AVLTree’ was not declared in this scope
+     AVLTree<int> tree;
+     ^
+driver-sample.cpp:645:13: error: expected primary-expression before ‘int’
+     AVLTree<int> tree;
+             ^
+driver-sample.cpp:645:13: error: expected ‘;’ before ‘int’
+driver-sample.cpp:658:7: error: ‘tree’ was not declared in this scope
+       tree.insert(ia[i]);
+       ^
+driver-sample.cpp:664:9: error: ‘tree’ was not declared in this scope
+     if (tree.ImplementedIndexing())
+         ^
+driver-sample.cpp:673:15: error: ‘tree’ was not declared in this scope
+     PrintInfo(tree);
+               ^
+driver-sample.cpp: In function ‘void AVLStressSmall()’:
+driver-sample.cpp:709:5: error: ‘AVLTree’ was not declared in this scope
+     AVLTree<int> tree;
+     ^
+driver-sample.cpp:709:13: error: expected primary-expression before ‘int’
+     AVLTree<int> tree;
+             ^
+driver-sample.cpp:709:13: error: expected ‘;’ before ‘int’
+driver-sample.cpp:721:7: error: ‘tree’ was not declared in this scope
+       tree.insert(ia[i]);
+       ^
+driver-sample.cpp:727:15: error: ‘tree’ was not declared in this scope
+     PrintInfo(tree);
+               ^
+driver-sample.cpp: In function ‘int main(int, char**)’:
+driver-sample.cpp:926:39: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+   TimedTest Tests[] = {{Test1<BSTree<T> >,         1000,  500}, //  1 random insert
+                                       ^
+driver-sample.cpp:926:39: error:   expected a constant of type ‘int’, got ‘T {aka int}’
+driver-sample.cpp:927:39: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+                        {Test2<BSTree<T> >,         1000,  500}, //  2 sorted insert
+                                       ^
+driver-sample.cpp:927:39: error:   expected a constant of type ‘int’, got ‘T {aka int}’
+driver-sample.cpp:928:39: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+                        {Test3<BSTree<T> >,         1000,  500}, //  3 random insert/remove some
+                                       ^
+driver-sample.cpp:928:39: error:   expected a constant of type ‘int’, got ‘T {aka int}’
+driver-sample.cpp:929:39: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+                        {Test4<BSTree<T> >,         1000,  500}, //  4 random insert/remove all
+                                       ^
+driver-sample.cpp:929:39: error:   expected a constant of type ‘int’, got ‘T {aka int}’
+driver-sample.cpp:930:39: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+                        {Test5<BSTree<T> >,         1000,  500}, //  5 random insert/clear
+                                       ^
+driver-sample.cpp:930:39: error:   expected a constant of type ‘int’, got ‘T {aka int}’
+driver-sample.cpp:931:39: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+                        {Test6<BSTree<T> >,         1000,  500} //  6 random insert/find
+                                       ^
+driver-sample.cpp:931:39: error:   expected a constant of type ‘int’, got ‘T {aka int}’
+driver-sample.cpp:952:23: error: no matches converting function ‘Test1’ to type ‘void (*)()’
+                       };
+                       ^
+driver-sample.cpp:190:6: note: candidate is: template<class T> void Test1()
+ void Test1(void)
+      ^
+driver-sample.cpp:952:23: error: no matches converting function ‘Test2’ to type ‘void (*)()’
+                       };
+                       ^
+driver-sample.cpp:242:6: note: candidate is: template<class T> void Test2()
+ void Test2(void)
+      ^
+driver-sample.cpp:952:23: error: no matches converting function ‘Test3’ to type ‘void (*)()’
+                       };
+                       ^
+driver-sample.cpp:279:6: note: candidate is: template<class T> void Test3()
+ void Test3(void)
+      ^
+driver-sample.cpp:952:23: error: no matches converting function ‘Test4’ to type ‘void (*)()’
+                       };
+                       ^
+driver-sample.cpp:341:6: note: candidate is: template<class T> void Test4()
+ void Test4(void)
+      ^
+driver-sample.cpp:952:23: error: no matches converting function ‘Test5’ to type ‘void (*)()’
+                       };
+                       ^
+driver-sample.cpp:386:6: note: candidate is: template<class T> void Test5()
+ void Test5(void)
+      ^
+driver-sample.cpp:952:23: error: no matches converting function ‘Test6’ to type ‘void (*)()’
+                       };
+                       ^
+driver-sample.cpp:429:6: note: candidate is: template<class T> void Test6()
+ void Test6(void)
+      ^
+driver-sample.cpp:954:25: error: type/value mismatch at argument 1 in template parameter list for ‘template<int T> class BSTree’
+   SHOW_COUNTS = BSTree<T>::ImplementedIndexing();
+                         ^
+driver-sample.cpp:954:25: error:   expected a constant of type ‘int’, got ‘T {aka int}’

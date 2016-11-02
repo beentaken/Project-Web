@@ -1,0 +1,55 @@
+$Primary_Color: #0080ff;
+$Background_Color: #001a33;
+$Plain_Text_Color: white;
+$Span_Primary_Color: #0080ff;
+
+/* Links */
+$Link_Color: white;
+$Link_Active_Color: white;
+$Link_Hover_Color: #0080ff;
+$Link_Visited_Color: white;
+
+/* Tnav / Snav */
+$Active_Btn_Text_Color: white;
+$Active_Btn_Background_Color: #0080ff;
+
+$Active_Dropdown_Background_Color:#0066cc;
+$Active_Dropdown_Text_Color: white;
+
+/* Tnav */
+$Tnav_Background_Color: #0066cc;
+
+$Tnav_Dropdown_Background_Color:#004d99;
+$Tnav_Dropdown_Text_Color: white;
+$Tnav_Dropdown_Hover_Background_Color: #003366;
+$Tnav_Dropdown_Hover_Text_Color:white;
+
+$Tnav_Btn_Text_Color: white;
+$Tnav_Btn_Hover_Background_Color:#0080ff;
+$Tnav_Btn_Hover_Text_Color:white;
+
+/* Snav */
+$Snav_Background_Color: #0066cc;
+
+$Snav_Dropdown_Background_Color:#004d99;
+$Snav_Dropdown_Text_Color: white;
+$Snav_Dropdown_Hover_Background_Color: #003366;
+$Snav_Dropdown_Hover_Text_Color:white;
+
+$Snav_Btn_Text_Color: white;
+$Snav_Btn_Hover_Background_Color:#0080ff;
+$Snav_Btn_Hover_Text_Color:white;
+
+$Active_Dropdown_Head_Background_Color : #0080ff;
+$Active_Dropdown_Head_Text_Color : white;
+
+/* Other */
+$Section_Heading_Underline_Color:#0080ff;
+body {
+  // background-color: $Background_Color;
+  background-image: url("../assets/backdrop.png");
+}
+
+img.Logo { content : url("../assets/Logo_Blue.png"); }
+
+@import "./base.scss";

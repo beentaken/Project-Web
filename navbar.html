@@ -1,0 +1,83 @@
+<?php $pageName = basename($_SERVER['PHP_SELF']); ?>
+<ul class="tnav">
+    <li><div class="tnav-btn">Login</div></li>
+    <li><div class="tnav-btn">Register</div></li>
+    <li><div class="tnav-btn">
+    <span>&#x25BC; Themes</span>
+        <div class="tnav-dropdown-content">
+            <form>
+            <a href="javascript:switch_style('V');">Vincent</a>
+            <a href="javascript:switch_style('VG');">Void Green</a>
+            <a href="javascript:switch_style('MB');">Midnight Blue</a>
+            </form>
+        </div>
+    </div>
+    </li>
+</ul>
+
+<img class="Logo"/>
+
+
+<ul class="snav">
+    <?php if($pageName == 'Home.php'): ?>
+    <li class="snav_btn"><a href="#" id="active_btn">Home</a></li>
+    <?php else: ?>
+    <li class="snav_btn"><a href="./Home.php" class="dropdown_head">Home</a></li>
+    <?php endif; ?>
+    <?php if($pageName == 'AboutMe.php'): ?>
+    <li class="snav_btn"><a href="#" id="active_btn">About Me</a></li>
+    <?php else: ?>
+    <li class="snav_btn"><a href="./AboutMe.php" class="dropdown_head">About Me</a></li>
+    <?php endif; ?>
+    <?php if($pageName == 'Resume_Sheet.php'): ?>
+    <li class="snav_btn"><a href="#" id="active_btn">Resume</a></li>
+    <?php else: ?>
+    <li class="snav_btn"><a href="./Resume_Sheet.php" class="dropdown_head">Resume</a></li>
+    <?php endif; ?>
+    <li class="snav_btn">
+        <?php if($pageName == 'Independent_Notes_Directory.php'): ?>
+        <a href="#" class="dropdown_head" id="active_ddhead">Notes</a>
+        <div class="dropdown_content" style="display: block">
+        <?php elseif($pageName == 'CS170_Directory.php'): ?>
+        <a href="#" class="dropdown_head" id="active_ddhead">Notes</a>
+        <div class="dropdown_content" style="display: block">
+        <?php elseif($pageName == 'CS180_Directory.php'): ?>
+        <a href="#" class="dropdown_head" id="active_ddhead">Notes</a>
+        <div class="dropdown_content" style="display: block">
+        <?php elseif($pageName == 'CS280_Directory.php'): ?>
+        <a href="#" class="dropdown_head" id="active_ddhead">Notes</a>
+        <div class="dropdown_content" style="display: block">
+        <?php else: ?>
+        <a href="#" class="dropdown_head">Notes</a>
+        <div class="dropdown_content">
+            <?php endif; ?>
+            <?php if($pageName == 'Independent_Notes_Directory.php'): ?>
+            <a href="./#" id="active_dd">Independent Notes</a>
+            <?php else: ?>
+            <a href="./Independent_Notes_Directory.php">Independent Notes</a>
+            <?php endif; ?>
+            <?php if($pageName == 'CS170_Directory.php'): ?>
+            <a href="#" id="active_dd">CS170</a>
+            <?php else: ?>
+            <a href="./CS170_Directory.php">CS170</a>
+            <?php endif; ?>
+            <?php if($pageName == 'CS180_Directory.php'): ?>
+            <a href="#" id="active_dd">CS180</a>
+            <?php else: ?>
+            <a href="./CS180_Directory.php">CS180</a>
+            <?php endif; ?>
+            <?php if($pageName == 'CS280_Directory.php'): ?>
+            <a href="#" id="active_dd">CS280</a>
+            <?php else: ?>
+            <a href="./CS280_Directory.php">CS280</a>
+            <?php endif; ?>
+        </div>
+    </li>
+    <li class="snav_btn">
+        <a href="#" class="dropdown_head">Lectures</a>
+        <div class="dropdown_content">
+            <a href="https://www.youtube.com/watch?v=WDIkqP4JbkE">Scott Meyers: Cpu Caches</a>
+            <a href=https://www.youtube.com/watch?v=hWDZ3Yy-NMA>John Edwards: Metaprogramming</a>
+        </div>
+    </li>
+</ul>

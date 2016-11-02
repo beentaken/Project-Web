@@ -1,0 +1,168 @@
+
+<!-- saved from url=(0072)http://azrael.digipen.edu/~mmead/www/Courses/CS280/MemoryManagement.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./Memory Management_files/new.css">
+<title>Memory Management</title>
+</head>
+
+<body>  
+<center><h1>Memory Management</h1></center>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<hr>
+
+<h2>Background</h2>
+
+Why not just use <i>malloc/free</i> and <i>new/delete</i>?
+
+<ul>
+<li>General purpose functions</li>
+<li>Hidden behavior (and you thought that was a good thing!)</li>
+<li>Inadequate capabilities</li>
+</ul>
+
+A custom memory allocator allows you to:
+
+<ul>
+<li>generate statistics</li>
+<li>control/simulate memory usage</li>
+<li>provide extensive debugging and error detection</li>
+<li>implement virtual memory, heap defrag</li>
+<li>tweak memory management to suit <i>your</i> application</li>
+</ul>
+
+Some aspects to address in a custom memory manager: (these are usually trade-offs)
+
+<ul>
+<li>Ease of Use</li>
+<li>Performance</li>
+<li>Memory Overhead</li>
+<li>Fragmentation</li>
+<li>Debugging</li>
+</ul>
+
+<p>
+</p><hr width="90%">
+<p>
+
+</p><h2>Ease of Use</h2>
+<p>
+
+</p><ul>
+<li>Pointers vs. Handles (opaque pointers)</li>
+<li>Complexity to implement and for users</li>
+<li>Garbage collection, coalescing/compacting memory</li>
+</ul>
+
+
+<h2>Performance</h2>
+<p>
+
+</p><ul>
+<li>Speed <i>and</i> consistency (when to do GC, compaction)</li>
+<li>Allocation/deallocation policies (best fit, next fit, first fit, LIFO/FIFO, etc.)</li>
+<li>Spatial coherence and <a href="http://en.wikipedia.org/wiki/Locality_of_reference">locality of reference</a>
+	(<a href="http://en.wikipedia.org/wiki/Cache">cache</a> mechanisms, write-back/write-through)</li>
+<li>Virtual memory (disk-based memory), disk buffers (read-ahead, read-behind)</li>
+<li>Recycling
+</li></ul>
+
+<h2>Memory Overhead</h2>
+<p>
+
+</p><ul>
+<li>The memory manager requires memory </li>
+<li>Each block requires (accounting) overhead (small vs. large)</li>
+<li>Variable block sizes vs. fixed block size</li>
+</ul>
+
+<h2>Fragmentation Control</h2>
+<p>
+
+</p><ul>
+<li>Happens randomly over time (not stack or queue-like)</li>
+<li>Usually responsible for "Insufficient Memory" problems</li>
+<li>Allocation policies (e.g. best fit, first fit)</li>
+<li>Fixed vs. variable size</li>
+<li>Lifetime of blocks (programmer knowledge)</li>
+<li>Number of free blocks vs. amount of free memory</li>
+<li>Multiple heaps (size-based, lifetime based)</li>
+<li>Coalescing (merging adjacent free blocks)</li>
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS280/Pointers-Handles.pdf">Pointers vs. Handles for compacting memory (PDF)</a></li>
+<li>Fragmentation vs. performance
+</li></ul>
+
+<h2>Debugging Capabilities</h2>
+<p>
+
+</p><ul>
+<li>Audit memory usage patterns and statistics</li>
+<li>Consistency checking (memory corruption, heap validation)</li>
+<li>Initializing blocks to certain values (free/allocated/deallocated)</li>
+<li>Invalid memory block detection (allocate/deallocate)</li>
+<li>Memory leak checking
+</li></ul>
+
+<p>
+</p><hr width="90%">
+<p>
+
+</p><h2>Automatic Memory Management</h2>
+<p>
+
+</p><ul>
+<li>a.k.a. <a href="http://en.wikipedia.org/wiki/Garbage_collection_(computer_science)">Garbage Collectors</a>
+</li><li>Advantages:
+<ul>
+<li>Programmer doesn't worry about MM (memory management)
+</li><li>Code is cleaner (GC has responsibility for MM)
+</li><li>Bugs related to MM are far less
+</li><li>GC is generally superior to hand-coded MM
+</li></ul>
+</li><li>Disadvantages:
+<ul>
+<li>Sometimes memory that is no longer needed is not released
+</li><li>Depending on the implementation, the programmer can't control when GC occurs
+</li><li>Generally needs to be built into the language 
+(e.g. BASIC, C#, Java, Javascript, Lisp, Perl, Python, PHP, Ruby, Smalltalk)
+</li><li>C/C++ is conspicuously absent, but there is a solution in the 
+	<a href="http://en.wikipedia.org/wiki/Boehm_garbage_collector">Boehm Garbage Collector</a>
+	<!--<a href="http://www.hpl.hp.com/personal/Hans_Boehm/gc/">Boehm Collector</a>-->
+</li></ul>
+</li><li>When is it collected? 
+<ul>
+<li>immediately
+</li><li>as-needed
+</li><li>idle
+</li><li>continuously
+</li><li>programmatically
+</li></ul>
+</li><li>Tracing Collectors
+<ul>
+<li>Mark-and-sweep (scan entire memory, can't be interrupted, compact live blocks)
+</li><li>Copying (requires extra memory, fixes fragmentation and locality of reference)
+</li><li>Incremental (recover at intervals, no large pauses, program cooperates)
+</li><li>Conservative (for languages without built-in GC, assumes what a pointer is)
+</li><li>Generational (new objects are reclaimed before old ones)
+</li></ul>
+</li><li>Reference Counting 
+<ul>
+<li>Easy to implement
+</li><li>Counting is not free
+</li><li>Circular reference problem
+<!--
+<li>One-bit reference counting
+-->
+</li></ul>
+</li><li>GC has matured over the years (it's been around since about 1958)
+</li><li>People devote careers to the topic
+</li></ul>
+
+<!-- ********************************************************** -->
+<!-- ********************************************************** -->
+<hr width="90%">
+
+<blockquote><pre></pre></blockquote>
+
+</body></html>

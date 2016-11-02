@@ -1,0 +1,770 @@
+
+<!-- saved from url=(0072)http://azrael.digipen.edu/~mmead/www/Courses/CS180/Virtualization-1.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./Virtualization_files/new.css">
+<link rel="stylesheet" type="text/css" href="./Virtualization_files/styles.css">
+
+<title>Virtualization</title>
+
+</head>
+
+<body>  
+
+<center><h1>
+Virtualization
+</h1></center>
+
+<!--
+Ctrl .         href
+Crlt+Shift+M   wiki-ize
+-->
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<p class="sectionheader">
+Introduction
+</p>
+
+
+<!--
+	<li><span id=wpurl><a class=wplabel>CPU</a></span><a class=wplink href="http://en.wikipedia.org/wiki/Central_processing_unit">CPU</a> (Central Processing Unit)</li>
+-->
+<p>
+
+<b>What is <span id="wpurl"><a class="wplabel">virtualization</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Virtualization">virtualization</a>?</b>
+</p><ul>
+	<li>In computing, it means that we are giving the illusion of something physical, when in reality it may not be physically tangible.</li>
+	<ul>
+		<li>Virtual memory - the operating system thinks that there is enough memory to run many processes.</li>
+		<li>Virtual disks</li>
+		<ul>
+			<li>a.k.a RAM disks uses memory to give the illusion of a physical drive.</li>
+			<li>CD/DVD images can be mounted as if they were a physical device.</li>
+		</ul>
+		<li>Virtual file systems - make all different file systems look the same. (NTFS, XFS, Btrfs, etc.)</li>
+	</ul>
+	<li>So, a <span id="wpurl"><a class="wplabel">virtual machine</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Virtual_machine">virtual machine</a> (computer) is a logical representation of a machine in software.</li>
+	<li>In fact, early CD players for computers tried to recreate the look of a real, physical CD player:</li>
+				<blockquote>
+			<img src="./Virtualization_files/ecplayer-cd-ui.gif">
+			</blockquote>
+
+	<li>Virtual machines have been around since the 1960s.</li>
+	<li>Most modern processors provide support for virtualization within the CPU itself.</li>
+	<ul>
+		<li>Better performance than software only.</li>
+		<li>Many of the computers we use are <span id="wpurl"><a class="wplabel">x86-based</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/X86">x86-based</a> and use <span id="wpurl"><a class="wplabel">x86 virtualization</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/X86_virtualization">x86 virtualization</a>.</li>
+		<ul>
+			<li><a href="http://www.intel.com/technology/itj/2006/v10i3/1-hardware/6-vt-x-vt-i-solutions.htm">Intel VT-x</a> virtualization.</li>
+			<li> <span id="wpurl"><a class="wplabel">AMDV</a></span><a class="wplink" href="http://sites.amd.com/us/business/it-solutions/virtualization/pages/virtualization.aspx#2">AMDV</a> virtualization.</li>
+		</ul>
+		
+	</ul>
+</ul>
+
+<b>Why virtualization?</b>
+<ul>
+	<li>Cost of ownership. A virtual machine costs less than a real machine.</li>
+	<li>Make better use of the computer's resources.</li>
+	<li>Virtualization is "green". Less power consumption.</li>
+	<li>Need a particular version of an OS to run a particular app. Older OS may not run on newer hardware.</li>
+	<li>Isolate programs that could crash the entire system. Only the virtual machine will crash.</li>
+	<li>Moving the entire "computer" is simply a file copy operation. Put it on a USB drive and take it anywhere.</li>
+	<li>Many others...</li>
+</ul>
+
+<p>
+	<xhr width="100%">
+</xhr></p>
+
+
+
+<p>
+
+<b>Background</b>
+</p><ul>	
+	<li>A computer system is made up of layers.</li>
+	<li>The hardware is the lowest level in the system.</li>
+	<li>The kernel running above the hardware uses instructions to create a set of system calls for use by higher layers.</li>
+	<li>With a virtual machine, the VM sits between the kernel and the hardware.</li>
+	<li>The kernel is unaware that it is not communicating directly with the hardware.</li>
+	<li>The application programs still talk to the kernel via system calls.</li>
+	<li>Finally, this layered approach is taken to its logical conclusion in the concept of virtual machines.</li>
+</ul>
+
+<b>How do virtual machines work?</b>
+<ul>
+	<li>You may already know that by using CPU scheduling, and virtual memory techniques, an operating system can create the illusion that a process has its own processor with its own virtual memory.</li>
+	<li>The virtual machine does the same thing for the operating system.</li>
+	<li>The VM provides an interface that is identical to the underlying bare hardware.</li>
+	<li>The physical computer shares resources to create the virtual machines.</li>
+	<!--<li>CPU scheduling can share out the CPU resources to create the appearance that users have their own processors.</li>-->
+	<li>The diagram below shows the differences:</li>
+<blockquote>
+<blockquote>
+<table border="0" cellspacing="0" cellpadding="2">
+	<tbody><tr><td><img src="./Virtualization_files/VM-1.png" border="3"></td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne ©2009&nbsp;&nbsp;</span></td></tr>
+</tbody></table>
+</blockquote>
+	
+	
+	<p>
+	(a) Non-virtual machine, (b) Virtual machine.
+</p></blockquote>
+</ul>
+
+<b>Advantages and disadvantages of the virtual machine</b>
+<ul>
+	<li>The virtual-machine concept provides complete protection of system resources.</li>
+	<ul>
+		<li>Each virtual machine is isolated from all other virtual machines.</li>
+	</ul>
+	<li>This isolation, however, permits no direct sharing of resources. (Pros and cons)</li>
+	<li>A virtual machine system is great for operating systems research and development.</li>
+	<ul>
+		<li>Actually, it's great for all types of development, especially potentially harmful ones.</li>
+	</ul>
+	<li>System development is done on the virtual machine, instead of on a physical machine and so does not disrupt normal system operation.</li>
+	<li>The virtual machine concept is difficult to implement due to the effort required to provide an exact duplicate to the underlying machine.</li>
+	<li>Performance is another difference, depending on the exact implementation of the virtualization.</li>
+	<ul>
+		<li>However, the benefits of virtualization vastly outweigh the performance issues (which are always getting better).</li>
+	</ul>
+</ul>
+
+<b>Available Virtual Machines</b>
+<p>
+
+</p><ul>
+	<li>There are dozens of different virtual machine products, some are free (including source code), some are proprietary.</li>
+	<li>Each one emulates a certain set of hardware and varies. (Which hardware?)</li>
+	<!--
+	For example, KVM emulates Sound Blaster audio card, Cirrus CLGD 5446 PCI VGA card, etc.
+	-->
+<li>A short list (licensing can be <span id="wpurl"><a class="wplabel">proprietar</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Proprietary_software">proprietar</a>y, 
+	<span id="wpurl"><a class="wplabel">GPL</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/GPL">GPL</a>, 
+	<span id="wpurl"><a class="wplabel">GPLv2</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/GPL#Version_2">GPLv2</a>, 
+	and others)
+		<ul>
+			<li><span id="wpurl"><a class="wplabel">Hyper-V</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Hyper-V">Hyper-V</a> (Microsoft, proprietary)</li>
+			<li><span id="wpurl"><a class="wplabel">KVM</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Kernel-based_Virtual_Machine">KVM</a> Kernel-based virtual machine (Qumranet/Red Hat, GPLv2 and others)</li>
+			<li><span id="wpurl"><a class="wplabel">Parallels</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Parallels_Workstation">Parallels</a> (Parallels, Inc., proprietary)</li>
+			<li><span id="wpurl"><a class="wplabel">VirtualBox</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/VirtualBox">VirtualBox</a> (Innotek/Sun/Oracle, GPLv2/proprietary)</li>
+			<li><span id="wpurl"><a class="wplabel">Windows Virtual PC</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Windows_Virtual_PC">Windows Virtual PC</a> (Connectix/Microsoft, proprietary, essentially does Windows only)</li>
+			<li><span id="wpurl"><a class="wplabel">VMware</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/VMware_Workstation">VMware</a> (WMware, proprietary)</li>
+			<li><span id="wpurl"><a class="wplabel">Xen</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Xen">Xen</a> paravirtualization via hypervisor requiring a modified Unix-like OS(Xensource, GPL)</li>
+		</ul>
+	</li><li>We are going to look at VirtualBox</li>
+	<ul>
+		<li>It supports a wide-range of operating systems, including Windows, Linux, and Mac (experimental due to Apple's licensing restrictions).</li>
+		<li>It's free. (What's not to like?)</li>
+		<li>It has many of the <span id="wpurl"><a class="wplabel">features</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Comparison_of_platform_virtual_machines">features</a> that other, more expensive products have.</li>
+		<li>It has very few limitations or <span id="wpurl"><a class="wplabel">restrictions</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Comparison_of_platform_virtual_machines#Restrictions">restrictions</a> on the amounts and sizes of resources it can handle.</li>
+		<li>Guest operating systems are nearly as fast as the host operating system.</li>
+		<li>Did I mention that it was free?</li>
+	</ul>
+
+	</ul>   
+	
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<p class="sectionheader">
+Case Study: <a href="https://www.virtualbox.org/">VirtualBox</a> 
+</p>
+
+The first thing is to download the software from the Virtual Box <a href="https://www.virtualbox.org/">website</a>. You have to choose the software that matches
+the operating system where you are going to install it (e.g. Windows, Linux, Mac&nbsp;OS&nbsp;X).
+<p>
+</p><blockquote>
+<p class="info">
+Since all of the computers at Digipen (and most student computers) run Windows, we will download the Windows version of VirtualBox.
+If you have a Mac, you should download the version for that. And if you're already running Linux, but not Mint 17 64-bit, you can download
+the version of VirtualBox for Linux, and run Mint in that virtual machine.
+</p></blockquote>
+	
+<p>
+The next thing is to choose what operating system you want to virtualize (i.e. run alongside of your host operating system). Linux is a great choice because there
+are over <a href="http://distrowatch.com/">100 distributions</a> and they are all free. Plus, since we're studying operating systems, Linux is by far the best choice for that.
+ If you have a copy of Windows (most any recent version), you can also 
+virtualize that. However, I suspect most students are already running Windows, and it's a Unix-like operating system (Linux, Mac&nbsp;OS&nbsp;X) that they lack. So, we
+will create a Linux virtual machine running inside a Windows host machine.
+</p><p>
+I am going to choose <a href="http://linuxmint.com/">Linux Mint</a>. The choice of a particular Linux distribution can be somewhat personal. As stated, there are over
+100 different distributions and they all target a different audience. If Linux Mint isn't to your liking (for whatever reason, and there could be many), you simply
+choose another one. However, until you've worked in a Linux environment, you won't really know what the differences are. The good thing is that Linux is free, so
+you can try every one of them until you find one you like! Compare this to proprietary operating systems where you may not have much of a choice. You take it or leave it.
+Anyway, I'm not going to get into the almost-religious debate about which operating system or distribution is better. That's for another time.
+Oh, and in case you're wondering why I chose Mint, I'm not the only one that thinks <a href="http://www.dedoimedo.com/computers/linux-mint-maya.html">it is a great distribution</a>.
+
+</p><p>
+Popular Linux distributions include:
+<!--
+As of August 2012:
+
+Mint
+Ubuntu
+Fedora
+Debian
+openSUSE
+Arch
+PCLinuxOS
+CentOS
+Mageia
+Slackware
+FreeBSD
+-->
+</p><ul>
+	<li> <a href="http://distrowatch.com/table.php?distribution=ubuntu">Ubuntu</a> - A very popluar version (maybe still <b>the</b> most popular), the word ubuntu means <i>"humanity towards others"</i> (<a href="http://www.ubuntu.com/">website</a>)</li>
+	<li> <a href="http://distrowatch.com/table.php?distribution=mint">Mint</a> - Some people say it is <i>"Ubuntu done right."</i> (<a href="http://www.linuxmint.com/">website</a>)</li>
+	<li> <a href="http://distrowatch.com/table.php?distribution=fedora">Fedora</a> - A community developed version of Red Hat's Enterprise Linux (<a href="http://fedoraproject.org/">website</a>)</li>
+	<li> <a href="http://distrowatch.com/table.php?distribution=suse">openSUSE</a> - A community developed version of SUSE Enterprise Linux (Mead ran this for about 10 years) (<a href="http://www.opensuse.org/en/">website</a>)</li>
+	<li> <a href="http://www.debian.org/">Debian</a> - One of the most influential Linux distros. Several popular ones are derived from Debian. (<a href="http://www.debian.org/">website</a>)</li>
+	<li> <a href="http://distrowatch.com/table.php?distribution=pclinuxos">PCLinuxOS</a> - A user-friendly distro that targets ease-of-use. (<a href="http://www.pclinuxos.com/">website</a>)</li>
+	<li> <a href="http://distrowatch.com/table.php?distribution=centos">CentOS</a> - A 100% compatible Red Hat Enterprise Linux, without cost for support. (<a href="http://www.centos.org/">website</a>)</li>
+	<li> <a href="http://distrowatch.com/table.php?distribution=gentoo">Gentoo</a> - A fast distro aimed at developers and professionals. (<a href="http://www.gentoo.org/">website</a>)</li>
+	<li> <a href="http://distrowatch.com/table.php?distribution=slackware">Slackware</a> - From Patrick Volkerding. It was the first version I ever used back in 1994. (<a href="http://www.slackware.org/">website</a>)</li>
+	<li> <a href="http://distrowatch.com/table.php?distribution=mageia">Mageia</a> - Mandrake Linux + Conectiva Linux = <a href="http://distrowatch.com/table.php?distribution=mandriva">Mandriva Linux</a>, later to become Mageia. (<a href="http://www.mageia.org/en/">website</a>)</li>
+  <li> <a href="http://distrowatch.com/table.php?distribution=redhat">RedHat</a> - One of the biggest commercial versions of Linux. (<a href="http://www.redhat.com/">website</a>)</li>
+</ul>
+Check out <a href="http://distrowatch.com/">Distrowatch</a> for many others. Before making a choice you should read their <a href="http://distrowatch.com/dwres.php?resource=major">overview of the major distributions</a>. 
+It will give you some insight into why Linux has so many choices.	
+Here is the <a href="http://azrael.digipen.edu/~mmead/www/public/linux/gldt1210.png">GNU/Linux Distribution Timeline</a> to see where distributions come from.
+<p>
+	
+</p><blockquote>
+<table border="1" cellspacing="0" cellpadding="5">
+<tbody><tr bgcolor="CCFFCC">
+<td>
+Another reason for getting familiar with a Unix-like operating system is because it has influenced so many operating systems. It's important to be familiar with the concepts behind the most widely-used (and/or imitated) operating system.
+In addition to <span id="wpurl"><a class="wplabel">Unix</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Unix">Unix</a> itself, other <span id="wpurl"><a class="wplabel">Unix-like</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Unix-like">Unix-like</a>
+operating systems include:
+<ul>
+	<li><span id="wpurl"><a class="wplabel">Linux</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Linux">Linux</a> - This is the obvious one. Probably used in more devices than everything else combined.
+		If you're new to Linux, you should check out this <a href="http://www.youtube.com/watch?v=yVpbFMhOAwE">short video</a> to see just how popular Linux is.
+			Most <a href="https://www.linux.com/news/enterprise/high-performance/147-high-performance/666669-94-percent-of-the-worlds-top-500-supercomputers-run-linux-">supercomputers run Linux</a>.</li>
+	<li><span id="wpurl"><a class="wplabel">MacOS X</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/OS_X">MacOS X</a> - From Apple for Macintosh desktop computers.</li>
+	<li><span id="wpurl"><a class="wplabel">iOS</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/IOS">iOS</a> - From Apple and runs on the iPod, iPad, and iPhone. All very popular devices.</li>
+	<li><span id="wpurl"><a class="wplabel">Android</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Android_(operating_system)">Android</a> - From Google, based on the Linux kernel. It is the most widely-used cellphone OS.
+	Plus, it is run on countless devices like TVs, DVRs, routers, and small form-factor computers like the 
+		<span id="wpurl"><a class="wplabel">Raspberry Pi</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Raspberry_Pi">Raspberry Pi</a>.</li>
+</ul>
+So, in a nutshell, Linux and Unix-like operating systems are the most widely used operating systems on the planet and they're getting more popular every day.
+</td>
+</tr></tbody></table>
+</blockquote>
+<p>
+
+	
+<!--
+http://www.softpedia.com/get/System/OS-Enhancements/VMware-Player.shtml	
+-->
+</p><p class="sectionheader">
+Installing VirtualBox
+</p>
+VirtualBox for Windows comes with an installer and should be a very straight-forward installation process. And, since there is already a very good website set up for VirtualBox, I'm going to 
+redirect you there, rather than re-write hundreds of pages of excellent documentation.
+<ul>
+	<li><a href="https://www.virtualbox.org/wiki/Downloads">Downloads</a> - This is the place to start to download and install the software. You need to download the software for
+	the platform you want to run VirtualBox on. For most students, that will be the Windows version (x86/amd64). The download includes software for 32-bit and 64-bit processors.</li>
+	<li>The User Manual - Yes, I know that many students don't read the documentation, but you need to start doing so. The documentation comes in 2 flavors:</li>
+		<ul>
+			<li><a href="https://www.virtualbox.org/manual/UserManual.html">HTML</a> - Read the online docs via a web browser</li>
+			<li><a href="http://download.virtualbox.org/virtualbox/UserManual.pdf">PDF</a> - Read the docs in a PDF. (This document is included with the installer.)</li>
+		</ul>
+	<li><a href="https://www.virtualbox.org/wiki/User_HOWTOS">HOW-TOS</a> - How to do specific things (e.g. installing, networking) with VirtualBox.</li>
+	<li><a href="https://www.virtualbox.org/wiki/Technical_documentation">Technical Docs</a> - More technical information about VirtualBox that the advanced students may want to know.</li>
+</ul>
+
+<!--
+<blockquote>
+<p class="info">
+<b>Note:</b> If you want to use the computers at Digipen, you will have to use <a href="http://www.vbox.me/">Portable VirtualBox</a>. This is because
+VirtualBox is not installed on the computers here, and you can't install software on the machines. This "portable" version allows you to install
+it on a thumb drive and run it from there. Be sure to create the virtual machines in the Sandbox folder on the C: drive and copy it to your thumb
+drive when you leave. And don't forget, a <a href="http://www.newegg.com/Product/ProductList.aspx?Submit=ENE&N=100007960%20600082309&IsNodeId=1&name=USB%203.0a">USB 3.0 flash drive</a> will perform better than a 2.0 drive
+so don't be tempted to save a few bucks by getting a USB 2.0 drive. 
+<big><b>This is no longer true. VirtualBox is installed on all of the computers at Digipen.</b></big>
+</p>
+</blockquote>
+-->
+
+<a name="CREATING">
+<p class="sectionheader">
+Creating the Virtual Machine
+</p>
+</a>
+
+Virtual box comes with a guided "wizard" that makes virtual machine creation very simple. 
+<!--
+<strike>I recommend installing the DVD version of Linux Mint. It comes
+with more than the CD version, so you won't have to do a lot of installing of other programs.</strike> 
+Mint only comes on a DVD now.
+-->
+<!--
+If you are running a 64-bit version of Windows, get the 64-bit version of Mint. If not, get the 32-bit version.
+-->
+<p>
+
+</p><blockquote>
+<p class="info">
+<b>Note:</b> The distribution to use is <a href="http://www.linuxmint.com/edition.php?id=158">Linux Mint 17 (Qiana) 64-bit</a>. The 64-bit version will help you understand
+the differences (problems) when porting 32-bit programs to 64-bit. Most of the software that you will likely run
+for the forseeable future is going to be 64-bit. It is time to start learning how to deal with that.
+</p>
+</blockquote>
+
+<p>
+
+</p><blockquote>
+<center>
+<p class="technote">
+<big>I've put together a very detailed step-by-step of creating a virtual machine and installing Linux Mint, complete
+	with dozens of screenshots. You can find it <a href="http://azrael.digipen.edu/~mmead/www/public/vbox/index.html">here</a>.</big>
+</p><p>
+</p></center>
+</blockquote>
+<p>	
+
+These are the first steps you should perform after you've install Linux into a virtual machine. By the way, 
+installing, upgrading, and removing software (packages) is done with a command-line program called
+<tt><b>apt-get</b></tt>. You need to be the administrator (<b>root</b>) to use it. Some information about
+it can be found <a href="https://help.ubuntu.com/community/AptGet/Howto">here</a>.
+</p><ol>
+	<li>Install Guest Additions - You do this from the <b>Devices</b> menu in the Virtual Box Manager. Choose <b>Install Guest Additions...</b> from that menu. 
+	Answer "yes" or "OK" to any questions.</li>
+	<blockquote>
+	<p class="technote">
+	Note that this step is no longer required with the recent versions of Linux Mint. 
+	It comes with these additional capabilities already installed. Installing them from 
+	the Virtual Box	Manager may actually cause problems if they are different versions.
+</p>
+	</blockquote>
+	<p>
+	</p><li>In Linux, open up a terminal and type: 
+		<blockquote><pre>sudo apt-get update</pre></blockquote>
+	 This will update the repository information which is used to keep track of which versions of the
+	 software packages are currently installed and what is the latest version in the repositories.</li>
+	 <p>
+	</p><li>In the terminal window type: 
+		<blockquote><pre>sudo apt-get upgrade</pre></blockquote>
+		This will make sure that you are running the latest version of all of the software that is installed on the system. It will download and install the software.
+		If you just want to download the software (and install later), use the <tt>-d</tt> switch
+				<blockquote><pre>sudo apt-get -d upgrade</pre></blockquote>
+		Now when you want to do the actual install, invoke it without the <tt>-d</tt> switch and it will install the updates.
+		Depending on how out-of-date your system is (i.e. how often you update things), you may end up downloading and installing hundreds of megabytes of updates. 
+		<p>
+		If during the <tt><b>upgrade</b></tt> you see something like this:
+		</p><p>
+		</p><blockquote>
+		<a href="./Virtualization_files/GRUB-configure-upgrade.png"><img src="./Virtualization_files/GRUB-configure-upgrade.png" width="676" height="178"></a>
+		</blockquote>
+		<p>
+		Select the first option (press the spacebar), then press TAB to move to the <tt>&lt;Ok&gt;</tt>
+		and press Enter. This message is something that I've only recently begun to see.
+		</p></li>
+	<p>
+		
+</p></ol>
+
+Other things you may want to do soon after installing Linux:
+<ol>
+	<li>Install KDE - This is the K Desktop Environment. It's different than the default Cinnamon desktop. Some people like it better, some people hate it. You decide.
+		To download it, type this in a terminal:
+				<blockquote><pre>sudo apt-get install kde-full</pre></blockquote>
+		It will download a lot of software and take up an additional 1 GB of drive space. The choice between the GNOME desktop
+		the Cinnamon desktop, and the KDE desktop (among others) is
+		one of personal preference. I've always preferred KDE because it is more configurable and powerful. Students new to computers (either Windows or Linux) sometimes
+		feel overwhelmed by the amount of options KDE provides. There will be things I demonstrate that will be much easier for you to do, if you have KDE installed.
+		Even if you don't want to use the KDE desktop, you might still want to install this because it provides much more than just the desktop environment. 
+		It will install many graphical programs that you might want to explore.
+	</li>
+</ol>
+		
+	
+<!--
+Here is a virtual machine, <a href="https://faculty.digipen.edu/~mmead/www/public/vbox/Mint12-32-cd.zip">Linux Mint 12 32-bit</a> (about 800 MB), that is all setup and ready to go. 
+It's in a .zip file so it will download faster. You have to extract the folder and put it on your hard drive somewhere. It will take up about 2.5 GBs after it is extracted.
+In the Virtual Box Manager, under the Machine menu select "Add". Then navigate to the folder where you extracted it and select the .vdi file. The virtual machine has now
+been added to your list of virtual machines.
+<p>
+There is a user account setup already:
+<blockquote><pre>
+username: student
+password: printf
+</pre></blockquote>
+
+You should create a new user account for yourself with a more secure password.
+-->
+<p>
+
+If you downloaded the <i>Cinnamon</i> version, you may want to install some other things before using it. In addition to the update and upgrade steps above
+(which should be done with any new installation), you might also want to add these packages to give you a much better Linux desktop experience:
+</p><p>
+</p><blockquote>
+<table border="1" cellspacing="0" cellpadding="10">
+	<tbody><tr><th>Command</th><th>Description</th></tr>
+	<tr>
+		<td>
+			<tt>sudo apt-get install mint-meta-codecs</tt>
+		</td> 
+		<td>
+			Add codecs (for playing music and watching videos). Adds about 200 MBs of files.
+			If you got the full Cinnamon version, you will already have these. If you got the smaller
+			download without the codecs, then this will install them.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<tt>sudo apt-get install mint-meta-mate</tt>
+		</td> 
+		<td>
+			Installs the MATE desktop. A popular desktop among the GNOME community. Adds about 500 MBs of files.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<tt>sudo apt-get install mint-meta-gnome-dvd</tt>
+		</td> 
+		<td>
+			Installs everything from the DVD version. Adds about 1 GB of files.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<tt>sudo apt-get install kde-full</tt>
+		</td> 
+		<td>
+			Installs everything from the KDE version (and then some). Adds about 1.2 GBs of files.
+		</td>
+	</tr>
+</tbody></table>
+</blockquote>
+
+		
+<!--**************************************************************************************-->
+<!--**************************************************************************************-->
+<!--**************************************************************************************-->
+<p class="sectionheader">
+Sharing Folders
+</p>
+
+Once you get the guest OS installed, one of the things that many people want to do is to be able to access files on the host from the guest, e.g. access their Windows
+files from Linux.
+<p>
+Having the guest OS access the files on the host OS is a very powerful and convenient capability. It's not hard to do, but, if you don't know how to do it,
+it may seem a little confusing at first. These notes should give you enough information to setup shared folders in your virtual machine.
+
+</p><blockquote>
+<p class="info">
+<b>Note</b>: In these examples, the host operating system is Windows 7 Professional 64-bit and the guest is Linux Mint 12 64-bit. The Virtual Box software looks very similar
+on all platforms, but you may detect some differences from the screen shots below.
+</p>
+</blockquote>
+	
+	
+We would like the host and guest operating systems to be able to share files. We can do this by using <i>Shared Folders</i>.
+In the running virtual machine, choose the <i>Devices</i> menu, then choose <i>Shared Folders</i>:
+<blockquote>
+	<img src="./Virtualization_files/DeviceMenu.png">
+</blockquote>
+
+This presents the <i>Shared Folders</i> dialog box:
+<blockquote>
+	<img src="./Virtualization_files/SharedFolders-1.png">
+</blockquote>
+
+
+You add a shared folder by clicking on the folder icon (with the '+' sign) or pressing the insert key.
+This presents the <i>Add Share</i> dialog box:
+<blockquote>
+	<img src="./Virtualization_files/AddShare-1.png">
+</blockquote>
+
+If you know the path of the folder on the host OS that you want to access from the guest OS, you can type it in or browse for it:
+<blockquote>
+	<img src="./Virtualization_files/BrowseForFolder.png">
+</blockquote>
+
+I've selected to share the entire C: drive in Windows. When you click OK, you have a chance to name the share. By default, it is named <tt>C_DRIVE</tt> which
+is adequate for our purposes. I also check <i>Auto-mount</i> and <i>Make Permanent</i> for ease-of-use, as I want this to happen automatically each time the 
+guest OS is booted.
+<blockquote>
+	<img src="./Virtualization_files/AddShare-2.png">
+</blockquote>
+
+Clicking OK returns us to this screen where we can see that we've successfully set up a share:
+<blockquote>
+	<img src="./Virtualization_files/SharedFolders-2.png">
+</blockquote>
+
+I also added my F: and G: drives as well, giving me this as a result:
+<blockquote>
+	<img src="./Virtualization_files/SharedFolders-3.png">
+</blockquote>
+
+You could have more control over which folder or folders to share, but when I set up my VM's, I tend to share everything because I never know what I'm going to want
+to access on the host OS. For more safety, you could just share specific folders, but I tend to be lazy with non-critical systems.
+<p>
+By default, when you boot into your Linux guest, you will see these shared folders mounted in <tt>/media</tt> as:
+</p><blockquote><pre>/media/sf_C_DRIVE
+/media/sf_F_DRIVE
+/media/sf_G_DRIVE
+</pre></blockquote>
+
+You will not be able to access the folders, though, because you do not have the proper permission to do that. If you look at the permissions of the shared folders, e.g:
+
+<blockquote><pre>ls -l /media
+</pre></blockquote>
+
+You will see this:
+
+<blockquote><pre>drwxrwx--- 1 <b>root vboxsf</b> 0 2012-05-11 12:17 sf_C_DRIVE
+drwxrwx--- 1 <b>root vboxsf</b> 0 2012-05-11 12:17 sf_F_DRIVE
+drwxrwx--- 1 <b>root vboxsf</b> 0 2012-05-11 12:17 sf_G_DRIVE
+</pre></blockquote>
+<!--
+<blockquote><pre>
+drwxrwx--- 1 <span style="background-color:white;color:blue">root</span> <span style="background-color:white;color:blue">vboxsf</span> 0 2012-05-11 12:17 sf_C_DRIVE
+drwxrwx--- 1 <span style="background-color:white;color:blue">root</span> <span style="background-color:white;color:blue">vboxsf</span> 0 2012-05-11 12:17 sf_F_DRIVE
+drwxrwx--- 1 <span style="background-color:white;color:blue">root</span> <span style="background-color:white;color:blue">vboxsf</span> 0 2012-05-11 12:17 sf_G_DRIVE
+</pre></blockquote>
+-->
+<!--
+             ^^^^ ^^^^^^
+               |     \
+               |      \
+             owner   group       -->
+
+The folders are owned by <b><tt>root</tt></b> and the group is <b><tt>vboxsf</tt></b>. Since, by default, no one is in the <b><tt>vboxsf</tt></b> group, you need
+to add yourself (username) to the group. To see what groups you are a member of, just use the <b><tt>groups</tt></b> command and you will see something like this
+displayed:
+<blockquote><pre>mmead adm dialout cdrom plugdev lpadmin admin sambashare
+</pre></blockquote>
+
+There is no <b><tt>vboxsf</tt></b> group listed. You can easily add a user to any group with the <b><tt>usermod</tt></b> command. 
+My username is <b><tt>mmead</tt></b> in this virtual machine, so I would do this at the command prompt:
+
+<blockquote><pre>sudo usermod -a -G vboxsf mmead
+</pre></blockquote>
+
+You have to log out and then log back in (just like a "regular" computer) for the new group to take affect. 
+
+Now when I type <b><tt>groups</tt></b> at the command prompt, I see this:
+<blockquote><pre>mmead adm dialout cdrom plugdev lpadmin admin vboxsf sambashare
+</pre></blockquote>
+
+Note that you must be administrator (<b><tt>root</tt></b> in Linux) to perform this task. The <span id="wpurl"><a class="wplabel">sudo</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Sudo">sudo</a>
+command gives you root access temporarily and will prompt you for your password.
+
+<!--**************************************************************************************-->
+<!--**************************************************************************************-->
+<!--**************************************************************************************-->
+<p class="sectionheader">
+Mounting shares in a specific folder (Optional)
+</p>
+
+<!--<h2>Mounting shares in a specific folder (Optional)</h2>-->
+
+For most users, using the default mount locations and mount names is fine. But, if you want more control over the shared folder process, you can
+mount the folders the "Linux way". In the following example, I'm going to mount the shared folders in my home directory on Linux, essentially preventing
+any other users from accessing these folders.
+
+<p>
+In the Linux guest operating system, we need to <span id="wpurl"><a class="wplabel">mount</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Mount_%28computing%29"><i>mount</i></a> 
+these shares using the <span id="wpurl"><a class="wplabel">mount</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Mount_%28Unix%29"><b>mount</b></a> command. In this example, I will show the steps involved.
+
+</p><ol>
+	<li>Determine where on the guest operating system you want to mount the share. It can be an existing directory (folder) or you can create a new one.
+	We will create three directories, one for each share (C_DRIVE, F_DRIVE, and G_DRIVE). 
+	<p> 
+	In my home directory (<tt>/home/mmead</tt>) I created a directory
+	called <tt>Windows</tt> and within that directory, I create 3 directories: <tt>C</tt>, <tt>F</tt>, and <tt>G</tt>. These names correspond to the 3 drives
+	that I've shared from Windows. Sometimes, having single-letter names for directories can lead to confusion, but in this case, it makes sense since Windows
+	wants to name partitions with a single-letter. Using the same name for the directory as the drive letter, it is clear what is what. 
+	Within my home directory, I run these commands:
+</p><blockquote><pre><span id="wpurl"><a class="wplabel">mkdir</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Mkdir">mkdir</a> Windows
+<span id="wpurl"><a class="wplabel">cd</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Cd_(command)">cd</a> Windows
+mkdir C
+mkdir F
+mkdir G	
+</pre></blockquote>
+
+Now I am ready to mount (map) the shares in Windows (e.g. <b>C_DRIVE</b>) to a directory in Linux (e.g. <tt>/home/mmead/Windows/C</tt>). Note that this isn't 
+required in a Windows guest. 
+	</li>
+	<p>
+	</p><li>Mount the shares. This is done (not surprisingly) with the <b>mount</b> command. This command requires root privileges, so we will have to use
+		<span id="wpurl"><a class="wplabel">sudo</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Sudo">sudo</a> to accomplish this task.
+		
+<blockquote><pre>sudo mount -t vboxsf C_DRIVE /home/mmead/Windows/C
+</pre></blockquote>
+		If you enter this correctly, you will be prompted for your user password. Type your password and the command will execute. The command is a little cryptic, 
+		so let me give you a brief explanation. This is the basic syntax:
+
+<blockquote><pre><b>mount</b> -t [filesystem type] [share name] [mount point]
+</pre></blockquote>
+where
+<p>
+</p><ul>
+	<li><b>filesystem type</b> - The type of file system. In this case, <b>vboxsf</b> is <b><u>v</u></b>irtual <b><u>box</u></b> <b><u>s</u></b>hared <b><u>f</u></b>older.</li>
+	<li><b>share name</b> - The name of the share that we assigned in the host OS (Windows).</li>
+	<li><b>mount point</b> - The directory in the guest OS that we are mapping (mounting) the share to.</li>
+</ul>
+<p>
+We will need to do this for each share:
+</p><blockquote><pre>sudo mount -t vboxsf C_DRIVE /home/mmead/Windows/C
+sudo mount -t vboxsf F_DRIVE /home/mmead/Windows/F
+sudo mount -t vboxsf G_DRIVE /home/mmead/Windows/G
+</pre></blockquote>
+		</li>
+
+The screen shot below shows the sequence of commands (plus a few others for clarity):		
+<blockquote>
+	<img src="./Virtualization_files/mount-commands.png">
+</blockquote>
+
+See the <a href="http://linuxmanpages.com/">man pages</a> (e.g. <tt>man mkdir</tt>) for detailed information.
+<p>
+</p><li>Of course, we don't want to have to type this <b>mount</b> command every time we boot the system. And, of course, we don't have to. We just need to tell
+	the system to mount these directories at start-up. We do so by adding similar commands to a file called <span id="wpurl"><a class="wplabel">fstab</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Fstab">fstab</a> in the directory <tt>/etc</tt>. <tt>fstab</tt>
+	is short for <b>f</b>ile <b>s</b>ystem <b>tab</b>le. Add these lines to the end of <tt>/etc/fstab</tt>:
+	
+<blockquote><pre>C_DRIVE /home/mmead/Windows/C vboxsf defaults 0 0
+F_DRIVE /home/mmead/Windows/F vboxsf defaults 0 0
+G_DRIVE /home/mmead/Windows/G vboxsf defaults 0 0
+</pre></blockquote>
+
+Now, every time the guest OS boots, the Windows shares will be mounted. The screen shot below shows the actual <tt>fstab</tt> file on the guest OS:
+
+<blockquote>
+	<img src="./Virtualization_files/fstab.png">
+</blockquote>
+	
+See the man pages for <tt>fstab</tt> for explanations.	
+</li>
+		
+</ol>
+
+
+<blockquote><pre></pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+
+
+<blockquote><pre></pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+
+
+
+
+<hr width="90%">
+
+When you want to close the guest OS, you can choose how to do so. Usually, you will want to <i>Save the machine state</i>. This will "freeze" the virtual machine in
+its current state. When you restart it later, it will be in this exact state. If you <i>Power off the machine</i> that is like pulling the plug on the computer. Nothing
+will be saved and you could damage the virtual machine (e.g. by corrupting the hard drive of the virtual machine).
+
+<blockquote>
+	<img src="./Virtualization_files/CloseVM.png">
+</blockquote>
+
+
+<p>
+	</p><hr width="100%">
+<p></p>
+
+<b>Additional references:</b>
+<ul>
+	<li><a href="http://queue.acm.org/detail.cfm?id=1017000">The Reincarnation of Virtual Machines</a> An excellent introduction to virtualization from the ACM Queue magazine.
+		It's from 2004, but is still quite relevant. (<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/The_Reincarnation_of_Virtual_Machines.pdf">PDF</a>)</li>
+	<ul>
+		<li>The entire <a href="http://queue.acm.org/issuedetail.cfm?issue=1016998">issue from 2004</a> is related to virtualization.</li>
+	</ul>
+	<li><a href="http://en.wikipedia.org/wiki/Comparison_of_platform_virtual_machines">Comparison of platform virtual machines</a> There are dozens of VMs compared.</li>
+	<li><a href="http://xen.org/">Xen hypervisor</a> An open source virtual machine monitor. (<a href="http://en.wikipedia.org/wiki/Xen">Wikipedia</a>)</li>
+	
+	
+	<li><a href="http://www.linux-kvm.org/page/Main_Page">KVM</a> A kernel-based virtual machine. (<a href="http://en.wikipedia.org/wiki/Kernel-based_Virtual_Machine">Wikipedia</a>)</li>
+	<!--<li><a href="http://www.linuxinsight.com/finally-user-friendly-virtualization-for-linux.html">User-friendly KVM</a></li>-->
+	<p>
+	</p><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/VMWare_Virtualization.pdf">VMWare Virtualization</a> A PDF from VMWare about virtualization.</li>
+	<li><a href="http://www.intel.com/technology/itj/2006/v10i3/1-hardware/6-vt-x-vt-i-solutions.htm">Intel VT-x</a> Intel's hardware virtualization information.</li>
+	<li><a href="http://sites.amd.com/us/business/it-solutions/virtualization/Pages/amd-v.aspx">AMD-V</a> AMD's hardware virtualization information.</li>
+</ul>
+	
+<!--<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>-->
+
+
+
+<blockquote><pre></pre></blockquote>
+  
+  
+<blockquote><pre></pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<tt><b></b></tt>
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<!--
+
+<big>&rarr;</big>
+
+	<span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne &copy;2009</span>
+	
+<blockquote>
+<table border=0 cellspacing=0 cellpadding=2>
+	<tr><td><img src="ComputerComponents-1.png"></td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne &copy;2009&nbsp;&nbsp;</span></td></tr>
+</table>
+</blockquote>
+	
+-->
+</body></html>

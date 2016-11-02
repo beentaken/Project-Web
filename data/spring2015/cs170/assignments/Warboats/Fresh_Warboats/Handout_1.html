@@ -1,0 +1,192 @@
+
+<!-- saved from url=(0084)http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/index.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./CS 170 - Programming Assignment #1_files/new.css">
+<title>CS 170 - Programming Assignment #1</title>
+<style>
+body {
+   background : #ffffff; 
+   margin-left : 50;
+   margin-right : 20;
+   background : url("../../../../../images/notebook.jpg");
+   }
+</style></head>
+
+
+
+<body>  
+<center>
+<h1>CS 170 - Programming Assignment #1</h1>
+Files - Due Thursday, February 4, 2016 at 11:59 pm<br>
+</center>
+
+<!--
+<p class="technote">
+</p>
+-->
+
+<p class="SectionHeader">
+Information
+</p>
+
+<ul>
+
+
+<li>Below is an <a href="http://dictionary.reference.com/browse/example">example</a> of the additional 
+	lines you need to add to your Doxygenized File Header Comments in your .cpp files.
+
+Make sure you add the lines in <font color="blue">BLUE</font> <b>even if you didn't have
+any problems</b>. If you had no problems, just write: NONE
+
+<blockquote><pre>/******************************************************************************/
+/*!
+\file   foobar.cpp
+\author Master Shake
+\par    email: master.shake\@digipen.edu
+\par    DigiPen login: shakemaster
+\par    Course: CS170
+\par    Assignment #9
+\date   2/19/2019
+\brief  
+    This file contains the implementation of the following functions for the 
+    FooBar assignment.
+      
+    Functions include:
+        Foo
+        Bar
+        Baz
+        blah, blah, blah,
+        yada, yada, yada,
+    
+        other stuff here....
+    
+    
+  <font color="blue"><b>Hours spent on this assignment: 
+
+  Specific portions that gave you the most trouble: 
+</b></font>
+  
+  
+  
+*/
+/******************************************************************************/
+</pre></blockquote>
+
+<!--
+<p class="technote">
+Before starting this assignment, read parts of Chapter 4. Especially the part about
+using <tt><b>new</b></tt> and <tt><b>delete</b></tt> for single objects and <tt><b>new[]</b></tt> 
+and <tt><b>delete[]</b></tt> for arrays starting on page 160 (page 150 in the 5th 
+edition). If you've forgotten how to use a <tt><b>struct</b></tt> in CS120, you should 
+review your notes about them as well. Also, <b>READ THROUGH THE SAMPLE DRIVER. There is a 
+lot of information to be gained from reading code.</b>
+</p>
+-->
+	
+For an example of how you must format your Doxygen function header comments, look 
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/Ocean.cpp.html">here</a>. Failure to follow this format will result in loss of points.
+<p>
+	
+</p></li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/cs170-programming-assignment-warboats.pdf">Handout</a> 
+
+ 
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/CS170-FAQ-WarBoats.html">FAQ</a> Frequently Asked Questions for this assignment. 
+	(<b>Please read this before asking questions</b>)
+</li><li>Warboats interface: <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/WarBoats.h.html">HTML</a> <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/WarBoats.h">Text</a>
+</li><li>Ocean definitions:  <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/Ocean.h.html">HTML</a>  <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/Ocean.h">Text</a>
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/pseudocode.html">Pseudocode</a> for the TakeShot function. Do not write any code until 
+	you understand this.
+</li><li>Partial Ocean implementations:  <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/Ocean.cpp.html">HTML</a> <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/Ocean.cpp">Text</a>
+</li><li>Sample driver program: <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/driver-sample.cpp.html">HTML</a> <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/driver-sample.cpp">Text</a>
+</li><li>Outputs from the three tests: <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/test0.txt">test0.txt</a>&nbsp;&nbsp;&nbsp;<a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/test1.txt">test1.txt</a>&nbsp;&nbsp;&nbsp;
+	<a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/test2.txt">test2.txt</a>
+</li><li>Random number generator files
+	<ul>
+		<li> - Header file (PRNG.h): <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/PRNG.h.html">HTML</a> <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/PRNG.h">Text</a>
+		</li><li> - Implementation (PRNG.cpp): <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/PRNG.cpp.html">HTML</a> <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/PRNG.cpp">Text</a>
+	</li></ul>
+</li><li>Sample command lines for compiling
+<blockquote>
+GNU: 
+<blockquote><pre><b>g++</b> -Wall -Wextra -Werror -O -ansi -pedantic -o gnu driver-sample.cpp Ocean.cpp PRNG.cpp
+</pre></blockquote>
+</blockquote>
+
+<blockquote>
+Clang:
+<blockquote><pre><b>clang++</b> -Wall -Wextra -Werror -O -ansi -pedantic -o clan driver-sample.cpp Ocean.cpp PRNG.cpp
+</pre></blockquote>
+If Clang won't link on Windows, use this command (compile-only):
+<blockquote><pre><b>clang++</b> -c -Wall -Wextra -Werror -O -ansi -pedantic driver-sample.cpp Ocean.cpp PRNG.cpp
+</pre></blockquote>
+</blockquote>
+
+<blockquote>
+Microsoft
+<blockquote><pre><b>cl</b> /W4 /Za /WX /Zi /MT /EHsc /Oy- /Ob0 /Fems.exe driver-sample.cpp Ocean.cpp PRNG.cpp
+</pre></blockquote>
+</blockquote>
+
+
+
+</li><li>You can "play" the text version <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/WarBoatsGame.exe">here</a>.
+<p>
+</p></li><li>Here's an example <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/Doxyfile">Doxyfile</a> for you to use with this project. 
+	You'll have to modify it for this assignment.
+
+<p>
+</p></li><li>Don't forget to compile a 32-bit version with Microsoft's compiler and run your program under
+Dr. Memory. Submitting code with memory errors will lead to a low score 
+<b>EVEN IF YOUR OUTPUT IS CORRECT</b>.</li>	
+</ul>
+
+<!--****************************************************************************************************-->
+<!--****************************************************************************************************-->
+<!--****************************************************************************************************-->
+<p class="SectionHeader">
+Additional Sample Program Runs
+</p>
+Be sure that you test your code with this driver as well, especially the 8x12 board. 
+<b>YOU HAVE BEEN WARNED.</b>
+
+<ul>
+<li>Another sample driver: <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/driver-big.cpp.html">HTML</a> <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/driver-big.cpp">Text</a> 
+	<ul>
+	<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/out-5-10-10-ff.txt">10x10 with 5 boats, minimum output</a>
+	</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/out-5-10-10-tf.txt">10x10 with 5 boats, medium output</a>
+	</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/out-5-10-10-tt.txt">10x10 with 5 boats, maximum output</a>
+		<p>
+	</p></li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/out-5-8-12-ff.txt">8x12 with 5 boats, minimum output</a>
+	</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/out-5-8-12-tf.txt">8x12 with 5 boats, medium output</a>
+	</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/out-5-8-12-tt.txt">8x12 with 5 boats, maximum output</a>
+		<p>
+	</p></li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/out-99-30-30-ff.txt">30x30 with 99 boats, minimum output</a>
+	</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/out-99-30-30-tf.txt">30x30 with 99 boats, medium output</a>
+	</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/out-99-30-30-tt.zip">30x30 with 99 boats, maximum output</a> zip file
+	</li></ul>
+</li></ul>
+
+<p class="SectionHeader">
+GUI Driver</p>
+
+After completing this assignment, you will have the "logic" to create a simple game like this one. 
+<!-- Of course, you need to know how to create a graphical user interface, which is one of the things you'll learn in CS230. -->
+
+<p>
+No installation necessary. Just copy to your hard drive and run it.
+<br>
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/WarBoats.exe">Download the executable</a> &nbsp;&nbsp;&nbsp; 
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs170/projects/1/WarBoats2.exe">(with alternate sounds)</a> &nbsp;&nbsp;&nbsp; 
+
+</p><p>
+<img src="./CS 170 - Programming Assignment #1_files/WarBoats-1.png">
+</p><p>
+
+
+
+
+
+
+</p><blockquote><pre></pre></blockquote>
+
+</body></html>

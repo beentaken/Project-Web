@@ -1,0 +1,36 @@
+PRG=gnu.exe
+GCC=gcc
+GCCFLAGS=-Werror -Wall -Wextra -ansi -pedantic -g -O
+
+OBJECTS0=memmgr.c
+DRIVER0=driver-s.c
+
+VALGRIND_OPTIONS=-q --leak-check=full
+DIFF_OPTIONS=-y --strip-trailing-cr --suppress-common-lines -b
+
+OSTYPE := $(shell uname)
+ifeq ($(OSTYPE),Linux)
+CYGWIN=
+else
+CYGWIN=-Wl,--enable-auto-import
+endif
+
+gcc0:
+	$(GCC) -o 1$(PRG) $(CYGWIN) $(DRIVER0) $(OBJECTS0) $(GCCFLAGS)
+gcc1:
+	$(GCC) $(GCCFLAGS) -fPIC -c memmgr.c -o memmgr.o
+gcc2:
+	$(GCC) -shared memmgr.o -o libmemmgr.so
+gcc3:
+	$(GCC) -c shared.c -o shared.o
+gcc4:
+	$(GCC) driver-d.c shared.o -o 2$(PRG) -ldl
+
+0:
+	#echo "running test$@"
+	#@echo "should run in less than 200 ms"
+	@echo "should run in less than 200 ms"
+	./$(PRG) input.txt >studentout$@
+	#diff output$@.txt studentout$@ $(DIFF_OPTIONS) > difference$@
+clean : 
+	rm *.exe student* difference* *.o *.so

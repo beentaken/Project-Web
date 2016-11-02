@@ -1,0 +1,88 @@
+Wed Oct  7 21:09:22 PDT 2015
+====================================================
+Archive:  ../2015-10-07-21-09-22.zip
+  inflating: typescript              
+  inflating: filter.c                
+Checking content of 2015-10-07-21-09-22.zip
+filter.c found
+typescript found
+
+
+Wed Oct  7 23:54:54 PDT 2015
+====================================================
+Archive:  ../2015-10-07-23-54-54.zip
+  inflating: typescript              
+  inflating: filter.c                
+Checking content of 2015-10-07-23-54-54.zip
+filter.c found
+typescript found
+
+
+Wed Oct  7 23:55:35 PDT 2015
+====================================================
+Archive:  ../2015-10-07-23-55-35.zip
+  inflating: typescript              
+  inflating: filter.c                
+Checking content of 2015-10-07-23-55-35.zip
+filter.c found
+typescript found
+====================================================
+Wed Oct  7 23:55:35 PDT 2015
+
+
+Archive:  ../2015-10-07-23-55-35.zip
+  inflating: filter.c                
+  inflating: typescript              
+======== COMPILE gcc0 ==============
+gcc -o filter-damien.baca.exe   filter.c -Wall -Wextra -ansi -pedantic -g -Werror -O
+filter.c: In function 'main':
+filter.c:201:17: error: 'num_spaces' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+                 for(i = 0; i < num_spaces; i++)
+                 ^
+filter.c:147:9: note: 'num_spaces' was declared here
+     int num_spaces;  
+         ^
+cc1: all warnings being treated as errors
+make: *** [gcc0] Error 1
+
+
+Wed Oct  7 23:56:20 PDT 2015
+====================================================
+Archive:  ../2015-10-07-23-56-20.zip
+  inflating: typescript              
+  inflating: filter.c                
+Checking content of 2015-10-07-23-56-20.zip
+filter.c found
+typescript found
+====================================================
+Wed Oct  7 23:56:20 PDT 2015
+
+
+Archive:  ../2015-10-07-23-56-20.zip
+  inflating: filter.c                
+  inflating: typescript              
+======== COMPILE gcc0 ==============
+gcc -o filter-damien.baca.exe   filter.c -Wall -Wextra -ansi -pedantic -g -Werror -O
+=========RUN=================
+======END REPORT=============
+
+
+Wed Oct  7 23:56:36 PDT 2015
+====================================================
+Archive:  ../2015-10-07-23-56-36.zip
+  inflating: typescript              
+  inflating: filter.c                
+Checking content of 2015-10-07-23-56-36.zip
+filter.c found
+typescript found
+====================================================
+Wed Oct  7 23:56:37 PDT 2015
+
+
+Archive:  ../2015-10-07-23-56-36.zip
+  inflating: filter.c                
+  inflating: typescript              
+======== COMPILE gcc0 ==============
+gcc -o filter-damien.baca.exe   filter.c -Wall -Wextra -ansi -pedantic -g -Werror -O
+=========RUN=================
+======END REPORT=============

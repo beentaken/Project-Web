@@ -1,0 +1,2158 @@
+
+<!-- saved from url=(0065)http://azrael.digipen.edu/~mmead/www/Courses/CS170/Classes-3.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./Classes Part 3_files/new.css">
+<title>Classes Part 3</title>
+</head>
+
+<body>  
+<center><h1>Classes - Part 3</h1></center>
+
+<!--
+<blockquote>
+<i>
+"The road to hell is paved with global variables"</i> -- Steve McConnell
+</blockquote>
+-->
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Default Class Behavior
+</p>
+
+We've been assigning <tt>StopWatch</tt> objects and initializing them without any regards to how this is done:
+
+<blockquote><pre>  <font color="#003399"><i>// Construction (conversion constructor)</i></font>
+StopWatch sw1(60);   <font color="#003399"><i>// 00:01:00</i></font>
+  
+  <font color="#003399"><i>// Initialization</i></font>
+StopWatch sw2 = sw1; <font color="#003399"><i>// 00:01:00</i></font>
+
+  <font color="#003399"><i>// Construction (default constructor)</i></font>
+StopWatch sw3; <font color="#003399"><i>// 00:00:00</i></font>
+
+  <font color="#003399"><i>// Assignment: sw3.operator=(sw1);</i></font>
+  <font color="#003399"><i>// Where did this operator come from?</i></font>
+sw3 = sw1;  <font color="#003399"><i>// 00:01:00</i></font>
+</pre></blockquote>
+
+The compiler made it for us.
+<ul>
+<li>Like the default constructor and destructor, the compiler provides a default assignment operator
+</li><li>And like the default constructor/destructor, the default assignment operator is very basic.
+</li><li>It works the way the assignment operator works in C for <b>structs</b>, by doing a <i>memberwise</i> assignment of the data.
+	
+<blockquote><pre><b>struct</b> Foo
+{
+  <b>int</b> a, b, c;
+};
+
+Foo f1 = {1, 2, 3}; <font color="#003399"><i>// initialization</i></font>
+Foo f2 = f1;        <font color="#003399"><i>// initialization</i></font>
+Foo f3;             <font color="#003399"><i>// uninitialized</i></font>
+f3 = f1;            <font color="#003399"><i>// assignment</i></font>
+</pre></blockquote>
+
+</li><li>If we could see what the compiler generates for the assignment operator, it would look something like this:
+	
+<blockquote><pre>Foo&amp; Foo::<b>operator</b>=(<b>const</b> Foo&amp; rhs)
+{
+  a = rhs.a;
+  b = rhs.b;
+  c = rhs.c;
+  <b>return</b> *<b>this</b>; <font color="#003399"><i>// Allows chaining: f1 = f2 = f3 etc...</i></font>
+}
+</pre></blockquote>
+
+So these mean the same thing:
+
+<blockquote><pre>  <font color="#003399"><i>// Infix notation</i></font>
+f3 = f1;
+
+  <font color="#003399"><i>// Functional notation</i></font>
+f3.<b>operator</b>=(f1);
+</pre></blockquote>
+
+
+
+</li></ul>
+
+For some classes, the default assignment operator is sufficient. (It is fine for the <tt>Foo</tt> class and the <tt>StopWatch</tt> class.)
+<p>
+In addition to the default assignment operator, the compiler will also provide a default <i>copy constructor</i>. (Once again, another
+function will be called to help the compiler perform its job.)
+</p><ul>
+<li>Anytime a copy of an object needs to be made, the copy constructor is called.
+</li><li>The default copy constructor is provided by the compiler.
+</li><li>If the default is insufficient, you can write your own (just like the default constructor, 
+  destructor, and assignment operator).
+</li><li>The copy constructor is also a one-argument constructor.
+</li><li>This is what it might look like if we could see the compiler-generated function:
+	
+<blockquote><pre>Foo::Foo(<b>const</b> Foo&amp; rhs) : a(rhs.a), b(rhs.b), c(rhs.c)
+{
+}
+</pre></blockquote>
+
+<!--
+  a = rhs.a;
+  b = rhs.b;
+  c = rhs.c;
+-->
+
+</li><li>Anytime you call the constructor with <b>an object of the same type</b>, the copy constructor is used:
+		
+<blockquote><pre>Foo f1;     <font color="#003399"><i>// default constructor</i></font>
+Foo f2(f1); <font color="#003399"><i>// copy constructor</i></font>
+</pre></blockquote>
+
+</li><li>There are 2 other major situations where this happens "silently":
+	
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Pass by value</th><th>Return by value</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>void</b> SomeFn1(Foo foo)
+{
+  <font color="#003399"><i>// do something with foo...</i></font>
+}
+
+<b>void</b> f3()
+{
+  Foo f1;
+  SomeFn1(f1); <font color="#003399"><i>// pass by value</i></font>
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>Foo SomeFn2()
+{
+  Foo f;
+  <b>return</b> f; <font color="#003399"><i>// return by value</i></font>
+}
+
+<b>void</b> f4()
+{
+  Foo f1 = SomeFn2();
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+	
+</li></ul>	
+	
+At this point in the discussion there are four methods that the compiler will provide defaults for. (No visible C++ code is actually generated)
+
+<p>
+	
+<!--
+<table border=1 cellspacing=5 cellpadding=5>
+<tr><th>Default constructor</th><th>Default destructor</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>
+Foo::Foo()
+{
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>
+Foo::~Foo()
+{
+}
+</pre></blockquote>
+</td>
+</tr></table>
+
+<p>
+	
+<table border=1 cellspacing=5 cellpadding=5>
+<tr><th>Default assignment operator</th><th>Default copy constructor</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>
+Foo&amp; Foo::<b>operator</b>=(<b>const</b> Foo&amp; rhs)
+{
+  a = rhs.a;
+  b = rhs.b;
+  c = rhs.c;
+  <b>return</b> *<b>this</b>;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>
+Foo::Foo(<b>const</b> Foo&amp; rhs)
+{
+  a = rhs.a;
+  b = rhs.b;
+  c = rhs.c;
+}
+</pre></blockquote>
+</td>
+</tr></table>
+-->
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr align="center"><th>Default constructor</th><th>Default destructor</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>Foo::Foo()
+{
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>Foo::~Foo()
+{
+}
+</pre></blockquote>
+</td>
+
+</tr><tr align="center"><th>Default assignment operator</th><th>Default copy constructor</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>Foo&amp; Foo::<b>operator</b>=(<b>const</b> Foo&amp; rhs)
+{
+  a = rhs.a;
+  b = rhs.b;
+  c = rhs.c;
+  <b>return</b> *<b>this</b>;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>Foo::Foo(<b>const</b> Foo&amp; rhs) : a(rhs.a), b(rhs.b), c(rhs.c)
+{
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+
+For simple classes and structs, these methods are sufficient. Where might it not be sufficient?
+</p><p>
+	
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Class definition</th><th>Some implementations</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>class</b> Student           
+{
+  <b>public</b>:
+      <font color="#003399"><i>// Constructor</i></font>
+    Student(<b>const</b> <b>char</b> * login, <b>int</b> age, 
+            <b>int</b> year, <b>float</b> GPA);
+      <font color="#003399"><i>// Destructor</i></font>
+    ~Student();
+
+  <b>private</b>:
+    <b>char</b> *login_; <font color="#003399"><i>// dynamically allocated</i></font>
+    <b>int</b> age_;
+    <b>int</b> year_;
+    <b>float</b> GPA_;
+};
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>void</b> Student::set_login(<b>const</b> <b>char</b>* login)
+{
+    <font color="#003399"><i>// Delete "old" login</i></font>
+  <b>delete</b> [] login_;
+
+    <font color="#003399"><i>// Allocate new one</i></font>
+  <b>int</b> len = std::strlen(login);
+  login_ = <b>new</b> <b>char</b>[len + 1]; 
+  std::strcpy(login_, login);
+}
+
+Student::~Student()
+{
+  std::cout &lt;&lt; <font color="#9933CC">"Student destructor for "</font> 
+            &lt;&lt; login_ &lt;&lt; std::endl;
+  <b>delete</b> [] login_;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+
+Given the above "legal" code, this seemingly innocent code below is undefined and <i>may</i> 
+cause a crash:
+
+</p><blockquote><pre><b>void</b> f6()
+{
+  Student john(<font color="#9933CC">"john"</font>, 20, 3, 3.10f);
+  Student billy(<font color="#9933CC">"billy"</font>, 21, 2, 3.05f);
+
+  billy = john; <font color="#003399"><i>// Assignment</i></font>
+}
+</pre></blockquote>
+
+<b>Output:</b>
+
+<blockquote><pre>Student constructor for john
+Student constructor for billy
+Student destructor for john
+Student destructor for ,o¶a,o¶a?
+  22292 [sig] a 2032 open_stackdumpfile: Dumping stack trace to a.exe.stackdump
+  22292 [sig] a 2032 open_stackdumpfile: Dumping stack trace to a.exe.stackdump
+ 742008 [sig] a 2032 E:\Data\Courses\Notes\CS170\Code\Classes3\a.exe: *** fatal error - 
+        E:\Data\Courses\Notes\CS170\Code\Classes3\a.exe: *** called with threadlist_ix -1
+</pre></blockquote>
+
+The output makes it obvious that there is a problem. On my 64-bit Linux system, I get 
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS170/ShallowAssignmentCrash.html">this message</a>.
+<p>
+
+Here's a graphic of the problem:
+
+</p><blockquote>
+</blockquote>
+
+<a name="COPYDIAGRAM">
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Incorrect assignment behavior (shallow copy)</th><th>Correct assignment behavior (deep copy)</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><img src="./Classes Part 3_files/ShallowCopy-1.png">
+</pre></blockquote>
+</td>
+<td>
+<img src="./Classes Part 3_files/DeepCopy-1.png">
+</td>
+</tr></tbody></table>
+</a>
+<p>
+	
+The diagram shows the painful truth: The default assignment operator won't cut it. Also, the default copy
+constructor will have the same problem, so this code will also fail:
+
+</p><blockquote><pre>Student john(<font color="#9933CC">"john"</font>, 20, 3, 3.10f);
+
+  <font color="#003399"><i>// Copy constructor</i></font>
+Student billy(john);
+</pre></blockquote>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">A Proper Assignment Operator and Copy Constructor
+</p>
+
+Adding an assignment operator is no different than any other operator:
+<p>
+	
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Declaration</th><th>Implementation</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>class</b> Student           
+{
+  <b>public</b>:
+      <font color="#003399"><i>// Constructor</i></font>
+    Student(<b>const</b> <b>char</b> * login, <b>int</b> age, 
+            <b>int</b> year, <b>float</b> GPA);
+
+      <font color="#003399"><i>// Explicit assignment operator</i></font>
+    Student&amp; <b>operator</b>=(<b>const</b> Student&amp; rhs);
+
+  <b>private</b>:
+      <font color="#003399"><i>// Private data</i></font>
+};
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>Student&amp; Student::<b>operator</b>=(<b>const</b> Student&amp; rhs)
+{
+  set_login(rhs.login_); <font color="#003399"><i>// This is important!</i></font>
+  set_age(rhs.age_);
+  set_year(rhs.year_);
+  set_GPA(rhs.GPA_);
+  <b>return</b> *<b>this</b>;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+<!--
+  std::cout &lt;&lt; <font color="#9933CC">&quot;Student operator= for &quot;</font> &lt;&lt; login_ &lt;&lt; std::endl;
+-->
+
+Remember that this is kind of what the default compiler-generated assignment operator looks like:
+</p><p>
+	
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Default assignment operator</th><th>Our correct and safe copy of login_</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>Student&amp; Student::<b>operator</b>=(<b>const</b> Student&amp; rhs)
+{
+  login_ = rhs.login_; <font color="#003399"><i>// This is big trouble!</i></font>
+  age_ = rhs.age_;
+  year_ = rhs.year_;
+  GPA_ = rhs.GPA_;
+  <b>return</b> *<b>this</b>;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>void</b> Student::set_login(<b>const</b> <b>char</b>* login)
+{
+    <font color="#003399"><i>// Delete "old" login</i></font>
+  <b>delete</b> [] login_;
+
+    <font color="#003399"><i>// Allocate new string</i></font>
+  <b>int</b> len = std::strlen(login);
+  login_ = <b>new</b> <b>char</b>[len + 1]; 
+  
+    <font color="#003399"><i>// Copy data</i></font>
+  std::strcpy(login_, login);
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+
+</p><blockquote><pre></pre></blockquote>
+
+There is more work to be done. Many (if not all) new C++ programmers fall into this trap a lot:
+<p>
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Sample code</th><th>Output</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>  <font color="#003399"><i>// Construct a Student object</i></font>
+Student john(<font color="#9933CC">"jdoe"</font>, 20, 3, 3.10f);
+
+  <font color="#003399"><i>// Self-assignment (legal)</i></font>
+john = john;
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>Student constructor for jdoe
+Error in age range!
+Error in year range!
+Student constructor for
+Student operator= for ,o¶a,o¶a?
+Student destructor for
+Student destructor for ,o¶a,o¶a?
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</p><p>
+An easy way to prevent this is to simply check first:
+
+</p><blockquote><pre>Student&amp; Student::<b>operator</b>=(<b>const</b> Student&amp; rhs)
+{
+    <font color="#003399"><i>// Check for self-assignment</i></font>
+  <b>if</b> (&amp;rhs != <b>this</b>)
+  {
+    set_login(rhs.login_);
+    set_age(rhs.age_);
+    set_year(rhs.year_);
+    set_GPA(rhs.GPA_);
+  }
+  <b>return</b> *<b>this</b>;
+}
+</pre></blockquote>
+
+There are other ways to prevent problems with self-assignment, but at this point, this is easier.
+<p>
+A similar problem exists with the default copy constructor:
+</p><p>
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Client code</th><th>Default copy constructor</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>  <font color="#003399"><i>// Construct a Student object</i></font>
+Student john(<font color="#9933CC">"jdoe"</font>, 20, 3, 3.10f);
+
+  <font color="#003399"><i>// Copy constructor</i></font>
+Student temp(john);
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>Student::Student(<b>const</b> Student&amp; student) : login_(student.login_),  <font color="#003399"><i>// This is bad</i></font>
+                                           age_(student.age_),
+                                           year_(student.year_),
+                                           GPA_(student.GPA_)
+{
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+We need to write our own copy constructor to copy the object's data correctly:
+</p><p>
+	
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Declaration</th><th>Implementation (almost correct)</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>class</b> Student           
+{
+  <b>public</b>:
+      <font color="#003399"><i>// Constructor</i></font>
+    Student(<b>const</b> <b>char</b> * login, <b>int</b> age, 
+            <b>int</b> year, <b>float</b> GPA);
+
+      <font color="#003399"><i>// Explicit copy constructor</i></font>
+    Student(<b>const</b> Student&amp; student);
+
+  <b>private</b>:
+      <font color="#003399"><i>// Private data</i></font>
+};
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>Student::Student(<b>const</b> Student&amp; student)
+{
+  set_login(student.login_); <font color="#003399"><i>// This is good</i></font>
+  set_age(student.age_);
+  set_year(student.year_);
+  set_GPA(student.GPA_);
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+
+
+</p><blockquote><pre></pre></blockquote>
+
+Points:
+<ul>
+<li>The copy constructor looks very similar to the assignment operator.
+</li><li>However, they are working in very different ways:
+	<ol>
+	<li>Copy constructor - creates a brand new object where one <b>didn't exist before</b>
+	</li><li>Assignment operator - modifies the data of an <b>existing object</b>
+</li></ol>
+</li><li>If you have a lot of similar code in both functions, you should make a private method to help:
+	
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Private helper function</th><th>Calling the helper function</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><font color="#003399"><i>// Private copy method</i></font>
+<b>void</b> Student::copy_data(<b>const</b> Student&amp; rhs)
+{
+  set_login(rhs.login_);
+  set_age(rhs.age_);
+  set_year(rhs.year_);
+  set_GPA(rhs.GPA_);
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><font color="#003399"><i>// Constructor</i></font>
+<font color="#003399"><i>// Explicit copy constructor</i></font>
+Student::Student(<b>const</b> Student&amp; student)
+{
+  copy_data(student);
+}
+
+<font color="#003399"><i>// Explicit assignment operator</i></font>
+Student&amp; Student::<b>operator</b>=(<b>const</b> Student&amp; rhs)
+{
+    <font color="#003399"><i>// Check for self-assignment</i></font>
+  <b>if</b> (&amp;rhs != <b>this</b>)
+    copy_data(rhs);
+
+  <b>return</b> *<b>this</b>;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+	
+</li><li>Why don't we check for "self-copying" in the copy constructor like we do in the assignment operator?
+</li><li>There is still a subtle deficiency (bug) in the constructor and copy constructor that isn't present in the 
+	assignment operator.
+<blockquote><pre><b>void</b> Student::set_login(<b>const</b> <b>char</b>* login)
+{
+    <font color="#003399"><i>// Delete "old" login (THIS IS A POTENTIAL PROBLEM)</i></font>
+  <b>delete</b> [] login_;
+
+    <font color="#003399"><i>// Allocate new one</i></font>
+  <b>int</b> len = (<b>int</b>)std::strlen(login);
+  login_ = <b>new</b> <b>char</b>[len + 1]; 
+  std::strcpy(login_, login);
+}
+</pre></blockquote>
+
+The copy constructor calls this method:
+
+<blockquote><pre><b>void</b> Student::copy_data(<b>const</b> Student&amp; rhs)
+{
+    <font color="#003399"><i>// What is the value of login_ when the constructors call this method?</i></font>
+  set_login(rhs.login_); 
+  set_age(rhs.age_);
+  set_year(rhs.year_);
+  set_GPA(rhs.GPA_);
+}
+</pre></blockquote>
+
+</li><li>This is the proper way to implement the constructors for the Student class:
+<p>
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Initializing in the body</th><th>Using the member initializer list</th></tr>
+<tr valign="top">
+<td>
+<pre><font color="#003399"><i>// Constructor</i></font>
+Student::Student(<b>const</b> <b>char</b> * login, 
+                 <b>int</b> age, <b>int</b> year, 
+                 <b>float</b> GPA)
+{
+  <font color="blue"><b>login_ = 0;</b></font>
+  set_login(login); 
+  set_age(age);
+  set_year(year);
+  set_GPA(GPA);
+}
+
+<font color="#003399"><i>// Explicit copy constructor</i></font>
+Student::Student(<b>const</b> Student&amp; student)
+{
+  <font color="blue"><b>login_ = 0;</b></font>
+  copy_data(student);
+}
+</pre>
+</td>
+<td>
+<blockquote><pre><font color="#003399"><i>// Constructor</i></font>
+Student::Student(<b>const</b> <b>char</b> * login, <b>int</b> age, 
+                 <b>int</b> year, <b>float</b> GPA) <font color="blue"><b>: login_(0)</b></font>
+{
+  set_login(login); 
+  set_age(age);
+  set_year(year);
+  set_GPA(GPA);
+}
+
+
+
+<font color="#003399"><i>// Explicit copy constructor</i></font>
+Student::Student(<b>const</b> Student&amp; student) <font color="blue"><b>: login_(0)</b></font>
+{
+  copy_data(student);
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+</p></li></ul>
+
+<center>
+<table border="1" bgcolor="#e0ffff" cellpadding="10">
+<tbody><tr>
+<td>	
+As a rule, if you use <tt><b>new</b></tt> in your constructor, you will need to create
+<p>
+</p><ol>
+	<li>a destructor to free the memory.
+	</li><li>a copy constructor to perform a deep copy.
+	</li><li>an assignment operator to perform a deep copy (and also free the original memory).
+</li></ol>
+</td></tr></tbody></table>
+</center>
+<p>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><p class="SectionHeader">Creating a String Class
+</p>
+
+
+<ul>
+<li>Some languages have "real" strings built-in.
+</li><li>In C/C++, we refer to NUL terminated character arrays as strings.
+</li><li>The Standard Template Library (STL) includes a <tt>std::string</tt> class that is much easier and more powerful than NUL terminated strings.
+</li><li>To get a glimpse of how this works, we will implement our own String class.
+</li><li>Our String class will be very simple.
+</li><li>Note that there will be <b>intentional</b> bugs in this code (so we can fix them as we learn more).
+</li></ul>
+
+This is our minimal interface. Looking at the interface, what kind of functionality does the String class have? 
+(It's important to be able to look at a public interface, typically in a header file, and determine the functionality of the
+class.)
+<p>
+
+</p><blockquote><pre><b>#include</b> &lt;iostream&gt; <font color="#003399"><i>// ostream</i></font>
+
+<b>class</b> String
+{
+  <b>public</b>:
+    String();                  <font color="#003399"><i>// default constructor</i></font>
+    String(<b>const</b> <b>char</b> *cstr); <font color="#003399"><i>// conversion constructor</i></font>
+    ~String();                 <font color="#003399"><i>// destructor</i></font>
+
+      <font color="#003399"><i>// So we can use cout</i></font>
+    <b>friend</b> std::ostream &amp; <b>operator</b>&lt;&lt;(std::ostream &amp; os, <b>const</b> String &amp;str);
+    
+  <b>private</b>:
+    <b>char</b> *string_; <font color="#003399"><i>// the "real" string (A NUL terminated array of characters)</i></font>
+};
+</pre></blockquote>
+  
+Once these methods are implemented, this trivial program will work:
+
+<blockquote><pre><b>void</b> f1()
+{
+  String s(<font color="#9933CC">"Hello"</font>);
+  std::cout &lt;&lt; s &lt;&lt; std::endl;
+}
+</pre></blockquote>
+
+Output:
+<blockquote><pre>Conversion constructor: Hello
+Hello
+Destructor: Hello
+</pre></blockquote>
+
+
+Implementations so far:
+<p>
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>#include</b> &lt;iostream&gt; <font color="#003399"><i>// iostream, cout, endl</i></font>
+<b>#include</b> &lt;cstring&gt;  <font color="#003399"><i>// strcpy, strlen</i></font>
+<b>#include</b> <font color="#9933CC">"String.h"</font>
+
+String::String()
+{
+    <font color="#003399"><i>// Allocate minimal space</i></font>
+  string_ = <b>new</b> <b>char</b>[1]; 
+  string_[0] = 0;        
+  
+  std::cout &lt;&lt; <font color="#9933CC">"Default constructor"</font> 
+            &lt;&lt; std::endl;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>	
+	
+	
+String::String(<b>const</b> <b>char</b> *cstr)
+{
+    <font color="#003399"><i>// Allocate space and copy</i></font>
+  <b>int</b> len = strlen(cstr);
+  string_ = <b>new</b> <b>char</b>[len + 1];
+  std::strcpy(string_, cstr);      
+
+  std::cout &lt;&lt; <font color="#9933CC">"Conversion constructor: "</font> 
+            &lt;&lt; cstr &lt;&lt; std::endl;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>String::~String()
+{
+  std::cout &lt;&lt; <font color="#9933CC">"Destructor: "</font>
+            &lt;&lt; string_ &lt;&lt; std::endl;
+  <b>delete</b> [] string_; <font color="#003399"><i>// free memory</i></font>
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>std::ostream &amp; <b>operator</b>&lt;&lt;(std::ostream &amp; os, 
+                          <b>const</b> String &amp;str)
+{
+  os &lt;&lt; str.string_;
+  <b>return</b> os;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+	
+Here's a larger example that demonstrates the construction and destruction of objects:
+</p><p>
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>#include</b> &lt;iostream&gt;
+<b>using</b> std::cout;
+<b>using</b> std::endl;
+
+String global(<font color="#9933CC">"Euclid"</font>);
+
+<b>void</b> Create1()
+{
+  cout &lt;&lt; <font color="#9933CC">"*** Start of Create1..."</font> &lt;&lt; endl;
+
+  String local(<font color="#9933CC">"Plato"</font>);
+  cout &lt;&lt; local &lt;&lt; endl;
+
+  cout &lt;&lt; <font color="#9933CC">"*** End of Create1..."</font> &lt;&lt; endl;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>	
+	
+	
+	
+String *Create2()
+{
+  cout &lt;&lt; <font color="#9933CC">"*** Start of Create2..."</font> &lt;&lt; endl;
+
+  String *dynamic = <b>new</b> String(<font color="#9933CC">"Pascal"</font>);
+  cout &lt;&lt; *dynamic &lt;&lt; endl;
+
+  cout &lt;&lt; <font color="#9933CC">"*** End of Create2..."</font> &lt;&lt; endl;
+  <b>return</b> dynamic;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+Given the functions above, what will be printed by the code below?
+
+</p><blockquote><pre><b>int</b> main()
+{
+  cout &lt;&lt; <font color="#9933CC">"*** Start of main..."</font> &lt;&lt; endl;
+
+    String s(<font color="#9933CC">"Newton"</font>);
+    cout &lt;&lt; s &lt;&lt; endl;
+
+    Create1();
+    String *ps = Create2();
+    cout &lt;&lt; ps &lt;&lt; endl;   <font color="#003399"><i>// what does this display?</i></font>
+    cout &lt;&lt; *ps &lt;&lt; endl;  <font color="#003399"><i>// what does this display?</i></font>
+    cout &lt;&lt; global &lt;&lt; endl;
+
+    <b>delete</b> ps;
+
+  cout &lt;&lt; <font color="#9933CC">"*** End of main..."</font> &lt;&lt; endl;
+  <b>return</b> 0;
+}
+</pre></blockquote>
+<br><br>
+<b>Output:</b><br><br>
+<blockquote><pre>Conversion constructor: Euclid
+*** Start of main...
+Conversion constructor: Newton
+Newton
+*** Start of Create1...
+Conversion constructor: Plato
+Plato
+*** End of Create1...
+Destructor: Plato
+*** Start of Create2...
+Conversion constructor: Pascal
+Pascal
+*** End of Create2...
+0x653290
+Pascal
+Euclid
+Destructor: Pascal
+*** End of main...
+Destructor: Newton
+Destructor: Euclid
+</pre></blockquote>
+
+Notice the two different uses of <b>new</b> and <b>delete</b> in the program:
+<ul>
+<li>In the constructors/destructor of the String class
+</li><li>In the <b>Create2</b> and <b>main</b> functions of the driver program
+</li><li>What is the purpose of each? Why are they different?
+</li><li>Make sure you understand when (and how) destructors are called.
+</li></ul>
+<p>
+At this point, we are missing quite a bit of functionality for a general purpose String class. What else could we
+add to it?
+</p><p>
+		
+<!--
+Change the string (assign)
+add (concat)
+subscript
+compare
+strlen
+-->
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><p class="SectionHeader">Fixing the String Class
+</p>
+
+	
+Here's a program that "appears" to work, but then causes a big problem:
+
+<blockquote><pre><b>void</b> foo()
+{
+  String one(<font color="#9933CC">"Pascal"</font>);
+  String two(one);
+
+  cout &lt;&lt; one &lt;&lt; endl;
+  cout &lt;&lt; two &lt;&lt; endl;
+}
+</pre></blockquote>
+
+This is the output:
+
+<blockquote><pre>Pascal
+Pascal
+Destructor: Pascal
+Destructor: ,o¶a,o¶a?
+     69 [sig] a 1864 open_stackdumpfile: Dumping stack trace to a.exe.stackdump
+     69 [sig] a 1864 open_stackdumpfile: Dumping stack trace to a.exe.stackdump
+</pre></blockquote>
+
+Notice that we initialized one String with another. It seemed to work, because we printed it out. Yet the
+program still crashed. What's the problem?
+<p>
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS170/Classes-3.html#COPYDIAGRAM">Problem diagram</a>
+</p><p>	
+
+</p><p>
+</p><hr width="90%">
+<p>
+
+Here's another similar use of the class:
+
+</p><blockquote><pre><b>void</b> PrintString(String s)
+{
+  cout &lt;&lt; s &lt;&lt; endl;
+}
+
+<b>void</b> f3()
+{
+  String str(<font color="#9933CC">"Pascal"</font>);
+  PrintString(str);
+}
+</pre></blockquote>
+
+<b>Output:</b>
+<blockquote><pre>Conversion constructor: Pascal
+Pascal
+Destructor: Pascal
+Destructor: ,o¶a,o¶a?
+     63 [sig] a 836 open_stackdumpfile: Dumping stack trace to a.exe.stackdump
+     63 [sig] a 836 open_stackdumpfile: Dumping stack trace to a.exe.stackdump
+1599112 [sig] a 836 E:\Data\Courses\Notes\CS170\Code\Classes3\a.exe: *** fatal error - 
+                    E:\Data\Courses\Notes\CS170\Code\Classes3\a.exe: *** called with threadlist_ix -1
+</pre></blockquote>
+<br><br>
+
+
+<p>
+What could possibly be causing this? 
+</p><p>
+To help understand the problem, look at the difference between these functions:
+
+</p><blockquote><pre><b>void</b> PrintString(String s)
+<b>void</b> PrintString(String &amp;s)
+<b>void</b> PrintString(const String &amp;s)
+</pre></blockquote>
+
+<ul>
+<li>What are the differences?
+</li><li>What effect will these functions have on the program?
+</li><li>Why would we choose one over the others?
+</li></ul>
+
+<!--After reviewing these functions, describe what is happening with the program. 
+  Do you see the problem?
+-->
+<p>
+
+</p><p>
+</p><hr width="90%">
+<p>
+
+Finally, we have this that "appears" to work until it crashes:
+
+</p><blockquote><pre><b>void</b> f5()
+{
+  String one(<font color="#9933CC">"Pascal"</font>);
+  String two;
+
+  two = one;
+
+  cout &lt;&lt; one &lt;&lt; endl;
+  cout &lt;&lt; two &lt;&lt; endl;
+}
+</pre></blockquote>
+
+<b>Output:</b>
+<blockquote><pre>Conversion constructor: Pascal
+Default constructor
+Pascal
+Pascal
+Destructor: Pascal
+Destructor: ,o¶a,o¶a?
+     64 [sig] a 1164 open_stackdumpfile: Dumping stack trace to a.exe.stackdump
+     64 [sig] a 1164 open_stackdumpfile: Dumping stack trace to a.exe.stackdump
+1508162 [sig] a 1164 E:\Data\Courses\Notes\CS170\Code\Classes3\a.exe: *** fatal error - 
+                     E:\Data\Courses\Notes\CS170\Code\Classes3\a.exe: *** called with threadlist_ix -1
+</pre></blockquote>
+
+<br>
+
+Remember that C++ automatically provides certain member functions if you don't:
+
+<ul>
+<li>A default constructor (a constructor that doesn't require the user to provide any paramters, 
+  doesn't do anything)
+</li><li>A copy constructor (for initializing one object with another during copy initialization)
+</li><li>A copy assignment operator (for doing copy assignments from one object to another)
+</li><li>A destructor (doesn't do anything)
+</li></ul>
+
+Note that
+<ul>
+<li>We have defined a default constructor and destructor, so the compiler won't provide them.
+</li><li>We don't define a copy constructor or assignment operator, so these will be provided by the compiler.
+</li><li>Our program is crashing, and it's because the compiler-provided functions are inadequate.
+</li></ul>
+
+Adding the methods to the class:
+
+<blockquote><pre><b>class</b> String
+{
+  <b>public</b>:
+    String();                      <font color="#003399"><i>// default constructor</i></font>
+    <font color="blue"><b>String(<b>const</b> String&amp; rhs);</b></font> <font color="#003399"><i>// copy constructor</i></font>
+    String(<b>const</b> <b>char</b> *cstr);    <font color="#003399"><i>// conversion constructor</i></font>
+    ~String();                    <font color="#003399"><i>// destructor</i></font>
+
+      <font color="#003399"><i>// Copy assignment operator</i></font>
+    <font color="blue"><b>String&amp; <b>operator</b>=(<b>const</b> String&amp; rhs);</b></font> 
+
+      <font color="#003399"><i>// So we can use cout</i></font>
+    <b>friend</b> std::ostream&amp; <b>operator</b>&lt;&lt;(std::ostream&amp; os, <b>const</b> String &amp;str);
+
+  <b>private</b>:
+    <b>char</b> *string_; <font color="#003399"><i>// the "real" string</i></font>
+};
+</pre></blockquote>
+
+Implementations:
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>String::String(<b>const</b> String&amp; rhs)
+{
+  std::cout &lt;&lt; <font color="#9933CC">"Copy constructor: "</font> 
+            &lt;&lt; rhs.string_ &lt;&lt; std::endl;
+
+  <b>int</b> len = strlen(rhs.string_);
+  string_ = <b>new</b> <b>char</b>[len + 1];
+  std::strcpy(string_, rhs.string_);
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>String&amp; String::<b>operator</b>=(<b>const</b> String&amp; rhs)
+{
+  std::cout &lt;&lt; <font color="#9933CC">"operator=: "</font> 
+            &lt;&lt; string_ &lt;&lt; <font color="#9933CC">" = "</font>
+            &lt;&lt; rhs.string_ &lt;&lt; std::endl;
+
+  <b>if</b> (&amp;rhs != <b>this</b>)
+  {
+    <b>delete</b> [] string_;
+    <b>int</b> len = strlen(rhs.string_);
+    string_ = <b>new</b> <b>char</b>[len + 1];
+    std::strcpy(string_, rhs.string_);
+  }
+  <b>return</b> *<b>this</b>;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+Testing:
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Copy test</th><th>Output</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>void</b> f4()
+{
+  String one(<font color="#9933CC">"Pascal"</font>);
+  String two(one);
+
+  cout &lt;&lt; one &lt;&lt; endl;
+  cout &lt;&lt; two &lt;&lt; endl;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>Conversion constructor: Pascal
+Copy constructor: Pascal
+Pascal
+Pascal
+Destructor: Pascal
+Destructor: Pascal
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Assignment test</th><th>Output</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>void</b> f5()
+{
+  String one(<font color="#9933CC">"Pascal"</font>);
+  String two;
+
+  two = one;
+
+  cout &lt;&lt; one &lt;&lt; endl;
+  cout &lt;&lt; two &lt;&lt; endl;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>Conversion constructor: Pascal
+Default constructor
+operator=:  = Pascal
+Pascal
+Pascal
+Destructor: Pascal
+Destructor: Pascal
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+OK, now things are looking a little better! Let's move on...
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Enhancing the String Class
+</p>
+
+There are many features and functions we could add to the String class to make it more useable. 
+<!--
+Just look at the online for the string class that is part of the STL.
+-->
+
+<ul>
+<li>Length of the string
+</li><li>Comparison operators (two Strings, a String and a char *)
+</li><li>Input operator
+</li><li>Substring search
+</li><li>Substring replace
+</li><li>Uppercase/lowercase functions
+</li><li>Converting to numbers (the string "137" would be the integer 137)
+</li><li>Other string-related functions
+</li></ul>
+
+Let's do a real simple one first: The length of the string. (Call the method <b>size</b>)
+<p>
+	
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Declaration</th><th>Implementation</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>class</b> String
+{
+  <b>public</b>:
+      <font color="#003399"><i>// Other public methods...</i></font>
+
+      <font color="#003399"><i>// Number of chars in the string</i></font>
+    <b>int</b> size() <b>const</b>;
+
+  <b>private</b>:
+    <b>char</b> *string_; <font color="#003399"><i>// the "real" string</i></font>
+};
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>int</b> String::size() <b>const</b>
+{
+    <font color="#003399"><i>// Return the length</i></font>
+  <b>return</b> strlen(string_);
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Test</th><th>Output</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>String s1(<font color="#9933CC">"Digipen"</font>);
+std::cout &lt;&lt; s1 &lt;&lt; std::endl;
+std::cout &lt;&lt; <font color="#9933CC">"Length of string: "</font>
+          &lt;&lt; s1.size() &lt;&lt; std::endl;
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>Conversion constructor: Digipen
+<b>Digipen
+Length of string: 7</b>
+Destructor: Digipen
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+A couple more functions:
+</p><p>
+
+We need to include this:
+	
+</p><blockquote><pre><b>#include</b> &lt;cctype&gt;   <font color="#003399"><i>// islower, isupper</i></font>
+</pre></blockquote>
+
+	
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Convert to uppercase</th><th>Convert to lowercase</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>void</b> String::upper()
+{
+  <b>int</b> len = size();
+  <b>for</b> (<b>int</b> i = 0; i &lt; len; i++)
+    <b>if</b> (std::islower(string_[i]))
+      string_[i] -= <font color="#9933CC">'a'</font> - <font color="#9933CC">'A'</font>;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>void</b> String::lower()
+{
+  <b>int</b> len = size();
+  <b>for</b> (<b>int</b> i = 0; i &lt; len; i++)
+    <b>if</b> (std::isupper(string_[i]))
+      string_[i] += <font color="#9933CC">'a'</font> - <font color="#9933CC">'A'</font>;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Test</th><th>Output</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>String s1(<font color="#9933CC">"Digipen"</font>);
+
+std::cout &lt;&lt; s1 &lt;&lt; std::endl;
+s1.lower();
+std::cout &lt;&lt; s1 &lt;&lt; std::endl;
+s1.upper();
+std::cout &lt;&lt; s1 &lt;&lt; std::endl;
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>Conversion constructor: Digipen
+<b>Digipen
+digipen
+DIGIPEN</b>
+Destructor: DIGIPEN
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+How about comparing two Strings?
+<p>
+	
+</p><blockquote><pre><b>void</b> f3()
+{
+  String s1(<font color="#9933CC">"One"</font>);
+  String s2(<font color="#9933CC">"Two"</font>);
+
+  <b>if</b> (s1 &lt; s2)
+    std::cout &lt;&lt; s1 &lt;&lt; <font color="#9933CC">" is before "</font> &lt;&lt; s2 &lt;&lt; std::endl;
+  <b>else</b>
+    std::cout &lt;&lt; s1 &lt;&lt; <font color="#9933CC">" is not before "</font> &lt;&lt; s2 &lt;&lt; std::endl;
+
+  <b>if</b> (s2 &lt; s1)
+    std::cout &lt;&lt; s2 &lt;&lt; <font color="#9933CC">" is before "</font> &lt;&lt; s1 &lt;&lt; std::endl;
+  <b>else</b>
+    std::cout &lt;&lt; s2 &lt;&lt; <font color="#9933CC">" is not before "</font> &lt;&lt; s1 &lt;&lt; std::endl;
+
+  <b>if</b> (s1 &lt; s1)
+    std::cout &lt;&lt; s1 &lt;&lt; <font color="#9933CC">" is before "</font> &lt;&lt; s1 &lt;&lt; std::endl;
+  <b>else</b>
+    std::cout &lt;&lt; s1 &lt;&lt; <font color="#9933CC">" is not before "</font> &lt;&lt; s1 &lt;&lt; std::endl;
+}
+</pre></blockquote>
+
+<b>Output:</b>
+<blockquote><pre>Conversion constructor: One
+Conversion constructor: Two
+<b>One is before Two
+Two is not before One
+One is not before One</b>
+Destructor: Two
+Destructor: One
+</pre></blockquote>
+
+Declaration:
+<blockquote><pre><b>bool</b> String::<b>operator</b>&lt;(<b>const</b> String&amp; rhs) <b>const</b>;
+</pre></blockquote>
+
+Implementation:
+<blockquote><pre><b>bool</b> String::<b>operator</b>&lt;(<b>const</b> String&amp; rhs) <b>const</b>
+{
+    <font color="#003399"><i>// if we're 'less' than rhs</i></font>
+  <b>if</b> (std::strcmp(string_, rhs.string_) &lt; 0)
+    <b>return</b> <b>true</b>;
+  <b>else</b>
+    <b>return</b> <b>false</b>;
+}
+</pre></blockquote>
+
+
+
+Implementing these operators is also trivial:
+<blockquote><pre><b>bool</b> String::<b>operator</b>&gt;(<b>const</b> String&amp; rhs) <b>const</b>;
+<b>bool</b> String::<b>operator</b>==(<b>const</b> String&amp; rhs) <b>const</b>;
+<b>bool</b> String::<b>operator</b>&lt;=(<b>const</b> String&amp; rhs) <b>const</b>;
+<b>bool</b> String::<b>operator</b>&gt;=(<b>const</b> String&amp; rhs) <b>const</b>;
+<b>bool</b> String::<b>operator</b>!=(<b>const</b> String&amp; rhs) <b>const</b>;
+<b>bool</b> String::<b>operator</b>==(<b>const</b> String&amp; rhs) <b>const</b>;
+</pre></blockquote>
+
+
+What about this?
+
+<blockquote><pre>String s1(<font color="#9933CC">"Digipen"</font>);
+
+<b>if</b> (<font color="#9933CC">"Hello"</font> &lt; s1)
+  std::cout &lt;&lt; <font color="#9933CC">"Hello is less"</font> &lt;&lt; std::endl;
+<b>else</b>
+  std::cout &lt;&lt; <font color="#9933CC">"Hello is NOT less"</font> &lt;&lt; std::endl;
+</pre></blockquote>
+
+<br><br>
+This is what we get:
+<blockquote><pre>In function ‘void f4()’:
+error: no match for ‘operator&lt;’ (operand types are ‘const char [6]’ and ‘String’)
+   if ("Hello" &lt; s1)
+               ^
+</pre></blockquote>
+We could require the user to do this:
+
+<blockquote><pre><b>if</b> (String(<font color="#9933CC">"Hello"</font>) &lt; s1)
+</pre></blockquote>
+
+<!--
+if it was this: if (s1 < "Hello") then the conversion ctor would 
+have been automatically called (until it's marked explicit)
+-->
+
+<br><br><br>
+
+Or, we could overload a global operator to do the conversion:
+
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>bool</b> <b>operator</b>&lt;(<b>const</b> <b>char</b> *lhs, <b>const</b> String&amp; rhs)
+{
+  <b>return</b> String(lhs) &lt; rhs;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>Conversion constructor: Digipen
+Conversion constructor: Hello
+Destructor: Hello
+<b>Hello is NOT less</b>
+Destructor: Digipen
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+<blockquote><pre></pre></blockquote>
+
+<!--
+
+Or, do it this way:
+<p>
+<table border=0 cellspacing=5 cellpadding=5>
+<tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>
+  <font color="#003399"><i>// global function</i></font>
+<b>bool</b> <b>operator</b>&lt;(<b>const</b> <b>char</b> *lhs, <b>const</b> String&amp; rhs)
+{
+  <b>return</b> (rhs &gt;= lhs);
+}
+
+  <font color="#003399"><i>// member function</i></font>
+<b>bool</b> String::<b>operator</b>&gt;=(<b>const</b> String&amp; rhs) <b>const</b>
+{
+    <font color="#003399"><i>// if we're not 'less', we're &gt; or ==</i></font>
+  <b>return</b> !(String(string_) &lt; rhs);
+}
+
+  <font color="#003399"><i>// member function</i></font>
+<b>bool</b> String::<b>operator</b>&lt;(<b>const</b> String&amp; rhs) <b>const</b>
+{
+    <font color="#003399"><i>// if we're 'less' than rhs</i></font>
+  <b>if</b> (std::strcmp(string_, rhs.string_) &lt; 0)
+    <b>return</b> <b>true</b>;
+  <b>else</b>
+    <b>return</b> <b>false</b>;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>
+Conversion constructor: Digipen
+Conversion constructor: Hello
+Conversion constructor: Digipen
+Destructor: Digipen
+Destructor: Hello
+<b>Hello is NOT less</b>
+Destructor: Digipen
+</pre></blockquote>
+</td>
+</tr></table>
+
+<blockquote>
+<p class="technote">
+<b>Insight</b>: Take some time and understand exactly why each of the lines are printed above. How can you
+"optimize" the behavior so less work is done at runtime. 
+</p>
+</blockquote>
+-->
+
+
+<blockquote><pre></pre></blockquote>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">More Enhancements to the <tt>String</tt> Class
+</p>
+
+There is an obvious feature that is missing from the <tt>String</tt> class: subscripting. We should
+be able to do this:
+
+<blockquote><pre>String s1(<font color="#9933CC">"Digipen"</font>);
+
+  <font color="#003399"><i>// c should have the value 'g'</i></font>
+<b>char</b> c = s1[2]; 
+</pre></blockquote>
+
+Like the other operators, this is also trivial:
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Declaration</th><th>Implementation</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>class</b> String
+{
+  <b>public</b>:
+    <b>char</b> <b>operator</b>[](<b>int</b> index) <b>const</b>;
+};
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>char</b> String::<b>operator</b>[](<b>int</b> index) <b>const</b>
+{
+  <b>return</b> string_[index];
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Sample usage</th><th>Output</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>void</b> f1()
+{
+  String s1(<font color="#9933CC">"Digipen"</font>);
+
+  <b>for</b> (<b>int</b> i = 0; i &lt; s1.size(); i++)
+    std::cout &lt;&lt; s1[i] &lt;&lt; std::endl;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>D
+i
+g
+i
+p
+e
+n
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+<b>Notes:</b>
+<ul>
+<li>We are using the <tt>size()</tt> method to insure we don't go too far.
+</li><li>There is nothing preventing the user from asking for <tt>s1[100]</tt>.
+</li><li>We could guard against that situation:
+<blockquote><pre><b>char</b> String::<b>operator</b>[](<b>int</b> index) <b>const</b>
+{
+    <font color="#003399"><i>// Validate the index</i></font>
+  <b>if</b> ( (index &gt;= 0) &amp;&amp; (index &lt; size()) )
+    <b>return</b> string_[index];
+  <b>else</b>
+    <b>return</b> string_[0]; <font color="#003399"><i>// What to return??? This is a BIG problem</i></font>
+                       <font color="#003399"><i>//   that we'll postpone for now. (EH)</i></font>
+}
+</pre></blockquote>
+</li></ul>
+
+
+Now we want to change a character in the string:
+
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th>Compiler error:</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>void</b> f4()
+{
+  String s1(<font color="#9933CC">"Hello"</font>);
+
+    <font color="#003399"><i>// change first letter</i></font>
+  s1[0] = <font color="#9933CC">'C'</font>;
+
+  std::cout &lt;&lt; s1 &lt;&lt; std::endl;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>error: non-lvalue in assignment
+
+
+
+
+&lt;----- can't assign to a temporary value
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+
+We can't return a temporary value if we want to modify it. We must return a reference:
+<p>
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Return a reference</th><th>Compiles and runs</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>char</b>&amp; String::<b>operator</b>[](<b>int</b> index) <b>const</b>
+{
+  <b>return</b> string_[index];
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>Output:</b>
+
+Cello
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+
+Let's try some tests that most beginners (and students) forget to do (even if told directly to do so!):
+Read a <tt><b>const</b></tt> object:
+</p><p>
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Try a <tt>const</tt> object</th><th>Compiles and runs fine</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>void</b> f5()
+{
+  <b>const</b> String s1(<font color="#9933CC">"Digipen"</font>);
+
+  <b>for</b> (<b>int</b> i = 0; i &lt; s1.size(); i++)
+    std::cout &lt;&lt; s1[i] &lt;&lt; std::endl;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>D
+i
+g
+i
+p
+e
+n
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+Change (write) a <tt><b>const</b></tt> object:
+</p><p>
+	
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Modify const object</th><th>No problemo</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>void</b> f6()
+{
+  <b>const</b> String s1(<font color="#9933CC">"Hello"</font>);
+
+    <font color="#003399"><i>// Change the const object</i></font>
+  s1[0] = <font color="#9933CC">'C'</font>;
+}
+
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>Output:</b>
+
+Cello
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+
+What?!?!?!?!? 
+<br><br>
+</p><p>
+	
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Return a const reference</th><th>Compiler error as expected</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b><font color="blue">const</font></b> <b>char</b>&amp; String::<b>operator</b>[](<b>int</b> index) <b>const</b>
+{
+  <b>return</b> string_[index];
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>error: assignment of read-only 
+       location
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+However, this breaks our previously working and legal code:
+
+</p><blockquote><pre><b>void</b> f4()
+{
+  String s1(<font color="#9933CC">"Hello"</font>);
+
+    <font color="#003399"><i>// Compiler error: assignment of read-only location</i></font>
+  s1[0] = <font color="#9933CC">'C'</font>;
+
+  std::cout &lt;&lt; s1 &lt;&lt; std::endl;
+}
+</pre></blockquote>
+
+<br><br>
+The solution: We need to support both:
+<p>
+	
+</p><blockquote><pre><b>void</b> f7()
+{
+  String s1(<font color="#9933CC">"Hello"</font>);          <font color="#003399"><i>// non-const object</i></font>
+  <b>const</b> String s2(<font color="#9933CC">"Goodbye"</font>); <font color="#003399"><i>// const object</i></font>
+
+    <font color="#003399"><i>// non-const: This should be allowed</i></font>
+  s1[0] = <font color="#9933CC">'C'</font>;
+
+    <font color="#003399"><i>// const: This should produce an error</i></font>
+  s2[0] = <font color="#9933CC">'F'</font>;
+}
+</pre></blockquote>
+
+We need to overload the subscript operator so that it can handle both return types. Here's is our first failed attempt at the
+function declarations:
+
+<blockquote><pre><b>const</b> <b>char</b>&amp; <b>operator</b>[](<b>int</b> index) <b>const</b>; <font color="#003399"><i>// for r-values</i></font>
+      <b>char</b>&amp; <b>operator</b>[](<b>int</b> index) <b>const</b>; <font color="#003399"><i>// for l-values</i></font>
+</pre></blockquote>
+
+and the implementations:
+<p>
+	
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>const</b> <b>char</b>&amp; String::<b>operator</b>[](<b>int</b> index) <b>const</b>
+{
+  <b>return</b> string_[index];
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>char</b>&amp; String::<b>operator</b>[](<b>int</b> index) <b>const</b>
+{
+  <b>return</b> string_[index];
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+What is wrong with these? (They won't compile)
+<!--
+Return type is not part of the signature so they are identical.
+The declarations will compile (prototypes), but not the definitions.
+-->
+
+
+</p><p><br><br>
+They are both <tt><b>const</b></tt> methods, since neither one is modifying the private fields.
+</p><p>
+One returns a const reference and the other returns a non-const reference.
+</p><p>
+
+The proper way:
+
+</p><blockquote><pre><b>const</b> <b>char</b>&amp; <b>operator</b>[](<b>int</b> index) <b>const</b>; <font color="#003399"><i>// for r-values</i></font>
+      <b>char</b>&amp; <b>operator</b>[](<b>int</b> index);       <font color="#003399"><i>// for l-values</i></font>
+</pre></blockquote>
+	
+<blockquote>
+<big><center>
+<p class="technote">	
+The <tt><b>const</b></tt> at the end is part of the method's signature and the compiler uses it 
+to distinguish between the two methods.
+</p>
+</center></big>
+</blockquote>
+
+Example code now works as expected:
+
+<blockquote><pre><b>void</b> f8()
+{
+  String s1(<font color="#9933CC">"Hello"</font>);          <font color="#003399"><i>// non-const object</i></font>
+  <b>const</b> String s2(<font color="#9933CC">"Goodbye"</font>); <font color="#003399"><i>// const object</i></font>
+
+    <font color="#003399"><i>// Calls non-const version, l-value assignment (write) is OK</i></font>
+  s1[0] = <font color="#9933CC">'C'</font>;
+
+    <font color="#003399"><i>// Calls const version, l-value assignment (write) is an error</i></font>
+  <font color="#003399"><i>//s2[0] = 'F';</i></font>
+
+    <font color="#003399"><i>// Calls non-const version, r-value read is OK</i></font>
+  <b>char</b> c1 = s1[0];
+
+    <font color="#003399"><i>// Calls const version, r-value read is OK</i></font>
+  <b>char</b> c2 = s2[0];
+}
+</pre></blockquote>
+
+
+Notes:
+<ul>
+<li>You will usually provide two overloaded subscript operators (const and non-const)
+</li><li>Unlike C-style arrays, the <tt>String</tt> class knows how many characters it contains
+<ul>
+	<li>This allows it to perform validation and protect the memory to some degree.
+</li></ul>
+</li><li>What do you do when the index is invalid?
+<ol>
+<li>Do nothing. Let the program behave badly. (This is what C++ does with built-in arrays)
+</li><li>Return nothing. Can't, the function <b>must</b> return something.
+</li><li>Return some valid element. Hides the problem from the user (not good).
+</li><li>Abort the program. (That's harsh, dude. But, they probably deserved it.)
+</li><li>Something else. 
+</li></ol>
+</li><li>None of these solutions is very good.
+</li><li>A good solution is to use <i>exceptions</i>. (We'll talk about those later.)
+</li></ul>	
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Class Methods and <tt>static</tt> Members
+</p>
+
+Suppose we add a public data member to the <tt>String</tt> class:
+<p>
+	
+</p><blockquote><pre><b>class</b> String
+{
+  <b>public</b>:
+    <font color="#003399"><i>// Other public members...</i></font>
+
+    <b>int</b> foo; <font color="#003399"><i>// public data member</i></font>
+
+  <b>private</b>:
+    <b>char</b> *string_; <font color="#003399"><i>// the "real" string</i></font>
+};
+</pre></blockquote>
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Test code</th><th>Output</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>void</b> f5()
+{
+  String s1(<font color="#9933CC">"foo"</font>);
+  String s2(<font color="#9933CC">"bar"</font>);
+  String s3(<font color="#9933CC">"baz"</font>);
+
+  s1.foo = 10;
+  s2.foo = 20;
+  s3.foo = 30;
+
+  std::cout &lt;&lt; s1.foo &lt;&lt; std::endl;
+  std::cout &lt;&lt; s2.foo &lt;&lt; std::endl;
+  std::cout &lt;&lt; s3.foo &lt;&lt; std::endl;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>Conversion constructor: foo
+Conversion constructor: bar
+Conversion constructor: baz
+10
+20
+30
+Destructor: baz
+Destructor: bar
+Destructor: foo
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+Of course, if we don't initialize the data in the constructor or in this code, we get different output:
+  
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>void</b> f6()
+{
+  String s1(<font color="#9933CC">"foo"</font>);
+  String s2(<font color="#9933CC">"bar"</font>);
+  String s3(<font color="#9933CC">"baz"</font>);
+
+  std::cout &lt;&lt; s1.foo &lt;&lt; std::endl;
+  std::cout &lt;&lt; s2.foo &lt;&lt; std::endl;
+  std::cout &lt;&lt; s3.foo &lt;&lt; std::endl;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>Conversion constructor: foo
+Conversion constructor: bar
+Conversion constructor: baz
+1627408208
+4268368
+4268368
+Destructor: baz
+Destructor: bar
+Destructor: foo
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+<p>
+	
+So this code:	
+</p><blockquote><pre>String s1(<font color="#9933CC">"foo"</font>);
+String s2(<font color="#9933CC">"bar"</font>);
+String s3(<font color="#9933CC">"baz"</font>);
+s1.foo = 10;
+s2.foo = 20;
+s3.foo = 30;
+</pre></blockquote>
+	
+would produce something like this in memory:
+
+<blockquote>
+<img src="./Classes Part 3_files/Classes-String3-1.png">
+</blockquote>
+
+
+We must always initialize any <i>non-static</i> data in the constructor. Non-static? As opposed to what? Static?
+<p>
+By default, members of a class are non-static. If you want them to be static, you must indicate it with the
+<tt><b>static</b></tt> keyword. 
+
+</p><center>
+<p class="technote">
+Unfortunately, the meaning of <tt><b>static</b></tt> is completely different from the other meanings we've learned.
+</p>
+</center>
+
+Adding a <tt><b>static</b></tt> member is trivial:
+<p>
+	
+</p><blockquote><pre><b>class</b> String
+{
+  <b>public</b>:
+    <font color="#003399"><i>// Other public members...</i></font>
+
+    <b>int</b> foo;         <font color="#003399"><i>// non-static</i></font>
+    <b>static</b> <b>int</b> bar; <font color="#003399"><i>// static</i></font>
+
+  <b>private</b>:
+    <b>char</b> *string_; <font color="#003399"><i>// the "real" string</i></font>
+};
+</pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+  
+
+<blockquote><pre></pre></blockquote>
+
+<ul>
+<li><tt><b>static</b></tt> members do not "live" within each instance (like non-static members).
+</li><li>There is only one copy and it is shared between all instances.
+</li><li>This means that you do not need to instantiate (create) an object before using a <tt><b>static</b></tt> member.
+</li><li>How do you access a <tt><b>static</b></tt> member if you don't have an object?
+<blockquote><pre>  <font color="#003399"><i>// Accessing a static member with the scope resolution operator</i></font>
+<b>int</b> i = String::bar;
+std::cout &lt;&lt; i &lt;&lt; std::endl;
+</pre></blockquote>
+</li><li>If there is no object, then there is no constructor. How do you initialize the <tt><b>static</b></tt> member?
+
+  
+
+<p>
+	
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Header file (.h)</th><th>Implementation file (.cpp)</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>class</b> String
+{
+  <b>public</b>:
+    String();                   <font color="#003399"><i>// default ctor</i></font>
+    String(<b>const</b> String&amp; rhs); <font color="#003399"><i>// copy ctor</i></font>
+    ~String();                  <font color="#003399"><i>// dtor</i></font>
+
+      <font color="#003399"><i>// declaration</i></font>
+    <font color="blue"><b><b>static</b> <b>int</b> bar;</b></font> <font color="#003399"><i>// static</i></font>
+    
+    <font color="#003399"><i>// etc...</i></font>
+};
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>#include</b> <font color="#9933CC">"String.h"</font>
+
+<font color="#003399"><i>// Initialize outside of the class (Definition)</i></font>
+<font color="blue"><b><b>int</b> String::bar = 0;</b></font>
+
+String::String()
+{
+  string_ = <b>new</b> <b>char</b>[1]; 
+  string_[0] = 0;        
+}
+
+String::~String()
+{
+  <b>delete</b> [] string_;
+}
+
+<font color="#003399"><i>// etc...</i></font>
+
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</p></li></ul>
+
+
+If you fail to define the static member outside of the class, you will get a linker error:
+
+<blockquote><pre>/cygdrive/h/temp/ccZm55jF.o:main.cpp:(.text+0xf8d): <b>undefined reference to 'String::bar'</b>
+collect2: ld returned 1 exit status
+</pre></blockquote>
+
+Each object has a separate storage area for <tt>foo</tt>, but <tt>bar</tt> is shared between them:
+
+<blockquote>
+<img src="./Classes Part 3_files/Classes-String3-1.png">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="./Classes Part 3_files/Classes-String-static-1.png">
+</blockquote>
+
+<p>
+Methods can be <tt><b>static</b></tt> as well:
+</p><p>
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Declarations</th><th>Definitions</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>class</b> String
+{
+  <b>public</b>:
+    <font color="#003399"><i>// Other public members...</i></font>
+
+    <b>static</b> <b>int</b> get_bar(); <font color="#003399"><i>// static</i></font>
+
+  <b>private</b>:
+    <b>char</b> *string_;  <font color="#003399"><i>// the "real" string</i></font>
+    <b>static</b> <b>int</b> bar; <font color="#003399"><i>// static</i></font>
+};
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><font color="#003399"><i>// Initialize outside of class (Definition)</i></font>
+<b>int</b> String::bar = 20;
+
+<b>int</b> String::get_bar()
+{
+  <b>return</b> bar;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+Sample usage:
+</p><blockquote><pre><b>void</b> f8()
+{
+    <font color="#003399"><i>// Accessing a static member</i></font>
+  <b>int</b> i = String::get_bar();
+
+    <font color="#003399"><i>// Error, private now</i></font>
+  i = String::bar;
+}
+</pre></blockquote>
+
+You can access <tt><b>static</b></tt> members through an object as well:
+<blockquote><pre><b>void</b> f9()
+{
+  String s1(<font color="#9933CC">"foo"</font>);
+
+  <b>int</b> x = s1.get_bar();      <font color="#003399"><i>// Access through object</i></font>
+  <b>int</b> y = String::get_bar(); <font color="#003399"><i>// Access through class</i></font>
+}
+</pre></blockquote>
+
+<ul>
+<li>A static data member is shared between all instances.
+</li><li>You can access static members through an object or the class.
+</li><li>A non-static method can access static data and methods.
+</li><li>A static method can NOT access non-static data and methods (only other static members).
+	<ul>
+	<li>There is no <b><tt>this</tt></b> pointer with a static method
+</li></ul>
+</li><li>You must define static data outside of the class.
+</li><li>You can initialized constant static integral values within the class:
+	
+<blockquote><pre><b>class</b> String
+{
+  <b>public</b>:
+    <font color="#003399"><i>// Other public members...</i></font>
+      <font color="#003399"><i>// const can be initialized in the class</i></font>
+    <b>const</b> <b>static</b> <b>int</b> foo = 47;
+    
+  <b>private</b>:
+    <font color="#003399"><i>// Other private members...</i></font>
+    
+      <font color="#003399"><i>// const can be initialized in the class</i></font>
+    <b>const</b> <b>static</b> <b>char</b> bar = 'B';
+};
+</pre></blockquote>
+	
+</li></ul>
+
+
+	
+<blockquote><pre></pre></blockquote>
+<blockquote><pre></pre></blockquote>
+
+<!--
+<table border=0 cellspacing=5 cellpadding=5>
+<tr><th>GNU</th><th>Microsoft</th><th>Borland</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>
+Conversion constructor: foo
+0
+Destructor: foo
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>
+Conversion constructor: foo
+-858993460
+Destructor: foo
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>
+Conversion constructor: foo
+4462868
+Destructor: foo
+</pre></blockquote>
+</td>
+</tr></table>
+-->
+
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+
+
+
+
+
+<blockquote><pre></pre></blockquote>
+
+
+
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<tt><b></b></tt>
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+
+</body></html>

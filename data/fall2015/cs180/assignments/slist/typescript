@@ -1,0 +1,423 @@
+Script started on Wed 16 Sep 2015 06:37:04 PM PDT
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/Desktop/CS180/Assignments/Assignment_1 $[00m date
+Wed Sep 16 18:37:07 PDT 2015
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/Desktop/CS180/Assignments/Assignment_1 $[00m uptime
+ 18:37:10 up  3:54,  2 users,  load average: 0.28, 0.15, 0.10
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/Desktop/CS180/Assignments/Assignment_1 $[00m echo Damien baca[K[K[K[KBaca
+Damien Baca
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/Desktop/CS180/Assignments/Assignment_1 $[00m pwd
+/home/tardis/Desktop/CS180/Assignments/Assignment_1
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/Desktop/CS180/Assignments/Assignment_1 $[00m whom[Kami
+tardis
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/Desktop/CS180/Assignments/Assignment_1 $[00m uname -a
+Linux tardis-VirtualBox 3.13.0-24-generic #47-Ubuntu SMP Fri May 2 23:30:00 UTC 2014 x86_64 x86_64 x86_64 GNU/Linux
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/Desktop/CS180/Assignments/Assignment_1 $[00m cat /proc/cpuinfo 
+processor	: 0
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 60
+model name	: Intel(R) Core(TM) i7-4800MQ CPU @ 2.70GHz
+stepping	: 3
+microcode	: 0x19
+cpu MHz		: 2693.772
+cache size	: 6144 KB
+physical id	: 0
+siblings	: 4
+core id		: 0
+cpu cores	: 4
+apicid		: 0
+initial apicid	: 0
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 13
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc pni pclmulqdq ssse3 cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx rdrand hypervisor lahf_lm abm
+bogomips	: 5387.54
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 39 bits physical, 48 bits virtual
+power management:
+
+processor	: 1
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 60
+model name	: Intel(R) Core(TM) i7-4800MQ CPU @ 2.70GHz
+stepping	: 3
+microcode	: 0x19
+cpu MHz		: 2693.772
+cache size	: 6144 KB
+physical id	: 0
+siblings	: 4
+core id		: 1
+cpu cores	: 4
+apicid		: 1
+initial apicid	: 1
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 13
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc pni pclmulqdq ssse3 cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx rdrand hypervisor lahf_lm abm
+bogomips	: 5387.54
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 39 bits physical, 48 bits virtual
+power management:
+
+processor	: 2
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 60
+model name	: Intel(R) Core(TM) i7-4800MQ CPU @ 2.70GHz
+stepping	: 3
+microcode	: 0x19
+cpu MHz		: 2693.772
+cache size	: 6144 KB
+physical id	: 0
+siblings	: 4
+core id		: 2
+cpu cores	: 4
+apicid		: 2
+initial apicid	: 2
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 13
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc pni pclmulqdq ssse3 cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx rdrand hypervisor lahf_lm abm
+bogomips	: 5387.54
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 39 bits physical, 48 bits virtual
+power management:
+
+processor	: 3
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 60
+model name	: Intel(R) Core(TM) i7-4800MQ CPU @ 2.70GHz
+stepping	: 3
+microcode	: 0x19
+cpu MHz		: 2693.772
+cache size	: 6144 KB
+physical id	: 0
+siblings	: 4
+core id		: 3
+cpu cores	: 4
+apicid		: 3
+initial apicid	: 3
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 13
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc pni pclmulqdq ssse3 cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx rdrand hypervisor lahf_lm abm
+bogomips	: 5387.54
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 39 bits physical, 48 bits virtual
+power management:
+
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/Desktop/CS180/Assignments/Assignment_1 $[00m car[Kt /proc/meminfo 
+MemTotal:        3081932 kB
+MemFree:         1950508 kB
+Buffers:           10860 kB
+Cached:           565296 kB
+SwapCached:            4 kB
+Active:           451024 kB
+Inactive:         545992 kB
+Active(anon):     131172 kB
+Inactive(anon):   341644 kB
+Active(file):     319852 kB
+Inactive(file):   204348 kB
+Unevictable:          80 kB
+Mlocked:              80 kB
+SwapTotal:       3143676 kB
+SwapFree:        3143436 kB
+Dirty:               100 kB
+Writeback:             0 kB
+AnonPages:        420936 kB
+Mapped:           173680 kB
+Shmem:             51956 kB
+Slab:              75748 kB
+SReclaimable:      54992 kB
+SUnreclaim:        20756 kB
+KernelStack:        3040 kB
+PageTables:        19104 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:     4684640 kB
+Committed_AS:    2054124 kB
+VmallocTotal:   34359738367 kB
+VmallocUsed:       36524 kB
+VmallocChunk:   34359697016 kB
+HardwareCorrupted:     0 kB
+AnonHugePages:    114688 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+DirectMap4k:       38848 kB
+DirectMap2M:     3106816 kB
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/Desktop/CS180/Assignments/Assignment_1 $[00m gcc -g -Wall -Wextra -ansi -pedantic sample-driver.c slist.c PRNG.c -o slist
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/Desktop/CS180/Assignments/Assignment_1 $[00m ./slist | tee output.txt
+==================
+   1: one
+   2: two
+   3: three
+   4: four
+   5: five
+   6: six
+   7: seven
+==================
+   1: one
+   2: two
+   3: three
+   4: four
+   5: five
+   6: six
+   7: seven
+==================
+   1: one
+   2: two
+   3: three
+   5: five
+   6: six
+   7: seven
+==================
+   1: one
+   2: two
+   3: three
+   6: six
+   7: seven
+==================
+   2: two
+   3: three
+   6: six
+   7: seven
+==================
+   2: two
+   3: three
+   6: six
+==================
+   1: one
+   2: two
+   3: three
+   4: four
+   5: five
+   6: six
+   7: seven
+==================
+   1: one
+   2: two
+   3: three
+   4: four
+   5: five
+   6: six
+   7: seven
+==================
+   1: one
+   2: two
+   3: three
+   5: five
+   6: six
+   7: seven
+==================
+   1: one
+   2: two
+   3: three
+   6: six
+   7: seven
+==================
+   2: two
+   3: three
+   6: six
+   7: seven
+==================
+   2: two
+   3: three
+   6: six
+==================
+   2: two
+   6: six
+==================
+   2: two
+==================
+==================
+==================
+   1: one
+   2: two
+   3: three
+   4: four
+==================
+   1: one
+   2: two
+ 101: fred
+   3: three
+   4: four
+==================
+ 102: barney
+   1: one
+   2: two
+ 101: fred
+   3: three
+   4: four
+==================
+ 102: barney
+   1: one
+   2: two
+ 101: fred
+   3: three
+ 103: wilma
+   4: four
+==================
+ 104: betty
+ 102: barney
+   1: one
+   2: two
+ 101: fred
+   3: three
+ 103: wilma
+   4: four
+==================
+ 104: betty
+ 102: barney
+   1: one
+   2: two
+ 101: fred
+   3: three
+ 103: wilma
+   4: four
+==================
+   1: one
+   2: two
+   3: three
+   4: four
+==================
+   1: one
+   2: two
+ 101: fred
+   3: three
+   4: four
+==================
+   1: one
+   2: two
+ 101: fred
+   3: three
+   4: four
+ 102: barney
+==================
+   1: one
+ 103: wilma
+   2: two
+ 101: fred
+   3: three
+   4: four
+ 102: barney
+==================
+   1: one
+ 103: wilma
+   2: two
+ 101: fred
+   3: three
+   4: four
+ 102: barney
+ 104: betty
+==================
+   1: one
+ 103: wilma
+   2: two
+ 101: fred
+   3: three
+   4: four
+ 102: barney
+ 104: betty
+==================
+5122: 00005122
+6115: 00006115
+6759: 00006759
+ 578: 00000578
+6354: 00006354
+ 814: 00000814
+ 980: 00000980
+1082: 00001082
+5835: 00005835
+1417: 00001417
+8040: 00008040
+8707: 00008707
+5873: 00005873
+7440: 00007440
+2479: 00002479
+3156: 00003156
+3724: 00003724
+8566: 00008566
+4420: 00004420
+4472: 00004472
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/Desktop/CS180/Assignments/Assignment_1 $[00m diff output.txt output-all.txt
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/Desktop/CS180/Assignments/Assignment_1 $[00m valgrind -q --leak-check=full --show-reachable=yes --tool=memcheck ./slist > /dev/null
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/Desktop/CS180/Assignments/Assignment_1 $[00m doxygen
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/Desktop/CS180/Assignments/Assignment_1 $[00m ls -al html/
+total 572
+drwxr-xr-x 2 tardis tardis   4096 Sep 16 18:38 [0m[01;34m.[0m
+drwxr-xr-x 3 tardis tardis   4096 Sep 16 18:38 [01;34m..[0m
+-rw-r--r-- 1 tardis tardis   2978 Sep 16 18:38 annotated.html
+-rw-r--r-- 1 tardis tardis     82 Sep 16 18:38 annotated.js
+-rw-r--r-- 1 tardis tardis    676 Sep 16 18:38 [01;35mbc_s.png[0m
+-rw-r--r-- 1 tardis tardis    147 Sep 16 18:38 [01;35mbdwn.png[0m
+-rw-r--r-- 1 tardis tardis   3134 Sep 16 18:38 classes.html
+-rw-r--r-- 1 tardis tardis    132 Sep 16 18:38 [01;35mclosed.png[0m
+-rw-r--r-- 1 tardis tardis  23935 Sep 16 18:38 doxygen.css
+-rw-r--r-- 1 tardis tardis   3779 Sep 16 18:38 [01;35mdoxygen.png[0m
+-rw-r--r-- 1 tardis tardis   3265 Sep 16 18:38 dynsections.js
+-rw-r--r-- 1 tardis tardis   3304 Sep 16 18:38 files.html
+-rw-r--r-- 1 tardis tardis    111 Sep 16 18:38 files.js
+-rw-r--r-- 1 tardis tardis     86 Sep 16 18:38 [01;35mftv2blank.png[0m
+-rw-r--r-- 1 tardis tardis    453 Sep 16 18:38 [01;35mftv2cl.png[0m
+-rw-r--r-- 1 tardis tardis    746 Sep 16 18:38 [01;35mftv2doc.png[0m
+-rw-r--r-- 1 tardis tardis    616 Sep 16 18:38 [01;35mftv2folderclosed.png[0m
+-rw-r--r-- 1 tardis tardis    597 Sep 16 18:38 [01;35mftv2folderopen.png[0m
+-rw-r--r-- 1 tardis tardis     86 Sep 16 18:38 [01;35mftv2lastnode.png[0m
+-rw-r--r-- 1 tardis tardis    746 Sep 16 18:38 [01;35mftv2link.png[0m
+-rw-r--r-- 1 tardis tardis    246 Sep 16 18:38 [01;35mftv2mlastnode.png[0m
+-rw-r--r-- 1 tardis tardis    246 Sep 16 18:38 [01;35mftv2mnode.png[0m
+-rw-r--r-- 1 tardis tardis    403 Sep 16 18:38 [01;35mftv2mo.png[0m
+-rw-r--r-- 1 tardis tardis     86 Sep 16 18:38 [01;35mftv2node.png[0m
+-rw-r--r-- 1 tardis tardis    388 Sep 16 18:38 [01;35mftv2ns.png[0m
+-rw-r--r-- 1 tardis tardis    229 Sep 16 18:38 [01;35mftv2plastnode.png[0m
+-rw-r--r-- 1 tardis tardis    229 Sep 16 18:38 [01;35mftv2pnode.png[0m
+-rw-r--r-- 1 tardis tardis    314 Sep 16 18:38 [01;35mftv2splitbar.png[0m
+-rw-r--r-- 1 tardis tardis     86 Sep 16 18:38 [01;35mftv2vertline.png[0m
+-rw-r--r-- 1 tardis tardis   3078 Sep 16 18:38 functions.html
+-rw-r--r-- 1 tardis tardis   2995 Sep 16 18:38 functions_vars.html
+-rw-r--r-- 1 tardis tardis   2888 Sep 16 18:38 globals_defs.html
+-rw-r--r-- 1 tardis tardis   4032 Sep 16 18:38 globals_func.html
+-rw-r--r-- 1 tardis tardis   4330 Sep 16 18:38 globals.html
+-rw-r--r-- 1 tardis tardis   2886 Sep 16 18:38 globals_type.html
+-rw-r--r-- 1 tardis tardis   2161 Sep 16 18:38 index.html
+-rw-r--r-- 1 tardis tardis 146351 Sep 16 18:38 jquery.js
+-rw-r--r-- 1 tardis tardis    153 Sep 16 18:38 [01;35mnav_f.png[0m
+-rw-r--r-- 1 tardis tardis     95 Sep 16 18:38 [01;35mnav_g.png[0m
+-rw-r--r-- 1 tardis tardis     98 Sep 16 18:38 [01;35mnav_h.png[0m
+-rw-r--r-- 1 tardis tardis   2036 Sep 16 18:38 navtree.css
+-rw-r--r-- 1 tardis tardis   1535 Sep 16 18:38 navtreeindex0.js
+-rw-r--r-- 1 tardis tardis  15536 Sep 16 18:38 navtree.js
+-rw-r--r-- 1 tardis tardis    123 Sep 16 18:38 [01;35mopen.png[0m
+-rw-r--r-- 1 tardis tardis   2800 Sep 16 18:38 resize.js
+-rw-r--r-- 1 tardis tardis  56230 Sep 16 18:38 slist_8c.html
+-rw-r--r-- 1 tardis tardis    579 Sep 16 18:38 slist_8c.js
+-rw-r--r-- 1 tardis tardis  41158 Sep 16 18:38 slist_8c_source.html
+-rw-r--r-- 1 tardis tardis  51371 Sep 16 18:38 slist_8h.html
+-rw-r--r-- 1 tardis tardis    720 Sep 16 18:38 slist_8h.js
+-rw-r--r-- 1 tardis tardis  11969 Sep 16 18:38 slist_8h_source.html
+-rw-r--r-- 1 tardis tardis   7170 Sep 16 18:38 structsll__node.html
+-rw-r--r-- 1 tardis tardis    267 Sep 16 18:38 structsll__node.js
+-rw-r--r-- 1 tardis tardis   3381 Sep 16 18:38 structsll__node-members.html
+-rw-r--r-- 1 tardis tardis    853 Sep 16 18:38 [01;35msync_off.png[0m
+-rw-r--r-- 1 tardis tardis    845 Sep 16 18:38 [01;35msync_on.png[0m
+-rw-r--r-- 1 tardis tardis    142 Sep 16 18:38 [01;35mtab_a.png[0m
+-rw-r--r-- 1 tardis tardis    169 Sep 16 18:38 [01;35mtab_b.png[0m
+-rw-r--r-- 1 tardis tardis    177 Sep 16 18:38 [01;35mtab_h.png[0m
+-rw-r--r-- 1 tardis tardis   1163 Sep 16 18:38 tabs.css
+-rw-r--r-- 1 tardis tardis    184 Sep 16 18:38 [01;35mtab_s.png[0m
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/Desktop/CS180/Assignments/Assignment_1 $[00m 
+Script done on Wed 16 Sep 2015 06:38:34 PM PDT

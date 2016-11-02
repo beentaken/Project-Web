@@ -1,0 +1,1656 @@
+
+<!-- saved from url=(0069)http://azrael.digipen.edu/~mmead/www/Courses/CS170/Inheritance-1.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./Class Inheritance - 1_files/new.css">
+<title>Class Inheritance - 1</title>
+</head>
+
+<body>  
+<center><h1>Class Inheritance</h1></center>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">
+Object-Oriented Programming
+</p>
+
+
+Inheritance is one of the three pillars of Object Oriented Programming:
+
+<ol>
+<li>Encapsulation (data abstraction/hiding; the <b>class</b>)
+</li><li>Inheritance (Is-a relationship, extending a <b>class</b>)
+</li><li>Polymorphism (dynamic binding, <b>virtual</b> methods)
+</li></ol>
+
+You've already seen encapsulation (classes). Now we will look at <i>extending</i> a class via inheritance.
+
+<ul>
+<li>Non OOP typically uses top-down design or structured 
+design decomposing the problem into modules.
+</li><li>These programs are collections of interacting functions.
+</li><li>Before we used classes, we programmed top-down.
+</li><li>Top-down doesn't scale up well for large programs.
+</li><li>It is generally difficult to reuse code from one program 
+to the next since the functions work directly on the data.
+</li><li>Object-oriented languages must provide 3 facilities:
+<ul>
+<li>data abstraction
+</li><li>inheritance
+</li><li>polymorphism (dynamic binding)
+</li></ul>
+</li><li>Programs written in an OO language are collections of interacting objects.
+</li><li>In C++, classes provide data abstraction; a class is essentially an <b>A</b>bstract <b>D</b>ata <b>T</b>ype (ADT).
+</li><li>Client programs don't work directly on the data in an object, 
+they "ask" the object to manipulate its own data via public member 
+functions (methods).
+</li><li>OO refers to this "asking" as "sending a message" to the object.
+</li></ul>
+<p>
+
+Other OO languages use different terminology than C++. Here are some equivalents:
+</p><p>
+
+</p><blockquote>
+<table border="1" cellpadding="5">
+<tbody><tr valign="TOP">
+<td><b>OOP</b></td>
+<td><b>C++</b></td>
+</tr>
+
+<tr valign="TOP">
+<td>Object</td>
+<td>Class object or instance</td>
+</tr>
+
+<tr valign="TOP">
+<td>Instance variable</td>
+<td>Private data member</td>
+</tr>
+
+<tr valign="TOP">
+<td>Method</td>
+<td>Public member function</td>
+</tr>
+
+<tr valign="TOP">
+<td>Message passing</td>
+<td>Calling a public member function</td>
+</tr>
+</tbody></table>
+</blockquote>
+
+<p>
+Within a class, all of the data and functions are related. 
+Within a program, classes can be related in various ways.
+</p><ol>
+<li>Two classes are independent of each other and have nothing in common
+</li><li>Two classes are related by <i>inheritance</i>
+</li><li>Two classes are related by <i>composition</i>, also called <i>aggregation</i> or <i>containment</i>
+</li></ol>
+
+Inheritance
+<ul>
+<li>Relation is an <i>is-a</i> relationship. (Also <i>is-a-kind-of</i> relationship)
+</li><li>A car <i>is a</i> vehicle, A dog <i>is an</i> animal.
+(A car <i>is a kind of</i> vehicle, A dog <i>is a kind of</i> animal.)
+</li><li>Generally, not reversible. All cars are vehicles but not all vehicles are cars.
+</li></ul>
+
+Composition
+<ul>
+<li>Relation is a <i>has-a</i> relationship.
+</li><li>Also called aggregation or containment.
+</li><li>One class is composed of another (maybe several)
+</li><li>A car <i>has a</i> motor (and a steering wheel, and 4 tires, etc.)
+</li></ul>
+<p>
+
+An inheritance relationship can be represented by a hierarchy.
+</p><p>
+A partial vehicle hierarchy:
+
+</p><blockquote>
+<img src="./Class Inheritance - 1_files/vehicle.gif" border="3">
+</blockquote>
+
+<p>
+A partial animal hierarchy:
+
+</p><blockquote>
+<img src="./Class Inheritance - 1_files/animal.gif" width="688" height="450" border="3">
+</blockquote>
+<p>
+
+
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><p class="SectionHeader">
+A Simple Example
+</p>
+
+Structures to represent 2D and 3D points:
+<p>
+
+<table>
+<tbody><tr valign="top">
+<td>
+<blockquote><pre><b>struct</b> Point2D
+{
+  <b>double</b> x_;
+  <b>double</b> y_;
+};
+</pre></blockquote>
+</td>
+<td width="10"></td>
+<td>
+<blockquote><pre><b>struct</b> Point3D
+{
+  <b>double</b> x_;
+  <b>double</b> y_;
+  <b>double</b> z_;
+};
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</p><p>
+
+Another way to define the 3D struct so that we can reuse the <tt>Point2D</tt> struct:
+
+</p><blockquote><pre><b>struct</b> Point3D_composite
+{
+  Point2D xy_; <font color="#003399"><i>// Struct contains a Point2D object</i></font>
+  <b>double</b> z_;
+};
+</pre></blockquote>
+
+The memory layout of <tt>Point3D</tt> and <tt>Point3D_composite</tt> is identical and
+is obviously compatible with C, as there is nothing "C++" about them yet.
+<p>
+
+Accessing the members:
+</p><p>
+
+</p><blockquote><pre><b>void</b> PrintXY(<b>const</b> Point2D &amp;pt)
+{
+  std::cout &lt;&lt; pt.x_ &lt;&lt; <font color="#9933CC">", "</font> &lt;&lt; pt.y_;
+}
+
+<b>void</b> PrintXYZ(<b>const</b> Point3D &amp;pt)
+{
+  std::cout &lt;&lt; pt.x_ &lt;&lt; <font color="#9933CC">", "</font> &lt;&lt; pt.y_ &lt;&lt; <font color="#9933CC">", "</font> &lt;&lt; pt.z_;
+}
+
+<b>void</b> PrintXYZ(<b>const</b> Point3D_composite &amp;pt)
+{
+  std::cout &lt;&lt; pt.xy_.x_ &lt;&lt; <font color="#9933CC">", "</font> &lt;&lt; pt.xy_.y_;
+  std::cout &lt;&lt; <font color="#9933CC">", "</font> &lt;&lt; pt.z_;
+}
+</pre></blockquote>
+
+Of course, the last function can be modified to reuse <tt>PrintXY</tt>:
+<p>
+
+</p><blockquote><pre><b>void</b> PrintXYZ(<b>const</b> Point3D_composite &amp;pt)
+{
+  PrintXY(pt.xy_); <font color="#003399"><i>// delegate for X,Y</i></font>
+  std::cout &lt;&lt; <font color="#9933CC">", "</font> &lt;&lt; pt.z_;
+}
+</pre></blockquote>
+
+Another way to do define the 3D point is to use <i>inheritance</i>.
+
+<blockquote><pre>  <font color="#003399"><i>// Struct inherits a Point2D object</i></font>
+<b>struct</b> Point3D_inherit : <b>public</b> Point2D
+{
+  <b>double</b> z_;
+};
+</pre></blockquote>
+
+This new struct has the exact same physical structure as the previous two 3D point structs and
+is still compatible with C:
+<p>
+
+<table>
+<tbody><tr valign="top">
+<td>
+<blockquote><pre><b>struct</b> Point3D
+{
+  <b>double</b> x_;
+  <b>double</b> y_;
+  <b>double</b> z_;
+};
+</pre></blockquote>
+</td>
+<td width="10"></td>
+<td>
+<blockquote><pre><b>struct</b> Point3D_composite
+{
+  Point2D xy_; <font color="#003399"><i>// Struct contains a Point2D object</i></font>
+  <b>double</b> z_;
+};
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+
+Another overloaded print function:
+
+</p><blockquote><pre><b>void</b> PrintXYZ(<b>const</b> Point3D_inherit &amp;pt)
+{ 
+  std::cout &lt;&lt; pt.x_ &lt;&lt; <font color="#9933CC">", "</font> &lt;&lt; pt.y_ &lt;&lt; <font color="#9933CC">", "</font> &lt;&lt; pt.z_;
+}
+</pre></blockquote>
+
+Visually:
+
+<p>
+</p><blockquote>
+<!-- 436x100 -->
+<img width="545" height="125" src="./Class Inheritance - 1_files/Point3D-1.gif">
+</blockquote>
+<p>
+
+
+<!--
+<b>void</b> PrintXYZ(<b>const</b> Point3D_inherit &amp;pt)
+{ 
+    <font color="#003399"><i>// &quot;Slice&quot; off the 3D portion</i></font>
+  PrintXY(<b>static_cast</b>&lt;Point2D&gt;(pt));
+  std::cout &lt;&lt; <font color="#9933CC">&quot;, &quot;</font> &lt;&lt; pt.z_;
+}
+-->
+
+
+
+
+Sample usage:
+</p><p>
+
+</p><pre class="sourcecode"><code><b>int</b> main()
+{
+  Point3D pt3;
+  Point3D_composite ptc;
+  Point3D_inherit pti;
+
+  <b>char</b> buffer[100];
+
+    <font color="#003399"><i>// Displays: pt3: x=0012FF68, y=0012FF70, z=0012FF78</i></font>
+  sprintf(buffer, <font color="#9933CC">"pt3: x=%p, y=%p, z=%p\n"</font>, &amp;pt3.x_, &amp;pt3.y_, &amp;pt3.z_);
+  std::cout &lt;&lt; buffer;
+
+    <font color="#003399"><i>// Displays: ptc: x=0012FF50, y=0012FF58, z=0012FF60</i></font>
+  sprintf(buffer, <font color="#9933CC">"ptc: x=%p, y=%p, z=%p\n"</font>, &amp;ptc.xy_.x_, &amp;ptc.xy_.y_, &amp;ptc.z_);
+  std::cout &lt;&lt; buffer;
+
+    <font color="#003399"><i>// Displays: pti: x=0012FF38, y=0012FF40, z=0012FF48</i></font>
+  sprintf(buffer, <font color="#9933CC">"pti: x=%p, y=%p, z=%p\n"</font>, &amp;pti.x_, &amp;pti.y_, &amp;pti.z_);
+  std::cout &lt;&lt; buffer;
+
+    <font color="#003399"><i>// Assign to Point3D members</i></font>
+  pt3.x_ = 1; 
+  pt3.y_ = 2; 
+  pt3.z_ = 3;
+  PrintXYZ(pt3);
+  std::cout &lt;&lt; std::endl;
+
+    <font color="#003399"><i>// Assign to Point3D_composite members</i></font>
+  ptc.xy_.x_ = 4;
+  ptc.xy_.y_ = 5;
+  ptc.z_ = 6;
+  PrintXYZ(ptc);
+  std::cout &lt;&lt; std::endl;
+
+    <font color="#003399"><i>// Assign to Point3D_inherit members</i></font>
+  pti.x_ = 7;
+  pti.y_ = 8;
+  pti.z_ = 9;
+  PrintXYZ(pti);
+  std::cout &lt;&lt; std::endl;
+
+  <b>return</b> 0;
+}</code></pre>
+
+<b>Output</b>:
+
+<blockquote><pre>pt3: x=0012FF68, y=0012FF70, z=0012FF78
+ptc: x=0012FF50, y=0012FF58, z=0012FF60
+pti: x=0012FF38, y=0012FF40, z=0012FF48
+1, 2, 3
+4, 5, 6
+7, 8, 9
+</pre></blockquote>
+
+Notes about this syntax:
+<p>
+</p><blockquote><pre><b>struct</b> Point3D_inherit : <b>public</b> Point2D
+</pre></blockquote>
+
+<ul>
+<li><tt>Point2D</tt> is the <i>base class</i> for <tt>Point3D_inherit</tt>.
+</li><li><tt>Point3D_inherit</tt> is the <i>derived class</i>.
+</li><li>The <b>public</b> keyword specifies that the public methods of the
+base class remain public in the derived class. This is known as
+<i>public inheritance</i> and it is the most common.
+</li><li>There is also <b>private</b> inheritance, but it is used much less. 
+  Unfortunately, this is the default if you do not specify it.
+
+  <ul>
+    <li>Technically, the default is whatever the <i>base's</i> default access is.
+      (<b>private</b> for <b>class</b>, <b>public</b> for <b>struct</b>).</li>
+    <li>Tip: Always specify <b>private</b> or <b>public</b> when inheriting so everyone knows
+      what you're intentions are.
+    </li>
+  </ul>
+</li></ul>
+
+Adding methods to the structs to make it more like C++:
+
+<p>
+<table>
+<tbody><tr valign="top">
+<td>
+<blockquote><pre><b>struct</b> Point2D
+{
+  <b>double</b> x_;
+  <b>double</b> y_;
+  <b>void</b> print()
+  {
+    std::cout &lt;&lt; x_ &lt;&lt; <font color="#9933CC">", "</font> &lt;&lt; y_;
+  }
+
+};
+</pre></blockquote>
+</td>
+<td width="0"></td>
+<td>
+<blockquote><pre><b>struct</b> Point3D
+{
+  <b>double</b> x_;
+  <b>double</b> y_;
+  <b>double</b> z_;
+  <b>void</b> print()
+  {
+    std::cout &lt;&lt; x_ &lt;&lt; <font color="#9933CC">", "</font> &lt;&lt; y_ &lt;&lt; <font color="#9933CC">", "</font> &lt;&lt; z_;
+  }
+};
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</p><p>
+
+Composite vs. inheritance (everything is <b>public</b>):
+
+</p><p>
+<table border="0" cellpadding="5" cellspacing="5">
+<tbody><tr><th>Composition</th><th></th><th>Inheritance</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>struct</b> Point3D_composite
+{
+  Point2D xy_;
+  <b>double</b> z_;
+  <b>void</b> print()
+  {
+      <font color="#003399"><i>// 2D members are public</i></font>
+    std::cout &lt;&lt; xy_.x_ &lt;&lt; <font color="#9933CC">", "</font> &lt;&lt; xy_.y_;  
+    std::cout &lt;&lt; <font color="#9933CC">", "</font> &lt;&lt; z_;
+  }
+};
+</pre></blockquote>
+</td>
+
+<td width="0"></td>
+
+<td>
+<blockquote><pre><b>struct</b> Point3D_inherit : <b>public</b> Point2D
+{
+  <b>double</b> z_;
+  <b>void</b> print()
+  {
+      <font color="#003399"><i>// 2D members are public</i></font>
+    std::cout &lt;&lt; x_ &lt;&lt; <font color="#9933CC">", "</font> &lt;&lt; y_;  
+    std::cout &lt;&lt; <font color="#9933CC">", "</font> &lt;&lt; z_;        
+  }
+};
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</p><p>
+
+
+And in <tt>main</tt> we would have something that looks like this:
+
+</p><blockquote><pre>Point3D pt3;
+Point3D_composite ptc;
+Point3D_inherit pti;
+
+<font color="#003399"><i>// setup points</i></font>
+
+pt3.print();
+ptc.print();
+pti.print();  <font color="#003399"><i>// Is this legal? Ambiguous? Which <i>print</i> method is called?</i></font>
+</pre></blockquote>
+
+<!--
+It's legal because pti is a Point3D_inherit, so it finds the print there first and 
+uses it.
+-->
+
+<p>
+</p><hr width="90%">
+<p>
+
+Let's make it even more C++-like with <b>private</b> members and <b>public</b> methods and
+we'll use the <b>class</b> keyword instead of <b>struct</b>:
+</p><p>
+
+</p><blockquote><pre><font color="#003399"><i>// This class is a stand-alone 2D point</i></font>
+<b>class</b> Point2D
+{
+  <b>public</b>:
+    Point2D(<b>double</b> x, <b>double</b> y) : x_(x), y_(y) {};
+    <b>void</b> print()
+    {
+      std::cout &lt;&lt; x_ &lt;&lt; <font color="#9933CC">", "</font> &lt;&lt; y_;
+    }
+  <b>private</b>:
+    <b>double</b> x_;
+    <b>double</b> y_;
+};
+</pre></blockquote>
+
+<blockquote><pre><font color="#003399"><i>// This class is a stand-alone 3D point</i></font>
+<b>class</b> Point3D
+{
+  <b>public</b>:
+    Point3D(<b>double</b> x, <b>double</b> y, <b>double</b> z) : x_(x), y_(y), z_(z) {};
+    <b>void</b> print()
+    {
+      std::cout &lt;&lt; x_ &lt;&lt; <font color="#9933CC">", "</font> &lt;&lt; y_ &lt;&lt; <font color="#9933CC">", "</font> &lt;&lt; z_;
+    }
+  <b>private</b>:
+    <b>double</b> x_;
+    <b>double</b> y_;
+    <b>double</b> z_;
+};
+</pre></blockquote>
+
+With composition, we must initialize the contained <tt>Point2D</tt> object in the initializer list:
+<p>
+
+</p><blockquote><pre><font color="#003399"><i>// This class contains a Point2D object</i></font>
+<b>struct</b> Point3D_composite
+{
+  <b>public</b>:
+    Point3D_composite(<b>double</b> x, <b>double</b> y, <b>double</b> z) : <font color="blue"><b>xy_(x, y)</b></font>, z_(z) {};
+    <b>void</b> print()
+    {
+      xy_.print(); <font color="#003399"><i>// 2D members are private</i></font>
+      std::cout &lt;&lt; <font color="#9933CC">", "</font> &lt;&lt; z_;
+    }
+  <b>private</b>:
+    Point2D xy_;
+    <b>double</b> z_;
+};
+</pre></blockquote>
+
+With inheritance, we also must initialize the <tt>Point2D</tt> <i>subobject</i> in the 
+initializer list:
+
+<blockquote><pre><font color="#003399"><i>// This class inherits a Point2D object</i></font>
+<b>struct</b> Point3D_inherit : <b>public</b> Point2D
+{
+  <b>public</b>:
+    Point3D_inherit(<b>double</b> x, <b>double</b> y, <b>double</b> z) : <font color="blue"><b>Point2D(x ,y)</b></font>, z_(z) {};
+    <b>void</b> print()
+    {
+      Point2D::print(); <font color="#003399"><i>// 2D members are private</i></font>
+      std::cout &lt;&lt; <font color="#9933CC">", "</font> &lt;&lt; z_;        
+    }
+  <b>private</b>:
+    <b>double</b> z_;
+};
+</pre></blockquote>
+
+<p>
+Sample usage:
+</p><p>
+
+</p><pre class="sourcecode"><code><b>int</b> main()
+{
+    <font color="#003399"><i>// Create Point3D </i></font>
+  Point3D pt3(1, 2, 3);
+  pt3.print();
+  std::cout &lt;&lt; std::endl;
+
+    <font color="#003399"><i>// Create Point3D_composite</i></font>
+  Point3D_composite ptc(4, 5, 6);
+  ptc.print();
+  std::cout &lt;&lt; std::endl;
+
+    <font color="#003399"><i>// Create Point3D_inherit</i></font>
+  Point3D_inherit pti(7, 8, 9);
+  pti.print();
+  std::cout &lt;&lt; std::endl;
+
+  <b>return</b> 0;
+}</code></pre>
+
+
+
+
+
+<p>
+<table>
+<tbody><tr valign="top">
+<td>
+
+</td>
+</tr></tbody></table>
+</p><p>
+
+
+</p><blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+
+
+
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">
+A Larger Example
+</p>
+
+<h2>The Base Class</h2>
+
+<blockquote><pre><b>class</b> Time
+{
+  <b>public</b>:
+    Time();
+    Time(<b>int</b> h, <b>int</b> m, <b>int</b> s);
+    <b>void</b> Set(<b>int</b> h, <b>int</b> m, <b>int</b> s);
+    <b>void</b> Print() <b>const</b>;
+    <b>void</b> Increment();
+
+  <b>private</b>:
+    <b>int</b> hrs_;
+    <b>int</b> mins_;
+    <b>int</b> secs_;
+};
+</pre></blockquote>
+
+A diagram of the Time class: 
+<p>
+</p><blockquote>
+<img src="./Class Inheritance - 1_files/time1.gif" width="430" height="345" border="3">
+</blockquote>
+<p>
+Note that <tt><b>sizeof</b>(Time)</tt> is 12 bytes. 
+</p><p>
+
+Partial implementation from <i>Time.cpp</i>: (Notice the code reuse even in this simple example.)
+</p><pre class="sourcecode"><code>Time::Time()
+{
+  Set(0, 0, 0);
+}
+
+Time::Time(<b>int</b> h, <b>int</b> m, <b>int</b> s)
+{
+  Set(h, m, s);
+}
+
+<b>void</b> Time::Set(<b>int</b> h, <b>int</b> m, <b>int</b> s)
+{
+  hrs_ = h;
+  mins_ = m;
+  secs_ = s;
+}
+</code></pre>
+<p>
+
+<!--
+<xcenter>
+<p class="technote">
+<b>Class Design Tip:</b> When a class has more than one constructor, move the common initialization code into
+a separate method (usually private) whenever possible.
+</p>
+</xcenter>
+-->
+
+</p><p class="SectionHeader">
+Extending the <i>Time</i> class
+</p>
+
+Now we decide that we'd like the Time class to include a Time Zone:
+<blockquote><pre><b>enum</b> TimeZone {EST, CST, MST, PST, EDT, CDT, MDT, PDT};
+</pre></blockquote>
+
+We have several choices at this point:
+<ol><li>Modify the Time class to include a TimeZone.
+</li><li>Create a new class by copying and pasting the code for the existing Time class and adding the TimeZone.
+</li><li>Create a new class by <i>inheriting</i> from the Time class.
+</li></ol>
+
+What are the pros and cons of each of the choices above?
+<p>
+
+</p><ol>
+  <li>Easy to do. Affects (breaks) existing code, which may be what we want (bug fix).</li>
+  <li>Easy, can't affect old code (and vice versa). Bugs will need to be fixed in both places.</li>
+  <li>Easy (if you know what to do), maximum code reuse, straight-forward for simple classes.</li>
+</ol>
+
+Deriving <i>ExtTime</i> from <i>Time</i>:
+
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="10">
+<tbody><tr>
+  <th>Derived class</th><th>Base class</th>
+</tr>
+<tr valign="top">
+  <td>
+<pre><b>class</b> ExtTime : <b>public</b> Time
+{
+  <b>public</b>:
+    ExtTime();
+    ExtTime(<b>int</b> h, <b>int</b> m, <b>int</b> s, TimeZone z);
+    <b>void</b> Set(<b>int</b> h, <b>int</b> m, <b>int</b> s, TimeZone z);
+    <b>void</b> Print() <b>const</b>;
+
+  <b>private</b>:
+    TimeZone zone_;
+};
+</pre>
+</td>
+<td>
+<pre><b>class</b> Time
+{
+  <b>public</b>:
+    Time();
+    Time(<b>int</b> h, <b>int</b> m, <b>int</b> s);
+    <b>void</b> Set(<b>int</b> h, <b>int</b> m, <b>int</b> s);
+    <b>void</b> Print() <b>const</b>;
+    <b>void</b> Increment();
+
+  <b>private</b>:
+    <b>int</b> hrs_;
+    <b>int</b> mins_;
+    <b>int</b> secs_;
+};
+</pre>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<p>
+What is <tt><b>sizeof</b>(ExtTime)</tt>? How might it be laid out in memory?
+</p><p>
+
+Some implementations of the <i>ExtTime</i> constructors:
+</p><p>
+</p><blockquote>
+<ol>
+
+<li>The derived class default constructor: (the base class default constructor is <b>implicitly</b> called)
+
+<blockquote><pre>ExtTime::ExtTime()
+{
+  zone_ = EST; <font color="#003399"><i>// arbitrary default</i></font>
+}
+</pre></blockquote>
+
+</li><li>The derived class non-default constructor: (the base class default constructor is <b>implicitly</b> called)
+<blockquote><pre>ExtTime::ExtTime(<b>int</b> h, <b>int</b> m, <b>int</b> s, TimeZone z)
+{
+  zone_ = z;
+  <font color="#003399"><i>// what do we do with h, m, and s?</i></font>
+}
+</pre></blockquote>
+
+</li><li>Calling a non-default base class constructor explicitly:
+
+<blockquote><pre>ExtTime::ExtTime(<b>int</b> h, <b>int</b> m, <b>int</b> s, TimeZone z) : Time(h, m, s)
+{
+  zone_ = z;
+}
+</pre></blockquote>
+
+</li><li>Same as above using initializer list for derived member initialization:
+
+<blockquote><pre>ExtTime::ExtTime(<b>int</b> h, <b>int</b> m, <b>int</b> s, TimeZone z) : Time(h, m, s), zone_(z)
+{
+}
+</pre></blockquote>
+</li></ol>
+
+Notes: 
+<ul>
+<li>The derived constructor calls the default base constructor if you don't call it explicitly.
+</li><li>You can call any base constructor explicitly from the member initializer list.
+</li><li>A base constructor must be called from a derived constructor using the initializer list syntax. This is incorrect:
+
+<blockquote><pre>ExtTime::ExtTime(<b>int</b> h, <b>int</b> m, <b>int</b> s, TimeZone z)
+{
+  Time(h, m, s); <font color="#003399"><i>// Can't call a base constructor explicitly (What is this statement actually doing?)</i></font>
+  zone_ = z;
+}
+</pre></blockquote>
+
+<p class="technote">
+
+<b>Key Point:</b> A base constructor <i>must</i> be called, either implicitly or explicitly. If the base
+class has no default constructor, you <i>must</i> call another one explicitly. (If you don't, the compiler
+will generate an error.)
+</p>
+
+</li></ul>
+
+</blockquote>
+
+The relationship between the Time and ExtTime classes:
+<p>
+
+</p><blockquote>
+<img src="./Class Inheritance - 1_files/exttime.gif" border="3">
+</blockquote>
+<p>
+
+In the <i>ExtTime</i> class:
+</p><ul>
+<li>We <i>override</i> the Set and Print methods of the base class. (Override, not overload!)
+</li><li>We <i>inherit</i> the Increment method of the base class.
+</li><li>It's easy to see the relationship of the base class with its derived
+class in the diagram above. 
+</li><li>Because an ExtTime object <i>is a</i> Time object, an ExtTime object is valid
+anywhere in a program that a Time object is valid. (Note that the converse is not true.)
+</li><li>The diagram also makes it clear how <tt><b>sizeof</b></tt> works in this case.
+</li><li>Note that derived classes do not inherit these methods: (the signatures are different for each class)
+<ul>
+<li>Constructors (including copy constructors) 
+  (<font color="red"><b>New in C++11: inherting constructors</b></font>)
+</li><li>Destructors
+</li><li>Assignment operators
+</li></ul>
+</li></ul>
+
+<!---
+Inheriting constructors don't really add anything we didn't have. They are more of
+a convenience:
+
+struct B
+{
+    B(int); // normal constructor 1
+    B(string); // normal constructor 2
+};
+
+struct D : B
+{
+    using B::B; // inherit constructors from B
+};
+
+So now D has the following constructors implicitly defined:
+D::D(int); // inherited
+D::D(string); // inherited
+
+Ds members are default constructed by these inherited constructors.
+
+It is as though the constructors were defined as follows:
+D::D(int x) : B(x) {}
+D::D(string s) : B(s) {}
+
+The feature isn't anything special. It is just a shorthand to save typing boilerplate code.
+
+http://stackoverflow.com/questions/9979194/what-is-constructor-inheritance
+
+-->
+
+
+Given our classes:
+<p>
+<table>
+<tbody><tr valign="top">
+<td>
+<blockquote><pre><b>class</b> Time
+{
+  <b>public</b>:
+    Time(<b>int</b> h, <b>int</b> m, <b>int</b> s);
+    Time();
+    <b>void</b> Set(<b>int</b> h, <b>int</b> m, <b>int</b> s);
+    <b>void</b> Print() <b>const</b>;
+    <b>void</b> Increment();
+
+  <b>private</b>:
+    <b>int</b> hrs_;
+    <b>int</b> mins_;
+    <b>int</b> secs_;
+};
+</pre></blockquote>
+</td>
+
+<td width="10"></td>
+
+<td>
+<blockquote><pre><b>class</b> ExtTime : <b>public</b> Time
+{
+  <b>public</b>:
+    ExtTime();
+    ExtTime(<b>int</b> h, <b>int</b> m, <b>int</b> s, TimeZone z);
+    <b>void</b> Set(<b>int</b> h, <b>int</b> m, <b>int</b> s, TimeZone z);
+    <b>void</b> Print() <b>const</b>;
+
+  <b>private</b>:
+    TimeZone zone_;
+};
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</p><p>
+
+What is the result of the code below? (What is the type of <i>time</i>?)
+</p><blockquote><pre>ExtTime time;
+time.Set(9, 30, 0); <font color="#003399"><i>// ???</i></font>
+time.Print();
+</pre></blockquote>
+
+
+<!--
+Compiler error on second line. Set is not overloaded.
+-->
+
+<p>
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Time Implementation</th><th>ExtTime Implementation</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>Time::Time()
+{
+  Set(0, 0, 0);
+}
+
+Time::Time(<b>int</b> h, <b>int</b> m, <b>int</b> s)
+{
+  Set(h, m, s);
+}
+
+<b>void</b> Time::Set(<b>int</b> h, <b>int</b> m, <b>int</b> s)
+{
+  hrs_ = h;
+  mins_ = m;
+  secs_ = s;
+}
+
+<b>void</b> Time::Print() <b>const</b>
+{
+  cout.fill(<font color="#9933CC">'0'</font>);
+  cout &lt;&lt; setw(2) &lt;&lt; hrs_ &lt;&lt; <font color="#9933CC">':'</font>;
+  cout &lt;&lt; setw(2) &lt;&lt; mins_ &lt;&lt; <font color="#9933CC">':'</font>;
+  cout &lt;&lt; setw(2) &lt;&lt; secs_;
+}
+
+<b>void</b> Time::Increment()
+{
+  secs_++;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>ExtTime::ExtTime()
+{
+  zone_ = EST;
+}
+
+ExtTime::ExtTime(<b>int</b> h, <b>int</b> m, <b>int</b> s, TimeZone z) : Time(h, m, s)
+{
+  zone_ = z;
+}
+
+<b>void</b> ExtTime::Set(<b>int</b> h, <b>int</b> m, <b>int</b> s, TimeZone z)
+{
+  Time::Set(h, m, s); <font color="#003399"><i>// Call base class Set. h,m,s are private</i></font>
+  zone_ = z;
+}
+
+<b>void</b> ExtTime::Print() <b>const</b>
+{
+  <b>static</b> <b>const</b> <b>char</b> *TZ[] = {<font color="#9933CC">"EST"</font>, <font color="#9933CC">"CST"</font>, <font color="#9933CC">"MST"</font>, <font color="#9933CC">"PST"</font>, 
+                             <font color="#9933CC">"EDT"</font>, <font color="#9933CC">"CDT"</font>, <font color="#9933CC">"MDT"</font>, <font color="#9933CC">"PDT"</font>};
+
+  Time::Print(); <font color="#003399"><i>// Call base class Print</i></font>
+  std::cout &lt;&lt; <font color="#9933CC">" "</font> &lt;&lt; TZ[zone_];
+}
+
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+Additional notes: 
+</p><ul>
+  <li>You cannot overload functions across classes.</li>
+  <li>The <tt>Set</tt> method in <i>ExtTime</i> hides the <tt>Set</tt> method in <i>Time</i>.</li>
+  <li>Another way to say it: The <tt>Set</tt> method in the derived class <i>overrides</i> the <tt>Set</tt> method in the base class.</li>
+</ul>
+
+<!--
+ExtTime::ExtTime (<b>int</b> h, <b>int</b> m, <b>int</b> s, TimeZone z)
+{
+  Set(h, m, s, z);  
+}
+-->
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">
+Another Example of Inheritance
+</p>
+
+<a name="EMPLOYEE_CLASS1">
+The specification (<b>Employee.h</b>) for an Employee class:
+</a>
+
+<pre class="sourcecode"><code><b>#ifndef</b> EMPLOYEE_H
+<b>#define</b> EMPLOYEE_H
+
+<b>#include</b> &lt;string&gt;
+
+<b>class</b> Employee           
+{
+  <b>private</b>:               
+    std::string firstName_;  
+    std::string lastName_;   
+    <b>float</b> salary_;    
+    <b>int</b> years_;       
+
+  <b>public</b>:             
+    Employee(<b>const</b> std::string&amp; first, <b>const</b> std::string&amp; last, <b>float</b> sal, <b>int</b> yrs);
+    <b>void</b> setName(<b>const</b> std::string&amp; first, <b>const</b> std::string&amp; last);
+    <b>void</b> setSalary(<b>float</b> newSalary);
+    <b>void</b> setYears(<b>int</b> numYears);
+    <b>void</b> Display() <b>const</b>;
+};
+<b>#endif</b></code></pre>
+
+A diagram of the Employee class:
+
+<blockquote>
+<img src="./Class Inheritance - 1_files/employee.gif" border="3">
+</blockquote>
+<p>
+
+What is <tt><b>sizeof</b>(Employee)</tt>?
+<br>
+What is <tt><b>sizeof</b>(std::string)</tt>? (Depends on the implementation) <!-- 32 -->
+</p><p>
+An implementation (<b>Employee.cpp</b>) for the Employee class:
+
+
+</p><pre class="sourcecode"><code><b>#include</b> &lt;iostream&gt;
+<b>#include</b> &lt;iomanip&gt;
+<b>#include</b> <font color="#9933CC">"Employee.h"</font>
+
+Employee::Employee(<b>const</b> std::string&amp; first, <b>const</b> std::string&amp; last, <b>float</b> sal, <b>int</b> yrs) : firstName_(first), lastName_(last)
+{
+  salary_ = sal;
+  years_ = yrs;
+}
+
+<b>void</b> Employee::setName(<b>const</b> std::string&amp; first, <b>const</b> std::string&amp; last)
+{
+  firstName_ = first;
+  lastName_ = last;
+}
+
+<b>void</b> Employee::setSalary(<b>float</b> newSalary)
+{
+  salary_ = newSalary;
+}
+
+<b>void</b> Employee::setYears(<b>int</b> numYears)
+{
+  years_ = numYears;
+}
+
+<b>void</b> Employee::Display() <b>const</b>
+{
+  std::cout &lt;&lt; <font color="#9933CC">"  Name: "</font> &lt;&lt; lastName_;
+  std::cout &lt;&lt; <font color="#9933CC">", "</font> &lt;&lt; firstName_ &lt;&lt; std::endl;
+  std::cout &lt;&lt; std::setprecision(2);
+  std::cout.setf(std::ios::fixed);
+  std::cout &lt;&lt; <font color="#9933CC">"Salary: $"</font> &lt;&lt; salary_ &lt;&lt; std::endl;
+  std::cout &lt;&lt; <font color="#9933CC">" Years: "</font> &lt;&lt; years_ &lt;&lt; std::endl;
+}</code></pre>
+
+<a name="MANAGER_CLASS1">
+The <i>specification</i> (<b>Manager.h</b>) for the <tt>Manager</tt> class:
+</a>
+
+<pre class="sourcecode"><code><b>#ifndef</b> MANAGER_H
+<b>#define</b> MANAGER_H
+<b>#include</b> <font color="#9933CC">"Employee.h"</font>
+
+<b>class</b> Manager : <b>public</b> Employee
+{
+  <b>public</b>:
+    Manager(<b>const</b> std::string&amp; first, <b>const</b> std::string&amp; last, <b>float</b> sal, <b>int</b> yrs, <b>int</b> dept, <b>int</b> emps);
+    <b>void</b> setDeptNumber(<b>int</b> dept);
+    <b>void</b> setNumEmployees(<b>int</b> emps);
+    <b>void</b> Display() <b>const</b>;
+    
+  <b>private</b>:
+    <b>int</b> deptNumber_;    <font color="#003399"><i>// department managed</i></font>
+    <b>int</b> numEmployees_;  <font color="#003399"><i>// employees in department</i></font>
+};
+<b>#endif</b></code></pre>
+
+<p>
+A diagram of the Manager class:
+</p><p>
+<img src="./Class Inheritance - 1_files/manager.gif" width="560" height="560" border="3">
+</p><p>
+
+What is <tt><b>sizeof</b>(Manager)</tt>?
+</p><p>
+An implementation (<b>Manager.cpp</b>) for the Manager class:
+</p><p>
+
+</p><pre class="sourcecode"><code><b>include</b> &lt;iostream&gt;
+<b>include</b> <font color="#9933CC">"Manager.h"</font>
+
+Manager::Manager(<b>const</b> std::string&amp; first, <b>const</b> std::string&amp; last, <b>float</b> salary, 
+                 <b>int</b> years, <b>int</b> dept, <b>int</b> emps) : Employee(first, last, salary, years)
+{
+  deptNumber_ = dept;
+  numEmployees_ = emps;
+}
+
+<b>void</b> Manager::Display() <b>const</b>
+{
+  Employee::Display();
+  std::cout &lt;&lt; <font color="#9933CC">"  Dept: "</font> &lt;&lt; deptNumber_ &lt;&lt; std::endl;
+  std::cout &lt;&lt; <font color="#9933CC">"  Emps: "</font> &lt;&lt; numEmployees_ &lt;&lt; std::endl;
+}
+
+<b>void</b> Manager::setDeptNumber(<b>int</b> dept)
+{
+  deptNumber_ = dept;
+}
+
+<b>void</b> Manager::setNumEmployees(<b>int</b> emps)
+{
+  numEmployees_ = emps;
+}</code></pre>
+
+
+Trace the execution of the following program through the class hierarchy. 
+What is the output?
+<p>
+
+<table border="0">
+<tbody><tr valign="top">
+<td>
+<pre class="sourcecode"><code><b>#include</b> <font color="#9933CC">"employee.h"</font>
+<b>#include</b> <font color="#9933CC">"manager.h"</font>
+<b>#include</b> &lt;iostream&gt;
+<b>using</b> std::cout;
+<b>using</b> std::endl;
+
+<b>int</b> main()
+{
+    <font color="#003399"><i>// Create an Employee and a Manager</i></font>
+  Employee emp1(<font color="#9933CC">"John"</font>, <font color="#9933CC">"Doe"</font>, 30000, 2);
+  Manager mgr1(<font color="#9933CC">"Mary"</font>, <font color="#9933CC">"Smith"</font>, 50000, 10, 5, 8); 
+
+    <font color="#003399"><i>// Display them</i></font>
+  emp1.Display();
+  cout &lt;&lt; endl;
+  mgr1.Display();
+  cout &lt;&lt; endl;
+
+    <font color="#003399"><i>// Change the manager's last name</i></font>
+  mgr1.setName(<font color="#9933CC">"Mary"</font>, <font color="#9933CC">"Jones"</font>);
+  mgr1.Display();
+  cout &lt;&lt; endl;
+
+    <font color="#003399"><i>// add two employees and give a raise</i></font>
+  mgr1.setNumEmployees(10);
+  mgr1.setSalary(80000);
+  mgr1.Display();
+  cout &lt;&lt; endl;
+  <b>return</b> 0;
+}
+</code></pre>
+</td>
+<td width="30"></td>
+<td>
+<pre><b>Output:</b>
+  Name: Doe, John
+Salary: $30000.00
+ Years: 2
+
+  Name: Smith, Mary
+Salary: $50000.00
+ Years: 10
+  Dept: 5
+  Emps: 8
+
+  Name: Jones, Mary
+Salary: $50000.00
+ Years: 10
+  Dept: 5
+  Emps: 8
+
+  Name: Jones, Mary
+Salary: $80000.00
+ Years: 10
+  Dept: 5
+  Emps: 10
+</pre>
+</td>
+</tr>
+</tbody></table>
+
+</p><p class="SectionHeader">
+Self-check
+</p>
+
+Given these two classes:
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr valign="top">
+<td>
+<pre><b>class</b> A
+{
+  <b>public</b>:
+    A(<b>int</b> x = 0) { a_ = x; }
+    <b>void</b> f1() 
+    {
+      std::cout &lt;&lt; <font color="#9933CC">"A1"</font>;
+    }
+    <b>void</b> f2() 
+    {
+      std::cout &lt;&lt; <font color="#9933CC">"A2"</font>;
+    }
+    <b>void</b> f3(<b>int</b>) 
+    {
+      std::cout &lt;&lt; <font color="#9933CC">"A3"</font>;
+    }
+  <b>private</b>:
+    <b>int</b> a_;
+};
+</pre>
+</td>
+<td width="15%"></td>
+<td>
+<pre><b>class</b> B : <b>public</b> A
+{
+  <b>public</b>:
+    B(<b>int</b> x) { a_ = x; }
+    <b>void</b> f1(<b>int</b>) 
+    {
+      std::cout &lt;&lt; <font color="#9933CC">"B1"</font>;
+    }
+    <b>void</b> f3()
+    {
+      std::cout &lt;&lt; <font color="#9933CC">"B3"</font>;
+    }
+    <b>void</b> f4()
+    {
+      std::cout &lt;&lt; <font color="#9933CC">"B4"</font>;
+    }
+  <b>private</b>:
+    <b>int</b> a_;
+};
+</pre>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+Determine if the statement compiles. If it does compile, what is the ouput?
+<blockquote><pre><b>int</b> main()
+{
+  A a;
+  B b(5);
+  
+  a.f1();   1. __________  
+  b.f1();   2. __________  
+  a.f2();   3. __________  
+  b.f2();   4. __________  
+  a.f3();   5. __________  
+  b.f3();   6. __________  
+  b.f1(5);  7. __________   
+  b.f3(5);  8. __________  
+
+  <b>return</b> 0;
+}
+</pre></blockquote>
+
+<!--
+
+1 A1
+2 NC
+3 A2
+4 A2
+5 NC
+6 B3
+7 B1
+8 NC
+
+<div class="hidden">
+	
+
+<p>
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+
+<!--
+<hr>
+<h2>Protected vs. Private Data</h2>
+
+In a nutshell:
+
+<ul>
+<li>All classes we've seen so far have <b>private</b> and <b>public</b> members.
+<li>There is a third type of access control: <b>protected</b>, which is kind of like a hybrid of <b>private</b> and <b>public</b>
+<li>Any base class member marked as <b>protected</b> can be accessed directly by derived classes (no need to go through a <b>public</b> member function)
+<li>To the "rest of the world", the <b>protected</b> members appear to be <b>private</b>, but to derived classes they appear to be <b>public</b>.
+</ul>
+
+Let's extend the <i>Employee</i> class slightly by including accessor methods for the private
+data. (These methods would most likely be necessary in any real-world class but were intentionally 
+left out to keep the example and diagrams very simple.)  These methods simply retrieve the private data for clients.
+<p>
+
+<b>Interface:</b>
+<p>
+<blockquote><pre>
+<b>const</b> <b>char</b> *getFirstName() <b>const</b>;
+<b>const</b> <b>char</b> *getLastName() <b>const</b>;
+<b>float</b> getSalary() <b>const</b>;
+<b>int</b> getYears() <b>const</b>;
+</pre></blockquote>
+
+<b>Implementation:</b>
+<p>
+<table><tr valign="top"><td>
+<blockquote><pre>
+<b>const</b> <b>char</b> *Employee::getFirstName() <b>const</b>
+{
+  <b>return</b> firstName_;
+}
+
+<b>const</b> <b>char</b> *Employee::getLastName() <b>const</b>
+{
+  <b>return</b> lastName_;
+}
+</pre></blockquote>
+</td>
+<td width=50></td>
+<td>
+<blockquote><pre>
+<b>float</b> Employee::getSalary() <b>const</b>
+{
+  <b>return</b> salary_;
+}
+
+<b>int</b> Employee::getYears() <b>const</b>
+{
+  <b>return</b> years_;
+}
+</pre></blockquote>
+</td></tr></table>
+
+We'll also add a new method to the <i>Manager</i> class that simply reports its internal state. (This type
+of operation was not required when the <i>Employee</i> class was designed and implemented.) 
+
+<blockquote><pre>
+<b>void</b> Manager::LogActivity() <b>const</b>
+{
+  <b>char</b> buffer[105];
+  <b>const</b> <b>char</b> *fn = getFirstName();  <font color="#003399"><i>// use public accessor method</i></font>
+  <b>const</b> <b>char</b> *ln = getLastName();   <font color="#003399"><i>// use public accessor method</i></font>
+
+  sprintf(buffer, <font color="#9933CC">&quot;%s, %s&quot;</font>, ln, fn); <font color="#003399"><i>// Format lastname, firstname</i></font>
+
+  cout &lt;&lt; <font color="#9933CC">&quot;============================&quot;</font> &lt;&lt; endl;
+  cout &lt;&lt; <font color="#9933CC">&quot;Manager data:&quot;</font> &lt;&lt; endl;
+  cout &lt;&lt; <font color="#9933CC">&quot;  Dept: &quot;</font> &lt;&lt; deptNumber_ &lt;&lt; endl;
+  cout &lt;&lt; <font color="#9933CC">&quot;  Emps: &quot;</font> &lt;&lt; numEmployees_ &lt;&lt; endl;
+  cout &lt;&lt; <font color="#9933CC">&quot;Employee data:&quot;</font> &lt;&lt; endl;
+  cout &lt;&lt; <font color="#9933CC">&quot;  Name: &quot;</font> &lt;&lt; buffer &lt;&lt; endl;
+  cout &lt;&lt; <font color="#9933CC">&quot;  Salary: &quot;</font> &lt;&lt; getSalary() &lt;&lt; endl;
+  cout &lt;&lt; <font color="#9933CC">&quot;  Years: &quot;</font> &lt;&lt; getYears() &lt;&lt; endl;
+  cout &lt;&lt; <font color="#9933CC">&quot;============================&quot;</font> &lt;&lt; endl;
+}
+</pre></blockquote>
+
+Some sample client code:
+<p>
+<table><tr valign="top"><td>
+<pre class="sourcecode"><code><b>#include</b> <font color="#9933CC">&quot;Manager.h&quot;</font>
+
+<b>int</b> main()
+{
+  Manager m1(<font color="#9933CC">&quot;Ian&quot;</font>, <font color="#9933CC">&quot;Faith&quot;</font>, 5, 80000, 7, 25);
+  m1.LogActivity();
+  
+  <b>return</b> 0;
+}
+</code></pre>
+</td>
+<td width=30></td>
+<td>
+<blockquote><pre>
+<b>Output</b>:
+============================
+Manager data:
+  Dept: 7
+  Emps: 25
+Employee data:
+  Name: Faith, Ian
+  Salary: 5
+  Years: 80000
+============================
+</pre></blockquote>
+</td></tr></table>
+
+<p>
+<hr width=90%>
+<p>
+<h2>Modification #1</h2>
+
+Modifying the <i>Employee</i> class so that the <b>private</b> data is now <b>protected</b>:
+<p>
+
+<blockquote><pre>
+<b>class</b> Employee           
+{
+  <b>protected</b>:
+    <b>char</b> firstName_[MAX_LENGTH];
+    <b>char</b> lastName_[MAX_LENGTH];
+    <b>float</b> salary_;    
+    <b>int</b> years_;       
+
+  <b>public</b>:                
+
+    <font color="#003399"><i>// Public methods...</i></font>  
+  
+};
+</pre></blockquote>
+
+How will this affect existing code, both derived classes and "global" code?
+<p>
+-->
+
+<!--
+Won't affect either, since the data was never accessible before.
+-->
+
+<!--
+This will allow us to change the implementation of <i>Manager</i> to access the fields directly:
+
+<blockquote><pre>
+<b>void</b> Manager::LogActivity() <b>const</b>
+{
+  <b>char</b> buffer[105];
+  <b>const</b> <b>char</b> *fn = firstName_;  <font color="#003399"><i>// direct access</i></font>
+  <b>const</b> <b>char</b> *ln = lastName_;   <font color="#003399"><i>// direct access</i></font>
+
+  sprintf(buffer, <font color="#9933CC">&quot;%s, %s&quot;</font>, ln, fn);
+
+  cout &lt;&lt; <font color="#9933CC">&quot;============================&quot;</font> &lt;&lt; endl;
+  cout &lt;&lt; <font color="#9933CC">&quot;Manager data:&quot;</font> &lt;&lt; endl;
+  cout &lt;&lt; <font color="#9933CC">&quot;  Dept: &quot;</font> &lt;&lt; deptNumber_ &lt;&lt; endl;
+  cout &lt;&lt; <font color="#9933CC">&quot;  Emps: &quot;</font> &lt;&lt; numEmployees_ &lt;&lt; endl;
+  cout &lt;&lt; <font color="#9933CC">&quot;Employee data:&quot;</font> &lt;&lt; endl;
+  cout &lt;&lt; <font color="#9933CC">&quot;  Name: &quot;</font> &lt;&lt; buffer &lt;&lt; endl;
+  cout &lt;&lt; <font color="#9933CC">&quot;  Salary: &quot;</font> &lt;&lt; salary_ &lt;&lt; endl;
+  cout &lt;&lt; <font color="#9933CC">&quot;  Years: &quot;</font> &lt;&lt; years_ &lt;&lt; endl;
+  cout &lt;&lt; <font color="#9933CC">&quot;============================&quot;</font> &lt;&lt; endl;
+}
+</pre></blockquote>
+
+Note that "regular" clients still must go through the public member functions:
+<p>
+<table><tr valign="top"><td>
+<pre class="sourcecode"><code><b>#include</b> &lt;iostream&gt;
+<b>#include</b> <font color="#9933CC">&quot;Manager.h&quot;</font>
+
+<b>int</b> main()
+{
+  Manager m1(<font color="#9933CC">&quot;Ian&quot;</font>, <font color="#9933CC">&quot;Faith&quot;</font>, 5, 80000, 7, 25);
+  m1.LogActivity();  <font color="#003399"><i>// now using protected data directly; main is unaware</i></font>
+
+    <font color="#003399"><i>// Error: lastName_ is a protected member (still inaccessible here)</i></font>
+  <b>const</b> <b>char</b> *last1 = m1.lastName_;
+
+    <font color="#003399"><i>// OK: getLastName() is a public member</i></font>
+  <b>const</b> <b>char</b> *last2 = m1.getLastName();
+
+  <b>return</b> 0;
+}
+</code></pre>
+</td></tr></table>
+
+Notes:
+<ul>
+<li>The <b>protected</b> data of the <i>Employee</i> class is still hidden to the "general public" and is, therefore, safe.
+<li>The <b>protected</b> data is now directly available to the <i>Manager</i> class (and any other class that we might
+derive from <i>Employee</i>). 
+<li>Note that no changes to the <i>Manager</i> class were <i>required</i>. We made them because the <i>Employee</i> class
+relaxed its access to the data. 
+-->
+
+<!--
+(We can assume it was originally <b>protected</b> so that our derived classes were
+already making direct access to the data.)
+-->
+
+<!--
+<li>Should we just make the data <b>protected</b> so that in case we extend a class via inheritance the derived class
+can access "its" data without going through cumbersome public methods?
+<li>As always, the answer is <i>it depends</i>, but in general the safe answer is <i>"No"</i>.	
+</ul>
+
+
+<p>
+<hr width=90%>
+<p>
+<h2>Modification #2</h2>
+
+Modifying the implementation of the <i>Employee</i> class.
+<p>
+
+<blockquote><pre>
+<b>#include</b> <font color="#9933CC">&quot;String.h&quot;</font>
+
+<b>class</b> Employee           
+{
+  <b>protected</b>:
+    String firstName_;  <font color="#003399"><i>// String is a user-defined class</i></font>
+    String lastName_;   <font color="#003399"><i>// String is a user-defined class</i></font>
+    <b>float</b> salary_;    
+    <b>int</b> years_;       
+
+  <b>public</b>:                
+
+    <font color="#003399"><i>// Same public methods...</i></font>
+};
+</pre></blockquote>
+
+How will this affect existing code, both derived classes and "global" code? 
+<br>
+Now what is <tt><b>sizeof</b>(Employee)</tt>?
+<p>
+-->
+
+<!--
+Won't affect global, breaks derived.
+String class is an additional 4 bytes.
+-->
+
+<!--
+<ul>
+
+<li>Interface for the <i>String</i> class:
+<p>
+
+<blockquote><pre>
+<b>class</b> String
+{
+  <b>private</b>:
+    <b>char</b> *data_;       <font color="#003399"><i>// the &quot;real&quot; C string</i></font>
+
+  <b>public</b>:
+    String();                  <font color="#003399"><i>// default constructor</i></font>
+    String(<b>const</b> String &amp;str); <font color="#003399"><i>// copy constructor</i></font>
+    String(<b>const</b> <b>char</b> *str);   <font color="#003399"><i>// conversion constructor </i></font>
+    ~String();                 <font color="#003399"><i>// destructor</i></font>
+
+    String &amp; <b>operator</b>=(<b>const</b> String &amp;str); <font color="#003399"><i>// assigning another String</i></font>
+    String &amp; <b>operator</b>=(<b>const</b> <b>char</b> *str);   <font color="#003399"><i>// assigning a char *</i></font>
+    <b>const</b> <b>char</b> *c_str() <b>const</b>;         <font color="#003399"><i>// get raw C string (data_)</i></font>
+
+      <font color="#003399"><i>// Other public methods...</i></font>
+};
+</pre></blockquote>
+
+<li>We will have to modify the internal implementation of these two public methods. (We may have to modify other methods
+as well, but these are sufficient to support our public interface.)
+
+<blockquote><pre>
+<b>const</b> <b>char</b> *Employee::getFirstName() <b>const</b>
+{
+  <b>return</b> firstName_.c_str(); <font color="#003399"><i>// return as a C string</i></font>
+}
+
+<b>const</b> <b>char</b> *Employee::getLastName() <b>const</b>
+{
+  <b>return</b> lastName_.c_str(); <font color="#003399"><i>// return as a C string</i></font>
+}
+</pre></blockquote>
+
+
+<li>This code in the derived class is now broken:
+
+<blockquote><pre>
+<b>void</b> Manager::LogActivity() <b>const</b>
+{
+  <b>char</b> buffer[105];
+
+  <b>const</b> <b>char</b> *fn = firstName_; <font color="#003399"><i>// direct access</i></font>
+  <b>const</b> <b>char</b> *ln = lastName_;  <font color="#003399"><i>// direct access</i></font>
+
+    <font color="#003399"><i>// Other code...</i></font>
+}
+</pre></blockquote>
+
+because <i>firstName_</i> and <i>lastName_</i> are no longer C strings. 
+
+<p>
+<li>Interestingly, global code is unaffected:
+
+<blockquote><pre>
+<b>int</b> main()
+{
+  Manager m1(<font color="#9933CC">&quot;Ian&quot;</font>, <font color="#9933CC">&quot;Faith&quot;</font>, 5, 80000, 7, 25);
+
+    <font color="#003399"><i>// This is still OK because getLastName() was modified as well</i></font>
+  <b>const</b> <b>char</b> *last2 = m1.getLastName();
+
+  <b>return</b> 0;
+}
+</pre></blockquote>
+
+</ul>
+
+
+Notes:
+<ul>
+<li>Making data <b>protected</b> essentially makes it public in derived classes.
+<li>This is definitely a double-edged sword:
+<ol>
+<li>Derived classes can access the data directly without going through public methods.
+<li>Changes to the base class data may affect <i>all</i> derived classes that rely on a particular implementation.
+</ol>
+<li>Any kind of direct access promotes <i>tight-coupling</i>, which is generally an undesirable coding practice. (Code to
+an interface, not an implementation.)
+<li>Are you making data protected to keep the syntax simpler? (This is generally not a good reason to use protected.)
+<li>With inline member functions, there is no penalty for making a function call. 
+<li>If you don't want all code to access the private data with public methods, consider making some
+of the methods protected for derived classes. 
+</ul>
+
+-->
+
+
+
+
+
+
+
+
+
+
+<blockquote><pre></pre></blockquote>
+
+
+
+
+<table><tbody><tr valign="top"><td>
+</td>
+<td width="30"></td>
+<td>
+</td></tr></tbody></table>
+
+
+
+<blockquote><pre></pre></blockquote>
+
+
+<tt><b></b></tt>
+<tt><b></b></tt>
+<tt><b></b></tt>
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<tt><b></b></tt>
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+</body></html>

@@ -1,0 +1,1803 @@
+
+<!-- saved from url=(0067)http://azrael.digipen.edu/~mmead/www/Courses/CS180/Processes-1.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./Processes_files/new.css">
+<title>Processes</title>
+
+</head>
+
+<body>  
+
+<center><h1>
+Processes
+</h1></center>
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<p class="sectionheader">
+Overview
+</p>
+
+<b>Terminology</b>
+
+<ul>
+	<li><b>Program</b> - code that can be executed. A program is a <i>passive</i> entity and generally
+	exists as a file on the disk.</li>
+  <li><b>Process</b> - a program (either user mode or kernel mode) that is being executed. A process
+  	is an <i>active</i> entity.</li>
+  <li><b>Process state</b> - Each process has information associated with it such as opened files,
+  	registers in use, memory allocated, duration of execution, etc.</li>
+  <li><b>Process states</b> - new, ready, running, blocked, terminated.</li>
+  <li><b>Thread</b> - A subprocess. A process contains one or more threads.</li>
+  <li><b>CPU burst</b> - A period of uninterrupted CPU activity.</li>
+  <li><b>I/O burst</b> - A period of waiting for I/O to complete.</li>
+  <li><b>Single tasking OS</b> - An OS that has one process in memory at once.</li>
+  <li><b>Multi-tasking OS</b> - An OS that has more than one process in memory at the same time.</li>
+  <li><b>Parallelism</b> - The ability to execute more than one process at the same time. Must have
+  	multiple CPUs or multiple cores.</li>
+  <li><b>Pseudo-parallelism</b> - The ability for a single-CPU/single-core machine to give the 
+  illusion of executing more than one process/thread simultaneously.</li>
+  <p>
+  <a name="PARALLELISM">
+	</a></p><li><a name="PARALLELISM">Diagrams showing parallelism vs. pseudo-parallelism</a></li><a name="PARALLELISM">
+	<ul>
+	  <li>The <font color="red"><b>RED LINE</b></font> represents the time to switch between processes:</li>
+	</ul>
+  
+<blockquote>
+<table border="0" cellspacing="0" cellpadding="0">
+<tbody><tr valign="top"><th>No parallelism</th><th></th><th>Pseudo-parallelism</th></tr>
+<tr valign="top">
+<td>
+<img src="./Processes_files/NoParallelism.png">
+</td>
+<td width="30"></td>
+<td>
+<img src="./Processes_files/PseudoParallelism.png">
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<blockquote>
+<table border="0" cellspacing="0" cellpadding="0">
+<tbody><tr valign="top"><th>Pseudo-parallelism (detail)</th></tr>
+<tr valign="top">
+<td>
+<img src="./Processes_files/PseudoParallelism-2.png">
+</td>
+</tr></tbody></table>
+</blockquote>
+</a><p><a name="PARALLELISM">
+</a>	
+
+</p><blockquote>
+<table border="0" cellspacing="0" cellpadding="0">
+<tbody><tr valign="top" align="left"><th>Parallelism</th></tr>
+<tr valign="top">
+<td>
+<img src="./Processes_files/Parallelism.png">
+</td>
+</tr></tbody></table>
+</blockquote>
+<p>
+
+
+How long does it take for each process to finish? How about all processes?
+
+  
+</p></ul>
+
+
+<br>
+	
+<b>Process States</b>
+<p>
+There are several states in which a process can be. They are mutually-exclusive, so a process can
+only be in exactly one of these states at any given time:
+
+</p><ul>
+	<li><b>New (Created)</b> - The process is being created.</li>
+	<li><b>Running</b> - The process is actively using the CPU and other resources.</li>
+	<li><b>Blocked</b> - The process is currently waiting (paused) for some I/O to complete or an event 
+		to happen.</li>
+	<li><b>Ready</b> - The process is in the runnable queue and is waiting to run by using the CPU.</li>
+	<li><b>Terminated</b> - The process has been terminated, either because it has finished its task or 
+		because	the system (or user) has terminated it.</li>
+</ul>
+
+
+<blockquote>
+<img src="./Processes_files/ProcessStates-1.png">
+</blockquote>
+
+<b>State Transitions</b>
+<p>
+</p><ol>
+	<li><b>(Admitted)</b> The process has been created and is now being put into the ready/runnable queue.</li>
+	<li><b>(Dispatched)</b> The OS has selected a process to run and is executing it on the CPU.</li>
+	<li><b>(Timeout)</b> The process has used up its allotted time slice and is put back in the queue for later execution.</li>
+	<ul>
+		<li>The process may still have time remaining in its time slice, but a higher-priority process has bumped it.</li>
+	</ul>
+	<li><b>(Need I/O or event to happen</b>) The process has requested I/O or has requested to wait until a future event.</li>
+	<li><b>(I/O done or event occurred)</b> The I/O has completed or event has occurred that the process was waiting on.</li>
+	<li><b>(Ending)</b> The process has completed its task or the system has terminated the process.</li>
+</ol>
+
+<p>
+Utilities like <span id="wpurl"><a class="wplabel">ps</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Ps_(Unix)">ps</a>, 
+<a href="http://man7.org/linux/man-pages/man1/top.1.html">top</a>, <a href="http://htop.sourceforge.net/">htop</a> (on Linux, with GUIs
+<a href="http://userbase.kde.org/KSysGuard">ksysguard</a>, <a href="http://help.gnome.org/users/gnome-system-monitor/">gnome-system-monitor</a>) and 
+<span id="wpurl"><a class="wplabel">Task Manager</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Windows_Task_Manager">Task Manager</a> and 
+<a href="http://technet.microsoft.com/en-us/sysinternals/bb896653">Process Explorer</a> (on Windows) can give you lots of detailed information
+about all of the processes on a computer.
+</p><p>
+	
+From the <a href="http://man7.org/linux/man-pages/man1/ps.1.html">ps man page</a> on Linux:
+</p><blockquote><pre><b>PROCESS STATE CODES</b>
+
+ Here are the different values that the s, stat and state output specifiers (header "STAT" or "S") will 
+ display to describe the state of a process.
+       D    Uninterruptible sleep (usually IO)
+       R    Running or runnable (on run queue)
+       S    Interruptible sleep (waiting for an event to complete)
+       T    Stopped, either by a job control signal or because it is being traced.
+       W    paging (not valid since the 2.6.xx kernel)
+       X    dead (should never be seen)
+       Z    Defunct ("zombie") process, terminated but not reaped by its parent.
+
+       For BSD formats and when the stat keyword is used, additional characters may be displayed:
+       &lt;    high-priority (not nice to other users)
+       N    low-priority (nice to other users)
+       L    has pages locked into memory (for real-time and custom IO)
+       s    is a session leader
+       l    is multi-threaded (using CLONE_THREAD, like NPTL pthreads do)
+       +    is in the foreground process group
+</pre></blockquote>
+
+<p></p><hr width="90%"><p>
+
+<b>Process Control Block (PCB)</b>
+</p><p>
+Each process has a block of memory (typically a C struct) that contains all of the relevant information
+about a process. The PCB can contain a massive amount of information. Some of the info includes:
+</p><ul>
+	<li><b>Process state</b> - Created, Ready, Running, Blocked, Terminated.</li>
+	<li><b>Program counter</b> - Where to resume the process when it is running again.</li>
+	<li><b>CPU registers</b> - (including instruction pointer) Must remember these to reload later.</li>
+	<li><b>Open files</b> - Any files or other I/O that are opened are listed in the PCB.</li>
+	<li><b>Scheduling info</b>  - Priority, time elapsed, etc.</li>
+	<li>Lots of other stuff...</li>
+</ul>
+
+<p>
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/task_struct-linux.html">Linux task_struct</a>
+</p><p>
+
+
+</p><p>
+The PCBs are kept on a linked-list structure that represents a queue for various devices (CPU, disk, etc.)
+
+
+</p><blockquote>
+<table border="0">
+	<tbody><tr><td><img src="./Processes_files/Figure3-6-ready-queue.png"></td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne ©2009&nbsp;&nbsp;</span></td></tr>
+</tbody></table>
+</blockquote>
+
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<p class="sectionheader">
+Process Scheduling
+</p>
+
+<ul>
+	<li>The OS must schedule processes for execution</li>
+	<ul>
+		<li>User processes</li>
+		<li>System processes</li>
+	</ul>
+	<li>Scheduling constraints</li>
+	<ul>
+		<li>Waiting time: jobs should be started quickly when they're ready</li>
+		<li>CPU utilization: keep the CPU busy</li>
+		<li>Response time: jobs should provide feedback quickly</li>
+		<li>Turnaround time: jobs should to be completed in a timely manner</li>
+		<li>Prioritization: certain tasks might be more important than others</li>
+	</ul>
+</ul>
+
+<b>Types of Scheduling</b>
+
+<ul>
+	<li>Queueing (<i>non-preemptive</i> scheduling)</li>
+	<ul>
+		<li>Jobs are placed on a queue for sequential execution.</li>
+		<li>Two type of queues used</li>
+		<ul>
+			<li>First In, First Out (FIFO) queue</li>
+			<li>Shortest Job First (SJF) queue</li>
+		</ul>
+		<li>Used for batch jobs (such as printing).</li>
+	</ul>
+	<li><span id="wpurl"><a class="wplabel">Round-Robin</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Round-robin_scheduling">Round-Robin</a> 
+		(<i><span id="wpurl"><a class="wplabel">preemptive</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Non-preemptive_multitasking#Preemptive_multitasking.2Ftime-sharing">preemptive</a></i> scheduling).</li>
+	<li>Each process is given a (short) time slice.</li>
+	<li>A process executes only for that time slice.</li>
+	<li>After the time slice is over, the next process gets a turn.</li>
+	<li>We will look at other scheduling algorithms later.</li>
+</ul>
+
+<!--
+http://msdn.microsoft.com/en-us/library/ms685100(v=vs.85).aspx
+-->
+
+<b>Context Switching</b>
+<ul>
+<li>A <span id="wpurl"><a class="wplabel">context switch</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Context_switch">context switch</a> is when the OS switches between processes.</li>
+<li>In round robin scheduling, the OS must switch often between processes.
+(<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/Processes-1.html#PARALLELISM">Overhead</a>)</li>
+<ul>
+	<li>Process's information is read in from its PCB</li>
+	<li>Timer is reset</li>
+	<li>Execution of that process (re)starts</li>
+	<li>If process terminates before timer expires:</li>
+	<ul>
+		<li>Remove the PCB from the list of scheduled jobs</li>
+	</ul>
+	<li>Otherwise:</li>
+	<ul>
+		<li>After a process's time slice is up (timer expires), the current process's information is saved in a PCB</li>
+	</ul>
+	<li>Go to next process in list</li>
+	<li>Repeat ad infinitum	</li>
+</ul>
+</ul>
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<p class="sectionheader">
+Process Creation
+</p>
+
+<b>Process Creation</b>
+
+<ul>
+<li>To execute a program:</li>
+	<ul>
+		<li>A unique process ID (PID) is assigned</li>
+		<li>A process priority is assigned</li>
+		<li>A PCB is created</li>
+		<li>Program is loaded from disk to memory</li>
+		<li>Process placed in the run queue</li>
+	</ul>
+	<li>An existing process creates a new process, or processes</li>
+	<ul>
+		<li>Parent: existing process</li>
+		<li>Child: created process</li>
+	</ul>
+<li>A child process can create one or more processes (the child becomes the parent of these new processes)</li>
+</ul>
+
+<b>The POSIX fork Function</b>
+<ul>
+	<li>The <span id="wpurl"><a class="wplabel">fork</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Fork_(operating_system)">fork</a> function splits the flow of execution into two paths.</li>
+	<ul>
+		<li>Parent process</li>
+		<li>Child process</li>
+	</ul>
+	<li>The return value depends on the process.</li>
+	<ul>
+		<li>0, if the process is the child process</li>
+		<li>PID of the child, if the process is the parent process</li>
+		<li>-1, on failure (<b>ALWAYS</b> be prepared to deal with this situation.)</li>
+	</ul>
+	<li>The child must call the exit system call (either directly or indirectly) when it finishes 
+		execution.</li>
+	<li>The parent typically uses a wait function to wait until the child terminates.</li>
+
+<p>
+<b><tt>fork</tt> Example</b> (<tt>fork.c</tt>)
+
+</p><pre class="sourcecode"><code><font color="990099">#include &lt;stdio.h&gt;    /* printf              */</font>
+<font color="990099">#include &lt;stdlib.h&gt;   /* exit                */</font>
+<font color="990099">#include &lt;unistd.h&gt;   /* fork, getpid, sleep */</font>
+<font color="990099">#include &lt;sys/wait.h&gt; /* wait                */</font>
+
+<b>int</b> main(<b>void</b>) 
+{
+  <b>int</b> i, pid;
+  pid = <font color="blue"><b><a href="http://man7.org/linux/man-pages/man2/getpid.2.html">getpid</a></b></font>();
+  printf(<font color="#9933CC">"parent pid = %d\n"</font>, pid);
+  
+  pid = <font color="blue"><b><a href="http://man7.org/linux/man-pages/man2/fork.2.html">fork</a></b>()</font>;
+  <b>if</b> (pid == 0) <font color="#003399"><i>/* child process is always 0 */</i></font>
+  {
+    <b>for</b> (i = 0; i &lt; 10; i++) 
+    {
+      printf(<font color="#9933CC">"child process: %d\n"</font>,i);
+      sleep(1); 
+    }
+    printf(<font color="#9933CC">"child exiting\n"</font>);
+    exit(0);
+  }
+  <b>else</b> <font color="#003399"><i>/* parent process is non-zero (child's pid) */</i></font>
+  { 
+    printf(<font color="#9933CC">"child pid = %d\n"</font>, pid);
+    printf(<font color="#9933CC">"waiting for child\n"</font>);
+    <font color="blue"><b><a href="http://man7.org/linux/man-pages/man2/wait.2.html">wait</a></b></font>(NULL);
+    printf(<font color="#9933CC">"child terminated\n"</font>); 
+  }
+  printf(<font color="#9933CC">"parent exiting\n"</font>);
+  
+  <b>return</b> 0;
+}
+</code></pre>
+
+<blockquote>
+<table border="0" cellpadding="0" cellspacing="5">
+<tbody><tr align="left"><th>Output 1</th><th></th><th>Output 2</th><th></th><th>Output 3</th></tr>
+<tr valign="top">
+<td>
+<pre>parent pid = 464
+child pid = 3688
+child process: 0
+waiting for child
+child process: 1
+child process: 2
+child process: 3
+child process: 4
+child process: 5
+child process: 6
+child process: 7
+child process: 8
+child process: 9
+child exiting
+child terminated
+parent exiting
+</pre>
+</td>
+<td width="40"></td>
+<td>
+<pre>parent pid = 3936
+child pid = 2756
+waiting for child
+child process: 0
+child process: 1
+child process: 2
+child process: 3
+child process: 4
+child process: 5
+child process: 6
+child process: 7
+child process: 8
+child process: 9
+child exiting
+child terminated
+parent exiting	
+</pre>
+</td>
+<td width="40"></td>
+<td>
+<pre>parent pid = 2180
+child pid = 212
+waiting for child
+child process: 0
+child process: 1
+child process: 2
+child process: 3
+child process: 4
+child process: 5
+child process: 6
+child process: 7
+child process: 8
+child process: 9
+child exiting
+child terminated
+parent exiting
+</pre>
+</td>
+</tr></tbody></table>
+</blockquote>
+<p>
+
+In normal, production code (read: homework assignments), you will want to handle failures
+(which are not uncommon):
+
+</p><pre class="sourcecode"><code>
+pid = fork();
+<b>if</b> (pid == 0) <font color="#003399"><i>/* child process is always 0 */</i></font>
+{
+  <font color="#003399"><i>/* do child stuff */</i></font>
+}
+<b>else</b> <b>if</b> (pid &gt; 0) <font color="#003399"><i>/* parent process is non-zero (child's pid) */</i></font>
+{
+  <font color="#003399"><i>/* do parent stuff */</i></font>
+}
+<b>else</b> <font color="#003399"><i>/* fork failed, pid is -1 */</i></font>
+{
+  <font color="#003399"><i>/* handle error */</i></font>
+}
+</code></pre>
+
+<li>It's important to realize that nothing is shared between the parent and child after the <tt><b>fork</b></tt> call: (<tt>fork3.c</tt>)
+
+
+<pre class="sourcecode"><code>
+<b>#include</b> &lt;stdio.h&gt;    <font color="#003399"><i>/* printf              */</i></font>
+<b>#include</b> &lt;stdlib.h&gt;   <font color="#003399"><i>/* exit                */</i></font>
+<b>#include</b> &lt;string.h&gt;   <font color="#003399"><i>/* strcpy              */</i></font>
+<b>#include</b> &lt;unistd.h&gt;   <font color="#003399"><i>/* fork, getpid, sleep */</i></font>
+<b>#include</b> &lt;sys/wait.h&gt; <font color="#003399"><i>/* wait                */</i></font>
+
+<b>int</b> main(<b>void</b>) 
+{
+  <b>int</b> pid;
+  <b>char</b> buffer[100] = <font color="#9933CC">"Shared data"</font>;
+
+  pid = getpid();
+  printf(<font color="#9933CC">"parent: pid = %d\n"</font>, pid);
+  
+  pid = fork();
+  
+  <b>if</b> (pid == 0) <font color="#003399"><i>/* child process is always 0 */</i></font>
+  {
+    printf(<font color="#9933CC">"child: buffer is %s\n"</font>, buffer); 
+    strcpy(buffer, <font color="#9933CC">"Child data"</font>);
+    printf(<font color="#9933CC">"child: buffer is %s\n"</font>, buffer);
+    printf(<font color="#9933CC">"child: child exiting\n"</font>);
+    exit(0);
+  }
+  <b>else</b> <font color="#003399"><i>/* parent process is non-zero (child's pid) */</i></font>
+  { 
+    sleep(1);
+    printf(<font color="#9933CC">"parent: child pid = %d\n"</font>, pid);
+    printf(<font color="#9933CC">"parent: waiting for child\n"</font>);
+    wait(NULL);
+    printf(<font color="#9933CC">"parent: child terminated\n"</font>); 
+    printf(<font color="#9933CC">"parent: buffer is %s\n"</font>, buffer); 
+  }
+  printf(<font color="#9933CC">"parent: parent exiting\n"</font>);
+  
+  <b>return</b> 0;
+}
+</code></pre>
+
+<blockquote>
+<b>Output:</b>
+<pre>parent: pid = 1396
+child: buffer is Shared data
+child: buffer is Child data
+child: child exiting
+parent: child pid = 936
+parent: waiting for child
+parent: child terminated
+parent: buffer is Shared data
+parent: parent exiting
+</pre>
+</blockquote>
+
+</li><li>Retrieving the exit code from the child: (<tt>fork-status.c</tt>)</li>
+
+<pre class="sourcecode"><code><b>#include</b> &lt;stdio.h&gt;    <font color="#003399"><i>/* printf         */</i></font>
+<b>#include</b> &lt;stdlib.h&gt;   <font color="#003399"><i>/* exit           */</i></font>
+<b>#include</b> &lt;unistd.h&gt;   <font color="#003399"><i>/* fork, getpid   */</i></font>
+<b>#include</b> &lt;sys/wait.h&gt; <font color="#003399"><i>/* wait           */</i></font>
+
+<b>int</b> main(<b>void</b>) 
+{
+  <b>int</b> pid;
+  
+  pid = <a href="http://man7.org/linux/man-pages/man2/fork.2.html">fork</a>();
+  
+  <b>if</b> (pid == 0) <font color="#003399"><i>/* child */</i></font>
+  {
+    exit(123);  <font color="#003399"><i>/* same as <b>return</b> 123; */</i></font>
+  }
+  <b>else</b> <font color="#003399"><i>/* parent */</i></font>
+  { 
+    <b>int</b> status;
+
+    <a href="http://man7.org/linux/man-pages/man2/wait.2.html">wait</a>(&amp;status);
+    
+    <b>if</b> (WIFEXITED(status))
+    {
+      <b>int</b> code = WEXITSTATUS(status); <font color="#003399"><i>/* low 8 bits */</i></font>
+      printf(<font color="#9933CC">"child terminated with value %i\n"</font>, code); 
+    }
+  }
+  
+  <b>return</b> 0;
+}
+</code></pre>
+
+<blockquote>
+<b>Output:</b>
+<pre>child terminated with value 123
+</pre>
+</blockquote>
+Note that the only values you can return to the parent this way are 0 to 255 (an <tt>unsigned char</tt>).
+<p>
+
+</p><li>Waiting for multiple children #1: (<tt>fork-multiwait.c</tt>)</li>
+
+<pre class="sourcecode"><code><font color="990099">#include &lt;stdio.h&gt;    /* printf              */</font>
+<font color="990099">#include &lt;stdlib.h&gt;   /* exit                */</font>
+<font color="990099">#include &lt;unistd.h&gt;   /* fork, getpid, sleep */</font>
+<font color="990099">#include &lt;sys/wait.h&gt; /* wait, waitpid       */</font>
+
+<font color="#003399"><i>/* Doesn't return */</i></font>
+<b>void</b> dochild(<b>int</b> count)
+{
+  <b>int</b> pid = getpid();
+  
+  printf(<font color="#9933CC">"[%i] child process\n"</font>, pid);
+  sleep(count); 
+  printf(<font color="#9933CC">"[%i] child exiting\n"</font>, pid);
+  
+  exit(count * 10);
+}
+
+<b>int</b> main(<b>void</b>) 
+{
+  <b>int</b> i, cpid[3];
+  <b>int</b> ppid = getpid();
+  printf(<font color="#9933CC">"parent pid = %d\n"</font>, ppid);
+  
+  cpid[0] = fork();
+  <b>if</b> (cpid[0] == 0) <font color="#003399"><i>/* child process is always 0 */</i></font>
+    dochild(1);
+
+  cpid[1] = fork();
+  <b>if</b> (cpid[1] == 0) <font color="#003399"><i>/* child process is always 0 */</i></font>
+    dochild(2);
+
+  cpid[2] = fork();
+  <b>if</b> (cpid[2] == 0) <font color="#003399"><i>/* child process is always 0 */</i></font>
+    dochild(3);
+  
+  <font color="#003399"><i>/* parent process is non-zero (child's pid) */</i></font>
+  
+  printf(<font color="#9933CC">"waiting for children\n"</font>);
+  <b>for</b> (i = 0; i &lt; 3; i++)
+  {
+    <b>int</b> status;
+    printf(<font color="#9933CC">"waiting for child pid: %d\n"</font>, cpid[i]);
+    <font color="blue"><b><a href="http://man7.org/linux/man-pages/man2/waitpid.2.html">waitpid</a></b></font>(cpid[i], &amp;status, 0);
+    <b>if</b> (WIFEXITED(status))
+      printf(<font color="#9933CC">"[%i] child ended normally: %i\n"</font>, cpid[i], WEXITSTATUS(status));
+    <b>else</b>
+      printf(<font color="#9933CC">"[%i] child ended abnormally\n"</font>, cpid[i]);
+  }
+  printf(<font color="#9933CC">"children terminated\n"</font>); 
+  
+  printf(<font color="#9933CC">"parent exiting\n"</font>);
+  <b>return</b> 0;
+}
+</code></pre>
+
+<blockquote>
+<table border="0" cellpadding="0" cellspacing="5">
+<tbody><tr align="left"><th>Output 1</th><th></th><th>Output 2</th><th></th><th>Output 3</th></tr>
+<tr valign="top">
+<td>
+<pre>parent pid = 1736
+[2496] child process
+[3640] child process
+[2176] child process
+waiting for children
+waiting for child pid: 2496
+[2496] child exiting
+[2496] child ended normally: 10
+waiting for child pid: 3640
+[3640] child exiting
+[3640] child ended normally: 20
+waiting for child pid: 2176
+[2176] child exiting
+[2176] child ended normally: 30
+children terminated
+parent exiting
+</pre>
+</td>
+<td width="40"></td>
+<td>
+<pre>parent pid = 3364
+[1308] child process
+[2240] child process
+waiting for children
+waiting for child pid: 1308
+[2364] child process
+[1308] child exiting
+[1308] child ended normally: 10
+waiting for child pid: 2240
+[2240] child exiting
+[2240] child ended normally: 20
+waiting for child pid: 2364
+[2364] child exiting
+[2364] child ended normally: 30
+children terminated
+parent exiting
+</pre>
+</td>
+<td width="40"></td>
+<td>
+<pre>parent pid = 3188
+[2420] child process
+[3620] child process
+waiting for children
+[2084] child process
+waiting for child pid: 2420
+[2420] child exiting
+[2420] child ended normally: 10
+waiting for child pid: 3620
+[3620] child exiting
+[3620] child ended normally: 20
+waiting for child pid: 2084
+[2084] child exiting
+[2084] child ended normally: 30
+children terminated
+parent exiting
+</pre>
+</td>
+</tr></tbody></table>
+</blockquote>
+<p>
+
+</p><li>There are a few things about the above program that need to be discussed.</li>
+<ol>
+	<li>The parent is blocked until the first child (<tt>cpid[0]</tt>) finishes.</li>
+	<li>What if the other children finish first?</li>
+	<ul>
+		<li>Call with -1 to wait on <i>any</i> child, not a particular one.</li>
+		<li>Returns the pid of the child that finished.</li>
+	</ul>
+	<li>What if the parent needs to do other work in parallel with the children?</li>
+</ol>
+
+<p>
+</p><li>Waiting for multiple children #2: (<tt>fork-multiwait2.c</tt>)</li>
+
+  <blockquote>
+  <p class="technote">
+  	Use this technique if the parent process has <i>other work to do</i> 
+  	while the children are working. If the parent has nothing to do
+  	(but wait for the children), DO NOT use this technique.
+  </p>
+  </blockquote>
+
+<pre class="sourcecode"><code><font color="990099">#include &lt;stdio.h&gt;    /* printf              */</font>
+<font color="990099">#include &lt;stdlib.h&gt;   /* exit                */</font>
+<font color="990099">#include &lt;unistd.h&gt;   /* fork, getpid, sleep */</font>
+<font color="990099">#include &lt;sys/wait.h&gt; /* wait, waitpid       */</font>
+
+<font color="#003399"><i>/* Doesn't return */</i></font>
+<b>void</b> dochild(<b>int</b> count)
+{
+  <b>int</b> pid = getpid();
+  
+  printf(<font color="#9933CC">"[%i] child process\n"</font>, pid);
+  sleep(count);
+  printf(<font color="#9933CC">"[%i] child exiting\n"</font>, pid);
+  
+  exit(count * 10);
+}
+
+<b>int</b> main(<b>void</b>) 
+{
+  <font color="990099">#define COUNT 3</font>
+  <b>int</b> running = COUNT;
+  <b>int</b> i, cpid[COUNT], terminated[COUNT] = {0};
+  <b>int</b> ppid = getpid();
+  printf(<font color="#9933CC">"parent pid = %d\n"</font>, ppid);
+  
+  <b>for</b> (i = 0; i &lt; COUNT; i++)
+  {
+    cpid[i] = fork();
+    <b>if</b> (cpid[i] == 0) <font color="#003399"><i>/* child process is always 0 */</i></font>
+      dochild(i);
+  }
+ 
+  <font color="#003399"><i>/* parent process is non-zero (child's pid) */</i></font>
+  printf(<font color="#9933CC">"waiting for children\n"</font>);
+  <b>while</b> (running)
+  {
+    <b>for</b> (i = 0; i &lt; COUNT; i++)
+    {
+      <b>int</b> status;
+      <font color="#003399"><i>/*printf("waiting for child pid: %d\n", cpid[i]);*/</i></font>
+
+      <font color="#003399"><i>/* If the parent has work to do while waiting, do it here...*/</i></font>
+      
+      <b>if</b> (!terminated[i])
+      {
+        <font color="#003399"><i>/*printf("child pid: %d not terminated\n", cpid[i]);*/</i></font>
+        <b>if</b> (waitpid(cpid[i], &amp;status, <font color="red"><b>WNOHANG</b></font>))
+        {
+          <b>if</b> (WIFEXITED(status))
+          {
+            printf(<font color="#9933CC">"[%i] child ended normally: %i\n"</font>, cpid[i], WEXITSTATUS(status));
+            running--;
+            terminated[i] = 1;
+          }
+        }
+      }
+    }
+  }
+  printf(<font color="#9933CC">"children terminated\n"</font>); 
+  printf(<font color="#9933CC">"parent exiting\n"</font>);
+  <b>return</b> 0;
+}
+</code></pre>
+
+
+<blockquote>
+<table border="0" cellpadding="0" cellspacing="5">
+<tbody><tr align="left"><th>Output 1</th><th></th><th>Output 2</th><th></th><th>Output 3</th></tr>
+<tr valign="top">
+<td>
+<pre>parent pid = 1132
+[928] child process
+[2456] child process
+[928] child exiting
+waiting for children
+[928] child ended normally: 0
+[3628] child process
+[2456] child exiting
+[2456] child ended normally: 10
+[3628] child exiting
+[3628] child ended normally: 20
+children terminated
+parent exiting
+</pre>
+</td>
+<td width="40"></td>
+<td>
+<pre>parent pid = 3956
+[3940] child process
+[3940] child exiting
+[3564] child process
+waiting for children
+[2764] child process[3940] child ended normally: 0
+
+[3564] child exiting
+[3564] child ended normally: 10
+[2764] child exiting
+[2764] child ended normally: 20
+children terminated
+parent exiting
+</pre>
+</td>
+<td width="40"></td>
+<td>
+<pre>parent pid = 948
+[1100] child process
+[2440] child process
+[1100] child exiting
+waiting for children[1684] child process
+
+[1100] child ended normally: 0
+[2440] child exiting
+[2440] child ended normally: 10
+[1684] child exiting
+[1684] child ended normally: 20
+children terminated
+parent exiting
+</pre>
+</td>
+</tr></tbody></table>
+</blockquote>
+<p>
+
+
+
+</p></ul>
+
+  <blockquote>
+  <p class="technote">
+  	<b>DO NOT</b> use the technique above (<tt>WNOHANG</tt>) for any assignments in the class. 
+  	<b>Doing so will cause you to lose significant points</b>. I'm only showing this 
+  	technique so that, in the future (outside of this class),
+  	you may find that you need this capability.
+  </p>
+  </blockquote>
+
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<p class="sectionheader">
+The <tt>exec</tt> Function
+</p>
+<ul>
+	<li>Isn't forking an entire process expensive? In a word, no.</li>
+	<li>Usually, the child process will replace itself by calling the <a href="http://man7.org/linux/man-pages/man3/exec.3.html">exec</a> function.</li>
+	<ul>
+		<li>These functions are just wrappers around the 
+			<a href="http://man7.org/linux/man-pages/man2/execve.2.html">execve</a> function.</li>
+	</ul>
+
+	<li>This function will load and execute another file from the disk.</li>
+	<li>There are several different versions of this function. (We looked at some of them in CS120)
+	</li><li>Example: (<tt>exec.c</tt>)</li>
+	
+<pre class="sourcecode"><code><b>#include</b> &lt;stdio.h&gt;    <font color="#003399"><i>/* printf         */</i></font>
+<b>#include</b> &lt;stdlib.h&gt;   <font color="#003399"><i>/* exit           */</i></font>
+<b>#include</b> &lt;unistd.h&gt;   <font color="#003399"><i>/* fork, getpid   */</i></font>
+<b>#include</b> &lt;sys/wait.h&gt; <font color="#003399"><i>/* wait           */</i></font>
+
+<b>int</b> main(<b>void</b>) 
+{
+  <b>int</b> pid;
+  
+  pid = fork();
+  
+  <b>if</b> (pid == 0) <font color="#003399"><i>/* child */</i></font>
+  {
+    printf(<font color="#9933CC">"child: executing a program...\n"</font>);
+    <a href="http://man7.org/linux/man-pages/man3/exec.3.html">execl</a>(<font color="#9933CC">"/usr/bin/gedit"</font>, <font color="#9933CC">"gedit"</font>, NULL);
+    printf(<font color="#9933CC">"child: if you see this, the exec failed\n"</font>);
+    perror(<font color="#9933CC">"gedit"</font>);
+    
+    exit(10); <font color="#003399"><i>/* arbitrary error code */</i></font>
+  }
+  <b>else</b> <font color="#003399"><i>/* parent */</i></font>
+  { 
+    <b>int</b> code, status;
+    
+    printf(<font color="#9933CC">"parent: waiting for child to terminate\n"</font>);
+    <a href="http://man7.org/linux/man-pages/man2/wait.2.html">wait</a>(&amp;status);
+    
+    code = WEXITSTATUS(status);
+    printf(<font color="#9933CC">"parent: child terminated with value %i\n"</font>, code); 
+  }
+  
+  <b>return</b> 0;
+}
+</code></pre>	
+	
+<blockquote>
+<b>Output:</b>
+<pre>parent: waiting for child to terminate
+child: executing a program...
+parent: child terminated with value 0
+</pre>
+</blockquote>
+
+Changing <b><tt>/usr/bin/gedit</tt></b> to <b><tt>/usr/bin/foobar</tt></b>:
+
+<blockquote>
+<b>Output:</b>
+<pre>parent: waiting for child to terminate
+child: executing a program...
+child: if you see this, the exec failed
+parent: child terminated with value 10
+</pre>
+</blockquote>
+
+<li>To get more information on why <b>exec</b> failed, call <a href="http://man7.org/linux/man-pages/man3/perror.3.html">perror</a>.
+<blockquote><pre>perror("foobar");
+</pre></blockquote>
+prints out:
+<blockquote><pre>foobar: No such file or directory
+</pre></blockquote>
+
+</li><li>You may be interested in the 'p' versions as they will search the path for the executable file.</li>
+<li>See <a href="http://man7.org/linux/man-pages/man3/exec.3.html">execve man page</a> for more information on this family of functions.</li>
+<li>Also, see <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS120/RuntimeEnvironment.html#EXEC">exec</a> functions
+	from the CS120 lectures.
+<!--
+<li>Real World<sup>&trade;</sup> use of forking: A <a href="watchdog.cpp.html">watchdog</a>	program.
+-->
+
+</li></ul>
+
+
+
+<p class="sectionheader">
+Win32 Process Creation
+</p>
+
+<ul>
+	<li>Creates a child process (doesn't <tt>fork</tt> like Unix-based systems).</li>
+	<li>Uses an existing <i>program</i> as child process (much like <tt>exec</tt>).</li>
+	<li>Non-blocking: parent code continues to execute after child process is created.</li>
+	<li>Parent uses <tt><a href="http://msdn.microsoft.com/en-us/library/ms687032(v=vs.85).aspx">WaitForSingleObject</a></tt> to wait for one child</li>
+	<li><tt><a href="http://msdn.microsoft.com/en-us/library/ms687025(v=vs.85).aspx">WaitForMultipleObjects</a></tt> used by parent to wait for multiple children</li>
+	<li>Win32 lacks a <tt>fork</tt> function, but Cygwin implements one (by way of voodoo and black magic, and it's inefficient).</li>
+</ul>
+
+<b>CreateProcess Example</b> (<tt>CreateProcess.cpp</tt>)
+
+<pre class="sourcecode"><code><font color="990099">#include &lt;iostream&gt;</font>
+<font color="990099">#include &lt;windows.h&gt;</font>
+
+<b>int</b> main(<b>void</b>) 
+{
+  <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms686331%28v=vs.85%29.aspx">STARTUPINFO</a> start_info;
+  <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms684873%28v=vs.85%29.aspx">PROCESS _INFORMATION</a> proc_info;
+  
+  DWORD pid = GetCurrentProcessId();
+  std::cout &lt;&lt; <font color="#9933CC">"parent pid = "</font> &lt;&lt; pid &lt;&lt; std::endl;
+
+    <font color="#003399"><i>// allocate memory and set to 0</i></font>
+  ZeroMemory(&amp;start_info, <b>sizeof</b>(STARTUPINFO));
+  ZeroMemory(&amp;proc_info, <b>sizeof</b>(PROCESS_INFORMATION));
+  
+  std::cout &lt;&lt; <font color="#9933CC">"creating child process"</font> &lt;&lt; std::endl;
+  <b>const</b> <b>char</b> *program = <font color="#9933CC">"c:\\windows\\system32\\notepad.exe"</font>;
+  BOOL err = <a href="http://msdn.microsoft.com/en-us/library/ms682425(v=vs.85).aspx">CreateProcess</a>(program,     <font color="#003399"><i>// program to run</i></font>
+                           0,           <font color="#003399"><i>// command line</i></font>
+                           0,           <font color="#003399"><i>// security attributes</i></font>
+                           0,           <font color="#003399"><i>// thread attributes</i></font>
+                           FALSE,       <font color="#003399"><i>// don't inherit handles</i></font>
+                           0,           <font color="#003399"><i>// creation flags (none)</i></font>
+                           0,           <font color="#003399"><i>// use parent's environment</i></font>
+                           0,           <font color="#003399"><i>// use parent's directory</i></font>
+                           &amp;start_info, <font color="#003399"><i>// start up info</i></font>
+                           &amp;proc_info   <font color="#003399"><i>// process info</i></font>
+                          );
+  
+  <b>if</b> (!err)
+  {
+    std::cout &lt;&lt; <font color="#9933CC">"Error creating process"</font> &lt;&lt; std::endl;
+    <b>return</b> -1;
+  }
+
+  std::cout &lt;&lt; <font color="#9933CC">"waiting for child to terminate"</font> &lt;&lt; std::endl;
+  <a href="http://msdn.microsoft.com/en-us/library/ms687032(v=vs.85).aspx">WaitForSingleObject</a>(proc_info.hProcess, INFINITE);
+  std::cout &lt;&lt; <font color="#9933CC">"parent terminating"</font> &lt;&lt; std::endl;
+
+  <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms724211%28v=vs.85%29.aspx">CloseHandle</a>(proc_info.hProcess);
+  CloseHandle(proc_info.hThread);
+
+  <b>return</b> 0;
+}
+</code></pre>
+
+<b>Creating Multiple Processes Example</b>
+
+<pre class="sourcecode"><code><font color="990099">#include &lt;stdio.h&gt;</font>
+<font color="990099">#include &lt;windows.h&gt;</font>
+
+<b>int</b> main(<b>void</b>) 
+{
+  <b>const</b> <b>int</b> COUNT = 2;
+
+  HANDLE proc[COUNT], thread[COUNT];
+  <b>const</b> <b>char</b> *programs[] = {<font color="#9933CC">"c:\\windows\\system32\\notepad.exe"</font>,
+                             <font color="#9933CC">"c:\\windows\\system32\\mspaint.exe"</font>,
+                            };
+
+  <b>for</b> (<b>int</b> i = 0; i &lt; COUNT; ++i) 
+  {
+    STARTUPINFO si;
+    PROCESS_INFORMATION pi;
+
+    ZeroMemory(&amp;si, <b>sizeof</b>(si));
+    ZeroMemory(&amp;pi, <b>sizeof</b>(pi));
+
+    CreateProcess(programs[i], 0, 0, 0, <b>FALSE</b>, 0, 0, 0, &amp;si, &amp;pi);
+
+    proc[i] = pi.hProcess;
+    thread[i] = pi.hThread;
+  }
+
+  WaitForMultipleObjects(COUNT, proc, <b>TRUE</b>, INFINITE);
+
+  <b>for</b> (<b>int</b> i = 0; i &lt; COUNT; ++i) 
+  {
+    printf(<font color="#9933CC">"Process: %i, Thread: %i ended.\n"</font>, proc[i], thread[i]);
+    CloseHandle(proc[i]);
+    CloseHandle(thread[i]);
+  }
+  <b>return</b> 0;
+}
+</code></pre>
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<p class="sectionheader">
+Process Termination
+</p>
+
+<ul>
+	<li>When a process terminates, it has to return all the resources to the operating system:</li>
+	<ul>
+		<li>physical and virtual memory is returned</li>
+		<li>open files are closed</li>
+		<li>I/O buffers are freed</li>
+		<li>All other resources are deallocated by the operating system</li>
+	</ul>
+	<li>The process terminates either voluntarily or involuntarily.</li>
+	<li>When one of the following conditions exists, the process terminates:</li>
+	<ul>
+		<li>Normal exit (voluntary)</li>
+		<li>Error exit (voluntary)</li>
+		<li>Fatal error (involuntary)</li>
+		<li>Killed by another process (involuntary)</li>
+	</ul>
+</ul>
+
+Voluntary exits:
+<ul>
+	<li>Normal exits:</li>
+	<ul>
+		<li>A process terminates when it finishes executing its final statement and asks the operating system to delete it. (Example: A process finished all of its work.)</li>
+		<li>A normal exit in Unix is implemented via the <b><a href="http://man7.org/linux/man-pages/man3/exit.3.html">exit</a></b> call. (If you don't call <tt>exit</tt>, it will be called for you.)</li>
+		<blockquote>
+			<p class="technote">
+				After <tt>exit()</tt>, the exit status must be transmitted to the parent process. There are three cases. If the parent has set SA_NOCLDWAIT, 
+				or has set the SIGCHLD handler to SIG_IGN, the status is discarded. If the parent was waiting on the child it is notified of the exit status. 
+				In both cases the exiting process dies immediately. <b>If the parent has not indicated that it is not interested in the exit status, but is not 
+				waiting, the exiting process turns into a "zombie" process</b> (which is nothing but a container for the single byte representing the exit status) 
+				so that the parent can learn the exit status when it later calls one of the <tt>wait()</tt> functions.
+			</p>
+		</blockquote>
+		<li>In Windows a normal exit is via the <b><a href="http://msdn.microsoft.com/en-us/library/ms682658(VS.85).aspx">ExitProcess</a></b> call. (If you don't call <tt>ExitProcess</tt>, it will be called for you.)</li>
+	</ul>
+	<li>Error exits:</li>
+	<ul>
+		<li>When a process discovers a fatal error forcing the process to terminate.
+		</li><li>For example, the process running the compiler might exit when it discovers that a file is missing.</li>
+	</ul>
+</ul>
+
+Involuntary exits:
+<ul>
+	<li>When the running process causes an error due to a program bug, the process is terminated:</li>
+	<ul>
+		<li>The process has exceeded the usage of the allocated resources.</li>
+		<li>The process executes an illegal instruction.</li>
+		<li>The process is referencing a nonexistent memory or illegal memory.</li>
+		<li>Dividing by zero.</li>
+	</ul>
+	<li>When a process, (usually a parent process) decides to terminate or kill a running process:</li>
+	<ul>
+		<li>The task assigned to the process is no longer required.</li>
+		<li>Other processes are exiting, and the operating system does not allow the process without the existence of other processes.</li>
+		<li>Operating system is shutting down and needs to terminate all running processes.</li>
+	</ul>
+</ul>
+
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<p class="sectionheader">
+Interprocess Communication (IPC)
+</p>
+
+<ul>
+	<li>Shared memory</li>
+	<ul>
+		<li>Processes have access to a common block of memory</li>
+		<li>Processes read and write to the shared memory</li>
+		<li>Faster, but there may be synchronization issues</li>
+	</ul>
+	<li>Message passing</li>
+	<ul>
+		<li>Information passed between processes via the kernel</li>
+		<li>Requires a message protocol</li>
+		<li>Safer, but slower</li>
+	</ul>
+	<li>POSIX pipes</li>
+	<ul>
+		<li>Two processes can communicate using read and write functions.</li>
+		<li>It is just as if they were reading/writing stdin/stdout.</li>
+	</ul>
+</ul>
+
+
+<a name="SHAREDMEM">
+<b>Shared memory</b>
+</a>
+<ul>
+	<li>Allows for a block of memory to be shared between multiple processes</li>
+	<li><tt><b><a href="http://man7.org/linux/man-pages/man2/shmget.2.html">shmget</a></b></tt> is used to create (or retrieve if already created) a block of memory</li>
+	<ul>
+		<li>Returns an identifier for the block</li>
+	</ul>
+	<li><tt><b><a href="http://man7.org/linux/man-pages/man2/shmat.2.html">shmat</a></b></tt> attaches the memory to the process</li>
+	<ul>
+		<li>Returns the address of memory block</li>
+	</ul>
+	<li><tt><b><a href="http://man7.org/linux/man-pages/man2/shmdt.2.html">shmdt</a></b></tt> detaches the memory from the process</li>
+	<li><tt><b><a href="http://man7.org/linux/man-pages/man2/shmctl.2.html">shmctl</a></b></tt> is used to delete the memory block</li>
+	<li>All of these functions return -1 if an error occurs.</li>
+	<li>Shared memory example: (<tt>shared.c</tt>)</li>
+
+<blockquote>
+<p class="technote">
+In order to keep these examples simple and understandable, most error handling has been removed. In a real-world
+program (like the assignments in CS180), failing to check the return values of these IPC functions can result
+in a lot of debugging because something failed. Also, failing to check the return values will cause you to receive
+a lower grade on your assignments.
+</p>
+</blockquote>
+
+<pre class="sourcecode"><code><b>#include</b> &lt;stdio.h&gt;    <font color="#003399"><i>/* printf                       */</i></font>
+<b>#include</b> &lt;stdlib.h&gt;   <font color="#003399"><i>/* exit                         */</i></font>
+<b>#include</b> &lt;string.h&gt;   <font color="#003399"><i>/* strcpy                       */</i></font>
+<b>#include</b> &lt;unistd.h&gt;   <font color="#003399"><i>/* sleep, fork                  */</i></font>
+<b>#include</b> &lt;sys/shm.h&gt;  <font color="#003399"><i>/* shmget, shmat, shmdt, shmctl */</i></font>
+<b>#include</b> &lt;sys/wait.h&gt; <font color="#003399"><i>/* wait                         */</i></font>
+
+<b>int</b> main(<b>void</b>) 
+{
+  <b>int</b> pid, shmid;
+  <b>char</b> *buffer;    <font color="#003399"><i>/* shared buffer */</i></font>
+  key_t key = 123; <font color="#003399"><i>/* arbitrary key */</i></font>
+  
+  shmid = <a href="http://man7.org/linux/man-pages/man2/shmget.2.html">shmget</a>(key, 1024, 0600 | IPC_CREAT);
+  buffer = (<b>char</b> *) <a href="http://man7.org/linux/man-pages/man2/shmat.2.html">shmat</a>(shmid, NULL, 0);
+  strcpy(buffer,<font color="#9933CC">""</font>);
+  
+  pid = <a href="http://man7.org/linux/man-pages/man2/fork.2.html">fork</a>();
+  
+  <b>if</b> (pid == 0) <font color="#003399"><i>/* child */</i></font>
+  {
+    printf(<font color="#9933CC">"child: putting message in buffer\n"</font>);
+    strcpy(buffer, <font color="#9933CC">"Let's get it on, get it over with."</font>);
+    <a href="http://man7.org/linux/man-pages/man2/shmdt.2.html">shmdt</a>(buffer); <font color="#003399"><i>/* detach memory from child process */</i></font>
+
+    printf(<font color="#9933CC">"child: sleeping for 5 seconds...\n"</font>);
+    sleep(5);    
+    printf(<font color="#9933CC">"child: exiting\n"</font>);
+    exit(0); 
+  }
+  <b>else</b> <font color="#003399"><i>/* parent */</i></font>
+  {
+    printf(<font color="#9933CC">"parent: waiting for child to exit...\n"</font>);
+    wait(NULL);
+    printf(<font color="#9933CC">"parent: message from child is %s\n"</font>, buffer);
+      
+    <a href="http://man7.org/linux/man-pages/man2/shmdt.2.html">shmdt</a>(buffer);              <font color="#003399"><i>/* detach memory from parent process */</i></font>
+    <a href="http://man7.org/linux/man-pages/man2/shmctl.2.html">shmctl</a>(shmid, IPC_RMID, 0); <font color="#003399"><i>/* delete memory block               */</i></font>
+    
+    printf(<font color="#9933CC">"parent: exiting\n"</font>);
+  }
+  
+  <b>return</b> 0;
+}
+</code></pre>
+
+<blockquote>
+<b>Output:</b>
+<pre>parent: waiting for child to exit...
+child: putting message in buffer
+child: sleeping for 5 seconds...
+child: exiting
+parent: message from child is Let's get it on, get it over with.
+parent: exiting
+</pre>
+</blockquote>
+
+
+
+	<li>Header file <tt>sys/shm.h</tt> needed for shared memory functions.</li>
+	<li>Shared memory has file-style permissions.</li>
+	<ul>
+		<li>user/group/other, 3 bits each (9 bit total).</li>
+		<li><tt>6 = 110 (binary) = rw-</tt>&nbsp;&nbsp; and &nbsp;&nbsp;<tt>666 = rw-rw-rw-</tt></li>
+	</ul>
+	<li>Each process must know the id of the shared memory block.</li>
+	<li>Use the command <a href="http://man7.org/linux/man-pages/man1/ipcs.1.html">ipcs</a> 
+		to see shared memory in use.</li>
+	<ul>
+		<li>Run it with the <tt>-l</tt> option (that's a lowercase 'L') to see system defaults.</li>
+	</ul>
+
+	<li>Use the command <a href="http://man7.org/linux/man-pages/man1/ipcrm.1.html">ipcrm</a> 
+		to delete shared memory.</li>
+		<blockquote>
+			<p class="technote">
+				If your program doesn't release the shared memory (likely due to it crashing),
+				you must remove it manually or subsequent attempts to create the shared memory
+				will fail.
+			</p>
+		</blockquote>
+
+	<!--
+	<li>Under native Unix-based systems, this works right out of the box. Under Windows with Cygwin, you need to run the
+		<a href="http://www.cygwin.com/cygwin-ug-net/using-cygserver.html">Cygserver</a>.
+	-->
+	<li>This code is the <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/wmutex-parent.c.html">parent</a> process and this code is 
+for the <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/wmutex-child.c.html">child</a> processes. This example also shows
+how to create shared memory between processes using the Win32 API.</li>
+<p>
+
+</p></ul>
+
+<a name="MSGQUEUE">
+<b>Message queues</b>
+</a>
+<ul>
+	
+	<li>Allows for passing messages between processes</li>
+	<li><tt><b><a href="http://man7.org/linux/man-pages/man2/msgget.2.html">msgget</a></b></tt> creates (or retrieves an existing) message queue</li>
+	<ul>	
+		<li>Returns an identifier for the queue</li>
+	</ul>
+	<li><tt><b><a href="http://man7.org/linux/man-pages/man2/msgsnd.2.html">msgsnd</a></b></tt> posts a message to the queue</li>
+	<li><tt><b><a href="http://man7.org/linux/man-pages/man2/msgrcv.2.html">msgrcv</a></b></tt> retrieves (and removes) a message from the queue</li>
+	<li><tt><b><a href="http://man7.org/linux/man-pages/man2/msgctl.2.html">msgctl</a></b></tt> is used to delete the message queue</li>
+	<li>All of these functions return -1 if an error occurred.</li>
+	<li>Technically, these are not POSIX message queues, they are System V message queues.</li>
+	<ul>
+		<li>Sys V message queues have been around Forever<sup>™</sup> and are implemented just about everywhere.</li>
+		<li>POSIX queues are newer and are not as ubiquitous yet.</li>
+		<li>The interfaces and capabilities are similar, but POSIX queues have more features.</li>
+	</ul>
+	<li>Message queue memory example: (<tt>msg.c</tt>)</li>
+
+<pre class="sourcecode"><code><b>#include</b> &lt;stdio.h&gt;    <font color="#003399"><i>/* printf                         */</i></font>
+<b>#include</b> &lt;stdlib.h&gt;   <font color="#003399"><i>/* exit                           */</i></font>
+<b>#include</b> &lt;string.h&gt;   <font color="#003399"><i>/* strcpy                         */</i></font>
+<b>#include</b> &lt;unistd.h&gt;   <font color="#003399"><i>/* fork                           */</i></font>
+<b>#include</b> &lt;sys/msg.h&gt;  <font color="#003399"><i>/* msgget, msgsnd, msgrcv, msgctl */</i></font>
+<b>#include</b> &lt;sys/wait.h&gt; <font color="#003399"><i>/* wait                         */</i></font>
+
+<b>#define</b> BUFSIZE 1024
+<b>#define</b> MSG_STRUCT 1
+
+<font color="#003399"><i>/* Our user-defined structure */</i></font>
+<b>typedef</b> <b>struct</b> 
+{
+  <b>long</b> <b>int</b> type;        <font color="#003399"><i>/* must be long int */</i></font>
+  <b>char</b> buffer[BUFSIZE]; <font color="#003399"><i>/* can be anything  */</i></font>
+}msg_struct;
+
+<b>int</b> main(<b>void</b>) 
+{
+  <b>int</b> pid;
+  <b>int</b> queue_id;    <font color="#003399"><i>/* shared id     */</i></font>
+  msg_struct msg;  <font color="#003399"><i>/* our message   */</i></font>
+  key_t key = 987; <font color="#003399"><i>/* arbitrary key */</i></font>
+  
+  queue_id = <a href="http://man7.org/linux/man-pages/man2/msgget.2.html">msgget</a>(key, 0600 | IPC_CREAT);
+  pid = fork();
+  
+  <b>if</b> (pid == 0) <font color="#003399"><i>/* child */</i></font>
+  {
+    printf(<font color="#9933CC">"child: sending messages\n"</font>);
+    msg.type = MSG_STRUCT;
+    strcpy(msg.buffer, <font color="#9933CC">"This is message number one..."</font>);
+    <a href="http://man7.org/linux/man-pages/man2/msgsnd.2.html">msgsnd</a>(queue_id, &amp;msg, BUFSIZE, 0);
+    strcpy(msg.buffer, <font color="#9933CC">"This is message number two..."</font>);
+    <a href="http://man7.org/linux/man-pages/man2/msgsnd.2.html">msgsnd</a>(queue_id, &amp;msg, BUFSIZE, 0);
+    
+    printf(<font color="#9933CC">"child: exiting\n"</font>);
+    exit(0); 
+  }
+  <b>else</b> <font color="#003399"><i>/* parent */</i></font>
+  {
+    <font color="#003399"><i>/*sleep(2);*/</i></font> 
+    printf(<font color="#9933CC">"parent: waiting on child\n"</font>);
+    wait(NULL);
+    
+    printf(<font color="#9933CC">"parent: receiving messages\n"</font>);
+    <b>while</b> (<a href="http://man7.org/linux/man-pages/man2/msgrcv.2.html">msgrcv</a>(queue_id, &amp;msg, BUFSIZE, 0, IPC_NOWAIT) != -1) 
+    {
+      <b>if</b> (msg.type == MSG_STRUCT)
+        printf(<font color="#9933CC">"message: %s\n"</font>, msg.buffer);
+      <b>else</b>
+        printf(<font color="#9933CC">"unknown message\n"</font>); 
+    }
+    <a href="http://man7.org/linux/man-pages/man2/msgctl.2.html">msgctl</a>(queue_id, IPC_RMID, NULL); 
+    printf(<font color="#9933CC">"parent: exiting\n"</font>);
+  }
+  
+  <b>return</b> 0;
+}
+</code></pre>
+
+
+<blockquote>
+<b>Output:</b>
+<pre>parent: waiting on child
+child: sending messages
+child: exiting
+parent: receiving messages
+message: This is message number one...
+message: This is message number two...
+parent: exiting
+</pre>
+</blockquote>
+
+
+<li>A more real-world example without using parent-child processes:</li>
+<p>
+<b>Shared data:</b> (in a header file, <tt>client-server-msg.h</tt>)
+
+</p><blockquote><pre><b>#define</b> BUFSIZE      1024
+<b>#define</b> MSG_STRUCT      1 
+<b>#define</b> MSG_QUIT        2 
+<b>#define</b> SHARED_KEY  12345 <font color="#003399"><i>/* 0x3039 */</i></font>
+
+<b>typedef</b> <b>struct</b> 
+{
+  <b>long</b> <b>int</b> type;        <font color="#003399"><i>/* must be long int */</i></font>
+  <b>char</b> buffer[BUFSIZE]; <font color="#003399"><i>/* can be anything  */</i></font>
+}msg_struct;
+</pre></blockquote>
+
+<b>Process #1 code (Sending process, <tt>msg-client.c</tt>)</b>
+
+<!--
+<font color="#003399"><i>/**************************************************************
+ remark:
+   For this to run properly under Cygwin, the Cygwin
+   server ('cygserver') must be running in the background.
+   See:
+   http://www.cygwin.com/cygwin-ug-net/using-cygserver.html
+**************************************************************/</i></font>
+-->
+
+<pre class="sourcecode"><code>
+<b>#include</b> &lt;stdio.h&gt;   <font color="#003399"><i>/* printf, sprintf        */</i></font>
+<b>#include</b> &lt;unistd.h&gt;  <font color="#003399"><i>/* sleep                  */</i></font>
+<b>#include</b> &lt;sys/msg.h&gt; <font color="#003399"><i>/* msgget, msgsnd, msgctl */</i></font>
+
+<b>#include</b> <font color="#9933CC">"client-server-msg.h"</font> <font color="#003399"><i>/* shared data */</i></font>
+
+<b>int</b> main(<b>void</b>) 
+{
+  <b>int</b> i;
+  key_t key = SHARED_KEY;
+  msg_struct msg;
+  <b>int</b> queue_id = msgget(key, 0600 | IPC_CREAT);
+  
+  msg.type = MSG_STRUCT;
+  
+  <b>for</b> (i = 0; i &lt; 10; i++) 
+  {
+    printf(<font color="#9933CC">"client writing: %i\n"</font>, i);
+    sprintf(msg.buffer, <font color="#9933CC">"Hello %i"</font>, i);
+    msgsnd(queue_id, &amp;msg, BUFSIZE, 0);
+    sleep(1);
+  }
+  
+  printf(<font color="#9933CC">"client writing end message\n"</font>);
+  msg.type = MSG_QUIT;
+  msgsnd(queue_id, &amp;msg, BUFSIZE, 0);
+  
+  <b>return</b> 0;
+}
+</code></pre>
+
+<b>Process #2 code (Receiving process, <tt>msg-server.c</tt>)</b>
+
+<!--
+<font color="#003399"><i>/**************************************************************
+ remark:
+   For this to run properly under Cygwin, the Cygwin
+   server ('cygserver') must be running in the background.
+   See:
+   http://www.cygwin.com/cygwin-ug-net/using-cygserver.html
+**************************************************************/</i></font>
+-->
+
+<pre class="sourcecode"><code>
+<b>#include</b> &lt;stdio.h&gt;    <font color="#003399"><i>/* printf                 */</i></font>
+<b>#include</b> &lt;sys/msg.h&gt;  <font color="#003399"><i>/* msgget, msgrcv, msgctl */</i></font>
+
+<b>#include</b> <font color="#9933CC">"client-server-msg.h"</font> <font color="#003399"><i>/* shared data */</i></font>
+
+<b>int</b> main(<b>void</b>) 
+{
+  msg_struct msg;
+  key_t key = SHARED_KEY;
+  <b>int</b> queue_id = msgget(key, 0600 | IPC_CREAT);
+  <b>int</b> done = 0;
+  
+  <b>while</b>(!done) 
+  {
+      <font color="#003399"><i>/* If no message is waiting, msgrcv returns -1 */</i></font>
+    <b>while</b> (msgrcv(queue_id, &amp;msg, BUFSIZE, 0, IPC_NOWAIT) != -1) 
+    {
+      <b>if</b> (msg.type == MSG_STRUCT)
+        printf(<font color="#9933CC">"message: %s\n"</font>, msg.buffer);
+      <b>else</b> <b>if</b> ( msg.type == MSG_QUIT ) 
+        done = 1;
+      <b>else</b>                      
+        printf(<font color="#9933CC">"unknown message\n"</font>);
+    }
+  }
+  printf(<font color="#9933CC">"server shutting down\n"</font>);
+  msgctl(queue_id, IPC_RMID, NULL);
+  
+  <b>return</b> 0;
+}
+</code></pre>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote>
+<table border="0" cellpadding="0" cellspacing="5">
+<tbody><tr align="left"><th>Sending process</th><th></th><th>Receiving process</th></tr>
+<tr valign="top">
+<td>
+<pre>client writing: 0
+client writing: 1
+client writing: 2
+client writing: 3
+client writing: 4
+client writing: 5
+client writing: 6
+client writing: 7
+client writing: 8
+client writing: 9
+client writing end message
+</pre>
+</td>
+<td width="40"></td>
+<td>
+<pre>message: Hello 0
+message: Hello 1
+message: Hello 2
+message: Hello 3
+message: Hello 4
+message: Hello 5
+message: Hello 6
+message: Hello 7
+message: Hello 8
+message: Hello 9
+server shutting down
+</pre>
+</td>
+</tr></tbody></table>
+</blockquote>
+<p>
+
+
+</p><blockquote><pre></pre></blockquote>
+
+<li>Header file <tt>sys/msg.h</tt> must be included.</li>
+<li>Each process must know the key value of the queue.</li>
+<li>Queue has file-style permissions.</li>
+<li><tt><b>msgrcv</b></tt> has two modes:</li>
+<ul>
+	<li><tt>IPC_NOWAIT</tt>: returns -1 if there are no messages on the queue (non-blocking)</li>
+	<li>not <tt>IPC_NOWAIT</tt>: blocks until there is a message on the queue</li>
+</ul>
+
+<li>Messages can have different structures</li>
+<li>A message structure must have a <tt><b>long int</b></tt> as its first field (used for the message type identifier)</li>
+<li>Message size (specified in <tt><b>msgsnd</b></tt> and <tt><b>msgrcv</b></tt>) is the message structure size <i><u>without</u></i> the long int identifier</li>
+<li>Use the command <a href="http://man7.org/linux/man-pages/man1/ipcs.1.html">ipcs</a> to see message queues in use.</li>
+<ul>
+	<li>Run it with the <tt>-l</tt> option (that's a lowercase 'L') to see system defaults.</li>
+</ul>
+<!--
+	<li>Under native Unix-based systems, this works right out of the box. Under Windows with Cygwin, you need to run the
+		<a href="http://www.cygwin.com/cygwin-ug-net/using-cygserver.html">Cygserver</a>.-->
+</ul>
+
+
+<p>
+
+
+<a name="PIPES">
+<b>POSIX pipes</b>
+</a>
+</p><ul>
+	<li>A pipe is a stream of communication between two processes.</li>
+	<li>You can think of it as a virtual file stream shared between two processes.</li>
+	<li>A process can read and/or write to a pipe.</li>
+	<li>Two processes can communicate via a pipe without even knowing it.</li>
+	<ul>
+		<li>This forms the backbone of Unix-like environments.</li>
+	</ul>
+	<li>The <tt><b>pipe</b></tt> function returns two descriptors (integers) in the (out) parameter</li>
+	<ul>
+		<li>Read descriptor – for reading from the pipe</li>
+		<li>Write descriptor – for writing to the pipe</li>
+	</ul>
+	<li>Both processes must know the descriptors.</li>
+	<li><tt><b>read</b></tt> and <tt><b>write</b></tt> are used with the pipe.</li>
+	<li><tt><b>pipe</b></tt> example: (<tt>pipe1.c</tt>)</li>
+
+
+<pre class="sourcecode"><code>
+<font color="990099">#include &lt;stdio.h&gt;    /* printf, fgets                  */</font>
+<font color="990099">#include &lt;stdlib.h&gt;   /* exit                           */</font>
+<font color="990099">#include &lt;string.h&gt;   /* strlen                         */</font>
+<font color="990099">#include &lt;unistd.h&gt;   /* fork, pipe, read, write, close */</font>
+<font color="990099">#include &lt;sys/wait.h&gt; /* wait                           */</font>
+
+<b>int</b> main(<b>void</b>) 
+{
+  <b>int</b> pid;
+  <b>char</b> buffer[1024];
+  <b>int</b> fd[2];
+  
+  <a href="http://man7.org/linux/man-pages/man2/pipe.2.html">pipe</a>(fd); <font color="#003399"><i>/* fd[0] is for read, fd[1] is for write */</i></font>
+  
+  pid = fork();
+  
+  <b>if</b> (pid == 0) <font color="#003399"><i>/* child */</i></font>
+  {
+    <b>int</b> count;
+    close(fd[0]); <font color="#003399"><i>/* close unused end, child will write */</i></font>
+    
+      <font color="#003399"><i>/* prompt user for input */</i></font>
+    printf(<font color="#9933CC">"input: "</font>);
+    fgets(buffer, <b>sizeof</b>(buffer), stdin);
+    printf(<font color="#9933CC">"child: message is %s"</font>, buffer);
+    
+      <font color="#003399"><i>/* write to the pipe (include NUL terminator) */</i></font>
+    count = write(fd[1], buffer, strlen(buffer) + 1);
+    printf(<font color="#9933CC">"child: wrote %i bytes\n"</font>, count);
+    
+    exit(0); 
+  }
+  <b>else</b> <font color="#003399"><i>/* parent */</i></font>
+  {
+    <b>int</b> count;
+    close(fd[1]); <font color="#003399"><i>/* close unused end, parent will read */</i></font>
+    
+      <font color="#003399"><i>/* read from the pipe */</i></font>
+    count = read(fd[0], buffer, <b>sizeof</b>(buffer));
+    printf(<font color="#9933CC">"parent: message is %s"</font>, buffer);
+    printf(<font color="#9933CC">"parent: read %i bytes\n"</font>, count);
+    
+    wait(NULL);   <font color="#003399"><i>/* reap the child */</i></font>
+  }
+  
+  <b>return</b> 0;
+}
+</code></pre>
+
+<blockquote>
+
+<b>Output:</b> (User types 22 characters)
+<pre>input: <font color="red"><b>This is from teh user!</b></font>
+child: message is This is from teh user!
+child: wrote 24 bytes
+parent: message is This is from teh user!
+parent: read 24 bytes</pre>
+
+<b>Output:</b>
+<pre>input: <font color="red"><b>12345</b></font>
+child: message is 12345
+child: wrote 7 bytes
+parent: message is 12345
+parent: read 7 bytes</pre>
+</blockquote>
+
+<!--
+<pre class="sourcecode"><code>
+  1 <font color="990099">#include &lt;stdio.h&gt;  /* fprintf, fgets           */</font>
+  2 <font color="990099">#include &lt;stdlib.h&gt; /* exit                     */</font>
+  3 <font color="990099">#include &lt;string.h&gt; /* strlen                   */</font>
+  4 <font color="990099">#include &lt;unistd.h&gt; /* pipe, read, write, close */</font>
+  5 
+  6 <b>int</b> main(<b>void</b>) 
+  7 {
+  8   <b>int</b> pid;
+  9   <b>char</b> buffer[1024];
+ 10   <b>int</b> fd[2];
+ 11   
+ 12   pipe(fd);
+ 13   pid = fork();
+ 14   
+ 15   <b>if</b> (pid == 0) <font color="#003399"><i>/* child */</i></font>
+ 16   {
+ 17     close(fd[0]); <font color="#003399"><i>/* close unused end */</i></font>
+ 18     
+ 19     printf(<font color="#9933CC">&quot;input: &quot;</font>);
+ 20     fgets(buffer, <b>sizeof</b>(buffer), stdin);
+ 21     write(fd[1], buffer, strlen(buffer) + 1);
+ 22     
+ 23     exit(0); 
+ 24   }
+ 25   <b>else</b> <font color="#003399"><i>/* parent */</i></font>
+ 26   {
+ 27     close(fd[1]); <font color="#003399"><i>/* close unused end  */</i></font>
+ 28     wait(NULL);   <font color="#003399"><i>/* Important to wait */</i></font>
+ 29     
+ 30     read(fd[0], buffer, <b>sizeof</b>(buffer));
+ 31     printf(<font color="#9933CC">&quot;message: %s&quot;</font>, buffer);
+ 32   }
+ 33   
+ 34   <b>return</b> 0;
+ 35 }
+</code></pre>
+-->
+
+</ul>
+
+
+
+<ul>
+	<li>The <tt>unistd.h</tt> (POSIX) header file needs to be included for the <tt>pipe, read,</tt> and <tt>write</tt> functions.</li>
+	<li>The <tt>pipe</tt> function fills in the descriptor array.</li>
+	<ul>
+		<li><tt>descriptor[0]</tt> is for reading from the pipe</li>
+		<li><tt>descriptor[1]</tt> is for writing to the pipe</li>
+	</ul>
+	<li>An ordinary (anonymous) pipe cannot be accessed from outside the process that created it.</li>
+	<ul>
+		<li>A parent will create a pipe, then fork so the child can access it.</li>
+		<li>Child processes inherit all open files (pipes are a special kind of file) from the parent.</li>
+		<li>Once the processes end, the pipes no longer exist.</li>
+		<li>Ordinary pipes can only be used with processes on the same machine.</li>
+	</ul>
+	<li><span id="wpurl"><a class="wplabel">Named pipes</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Named_pipe">Named pipes</a> are more powerful than ordinary (or anonymous) pipes.</li>
+	<ul>
+		<li>They can be used by several processes at once.</li>
+		<li>They don't require a parent-child relationship.</li>
+		<li>They exist independently of the process that created them.</li>
+		<ul>
+			<li>Much like how files created on the disk by a process exist after the process ends.</li>
+		</ul>
+		<li>See <a href="http://man7.org/linux/man-pages/man3/mkfifo.3.html">mkfifo</a> on Unix-based systems and 
+			<a href="http://msdn.microsoft.com/en-us/library/aa365150(VS.85).aspx">CreateNamedPipe</a> on Windows</li>
+	</ul>
+			
+</ul>
+
+<p></p><hr width="90%"><p>
+
+<b>Self check:</b> Programming Problem 3.18 from the suggested textbook.
+
+</p><blockquote><i>
+"Design a program using ordinary pipes in which one process sends a string message
+to a second process, and the second process reverses the case of each character in
+the message and sends it back to the first process. For example, if the first process
+sends the message</i> <tt>Hi There</tt>, <i>the second process will return</i> <tt>hI tHERE</tt>.
+<i>This will require using two pipes, one for sending the original message from the
+first to the second process, and the other for sending the modified message from
+the second back to the first process."
+</i></blockquote>
+
+<!--
+Here is a function that will do the actual reversal:
+
+<blockquote><pre>
+<b>void</b> revcase(<b>char</b> *buffer)
+{
+  <b>int</b> i;
+  <b>int</b> len = strlen(buffer);
+  <b>for</b> (i = 0; i &lt; len; i++)
+  {
+    <b>if</b> (isupper(buffer[i]))
+      buffer[i] = tolower(buffer[i]);
+    <b>else</b> <b>if</b> (islower(buffer[i]))
+      buffer[i] = toupper(buffer[i]);
+  }
+}
+</pre></blockquote>
+-->
+
+<pre class="sourcecode"><code>
+<font color="990099">#include &lt;stdio.h&gt;    /* printf, fgets            */</font>
+<font color="990099">#include &lt;stdlib.h&gt;   /* exit                     */</font>
+<font color="990099">#include &lt;string.h&gt;   /* strlen                   */</font>
+<font color="990099">#include &lt;ctype.h&gt;    /* isalpha, toupper         */</font>
+<font color="990099">#include &lt;unistd.h&gt;   /* pipe, read, write, close */</font>
+<font color="990099">#include &lt;sys/wait.h&gt; /* wait                     */</font>
+
+<b>void</b> revcase(<b>char</b> *buffer)
+{
+  <b>int</b> i;
+  <b>int</b> len = strlen(buffer);
+  <b>for</b> (i = 0; i &lt; len; i++)
+  {
+    <b>if</b> (isupper(buffer[i]))
+      buffer[i] = tolower(buffer[i]);
+    <b>else</b> <b>if</b> (islower(buffer[i]))
+      buffer[i] = toupper(buffer[i]);
+  }
+}
+
+<b>int</b> main(<b>void</b>) 
+{
+  <b>int</b> pid;
+
+  <font color="#003399"><i>/* setup stuff */</i></font>
+  
+  pid = fork();
+  
+  <b>if</b> (pid == 0) <font color="#003399"><i>/* child */</i></font>
+  {
+  
+    <font color="#003399"><i>/* DO STUFF */</i></font>  
+  
+    exit(0); 
+  }
+  <b>else</b> <font color="#003399"><i>/* parent */</i></font>
+  {
+    <font color="#003399"><i>/* DO STUFF */</i></font>
+      
+    wait(NULL);  
+  }
+  
+  <b>return</b> 0;
+}
+
+</code></pre>
+
+
+
+
+<blockquote><pre></pre></blockquote>
+  
+  
+<blockquote><pre></pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<tt><b></b></tt>
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<!--
+	<span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne &copy;2009</span>
+	
+<table border=0>
+	<tr><td></td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne &copy;2009&nbsp;&nbsp;</span></td></tr>
+</table>
+
+<blockquote>
+<table border=0 cellspacing=0 cellpadding=2>
+	<tr><td><img src="ComputerComponents-1.png"></td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne &copy;2009&nbsp;&nbsp;</span></td></tr>
+</table>
+</blockquote>
+	
+-->
+</body></html>

@@ -1,0 +1,2496 @@
+
+<!-- saved from url=(0073)http://azrael.digipen.edu/~mmead/www/Courses/CS180/Synchronization-1.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./Synchronization_files/new.css">
+<title>Synchronization</title>
+
+
+</head>
+
+<body>  
+
+<center><h1>
+Synchronization
+</h1></center>
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<p class="sectionheader">
+Overview
+</p>
+
+Recall this program from the "Threads" lectures:
+<p>
+Single-threaded version:
+
+</p><pre class="sourcecode"><code><b>#include</b> &lt;stdio.h&gt; <font color="#003399"><i>/* printf */</i></font>
+
+<b>int</b> Count = 0;
+
+<b>void</b> Increment(<b>void</b>) 
+{
+  <b>int</b> i;
+  <b>int</b> loops = 1000 * 100;
+  <b>for</b> (i = 0; i &lt; loops; i++) 
+    Count++;
+}
+
+<b>int</b> main(<b>void</b>) 
+{
+  <b>#define</b> N 10
+  <b>int</b> i;
+ 
+  <b>for</b> (i = 0; i &lt; N; i++)
+    Increment();
+    
+  printf(<font color="#9933CC">"Count = %i\n"</font>, Count);
+  
+  <b>return</b> 0;
+}
+</code></pre>
+
+<b>Output:</b>
+<blockquote><pre>Count = 1,000,000 
+</pre></blockquote>
+
+Multi-threaded version:
+
+<pre class="sourcecode"><code>
+<b>#include</b> &lt;stdio.h&gt;   <font color="#003399"><i>/* printf                  */</i></font>
+<b>#include</b> &lt;pthread.h&gt; <font color="#003399"><i>/* thread create/join/exit */</i></font>
+
+<b>int</b> Count;
+
+<b>void</b> *Increment(<b>void</b> *p) 
+{
+  <b>int</b> i;
+  <b>int</b> loops = 1000 * 100;
+  <b>for</b> (i = 0; i &lt; loops; i++) 
+    Count++;
+    
+  <b>return</b> 0;
+}
+
+<b>int</b> main(<b>void</b>) 
+{
+  <b>#define</b> N 10
+  <b>int</b> i;
+  pthread_t thread_id[N];
+  
+  <b>for</b> (i = 0; i &lt; N; i++)
+    pthread_create(thread_id + i, 0, Increment, 0);
+    
+  <b>for</b> (i = 0; i &lt; N; i++)
+    pthread_join(thread_id[i], 0);
+    
+  printf(<font color="#9933CC">"Count = %i\n"</font>, Count);
+  
+  <b>return</b> 0;
+}
+</code></pre>
+
+<b>Comparing Results:</b>
+
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="8">
+<tbody><tr><th>&nbsp;</th><th>Single-threaded</th><th>Multi-threaded</th></tr>
+
+<tr valign="center">
+<td><pre>Run #1
+</pre></td>
+<td>
+<pre>Count = 1,000,000
+</pre>
+</td>
+<td>
+<pre>Count = 591,274
+</pre>
+</td>
+</tr>
+
+<tr valign="center">
+<td><pre>Run #2
+</pre></td>
+<td>
+<pre>Count = 1,000,000
+</pre>
+</td>
+<td>
+<pre>Count = 636,767
+</pre>
+</td>
+</tr>
+
+<tr valign="center">
+<td><pre>Run #3
+</pre></td>
+<td>
+<pre>Count = 1,000,000
+</pre>
+</td>
+<td>
+<pre>Count = 591,146
+</pre>
+</td>
+</tr>
+
+<tr valign="center">
+<td><pre>Run #4
+</pre></td>
+<td>
+<pre>Count = 1,000,000
+</pre>
+</td>
+<td>
+<pre>Count = 611,036
+</pre>
+</td>
+</tr>
+
+<tr valign="center">
+<td><pre>Run #5
+</pre></td>
+<td>
+<pre>Count = 1,000,000
+</pre>
+</td>
+<td>
+<pre>Count = 625,463
+</pre>
+</td>
+</tr>
+
+</tbody></table>
+</blockquote>
+
+<ul>
+<li>What's going on here???</li>
+<li>How do we fix it so it produces the correct output?</li>
+</ul>
+
+<!--
+No synchronization at the assembly level.
+You got lucky.
+Yes.
+Probably not as it is purely CPU-bound
+-->
+
+<p>
+Summarizing:
+</p><ul>
+<li>This is the fundamental problem with multiple threads (or processes) accessing a shared resource.</li>
+<li>Whenever the outcome depends on a particular order of execution, we call it a <span id="wpurl"><a class="wplabel">race condition</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Race_condition">race condition</a>.</li>
+<li>When a process/thread is accessing a shared resource, this section of code is called a <span id="wpurl"><a class="wplabel">critical section</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Critical_section">critical section</a></li>
+<li>We need a way to ensure that two threads/processes are not modifying the same resource (e.g. a file, memory, etc.)</li>
+<li>To protect the shared resources we need to <span id="wpurl"><a class="wplabel">synchronize</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Synchronization_%28computer_science%29#Thread_or_process_synchronization">synchronize</a> the access between multiple threads/processes.</li>
+</ul>
+<p>
+
+</p><p>
+
+  
+
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+</p><p class="sectionheader">
+Critical Sections
+</p>
+What we need to do is to ensure only one thread can access the critical section at any time. We will use some kind of locking mechanism.
+<p>
+Here is the test program (with the black-box functions for locking and unlocking):
+
+</p><pre class="sourcecode"><code><b>#include</b> &lt;stdio.h&gt;   <font color="#003399"><i>/* printf                  */</i></font>
+<b>#include</b> &lt;pthread.h&gt; <font color="#003399"><i>/* thread create/join/exit */</i></font>
+
+<b>int</b> Count = 0;
+
+<b>void</b> *Increment(<b>void</b> *p)
+{
+  <b>int</b> i, id = *(<b>int</b> *)p;
+
+  <b>for</b> (i = 0; i &lt; 1000 * 1000 * 100; i++)
+  {
+    Lock0(id);   <font color="#003399"><i>/* Acquire the critical section */</i></font>
+      Count++;   <font color="#003399"><i>/* This is the critical section */</i></font>
+    Unlock0(id); <font color="#003399"><i>/* Release the critical section */</i></font>
+  }
+
+  <b>return</b> NULL;
+}
+
+<b>int</b> main(<b>void</b>)
+{
+  pthread_t thread_id[2];
+  <b>int</b> tid0 = 0, tid1 = 1;
+  
+  pthread_create(&amp;thread_id[0], 0, Increment, &amp;tid0);
+  pthread_create(&amp;thread_id[1], 0, Increment, &amp;tid1);
+    
+  pthread_join(thread_id[0], 0);
+  pthread_join(thread_id[1], 0);
+  <!--printf(<font color="#9933CC">&quot;------------------&#92;n&quot;</font>);-->
+  printf(<font color="#9933CC">"Count = %i\n"</font>, Count);
+  
+  <b>return</b> 0;
+}</code></pre>
+
+For a locking solution to be accepted, it must provide three properties:
+<ol>
+  <li>Mutual exclusion is provided:</li>
+  <ul>
+    <li>Only one thread/process can be in the critical section at any one time.</li>
+  </ul>
+  <li>Progress is made:</li>
+  <ul>
+    <li>If no thread/process is in the critical section and some thread/process wants to enter it, it can do so.</li>
+  </ul>
+  <li>The waiting is bounded (not unlimited):</li>
+  <ul>
+    <li>Essentially, no threads/processes can keep the critical section without allowing other threads/processes to access it. (Must share the critical section.)</li>
+  </ul>
+</ol>
+
+Also, realize that critical sections of code are generally very short (code and runtime). This is simply because
+all other threads have to wait for the one thread that is in the critical section. If critical sections are
+long, the other threads are essentially blocked (doing nothing) until the critical section completes, turning
+an efficient multi-threaded program into an inefficient single-threaded program.
+<p>
+And these are a few different Lock and Unlock functions to look at:
+
+</p><ol start="0">
+<!--
+*****************************************************************************************
+-->
+  <li>Reference functions (do nothing). The variable <b>me</b> will be the thread ID,
+    either 0 or 1.</li>
+
+<blockquote><pre><b>void</b> Lock0(<b>int</b> me)
+{
+}
+
+<b>void</b> Unlock0(<b>int</b> me)
+{
+}
+</pre></blockquote>
+
+And the output:
+
+<blockquote><pre>Count = 117,004,575
+
+real    0m1.061s
+user    0m2.060s
+sys     0m0.000s
+</pre></blockquote>
+
+Q. Why is this solution unacceptable?
+<p>
+A. Obviously, no mutual exclusion. Both threads can be modifying <tt><b>Count</b></tt>.
+<!--
+No mutual exclusion.
+-->
+
+<!--
+*****************************************************************************************
+-->
+</p><p>
+</p><hr width="90%">
+<p>
+</p><li>Using a lock variable:</li>
+
+<blockquote><pre><b>int</b> lock = 0; <font color="#003399"><i>/* global lock variable */</i></font>
+
+<b>void</b> Lock1(<b>int</b> me)
+{
+  <b>while</b> (lock == 1) <font color="#003399"><i>/* spin wait (busy waiting) */</i></font>
+    <b>continue</b>;
+    
+  lock = 1;
+}
+
+<b>void</b> Unlock1(<b>int</b> me)
+{
+  lock = 0;
+}
+</pre></blockquote>
+
+And the output:
+<blockquote><pre>Count = 164,908,686
+
+real    0m1.602s
+user    0m3.130s
+sys     0m0.000s
+</pre></blockquote>
+
+Q. Why is this solution unacceptable?
+<p>
+A. Again, no mutual exclusion on <tt><b>lock</b></tt> so both threads can see a value of 0 and skip
+the while loop.
+
+<!--
+No mutual exclusion.
+-->
+
+<!--
+*****************************************************************************************
+-->
+</p><p>
+</p><hr width="90%">
+<p>
+</p><li>Alternating turns:</li>
+
+<blockquote><pre><b>int</b> turn = 0;
+
+<b>void</b> Lock2(<b>int</b> me)
+{
+  <b>while</b> (turn != me) <font color="#003399"><i>/* busy wait */</i></font>
+    <b>continue</b>;
+}
+
+<b>void</b> Unlock2(<b>int</b> me)
+{
+  turn = 1 - me; <font color="#003399"><i>/* other thread */</i></font>
+}
+</pre></blockquote>
+
+And the output:
+<blockquote><pre>Count = 200,000,000
+
+real    0m7.523s
+user    0m14.980s
+sys     0m0.010s
+</pre></blockquote>
+Q. Why is this solution unacceptable? (The output is correct and is always correct with this example.)
+<p>
+A. It relies on the fact that the second thread will take a turn and then set the flag back
+to the first thread. What if the second thread is doing something else? The first thread
+waits and waits until the (unready) second thread does something else. The second thread
+may never want the lock again. It's a violation of property #2 above: No progress is made:
+A thread wants to enter the critical section, but can't.
+
+
+<!--
+*****************************************************************************************
+-->
+</p><p>
+</p><hr width="90%">
+<p>
+</p><li>Yield to the other thread:</li>
+
+<blockquote><pre><b>int</b> ready[2] = {0, 0};
+
+<b>void</b> Lock3(<b>int</b> me)
+{
+  <b>int</b> you = 1 - me;
+  ready[me] = 1;
+  
+  <b>while</b> (ready[you]) <font color="#003399"><i>/* busy wait */</i></font>
+    <b>continue</b>;
+}
+
+<b>void</b> Unlock3(<b>int</b> me)
+{
+  ready[me] = 0;
+}
+</pre></blockquote>
+
+And the output:
+<blockquote><pre>No output, it hangs. (around 1000 iterations)
+</pre></blockquote>
+
+Q. Why is this solution unacceptable? 
+<p>
+A. It's easy to tell from the output that no progress is made. Both threads are able to set their
+ready flag to true causing an infinite while loop.
+<!--
+No progress is made. Each can set themselves as ready and wait forever.
+-->
+
+<!--
+*****************************************************************************************
+-->
+</p><p>
+</p><hr width="90%">
+<p>
+</p><li>Combining alternating and yielding:</li>
+<blockquote><pre><b>int</b> ready[2] = {0, 0};
+<b>int</b> turn = 0;
+
+<b>void</b> Lock4(<b>int</b> me)
+{
+  <b>int</b> you = 1 - me;
+  turn = you;
+  ready[me] = 1;
+  
+  <b>while</b> (ready[you] &amp;&amp; (turn == you))
+    <b>continue</b>;
+}
+
+<b>void</b> Unlock4(<b>int</b> me)
+{
+  ready[me] = 0;
+}
+</pre></blockquote>
+
+<blockquote><pre>Count = 199,999,192
+
+real    0m18.366s
+user    0m36.380s
+sys     0m0.040s
+</pre></blockquote>
+
+<b>Notes:</b>
+<ul>
+   <li>Both threads can't be executing <tt>Count++</tt> at the same time because:
+   <ul>
+   <li>if Thread 0 is in the critical section, then either ready[1] is 0, which can only happen when 
+    Thread 1 has finished executing the critical section or</li>
+    <li>if turn is 0, which means that Thread 1 is attempting to enter the critical section.</li>
+    <li>In both cases, neither thread can be executing in the critical when the other thread is doing so.</li>
+  </ul>
+  </li><li>This combined locking mechanism is known as <span id="wpurl"><a class="wplabel">Peterson's Solution</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Peterson%27s_algorithm">Peterson's Solution</a>.</li>
+  <li>It used to work on older systems but not on modern architectures.</li>
+  <li>Modern architectures have <span id="wpurl"><a class="wplabel">superscalar</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Superscalar">superscalar</a> processors and can re-order instructions on the CPU.</li>
+  <li>This requires a <span id="wpurl"><a class="wplabel">memory barrier</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Memory_barrier">memory barrier</a> or something similar to work properly.</li>
+  <li>Here is a <a href="http://bartoszmilewski.com/2008/11/05/who-ordered-memory-fences-on-an-x86/">nice description</a> (albeit, somewhat advanced) of the exact problem.</li>
+  <li>It is related to <span id="wpurl"><a class="wplabel">out-of-order execution</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Out-of-order_execution">out-of-order execution</a> that modern processors employ.</li>
+  <li>Here's a simplified example. Assume X and Y have been initialized to 0 and two threads 
+    are about to execute two statements each. 
+    Thread 0 executes <b>A</b> then <b>B</b>, 
+    Thread 1 executes <b>C</b> then <b>D</b>:
+    <blockquote>
+      <table border="1" cellspacing="0" cellpadding="15">
+        <tbody><tr><th>&nbsp;</th><th>Thread 0</th><th>Thread 1</th></tr>
+        <tr><td>Stores</td><td><b>A:</b><tt>  X = 1</tt></td><td><b>C:</b><tt>  Y = 1</tt></td></tr>
+        <tr><td>Loads</td><td><b>B:</b><tt>  R1 = Y</tt></td><td><b>D:</b><tt>  R2 = X</tt></td></tr>
+      </tbody></table>
+    </blockquote>
+    What are the possible execution paths? (e.g.: <tt>A B C D</tt> and <tt>C D A B</tt>, etc.)<br>
+    What paths will have one register set to 1 and the other set to 0?<br>
+    <!--
+    ABCD, CDAB
+  -->
+    What paths will have both registers set to 1?<br>
+    <!--
+    ACBD, CABD, ACDB, CADB
+  -->
+    Is it possible to have both registers set to 0?<br>
+    <!--
+    Out of order execution by the CPU.
+    BDAC or some variation
+  -->
+  </li>
+
+
+</ul>
+<p>
+
+
+
+<!--
+*****************************************************************************************
+-->
+</p><p>
+</p><hr width="90%">
+<p>
+</p><li>Using a sychronization primitive: 
+  <span id="wpurl"><a class="wplabel">__sync_synchronize()</a></span><a class="wplink" href="http://gcc.gnu.org/onlinedocs/gcc-4.6.2/gcc/Atomic-Builtins.html">__sync_synchronize()</a></li>
+
+<blockquote><pre><b>void</b> Lock5(<b>int</b> me)
+{
+  <b>int</b> you = 1 - me;
+  turn = you;
+  ready[me] = 1;
+  <font color="blue"><b>__sync_synchronize();</b></font>
+  <b>while</b> (ready[you] &amp;&amp; (turn == you))
+    <b>continue</b>;
+}
+
+<b>void</b> Unlock5(<b>int</b> me)
+{
+  ready[me] = 0;
+}
+</pre></blockquote>
+
+And the output:
+<blockquote><pre>Count = 200,000,000
+
+real    0m20.981s
+user    0m41.660s
+sys     0m0.020s
+</pre></blockquote>
+
+A closer look:
+<p>
+The line in <font color="blue"><b>blue</b></font> is the only difference between the two functions.
+
+</p><blockquote>
+<table border="1" cellspacing="0" cellpadding="5">
+<tbody><tr><th>Peterson's Solution (no sync)</th><th>Peterson's Solution (w/sync)</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>Lock4:
+.LFB8:
+  .cfi_startproc
+  pushl %ebp
+  .cfi_def_cfa_offset 8
+  .cfi_offset 5, -8
+  movl  %esp, %ebp
+  .cfi_def_cfa_register 5
+  subl  $16, %esp
+  movl  $1, %eax            #
+  subl  me, %eax            #
+  movl  %eax, you           # you = 1 - me
+  movl  you, %eax           #
+  movl  %eax, turn          # turn = you
+  movl  me, %eax            #
+  movl  $1, ready(,%eax,4)  # ready[me] = 1
+
+  nop
+  jmp .L19
+.L22:
+  nop
+.L19:
+  movl  you, %eax
+  movl  ready(,%eax,4), %eax
+  testl %eax, %eax
+  je  .L18
+  movl  turn, %eax
+  cmpl  you, %eax
+  je  .L22
+.L18:
+  leave
+  .cfi_restore 5
+  .cfi_def_cfa 4, 4
+  ret
+  .cfi_endproc
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>Lock5:
+.LFB10:
+  .cfi_startproc
+  pushl %ebp
+  .cfi_def_cfa_offset 8
+  .cfi_offset 5, -8
+  movl  %esp, %ebp
+  .cfi_def_cfa_register 5
+  subl  $16, %esp
+  movl  $1, %eax            #
+  subl  me, %eax            #
+  movl  %eax, you           # you = 1 - me
+  movl  you, %eax           #
+  movl  %eax, turn          # turn = you
+  movl  me, %eax            #
+  movl  $1, ready(,%eax,4)  # ready[me] = 1
+  <font color="blue"><b>lock orl  $0, (%esp)</b></font>
+  nop
+  jmp .L25
+.L28:
+  nop
+.L25:
+  movl  you, %eax
+  movl  ready(,%eax,4), %eax
+  testl %eax, %eax
+  je  .L24
+  movl  turn, %eax
+  cmpl  you, %eax
+  je  .L28
+.L24:
+  leave
+  .cfi_restore 5
+  .cfi_def_cfa 4, 4
+  ret
+  .cfi_endproc
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<!--
+Optimized version (<b><tt>gcc -O2 -S lock_test.c</tt></b>):
+<blockquote>
+<table border=1 cellspacing=0 cellpadding=5>
+<tr><th>Peterson's Solution (no sync)</th><th>Peterson's Solution (w/sync)</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>
+</pre></blockquote>
+</td>
+</tr></table>
+</blockquote>
+-->
+
+Time comparison:
+<p>
+It is interesting to note that the code without the synchronization appears to run about 50% slower. (This was under Linux in a virtual machine.)
+</p><blockquote>
+<table border="1" cellspacing="0" cellpadding="5">
+<tbody><tr><th>Peterson's Solution (no sync)</th><th>Peterson's Solution (with sync)</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>Count = 19,999,997     Count = 19,999,997
+
+real  0m3.455s       real  0m3.474s
+user  0m6.308s       user  0m6.344s
+sys   0m0.032s       sys   0m0.044s
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>Count = 20,000,000     Count = 20,000,000
+
+real  0m2.179s       real  0m2.228s
+user  0m3.936s       user  0m3.960s
+sys   0m0.028s       sys   0m0.032s
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+
+This solution works, but not all systems implement the synchronization.
+<p>
+</p></ol>
+Other examples:
+
+<blockquote>
+Running Lock4 (Peterson's solution) on my Digipen computer (running Windows XP with Cygwin):
+<table border="0" cellspacing="0" cellpadding="10">
+<tbody><tr>
+<td>
+<pre>Count = 199,999,192
+real 24.84
+user 48.87
+sys 0.01
+</pre>
+</td><td width="20"></td>
+<td>
+<pre>Count = 199,999,998
+real 24.64
+user 48.97
+sys 0.00
+</pre>
+</td><td width="20"></td>
+<td>
+<pre>Count = 200,000,000
+real 24.74
+user 49.07
+sys 0.00
+</pre>
+</td><td width="20"></td>
+<td>
+<pre>Count = 199,999,999
+real 24.90
+user 49.48
+sys 0.01
+</pre>
+</td>
+</tr></tbody></table><p>
+
+Running Lock5 (Peterson's solution w/synch) on my <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/Threads-1.html#BENCHMARKS">Digipen computer</a> under Cygwin with a version of gcc (4.3.2) which doesn't support the synchronization function:
+</p><blockquote><pre>Count = 199,999,976
+real 30.90
+user 61.76
+sys 0.01
+</pre></blockquote>
+
+GCC version 4.4.0 or later does support this synchronization.
+<p>
+Summary: (All tests run under Linux on <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/Threads-1.html#BENCHMARKS">olga</a>, which supports the synchronization function, GCC 4.4.3.)
+</p><blockquote>
+</blockquote><table>
+
+
+</table><table border="1" cellpadding="10" cellspacing="0">
+<tbody><tr><th>0 - No locking</th><th>1 - Lock variable</th><th>2 - Alternate turns</th><th>3 - Yield to other</th><th>4 - Peterson's Solution</th><th>5 - Peterson's Solution w/synch</th></tr>
+<tr valign="top">
+  <td><pre>Count = 117,004,575
+
+real    0m1.061s
+user    0m2.060s
+sys     0m0.000s</pre></td>
+  
+  <td><pre>Count = 164,908,686
+
+real    0m1.602s
+user    0m3.130s
+sys     0m0.000s</pre></td>
+
+  <td><pre>Count = 200,000,000
+
+real    0m7.523s
+user    0m14.980s
+sys     0m0.010s</pre></td>
+
+  <td><pre>No output</pre></td>
+  <td><pre>Count = 187,677,882
+
+real    0m18.366s
+user    0m36.380s
+sys     0m0.040s</pre></td>
+  
+  
+  <td><pre>Count = 200,000,000
+
+real    0m20.981s
+user    0m41.660s
+sys     0m0.020s</pre></td>
+</tr></tbody></table>
+</blockquote>
+<p> 
+
+</p><blockquote>
+Summary: (All tests run under Linux on <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/Threads-1.html#BENCHMARKS">maya</a>, which supports the synchronization function, GCC 4.6.3.)
+<p>
+<table border="1" cellpadding="10" cellspacing="0">
+<tbody><tr><th>0 - No locking</th><th>1 - Lock variable</th><th>2 - Alternate turns</th><th>3 - Yield to other</th><th>4 - Peterson's Solution</th><th>5 - Peterson's Solution w/synch</th></tr>
+<tr valign="top">
+  <td><pre>Count = 109,115,358
+
+real    0m2.082s
+user    0m4.148s
+sys     0m0.000s
+</pre></td>
+  
+  <td><pre>Count = 123,013,163
+
+real    0m2.189s
+user    0m4.236s
+sys     0m0.004s
+</pre></td>
+
+  <td><pre>Count = 200,000,000
+
+real    0m7.763s
+user    0m15.505s
+sys     0m0.004s
+</pre></td>
+
+  <td><pre>No output</pre></td>
+  <td><pre>Count = 198,261,472
+
+real    0m9.374s
+user    0m18.693s
+sys     0m0.000s
+</pre></td>
+  
+  
+  <td><pre>Count = 200,000,000
+
+real    0m8.653s
+user    0m17.281s
+sys     0m0.000s
+</pre></td>
+</tr></tbody></table>
+</p><p>
+
+
+Summary: (All tests run under Linux on <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/Threads-1.html#BENCHMARKS">maya</a>, in a Windows 7 virtual machine with GCC version 4.5.3 .)
+</p><p>
+<table border="1" cellpadding="10" cellspacing="0">
+<tbody><tr><th>0 - No locking</th><th>1 - Lock variable</th><th>2 - Alternate turns</th><th>3 - Yield to other</th><th>4 - Peterson's Solution</th><th>5 - Peterson's Solution w/synch</th></tr>
+<tr valign="top">
+  <td><pre>Count = 117,652,282
+
+real    0m2.020s
+user    0m3.609s
+sys     0m0.046s
+</pre></td>
+  
+  <td><pre>Count = 122,907,276
+
+real    0m2.750s
+user    0m5.250s
+sys     0m0.046s
+</pre></td>
+
+  <td><pre>Count = 200,000,000
+
+real    0m8.047s
+user    0m15.375s
+sys     0m0.077s
+</pre></td>
+
+  <td><pre>No output</pre></td>
+  <td><pre>Count = 199,996,702
+
+real    0m16.678s
+user    0m32.265s
+sys     0m0.109s
+</pre></td>
+  
+  
+  <td><pre>Count = 200,000,000
+
+real    0m14.561s
+user    0m29.733s
+sys     0m0.046s
+</pre></td>
+</tr></tbody></table>
+</p></blockquote>
+<p>
+
+
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/lock_test.c.html">Code</a> to demonstrate the above output.
+</p><p>
+
+Fortunately, there are better ways to provide synchronization.
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+</p><p class="sectionheader">
+Synchronization Primitives
+</p>
+
+<ul>
+<li>All of the attempts above at synchronization were software-based solutions. (We were trying to do it in our code.)</li>
+<li>Not all software-based solutions are guaranteed to work on modern architectures.</li>
+<!--<li>There are other software-based solutions that will work as well as hardware-based.</li>-->
+<li>On a single-core system we could solve the critical section problem by disabling interrupts (context switches) while
+a shared resource was being accessed.</li>
+<li>Hardware provides special instructions that work <span id="wpurl"><a class="wplabel">atomically</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Atomicity_(programming)">atomically</a>.
+  This means that the instruction cannot be preempted; it will finish completely. </li>
+</ul>
+
+Suppose we had atomic functions called <b><tt>TestAndSet</tt></b> and <b><tt>Swap</tt></b> that worked with a global variable (<tt>locked</tt>). This is how we could use them:
+<p>
+The atomic <b><tt>TestAndSet</tt></b> function provides mutual exclusion.
+
+</p><blockquote>
+<table border="1" cellpadding="10" cellspacing="0">
+<tbody><tr><th>Client code</th><th>Library function (atomic)</th></tr>
+<tr valign="top">
+  <td>
+<pre><b>void</b> fn(<b>void</b>)
+{
+  <b>do</b>
+  {
+    <b>while</b> (TestAndSet(&amp;locked))
+      <b>continue</b>;
+      
+    <font color="#003399"><i>/* critical section */</i></font>
+    
+    locked = 0;
+  } 
+  <b>while</b> (1);
+}
+</pre>
+</td>
+<td>
+<pre><b>int</b> TestAndSet(<b>int</b> *locked)
+{
+  <b>int</b> oldval = *locked;
+  *locked = 1;
+  <b>return</b> oldval;
+}
+</pre>
+</td>
+</tr></tbody></table>
+</blockquote>
+<p>
+
+
+
+The atomic <b><tt>Swap</tt></b> function also provides mutual exclusion:
+</p><blockquote>
+<table border="1" cellpadding="10" cellspacing="0">
+<tbody><tr><th>Client code</th><th>Library function (atomic)</th></tr>
+<tr valign="top">
+  <td>
+<pre><b>void</b> fn2(<b>void</b>)
+{
+  <b>do</b>
+  {
+    <b>int</b> key = 1;
+    <b>while</b> (key == 1)
+      Swap(&amp;locked, &amp;key);
+      
+    <font color="#003399"><i>/* critical section */</i></font>
+    
+    locked = 0;
+  } 
+  <b>while</b> (1);
+}
+</pre>
+</td>
+<td>
+<pre><b>void</b> Swap(<b>int</b> *a, <b>int</b> *b)
+{
+  <b>int</b> temp = *a;
+  *a = *b;
+  *b = temp;
+}
+</pre>
+</td>
+</tr></tbody></table>
+</blockquote>
+<p>
+
+ Because the functions are atomic, only one thread/process can enter them and they are guarateed
+to finish executing the entire function before another thread/process can execute it.
+</p><p>
+<!--
+The <b><tt>TestAndSet</tt></b> function can provide all mutual exclusion requirements:
+<blockquote><pre>
+<b>void</b> fn3(<b>void</b>)
+{
+  <b>int</b> i = 0, j;
+  <b>do</b>
+  {
+    <b>int</b> key = 1;
+    waiting[i] = 1;
+    <b>while</b> (waiting[i] &amp;&amp; key)
+      key = TestAndSet(&amp;lock);
+    waiting[i] = 0;
+    
+    <font color="#003399"><i>/* critical section */</i></font>
+    
+    j = (i + 1) % N;
+    <b>while</b> ((j != i) &amp;&amp; !waiting[j])
+      j = (j + 1) % N;
+      
+    <b>if</b> (j == i)
+      lock = 0;
+    <b>else</b>
+      waiting[j] = 0;
+    
+  }
+  <b>while</b> (1);
+}
+</pre></blockquote>
+<p>
+-->
+
+Fortunately, we have these capabilities in a library using the <span id="wpurl"><a class="wplabel">Pthreads</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/POSIX_Threads">Pthreads</a> API.
+</p><p>
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+</p><p class="sectionheader">
+Mutexes
+</p>
+
+If two events are <span id="wpurl"><a class="wplabel">mutually exclusive</a></span><a class="wplink" href="https://en.wikipedia.org/wiki/Mutually_exclusive_events">mutually exclusive</a> it
+means that only one or the other can happen, but not both. A mutex provides for <span id="wpurl"><a class="wplabel">mutual exclusion</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Mutual_exclusion">mutual exclusion</a>
+between threads/processes.
+<p>
+<b>A POSIX example using a global mutex:</b>
+
+</p><pre class="sourcecode"><code><font color="#003399"><i>/* mutex.c                                           */</i></font>
+<font color="#003399"><i>/* to build on Linux, link with the pthread library: */</i></font>
+<font color="#003399"><i>/* gcc mutex.c -lpthread                             */</i></font>
+
+<b>#include</b> &lt;stdio.h&gt;   <font color="#003399"><i>/* printf       */</i></font>
+<b>#include</b> &lt;pthread.h&gt; <font color="#003399"><i>/* thread stuff */</i></font>
+
+<b>int</b> Count = 0;
+pthread_mutex_t count_mutex;
+
+<b>void</b> *Increment(<b>void</b> *p)
+{
+  <b>int</b> i;
+  <b>for</b> (i = 0; i &lt; 1000 * 100; i++)
+  {
+    <a href="http://linux.die.net/man/3/pthread_mutex_lock">pthread _mutex_lock</a>(&amp;count_mutex);
+      Count++;
+    <a href="http://linux.die.net/man/3/pthread_mutex_lock">pthread _mutex_unlock</a>(&amp;count_mutex);
+  }
+  <b>return</b> 0;
+}
+
+<b>int</b> main(<b>void</b>)
+{
+  <b>#define</b> THREADS 10
+  <b>int</b> i;
+  pthread_t thread_id[THREADS];
+  
+  <a href="http://linux.die.net/man/3/pthread_mutex_init">pthread_mutex_init</a>(&amp;count_mutex, NULL);
+
+  <b>for</b> (i = 0; i &lt; THREADS; i++)
+    pthread_create(&amp;thread_id[i], 0, Increment, 0);
+  
+  <b>for</b> (i = 0; i &lt; THREADS; i++)
+    pthread_join(thread_id[i], 0);
+
+  <a href="http://linux.die.net/man/3/pthread_mutex_init">pthread_mutex_destroy</a>(&amp;count_mutex);
+  
+  printf(<font color="#9933CC">"------------------\n"</font>);
+  printf(<font color="#9933CC">"Count = %i\n"</font>, Count);
+  
+  <b>return</b> 0;
+}
+</code></pre>
+
+Output:
+<blockquote>
+<table border="1" cellpadding="8" cellspacing="0">
+<tbody><tr><th>No synchronization</th><th>Using a mutex</th></tr>
+<tr>
+  <td>
+<pre>Count = 626,603
+real 0.02
+user 0.06
+sys 0.00</pre>
+</td>
+<td>
+<pre>Count = 1,000,000
+real 3.08
+user 0.95
+sys 1.31</pre>
+</td>
+</tr></tbody></table>
+</blockquote>
+<p>
+
+
+Output with 50 threads:
+</p><blockquote>
+<table border="1" cellpadding="8" cellspacing="0">
+<tbody><tr><th>No synchronization</th><th>Using a mutex</th></tr>
+<tr>
+  <td>
+<pre>Count = 3,012,725
+real 0.05
+user 0.07
+sys 0.01
+</pre>
+</td>
+<td>
+<pre>Count = 5,000,000
+real 15.21
+user 3.56
+sys 7.18
+</pre>
+</td>
+</tr></tbody></table>
+</blockquote>
+<p>
+
+Output with 100 threads:
+</p><blockquote>
+<table border="1" cellpadding="8" cellspacing="0">
+<tbody><tr><th>No synchronization</th><th>Using a mutex</th></tr>
+<tr>
+  <td>
+<pre>Count = 5,874,657
+real 0.05
+user 0.09
+sys 0.04
+</pre>
+</td>
+<td>
+<pre>Count = 10,000,000
+real 30.27
+user 6.07
+sys 13.09
+</pre>
+</td>
+</tr></tbody></table>
+</blockquote>
+<p>
+
+Factor out the mutex into a function without parameters (global mutex):
+
+</p><blockquote>
+<table border="1" cellpadding="10" cellspacing="0">
+<tbody><tr><th>Client code</th><th>Functions for Lock/Unlock</th></tr>
+<tr valign="top">
+<td>
+<pre><b>void</b> *Increment(<b>void</b> *p)
+{
+  <b>int</b> i;
+  <b>for</b> (i = 0; i &lt; 1000 * 100; i++)
+  {
+    Lock();
+      Count++;
+    Unlock();
+  }
+  <b>return</b> 0;
+}
+</pre>
+</td>
+<td>
+<pre><b>void</b> Lock(<b>void</b>)
+{
+  pthread_mutex_lock(&amp;count_mutex);
+}
+
+<b>void</b> Unlock(<b>void</b>)
+{
+  pthread_mutex_unlock(&amp;count_mutex);
+}
+</pre>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+Factor out the mutex into a function using parameters (non-global mutex):
+<blockquote>
+<table border="1" cellpadding="10" cellspacing="0">
+<tbody><tr><th>Client code</th><th>Functions for Lock/Unlock</th></tr>
+<tr valign="top">
+<td>
+<pre><b>void</b> *Increment(<b>void</b> *p)
+{
+  <b>int</b> i;
+  <b>for</b> (i = 0; i &lt; 1000 * 100; i++)
+  {
+    Lock(&amp;count_mutex);
+      Count++;
+    Unlock(&amp;count_mutex);
+  }
+  <b>return</b> 0;
+}
+</pre>
+</td>
+<td>
+<pre><b>void</b> Lock(pthread_mutex_t *mutex)
+{
+  pthread_mutex_lock(mutex);
+}
+
+<b>void</b> Unlock(pthread_mutex_t *mutex)
+{
+  pthread_mutex_unlock(mutex);
+}
+</pre>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<blockquote>
+<p class="technote">
+Of course, in "normal, production code" you would check the return values of the system calls to ensure that they actually succeeded. Otherwise, you could spend unecessary time debugging your application.
+</p>
+</blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<b>A Win32 example that passes the mutex via a parameter to the thread function:</b>
+
+<pre class="sourcecode"><code><font color="#003399"><i>/* wmutex.c */</i></font>
+<b>#include</b> &lt;windows.h&gt;
+<b>#include</b> &lt;stdio.h&gt;
+
+<b>struct</b> ThreadParams
+{
+  HANDLE mutex;
+  <b>int</b> tid;
+};
+
+DWORD WINAPI ThreadFn(LPVOID p)
+{
+  DWORD result; 
+  <b>int</b> done = FALSE;
+  <b>struct</b> ThreadParams *params = (<b>struct</b> ThreadParams *)p;
+  HANDLE mutex = params-&gt;mutex;
+  <b>int</b> tid = params-&gt;tid;
+  
+  <b>while</b>(!done)
+  {
+    <font color="#003399"><i>/********************************************************************
+      DO NOT set the timeout to zero, unless your threads have some other
+      work to do. If the thread can do nothing until it obtains the mutex, 
+      then don't keep checking that it is available. Use INFINITE instead
+      of O (zero) for the timeout. If you use 0, and don't obtain the
+      mutex immediately (the likely outcome) your program will be wasting 
+      CPU cycles in a kind of busy wait loop. This is just an <b>example</b>
+      of how you would be able to do other work, if necessary.
+
+      If you don't understand the above, use INFINITE and forget about it.
+    *********************************************************************/</i></font>
+    result = <a href="http://msdn.microsoft.com/en-us/library/ms687032(VS.85).aspx">WaitForSingleObject</a>(mutex, 0L);
+    <b>switch</b> (result) 
+    { 
+        <font color="#003399"><i>/* Acquired the mutex */</i></font>
+      <b>case</b> WAIT_OBJECT_0: 
+        printf(<font color="#9933CC">"ThreadId %i: acquired mutex\n"</font>, tid);
+        done = TRUE;            
+
+          <font color="#003399"><i>/* Pretend to do some work */</i></font>
+        printf(<font color="#9933CC">"ThreadId %i: working...\n"</font>, tid);
+        Sleep(1000);
+
+        <b>if</b> (!<a href="http://msdn.microsoft.com/en-us/library/ms685066(VS.85).aspx">ReleaseMutex</a>(mutex))
+          printf(<font color="#9933CC">"Error releasing mutex: %i\n"</font>, GetLastError());
+
+        printf(<font color="#9933CC">"ThreadId %i: released mutex\n"</font>, tid);
+        <b>break</b>; 
+
+        <font color="#003399"><i>/* The mutex wasn't available yet */</i></font>
+      <b>case</b> WAIT_TIMEOUT: 
+        <font color="#003399"><i>/*printf("ThreadId %d: no mutex yet\n", tid);*/</i></font>
+        <b>break</b>; 
+    }
+  }
+  <b>return</b> TRUE;
+}
+
+<b>int</b> main(<b>int</b> argc, <b>char</b> **argv)
+{
+  <b>int</b> i;
+  HANDLE *threads;
+  <b>struct</b> ThreadParams* params;  
+  DWORD ThreadID;
+  HANDLE mutex;
+  <b>int</b> num_threads = 4;
+
+    <font color="#003399"><i>/* The user can specify the number of threads */</i></font>  
+  <b>if</b> (argc &gt; 1)
+    num_threads = atoi(argv[1]);
+
+    <font color="#003399"><i>/* Allocate memory for threads and parameters */</i></font>    
+  threads = malloc(num_threads * <b>sizeof</b>(HANDLE));
+  params = malloc(num_threads * <b>sizeof</b>(<b>struct</b> ThreadParams));
+  
+    <font color="#003399"><i>/* Create mutex */</i></font>  
+  mutex = <a href="http://msdn.microsoft.com/en-us/library/ms682411(VS.85).aspx">CreateMutex</a>(NULL, FALSE, NULL);
+  <b>if</b> (mutex == NULL) 
+  {
+    printf(<font color="#9933CC">"Error creating mutex: %d\n"</font>, GetLastError());
+    <b>return</b> 1;
+  }
+
+    <font color="#003399"><i>/* Create the threads */</i></font>
+  <b>for</b>(i = 0; i &lt; num_threads; i++)
+  {
+    params[i].mutex = mutex;
+    params[i].tid = i;
+    
+    threads[i] = <a href="http://msdn.microsoft.com/en-us/library/ms682453(VS.85).aspx">CreateThread</a>(NULL, 0, ThreadFn, &amp;params[i], 0, &amp;ThreadID); 
+    <b>if</b>(threads[i] == NULL)
+    {
+      printf(<font color="#9933CC">"Error creating thread: %d\n"</font>, GetLastError());
+      <b>return</b> 1;
+    }
+  }
+
+    <font color="#003399"><i>/* Wait for each thread */</i></font>
+  <a href="http://msdn.microsoft.com/en-us/library/ms687025(VS.85).aspx">WaitForMultipleObjects</a>(num_threads, threads, TRUE, INFINITE);
+  
+    <font color="#003399"><i>/* Release thread handles */</i></font>
+  <b>for</b>(i = 0; i &lt; num_threads; i++)
+    CloseHandle(threads[i]);
+
+    <font color="#003399"><i>/* Release mutex */</i></font>
+  CloseHandle(mutex);
+  
+    <font color="#003399"><i>/* Clean up memory */</i></font>
+  free(threads);
+  free(params);
+
+  <b>return</b> 0;
+}
+</code></pre>
+
+Parameters to CreateThread:
+<blockquote><pre>HANDLE WINAPI CreateThread
+(
+  __in_opt   LPSECURITY_ATTRIBUTES lpThreadAttributes,
+  __in       SIZE_T dwStackSize,
+  __in       LPTHREAD_START_ROUTINE lpStartAddress,
+  __in_opt   LPVOID lpParameter,
+  __in       DWORD dwCreationFlags,
+  __out_opt  LPDWORD lpThreadId
+);
+</pre></blockquote>
+
+Final note:
+<ul>
+  <li>If multiple threads/processes are waiting on a mutex, it is indeterminate which
+    thread/process will acquire it. In other words, it's not first-come-first-serve, it's
+    random. (Well, at least from the user's perspective.)
+  </li>
+</ul>
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<p class="sectionheader">
+Semaphores
+</p>
+
+A <span id="wpurl"><a class="wplabel">semaphore</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Semaphore_(programming)">semaphore</a> is an integer that can only be accessed using atomic operations.
+<ul>
+  <li>The names of the functions vary (e.g. up/down, lock/unlock, wait/post, wait/signal, acquire/release)</li>
+  <li><b>lock</b> - Waits until the value of the semaphore is greater than zero, then decrements the value.</li>
+  <li><b>unlock</b> - Increments the value and returns.
+    
+  </li><li>Depending on the values that the semaphore can take on:</li>
+  <ul>
+    <li>Binary semaphore - can be 0 or 1 (similar to a mutex)</li>
+    <li>Counting semaphore - can be 0 up to any positive value</li>
+  </ul>
+  <li>Allows more than one process/thread to simultaneously access shared resources.</li>
+  <li>There is generally more than one instance of the shared resource.</li>
+  <li>The usage is much like other synchronization techniques:</li>
+
+
+<blockquote><pre>acquire(semaphore);   <font color="#003399"><i>/* decrement value (may block)              */</i></font>
+
+  <font color="#003399"><i>/* critical section */</i></font>
+
+release(semaphore);  <font color="#003399"><i>/* increment value and return (won't block) */</i></font>
+</pre></blockquote>
+
+</ul>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+A POSIX example:
+  <blockquote>
+  <table border="1" cellpadding="5" cellspacing="0">
+    <tbody><tr>
+      <td>
+        <font color="blue">
+          This program allows the user to specify how many threads to create and how many to allow to run at any one time.
+          For CPU-bound threads, you would want as many threads as CPU cores. For I/O-bound threads, you could launch many
+          more (most would be in the blocked/waiting state).
+        </font>
+      </td>
+    </tr>
+  </tbody></table>
+</blockquote>
+
+
+
+<pre class="sourcecode"><code><font color="#003399"><i>/* sem.c                                             */</i></font>
+<font color="#003399"><i>/* to build on Linux, link with the pthread library: */</i></font>
+<font color="#003399"><i>/* gcc sem.c -lpthread                               */</i></font>
+  
+<b>#include</b> &lt;stdio.h&gt;     <font color="#003399"><i>/* printf             */</i></font>
+<b>#include</b> &lt;fcntl.h&gt;     <font color="#003399"><i>/* O_CREAT, O_RDWR    */</i></font>
+<b>#include</b> &lt;stdlib.h&gt;    <font color="#003399"><i>/* malloc, free, atoi */</i></font>
+<b>#include</b> &lt;pthread.h&gt;   <font color="#003399"><i>/* thread stuff       */</i></font>
+<b>#include</b> &lt;semaphore.h&gt; <font color="#003399"><i>/* semaphore stuff    */</i></font>
+<b>#include</b> &lt;unistd.h&gt;    <font color="#003399"><i>/* sleep              */</i></font>
+
+<b>struct</b> ThreadParams
+{
+  sem_t *semaphore;
+  <b>int</b> tid;
+};
+
+<b>void</b> *ThreadFn(<b>void</b> *p)
+{
+  <b>struct</b> ThreadParams *params = (<b>struct</b> ThreadParams *)p;
+  sem_t *semaphore = params-&gt;semaphore;
+  <b>int</b> tid = params-&gt;tid;
+  
+    <font color="#003399"><i>/* Acquire semaphore */</i></font>
+  <a href="http://pubs.opengroup.org/onlinepubs/009695399/functions/sem_wait.html">sem_wait</a>(semaphore); 
+    printf(<font color="#9933CC">"ThreadId %i: acquired semaphore\n"</font>, tid);
+
+      <font color="#003399"><i>/* Pretend to do some work */</i></font>
+    printf(<font color="#9933CC">"ThreadId %i: working...\n"</font>, tid);
+    sleep(1);
+  
+      <font color="#003399"><i>/* Release semaphore */</i></font>
+  <a href="http://pubs.opengroup.org/onlinepubs/009695399/functions/sem_post.html">sem_post</a>(semaphore); 
+  printf(<font color="#9933CC">"ThreadId %i: released semaphore\n"</font>, tid);
+  
+  <b>return</b> 0;
+}
+
+<b>int</b> main(<b>int</b> argc, <b>char</b> **argv)
+{
+  <b>int</b> i;
+  pthread_t *threads;
+  <b>struct</b> ThreadParams* params;
+  sem_t *semaphore;
+  <b>const</b> <b>char</b> *sem_name = <font color="#9933CC">"/barney"</font>; <font color="#003399"><i>/* see online docs about naming */</i></font>
+  <b>int</b> num_threads = 12;
+  <b>int</b> sem_count = 4;
+  
+    <font color="#003399"><i>/* The user can specify the number of threads and max semaphore count */</i></font>
+  <b>if</b> (argc &gt; 1)
+    num_threads = atoi(argv[1]);
+  <b>if</b> (argc &gt; 2)
+    sem_count = atoi(argv[2]);
+    
+    <font color="#003399"><i>/* Allocate memory for threads and parameters */</i></font>
+  threads = malloc(num_threads * <b>sizeof</b>(pthread_t *));
+  params = malloc(num_threads * <b>sizeof</b>(<b>struct</b> ThreadParams));
+  
+    <font color="#003399"><i>/* Create semaphore */</i></font>  
+  semaphore = <a href="http://pubs.opengroup.org/onlinepubs/009695399/functions/sem_open.html">sem_open</a>(sem_name, O_CREAT, O_RDWR, sem_count); 
+  <b>if</b> (semaphore == SEM_FAILED)
+  {
+    printf(<font color="#9933CC">"sem_open failed\n"</font>);
+    <b>return</b> 1;
+  }
+  
+    <font color="#003399"><i>/* Mark the semaphore for deletion */</i></font>
+  <a href="http://pubs.opengroup.org/onlinepubs/009695399/functions/sem_unlink.html">sem_unlink</a>(sem_name);
+
+    <font color="#003399"><i>/* Create the threads */</i></font>
+  <b>for</b>(i = 0; i &lt; num_threads; i++)
+  {
+    params[i].semaphore = semaphore;
+    params[i].tid = i;
+    
+    <a href="http://pubs.opengroup.org/onlinepubs/009695399/functions/pthread_create.html">pthread_create</a>(&amp;threads[i], NULL, ThreadFn, &amp;params[i]);
+  }
+
+    <font color="#003399"><i>/* Wait for each thread */</i></font>
+  <b>for</b> (i = 0; i &lt; num_threads; i++)
+    <a href="http://pubs.opengroup.org/onlinepubs/009695399/functions/pthread_join.html">pthread_join</a>(threads[i], NULL);
+
+    <font color="#003399"><i>/* Done with the semaphore */</i></font>
+  <a href="http://pubs.opengroup.org/onlinepubs/009695399/functions/sem_close.html">sem_close</a>(semaphore); 
+
+    <font color="#003399"><i>/* Clean up memory */</i></font>
+  free(threads);
+  free(params);
+
+  <b>return</b> 0;
+}
+</code></pre>
+
+<b>Output</b> (program is called <b><tt>sem</tt></b>):
+
+<blockquote>
+<table border="1" cellpadding="10" cellspacing="0">
+<tbody><tr><th>sem 4 1</th><th>sem 8 3</th><th>sem 12 4</th><th>sem 12 8</th></tr>
+<tr valign="top">
+<td>
+<pre>ThreadId 0: acquired semaphore
+ThreadId 0: working...
+ThreadId 0: released semaphore
+ThreadId 1: acquired semaphore
+ThreadId 1: working...
+ThreadId 1: released semaphore
+ThreadId 2: acquired semaphore
+ThreadId 2: working...
+ThreadId 2: released semaphore
+ThreadId 3: acquired semaphore
+ThreadId 3: working...
+ThreadId 3: released semaphore
+</pre>
+</td>
+<td>
+<pre>ThreadId 0: acquired semaphore
+ThreadId 0: working...
+ThreadId 2: acquired semaphore
+ThreadId 2: working...
+ThreadId 1: acquired semaphore
+ThreadId 1: working...
+ThreadId 0: released semaphore
+ThreadId 3: acquired semaphore
+ThreadId 3: working...
+ThreadId 4: acquired semaphore
+ThreadId 4: working...
+ThreadId 1: released semaphore
+ThreadId 2: released semaphore
+ThreadId 5: acquired semaphore
+ThreadId 5: working...
+ThreadId 3: released semaphore
+ThreadId 6: acquired semaphore
+ThreadId 6: working...
+ThreadId 7: acquired semaphore
+ThreadId 7: working...
+ThreadId 5: released semaphore
+ThreadId 4: released semaphore
+ThreadId 6: released semaphore
+ThreadId 7: released semaphore
+</pre>
+</td>
+<td>
+<pre>ThreadId 1: acquired semaphore
+ThreadId 1: working...
+ThreadId 3: acquired semaphore
+ThreadId 2: acquired semaphore
+ThreadId 2: working...
+ThreadId 3: working...
+ThreadId 0: acquired semaphore
+ThreadId 0: working...
+ThreadId 1: released semaphore
+ThreadId 2: released semaphore
+ThreadId 5: acquired semaphore
+ThreadId 5: working...
+ThreadId 4: acquired semaphore
+ThreadId 4: working...
+ThreadId 3: released semaphore
+ThreadId 6: acquired semaphore
+ThreadId 6: working...
+ThreadId 0: released semaphore
+ThreadId 7: acquired semaphore
+ThreadId 7: working...
+ThreadId 6: released semaphore
+ThreadId 8: acquired semaphore
+ThreadId 8: working...
+ThreadId 5: released semaphore
+ThreadId 9: acquired semaphore
+ThreadId 9: working...
+ThreadId 4: released semaphore
+ThreadId 10: acquired semaphore
+ThreadId 10: working...
+ThreadId 7: released semaphore
+ThreadId 11: acquired semaphore
+ThreadId 11: working...
+ThreadId 8: released semaphore
+ThreadId 9: released semaphore
+ThreadId 10: released semaphore
+ThreadId 11: released semaphore
+</pre>
+</td>
+<td><pre>ThreadId 0: acquired semaphore
+ThreadId 0: working...
+ThreadId 2: acquired semaphore
+ThreadId 2: working...
+ThreadId 3: acquired semaphore
+ThreadId 5: acquired semaphore
+ThreadId 5: working...
+ThreadId 4: acquired semaphore
+ThreadId 4: working...
+ThreadId 3: working...
+ThreadId 7: acquired semaphore
+ThreadId 7: working...
+ThreadId 6: acquired semaphore
+ThreadId 1: acquired semaphore
+ThreadId 1: working...
+ThreadId 6: working...
+ThreadId 0: released semaphore
+ThreadId 3: released semaphore
+ThreadId 5: released semaphore
+ThreadId 4: released semaphore
+ThreadId 7: released semaphore
+ThreadId 8: acquired semaphore
+ThreadId 8: working...
+ThreadId 11: acquired semaphore
+ThreadId 11: working...
+ThreadId 2: released semaphore
+ThreadId 10: acquired semaphore
+ThreadId 10: working...
+ThreadId 6: released semaphore
+ThreadId 9: acquired semaphore
+ThreadId 9: working...
+ThreadId 1: released semaphore
+ThreadId 8: released semaphore
+ThreadId 11: released semaphore
+ThreadId 10: released semaphore
+ThreadId 9: released semaphore
+</pre></td>
+</tr></tbody></table>
+</blockquote>
+
+<b>Notes:</b>
+<ul>
+  <li>If you look closely at the second run above, you'll see that it <i>appears</i> incorrect.</li>
+  <li>At one point, there are 4 threads in the critical section!</li>
+  <li>How can that be?</li>
+  <li>How do we "fix" the <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/Synchronization-2.html">problem</a>?</li>
+  <li>See also: <a href="http://pubs.opengroup.org/onlinepubs/009695399/functions/sem_trywait.html">sem_trywait</a>
+    and <a href="http://pubs.opengroup.org/onlinepubs/009695399/functions/sem_timedwait.html">sem_timedwait</a>
+    for more control.</li>
+</ul>
+<!-- 
+The 3rd printf statement in the thread function is not in the critical secion.
+-->
+
+<p>
+</p><hr width="90%">
+<p>
+  
+<b>The same example using the Win32 API:</b>
+
+</p><pre class="sourcecode"><code><font color="#003399"><i>/* wsemp.c */</i></font>
+<b>#include</b> &lt;windows.h&gt;
+<b>#include</b> &lt;stdio.h&gt;
+
+<b>struct</b> ThreadParams
+{
+  HANDLE semaphore;
+  <b>int</b> tid;
+};
+
+DWORD WINAPI ThreadFn(LPVOID p)
+{
+  DWORD result; 
+  <b>int</b> done = FALSE;
+  <b>struct</b> ThreadParams *params = (<b>struct</b> ThreadParams *)p;
+  HANDLE semaphore = params-&gt;semaphore;
+  <b>int</b> tid = params-&gt;tid;
+  
+  <b>while</b>(!done)
+  {
+    <font color="#003399"><i>/********************************************************************
+      DO NOT set the timeout to zero, unless your threads have some other
+      work to do. If the thread can do nothing until it obtains the mutex, 
+      then don't keep checking that it is available. Use INFINITE instead
+      of O (zero) for the timeout. If you use 0, and don't obtain the
+      mutex immediately (the likely outcome) your program will be wasting 
+      CPU cycles in a kind of busy wait loop. This is just an <b>example</b>
+      of how you would be able to do other work, if necessary.
+
+      If you don't understand the above, use INFINITE and forget about it.
+    *********************************************************************/</i></font>
+    result = <a href="http://msdn.microsoft.com/en-us/library/ms687032(VS.85).aspx">WaitForSingleObject</a>(semaphore, 0L);
+    <b>switch</b> (result) 
+    { 
+        <font color="#003399"><i>/* Acquired the semaphore */</i></font>
+      <b>case</b> WAIT_OBJECT_0: 
+        printf(<font color="#9933CC">"ThreadId %i: acquired semaphore\n"</font>, tid);
+        done = TRUE;            
+
+          <font color="#003399"><i>/* Pretend to do some work */</i></font>
+        printf(<font color="#9933CC">"ThreadId %i: working...\n"</font>, tid);
+        <a href="http://msdn.microsoft.com/en-us/library/ms686298(VS.85).aspx">Sleep</a>(1000);
+
+        <b>if</b> (!<a href="http://msdn.microsoft.com/en-us/library/ms685071(VS.85).aspx">ReleaseSemaphore</a>(semaphore, 1, NULL))
+          printf(<font color="#9933CC">"ReleaseSemaphore error: %i\n"</font>, GetLastError());
+
+        printf(<font color="#9933CC">"ThreadId %i: released semaphore\n"</font>, tid);
+        <b>break</b>; 
+
+        <font color="#003399"><i>/* The semaphore wasn't available yet */</i></font>
+      <b>case</b> WAIT_TIMEOUT: 
+        <font color="#003399"><i>/*printf("ThreadId %d: no semaphore yet\n", GetCurrentThreadId());*/</i></font>
+        <b>break</b>; 
+    }
+  }
+  <b>return</b> TRUE;
+}
+
+<b>int</b> main(<b>int</b> argc, <b>char</b> **argv)
+{
+  <b>int</b> i;
+  HANDLE *threads;
+  <b>struct</b> ThreadParams* params;  
+  DWORD ThreadID;
+  HANDLE semaphore;
+  <b>int</b> num_threads = 12;
+  <b>int</b> sem_count = 4;
+
+    <font color="#003399"><i>/* The user can specify the number of threads and max semaphore count */</i></font>  
+  <b>if</b> (argc &gt; 1)
+    num_threads = atoi(argv[1]);
+  <b>if</b> (argc &gt; 2)
+    sem_count = atoi(argv[2]);
+
+    <font color="#003399"><i>/* Allocate memory for threads and parameters */</i></font>    
+  threads = malloc(num_threads * <b>sizeof</b>(HANDLE));
+  params = malloc(num_threads * <b>sizeof</b>(<b>struct</b> ThreadParams));
+  
+    <font color="#003399"><i>/* Create semaphore */</i></font>  
+  semaphore = <a href="http://msdn.microsoft.com/en-us/library/ms682438(VS.85).aspx">CreateSemaphore</a>(NULL, sem_count, sem_count, NULL);
+  <b>if</b> (semaphore == NULL) 
+  {
+    printf(<font color="#9933CC">"CreateSemaphore error: %d\n"</font>, GetLastError());
+    <b>return</b> 1;
+  }
+
+    <font color="#003399"><i>/* Create the threads */</i></font>
+  <b>for</b>(i = 0; i &lt; num_threads; i++)
+  {
+    params[i].semaphore = semaphore;
+    params[i].tid = i;
+    
+    threads[i] = <a href="http://msdn.microsoft.com/en-us/library/ms682453(VS.85).aspx">CreateThread</a>(NULL, 0, ThreadFn, &amp;params[i], 0, &amp;ThreadID); 
+    <b>if</b>(threads[i] == NULL)
+    {
+      printf(<font color="#9933CC">"CreateThread error: %d\n"</font>, GetLastError());
+      <b>return</b> 1;
+    }
+  }
+
+    <font color="#003399"><i>/* Wait for each thread */</i></font>
+  <a href="http://msdn.microsoft.com/en-us/library/ms687025(VS.85).aspx">WaitForMultipleObjects</a>(num_threads, threads, TRUE, INFINITE);
+  
+    <font color="#003399"><i>/* Release thread handles */</i></font>
+  <b>for</b>(i = 0; i &lt; num_threads; i++)
+    <a href="http://msdn.microsoft.com/en-us/library/ms724211(VS.85).aspx">CloseHandle</a>(threads[i]);
+
+    <font color="#003399"><i>/* Release semaphore */</i></font>
+  <a href="http://msdn.microsoft.com/en-us/library/ms724211(VS.85).aspx">CloseHandle</a>(semaphore);
+  
+    <font color="#003399"><i>/* Clean up memory */</i></font>
+  free(threads);
+  free(params);
+
+  <b>return</b> 0;
+}
+</code></pre>
+
+<b>Output</b> (program is called <b><tt>sem.exe</tt></b>):
+
+<blockquote>
+<table border="1" cellpadding="10" cellspacing="0">
+<tbody><tr><th>sem.exe 4 1</th><th>sem.exe 8 3</th><th>sem.exe 12 4</th><th>sem.exe 12 8</th></tr>
+<tr valign="top">
+<td>
+<pre>ThreadId 0: acquired semaphore
+ThreadId 0: working...
+ThreadId 0: released semaphore
+ThreadId 1: acquired semaphore
+ThreadId 1: working...
+ThreadId 1: released semaphore
+ThreadId 2: acquired semaphore
+ThreadId 2: working...
+ThreadId 2: released semaphore
+ThreadId 3: acquired semaphore
+ThreadId 3: working...
+ThreadId 3: released semaphore
+</pre>
+</td>
+<td>
+<pre>ThreadId 0: acquired semaphore
+ThreadId 1: acquired semaphore
+ThreadId 0: working...
+ThreadId 2: acquired semaphore
+ThreadId 1: working...
+ThreadId 2: working...
+ThreadId 0: released semaphore
+ThreadId 3: acquired semaphore
+ThreadId 2: released semaphore
+ThreadId 1: released semaphore
+ThreadId 4: acquired semaphore
+ThreadId 5: acquired semaphore
+ThreadId 3: working...
+ThreadId 4: working...
+ThreadId 5: working...
+ThreadId 3: released semaphore
+ThreadId 6: acquired semaphore
+<b>ThreadId 7: acquired semaphore</b>
+ThreadId 4: released semaphore
+ThreadId 5: released semaphore
+ThreadId 6: working...
+ThreadId 7: working...
+ThreadId 6: released semaphore
+ThreadId 7: released semaphore
+</pre>
+</td>
+<td>
+<pre>ThreadId 0: acquired semaphore
+ThreadId 1: acquired semaphore
+ThreadId 2: acquired semaphore
+ThreadId 0: working...
+ThreadId 3: acquired semaphore
+ThreadId 1: working...
+ThreadId 2: working...
+ThreadId 3: working...
+ThreadId 0: released semaphore
+ThreadId 1: released semaphore
+ThreadId 4: acquired semaphore
+ThreadId 3: released semaphore
+ThreadId 5: acquired semaphore
+ThreadId 6: acquired semaphore
+ThreadId 2: released semaphore
+ThreadId 7: acquired semaphore
+ThreadId 4: working...
+ThreadId 5: working...
+ThreadId 6: working...
+ThreadId 7: working...
+ThreadId 5: released semaphore
+ThreadId 4: released semaphore
+ThreadId 9: acquired semaphore
+ThreadId 8: acquired semaphore
+ThreadId 7: released semaphore
+ThreadId 10: acquired semaphore
+ThreadId 6: released semaphore
+ThreadId 11: acquired semaphore
+ThreadId 9: working...
+ThreadId 8: working...
+ThreadId 10: working...
+ThreadId 11: working...
+ThreadId 9: released semaphore
+ThreadId 8: released semaphore
+ThreadId 11: released semaphore
+ThreadId 10: released semaphore
+</pre>
+</td>
+<td><pre>ThreadId 0: acquired semaphore
+ThreadId 1: acquired semaphore
+ThreadId 2: acquired semaphore
+ThreadId 0: working...
+ThreadId 3: acquired semaphore
+ThreadId 4: acquired semaphore
+ThreadId 1: working...
+ThreadId 6: acquired semaphore
+ThreadId 5: acquired semaphore
+ThreadId 2: working...
+ThreadId 7: acquired semaphore
+ThreadId 3: working...
+ThreadId 4: working...
+ThreadId 6: working...
+ThreadId 5: working...
+ThreadId 7: working...
+ThreadId 0: released semaphore
+ThreadId 9: acquired semaphore
+ThreadId 9: working...
+ThreadId 1: released semaphore
+ThreadId 8: acquired semaphore
+ThreadId 8: working...
+ThreadId 2: released semaphore
+ThreadId 10: acquired semaphore
+ThreadId 3: released semaphore
+ThreadId 11: acquired semaphore
+ThreadId 5: released semaphore
+ThreadId 6: released semaphore
+ThreadId 4: released semaphore
+ThreadId 7: released semaphore
+ThreadId 10: working...
+ThreadId 11: working...
+ThreadId 9: released semaphore
+ThreadId 8: released semaphore
+ThreadId 10: released semaphore
+ThreadId 11: released semaphore
+</pre></td>
+</tr></tbody></table>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+A simpler thread function:
+
+<pre class="sourcecode"><code><font color="#003399"><i>/* wsemp2.c */</i></font>
+DWORD WINAPI ThreadFn(LPVOID p)
+{
+  <b>struct</b> ThreadParams *params = (<b>struct</b> ThreadParams *)p;
+  HANDLE semaphore = params-&gt;semaphore;
+  <b>int</b> tid = params-&gt;tid;
+  
+  <a href="http://msdn.microsoft.com/en-us/library/ms687032(VS.85).aspx">WaitForSingleObject</a>(semaphore, INFINITE);
+    
+    printf(<font color="#9933CC">"ThreadId %i: acquired semaphore\n"</font>, tid);
+
+      <font color="#003399"><i>/* Pretend to do some work */</i></font>
+    printf(<font color="#9933CC">"ThreadId %i: working...\n"</font>, tid);
+    Sleep(1000);
+
+  <a href="http://msdn.microsoft.com/en-us/library/ms685071(VS.85).aspx">ReleaseSemaphore</a>(semaphore, 1, NULL);
+  printf(<font color="#9933CC">"ThreadId %i: released semaphore\n"</font>, tid);
+  
+  <b>return</b> TRUE;
+}
+</code></pre>
+
+
+
+<blockquote><pre></pre></blockquote>
+
+A Win32 Example using a Critical Section:
+
+<pre class="sourcecode"><code><font color="#003399"><i>/* wcritical.c */</i></font>
+<b>#include</b> &lt;windows.h&gt;
+<b>#include</b> &lt;stdio.h&gt;
+
+<b>struct</b> ThreadParams
+{
+  CRITICAL_SECTION *critical_section;
+  <b>int</b> tid;
+};
+
+DWORD WINAPI ThreadFn(LPVOID p)
+{
+  <b>struct</b> ThreadParams *params = (<b>struct</b> ThreadParams *)p;
+  CRITICAL_SECTION *critical_section = params-&gt;critical_section;
+  <b>int</b> tid = params-&gt;tid;
+  
+  <a href="http://msdn.microsoft.com/en-us/library/ms682608(VS.85).aspx">EnterCriticalSection</a>(critical_section);
+  
+      <font color="#003399"><i>/* Pretend to do some work */</i></font>
+    printf(<font color="#9933CC">"ThreadId %i: working...\n"</font>, tid);
+    Sleep(1000);
+  
+  <a href="http://msdn.microsoft.com/en-us/library/ms684169(VS.85).aspx">LeaveCriticalSection</a>(critical_section);
+  
+  <b>return</b> TRUE;
+}
+
+<b>int</b> main(<b>int</b> argc, <b>char</b> **argv)
+{
+  <b>int</b> i;
+  HANDLE *threads;
+  <b>struct</b> ThreadParams* params;  
+  DWORD ThreadID;
+  <a href="http://msdn.microsoft.com/en-us/library/ms682530(VS.85).aspx">CRITICAL_SECTION</a> critical_section;
+  <b>int</b> num_threads = 4;
+
+    <font color="#003399"><i>/* The user can specify the number of threads */</i></font>  
+  <b>if</b> (argc &gt; 1)
+    num_threads = atoi(argv[1]);
+
+    <font color="#003399"><i>/* Allocate memory for threads and parameters */</i></font>    
+  threads = malloc(num_threads * <b>sizeof</b>(HANDLE));
+  params = malloc(num_threads * <b>sizeof</b>(<b>struct</b> ThreadParams));
+  
+    <font color="#003399"><i>/* Setup critical section */</i></font>  
+  <a href="http://msdn.microsoft.com/en-us/library/ms683472(VS.85).aspx">InitializeCriticalSection</a>(&amp;critical_section);
+
+    <font color="#003399"><i>/* Create the threads */</i></font>
+  <b>for</b>(i = 0; i &lt; num_threads; i++)
+  {
+    params[i].critical_section = &amp;critical_section;
+    params[i].tid = i;
+    
+    threads[i] = <a href="http://msdn.microsoft.com/en-us/library/ms682453(VS.85).aspx">CreateThread</a>(NULL, 0, ThreadFn, &amp;params[i], 0, &amp;ThreadID); 
+    <b>if</b>(threads[i] == NULL)
+    {
+      printf(<font color="#9933CC">"Error creating thread: %d\n"</font>, GetLastError());
+      <b>return</b> 1;
+    }
+  }
+
+    <font color="#003399"><i>/* Wait for each thread */</i></font>
+  <a href="http://msdn.microsoft.com/en-us/library/ms687025(VS.85).aspx">WaitForMultipleObjects</a>(num_threads, threads, TRUE, INFINITE);
+  
+    <font color="#003399"><i>/* Release thread handles */</i></font>
+  <b>for</b>(i = 0; i &lt; num_threads; i++)
+    CloseHandle(threads[i]);
+
+    <font color="#003399"><i>/* Release critical section */</i></font>
+  <a href="http://msdn.microsoft.com/en-us/library/ms682552(VS.85).aspx">DeleteCriticalSection</a>(&amp;critical_section);
+  
+    <font color="#003399"><i>/* Clean up memory */</i></font>
+  free(threads);
+  free(params);
+
+  <b>return</b> 0;
+}
+</code></pre>
+
+<b>Notes</b>:
+<ul>
+  <li>A mutex generally protects a single resource, requires help from the kernel (context switch) and
+  can be used between threads/processes.</li>
+  <li>A semaphore can protect mulitple instances of the same resource, requires help from the kernel (context switch) and can be
+  used between threads/processes.</li>
+  <li>In Windows, a critical section (CRITICAL_SECTION) is like a mutex, but it doesn't require as much kernel help (fewer context switches so it's faster), but can only be
+    used between threads in the same process.
+    
+</li></ul>
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th>Mutex (<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/wmutex2.c.html">wmutex2.c</a>)</th><th>Critical Section (<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/wcritical2.c.html">wcritical2.c</a>)</th></tr>
+<tr valign="top">
+<td>
+<pre class="sourcecode"><code>
+DWORD WINAPI ThreadFn(LPVOID p)
+{
+  <b>int</b> i;
+  <b>struct</b> ThreadParams *params = (<b>struct</b> ThreadParams *)p;
+  HANDLE mutex = params-&gt;mutex;
+  
+  <b>for</b> (i = 0; i &lt; 1000 * 1000; i++)
+  {
+    WaitForSingleObject(mutex, INFINITE);
+      Count++;
+    ReleaseMutex(mutex);
+  }
+  
+  <b>return</b> TRUE;
+}
+</code></pre>
+<blockquote>
+<b>Output using 10 threads:</b>
+<pre>Value of Count is 10000000
+real 27.23
+user 0.01
+sys 0.01
+</pre>
+</blockquote>
+</td>
+<td>
+<pre class="sourcecode"><code>
+DWORD WINAPI ThreadFn(LPVOID p)
+{
+  <b>int</b> i;
+  <b>struct</b> ThreadParams *params = (<b>struct</b> ThreadParams *)p;
+  CRITICAL_SECTION *critical_section = params-&gt;critical_section;
+
+  <b>for</b> (i = 0; i &lt; 1000 * 1000; i++)
+  {
+    EnterCriticalSection(critical_section);
+      Count++;
+    LeaveCriticalSection(critical_section);
+  }
+  
+  <b>return</b> TRUE;
+}
+</code></pre>
+
+<blockquote>
+<b>Output using 10 threads:</b>
+<pre>Value of Count is 10000000
+real 14.05
+user 0.01
+sys 0.00
+</pre>
+</blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<blockquote>
+<p class="technote">
+Using a mutex between processes (Win32 example):
+
+This code is the <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/wmutex-parent.c.html">parent</a> process and this code is 
+for the <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/wmutex-child.c.html">child</a> processes. This example also shows
+how to create shared memory between processes.
+</p>
+</blockquote>
+
+<b>Notes</b>
+<ul>
+  <li>At first glance, it seems that busy-waiting is a waste of CPU cycles.</li>
+  <li>It depends on how long the thread expects to wait to enter the critical section.</li>
+  <li>Spinning a long time can prevent other threads from running (spinning is CPU-bound).</li>
+  <li>Blocking will let other threads run.</li>
+  <ul>
+    <li>Swapping out a thread's stack and registers takes time.</li>
+    <li>Could also affect the thread's cache. (Thread may move between cores.)</li>
+  </ul>
+  <li>Some APIs allow the program to set the spin count.</li>
+</ul>
+
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="5">
+<tbody><tr><th>Spin lock (busy-waiting, CPU-bound)</th><th>Blocked (likely I/O-bound)</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>void</b> Lock5(<b>int</b> me)
+{
+  <b>int</b> you = 1 - me;
+  turn = you;
+  ready[me] = 1;
+  __sync_synchronize();
+  <font color="blue"><b>while</b> (ready[you] &amp;&amp; (turn == you))
+    <b>continue</b>;</font>
+}
+
+Lock5(id);
+  <i>Critical section...</i>
+Unlock5(id);
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>WaitForSingleObject(mutex, INFINITE);
+  <i>Critical section...</i>
+ReleaseMutex(mutex);
+
+WaitForSingleObject(semaphore, INFINITE);
+  <i>Critical section...</i>
+ReleaseSemaphore(semaphore);
+
+EnterCriticalSection(critical_section);
+  <i>Critical section...</i>
+LeaveCriticalSection(critical_section);
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<ul>
+<li>The Win32 API provides <a href="http://msdn.microsoft.com/en-us/library/ms683476(v=vs.85).aspx">InitializeCriticalSectionAndSpinCount</a> that
+allows the programmer to select how many times to spin before blocking. Just change this:
+
+<blockquote><pre><a href="http://msdn.microsoft.com/en-us/library/ms683472(VS.85).aspx">InitializeCriticalSection</a>(&amp;critical_section);
+</pre></blockquote>
+to this:
+<blockquote><pre><a href="http://msdn.microsoft.com/en-us/library/ms683476(v=vs.85).aspx">InitializeCriticalSectionAndSpinCount</a>(&amp;critical_section, 2000);
+</pre></blockquote>
+
+You may need to experiment with the proper spin count.</li>
+
+<p>
+Comparisons:
+
+</p><blockquote>
+<table border="1" cellspacing="0" cellpadding="5">
+<tbody><tr><th>InitializeCriticalSection</th><th>InitializeCriticalSectionAndSpinCount</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>Value of Count is 10000000
+real 2.43
+real 1.60
+real 2.05
+real 2.48
+real 1.99
+real 2.35
+---------
+Ave: 2.15
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>Value of Count is 10000000
+real 1.27
+real 1.16
+real 1.31
+real 1.32
+real 1.18
+real 1.26
+---------
+Ave: 1.25
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+My rough experimenting showed a spin count of 2000 provided these numbers. 
+<p>
+According to MSDN:
+</p><blockquote>
+<p class="technote">
+You can improve performance significantly by choosing a small spin count for a critical section of short
+duration. For example, the heap manager uses a spin count of roughly 4,000 for its per-heap critical sections.  
+</p>
+</blockquote>
+</ul>
+
+Final note:
+<ul>
+  <li>If multiple threads/processes are trying to acquire a semaphore, it is indeterminate which
+    thread/process will acquire it. In other words, it's not first-come-first-serve, it's
+    random. (Well, at least from the user's perspective.)
+  </li>
+</ul>
+
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<p class="sectionheader">
+Deadlock
+</p>
+
+
+The synchronization techniques still require the programmer to use them correctly. Even when used "correctly", bad things can happen:
+<p>
+</p><blockquote>
+<table border="1" cellpadding="0" cellspacing="0">
+<tbody><tr><td>
+<blockquote><pre>    P<sub>0</sub>              P<sub>1</sub>
+lock(res1);     lock(res2);
+lock(res2);     lock(res1);
+    
+   /* use resources */
+
+unlock(res1);   unlock(res2);
+unlock(res2);   unlock(res1);
+</pre></blockquote>
+</td></tr></tbody></table>
+</blockquote>
+  <p>
+
+Can you see the problem? The two processes are <span id="wpurl"><a class="wplabel">deadlocked</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Deadlock">deadlocked</a>.  
+</p><p>
+The deadlock depends on how the resources are acquired:
+
+
+</p><blockquote>
+<table border="1" cellpadding="0" cellspacing="0">
+<tbody><tr><td>
+<blockquote><pre>    P<sub>0</sub>              P<sub>1</sub>
+lock(res1);       -------
+lock(res2);       -------
+use resources     blocked (try to lock res2)
+use resources     blocked
+use resources     blocked
+use resources     blocked
+unlock(res1);     blocked           
+unlock(res2);     blocked           
+-------           lock(res2);
+-------           lock(res1);
+-------           use resources
+-------           use resources
+-------           use resources
+-------           use resources
+-------           unlock(res2);
+-------           unlock(res1);
+-------           -------
+-------           -------
+</pre></blockquote>
+</td></tr></tbody></table>
+</blockquote>
+  <p>
+
+There is no deadlock above. However,
+
+</p><blockquote>
+<table border="1" cellpadding="0" cellspacing="0">
+<tbody><tr><td>
+<blockquote><pre>    P<sub>0</sub>                           P<sub>1</sub>
+lock(res1);                  lock(res2);
+blocked (try to lock res2)   blocked (try to lock res1)  
+blocked (forever)            blocked (forever)
+            
+             DEADLOCK
+</pre></blockquote>
+</td></tr></tbody></table>
+</blockquote>
+  <p>
+
+The sequence above causes a deadlock. Other problems:
+
+</p><ul>
+  <li>Starvation - wait on resource forever.</li>
+  <!--<li>Indefinite blocking - using LIFO (Last-In, First-Out) order (a list that accepts new processes).</li>-->
+  <li><span id="wpurl"><a class="wplabel">Priority inversion</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Priority_inversion">Priority inversion</a> 
+    - a high-priority task is waiting on a low-priority task to release.</li>
+  <ul>
+    <li>This is what happened to the <a href="http://research.microsoft.com/en-us/um/people/mbj/mars_pathfinder/authoritative_account.html">Mars Pathfinder project</a>.</li>
+    <ul>
+      <li>The processes on the spacecraft used shared memory, message queues, and pipes to communicate.</li>
+      <li>If the data collection processes didn't finish by the time the scheduler ran, the system was reset (rebooted because it considered this a hard error).</li>
+      <li>The amount of data on Mars was far too much to collect in the time slices allotted. (Way more than they ever thought possible.)</li>
+      <li>The data collection processes were lower priority than system processes (scheduling, communications), but they locked resources needed by higher priority processes.</li>
+    </ul>
+    <li>Priority inheritance - Lower priority tasks get the priority of the highest-priority blocked task (that's waiting on the same resource).
+    </li><li>Microsoft Windows gives random priority boosts to lower priority tasks holding a resource. (Allows them to finish executing the (short) critical section.)</li>
+  </ul>
+</ul>
+
+These problems are similar to the problems with some scheduling algorithms.
+<p>
+Deadlock occurs when several processes are waiting for an event that can be caused by the other waiting processes.
+</p><p>
+  
+</p><blockquote>
+<table border="0" cellspacing="0" cellpadding="2">
+  <tbody><tr><td><img src="./Synchronization_files/deadlock-1.jpg"></td></tr>
+  <!-- Not sure about this one -->
+  <!--<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne &copy;2009&nbsp;&nbsp;</span></td></tr>-->
+</tbody></table>
+</blockquote>
+<p>
+  
+  
+There are 4 conditions that must hold for there to be a deadlock:
+</p><ol>
+  <li><b>Mutual exclusion</b> - resources can only be held (used) by one process at a time, and must be released in order for others to use them.</li>
+  <li><b>Hold and wait</b> - A process must be holding a resource and waiting for another resource that is held by another process.</li>
+  <li><b>No preemption</b> - processes can only voluntarily release a held resource.</li>
+  <li><b>Circular waiting</b> - process P<sub>0</sub> is waiting for process P<sub>1</sub> to release a resource, P<sub>1</sub> is waiting for P<sub>2</sub>, ... , P<sub>n</sub> is waiting for P<sub>0</sub></li>
+</ol>
+<p>
+  
+Looking back at this deadlock we see all 4 conditions:
+
+</p><blockquote>
+<table border="1" cellpadding="0" cellspacing="0">
+<tbody><tr><td>
+<blockquote><pre>    P<sub>0</sub>                           P<sub>1</sub>
+lock(res1);                  lock(res2);
+blocked (try to lock res2)   blocked (try to lock res1)  
+blocked (forever)            blocked (forever)
+            
+             DEADLOCK
+</pre></blockquote>
+</td></tr></tbody></table>
+</blockquote>
+<p>
+
+Why is there no deadlock here?
+
+</p><blockquote>
+<table border="1" cellpadding="0" cellspacing="0">
+<tbody><tr><td>
+<blockquote><pre>    P<sub>0</sub>              P<sub>1</sub>
+lock(res1);       -------
+lock(res2);       -------
+use resources     blocked (try to lock res2)
+use resources     blocked
+use resources     blocked
+use resources     blocked
+unlock(res1);     blocked           
+unlock(res2);     blocked           
+-------           lock(res2);
+-------           lock(res1);
+-------           use resources
+-------           use resources
+-------           use resources
+-------           use resources
+-------           unlock(res2);
+-------           unlock(res1);
+-------           -------
+-------           -------
+</pre></blockquote>
+</td></tr></tbody></table>
+</blockquote>
+  <p>
+  
+<b>Resource allocation graphs</b> 
+</p><ul>
+  <li>Two types of vertices</li>
+  <ul>
+    <li>Processes: one vertex for each process (represented by a circle)</li>
+    <li>Resources: one vertex for each resource (represented by a square)</li>
+  </ul>
+  <li>A directed edge (arrow) can connect a process and a resource</li>
+    <ul>
+      <li>Request edge: (process) <big><big>&#8594;</big></big> (resource)</li>
+      <ul>
+        <li>Used when a process requests a resource</li>
+      </ul>
+        <li>Assignment edge: (resource) <big><big>&#8594;</big></big> (process)</li>
+    <ul>
+      <li>Used when a resource is assigned to a process</li>
+    </ul>
+    <p>
+  </p></ul>
+  <li>If there is NO cycle in the (directed) graph, there is no deadlock.</li>
+  <li>If there IS a cycle in the (directed) graph, there is a deadlock.</li>
+  <li>Where is the deadlock below?</li>
+  <!--
+  P2 is waiting on something that P4 has and P4 is waiting on something that P2 has
+  -->
+<p>
+</p><blockquote>
+<table cellpadding="0">
+<tbody><tr><th>Deadlock</th><th></th><th>No deadlock</th></tr>
+<tr>
+<td>
+<img src="./Synchronization_files/ResourceGraph-1.jpg" border="3">
+</td>
+<td width="20"></td>
+<td>
+<img src="./Synchronization_files/ResourceGraph-2.jpg" border="3">
+</td>
+</tr></tbody></table>
+<p>
+</p></blockquote></ul> 
+  
+There are 3 methods for dealing with deadlocks:
+<ol>
+  <li><b>Deadlock prevention</b></li>
+  <ul>
+    <li>Prevent hold and wait</li>
+    <ul>
+      <li>Ensure that a process cannot request a resource if it already holds one. (Get all at once or none.)</li>
+    </ul>
+    <!--
+    <li>Preemption</li>
+    <ul>
+      <li>When a process requests a resource, its held resources are preempted (temporarily released).</li>
+    </ul>
+  -->
+  </ul>
+  <li><b>Deadlock detection (and recovery)</b></li>
+  <ul>
+    <li>Detect a deadlock</li>
+    <ul>
+      <li>Maintain a resource allocation graph and look for cycles</li>
+    </ul>
+    <li>Recover from the deadlock</li>
+    <ul>
+      <li>Terminate all deadlocked processes, or</li>
+      <li>Terminate one deadlocked process at a time until the deadlock cycle is removed</li>
+    </ul>
+  </ul>
+  <li><b>Do nothing</b></li>
+  <ul>
+    <li>Ignore the problem and just pretend that deadlocks never occur. (Easiest solution!)</li>
+  </ul>
+ 
+</ol>
+
+<p>
+Which one do you think is used by most operating systems?
+<!--
+Ignore the problem
+-->
+  
+
+
+
+</p><blockquote><pre></pre></blockquote>
+  
+  
+<blockquote><pre></pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<tt><b></b></tt>
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<!--
+  <span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne &copy;2009</span>
+  
+<table border=0>
+  <tr><td></td></tr>
+  <tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne &copy;2009&nbsp;&nbsp;</span></td></tr>
+</table>
+
+<blockquote>
+<table border=0 cellspacing=0 cellpadding=2>
+  <tr><td><img src="ComputerComponents-1.png"></td></tr>
+  <tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne &copy;2009&nbsp;&nbsp;</span></td></tr>
+</table>
+</blockquote>
+  
+-->
+</body></html>

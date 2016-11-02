@@ -1,0 +1,244 @@
+
+<!-- saved from url=(0100)http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project4/cs280-FAQ-bst-avl-trees.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./FAQ_files/new.css">
+<title>CS 280 - FAQ for Assignment #4</title>
+</head>
+
+<body>  
+
+<center><h1>
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project4/cs280-programming-assignment-bst-avl-tree.pdf">Programming Assignment #4</a> FAQ
+<p>
+</p></h1><h2>(Frequently Asked Questions)</h2>
+
+</center>
+
+<br>
+
+<p>
+
+Here are some popular Questions and Answers for this assignment.<br>
+	
+</p><hr>
+
+<ol>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<li><b>Question:<br>
+You said that we can't call <tt><b>new</b></tt> in our tree classes. How do we construct our own ObjectAllocator
+if we can't call <tt><b>new</b></tt>.
+</b>
+<p>
+
+<b>Answer:</b><br>
+I meant that you can't use <tt><b>new</b></tt> to allocate any memory for nodes (or anything else). The only place
+that you need to call <tt><b>new</b></tt> is:
+</p><ul>
+<li>when you are constructing your own allocator. (You aren't allocating any nodes.)
+</li><li>when you call placement <tt><b>new</b></tt> to construct the node in the memory returned from the allocator.
+</li></ul>
+<p>
+All nodes that you create must be created via the
+ObjectAllocator. If you call <tt><b>new</b></tt> for anything but the items above, your will lose points.
+Realize that this isn't a limitation for your program because you don't need to 
+use <tt><b>new</b></tt> except where specified above. I would expect to see only 2 or 3 occurrences of
+the keyword <tt><b>new</b></tt> in your entire program. (You <b>DID</b> create a single function to allocate
+a node instead of calling the allocator from several places in your code, didn't you?)
+</p><p>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><hr>
+</li><li><b>Question:<br>
+I'm getting weird errors from the compilers when I try to build my code. The errors say something
+about a <tt>bad token '&lt;'</tt>. What's wrong?
+</b>
+<p>
+
+<b>Answer:</b><br>
+You probably are including the implementation file twice. Remember, it's a templated class, so you have
+to include the implementation with the header file. Since it's already included in the header,
+adding it to the project or on the command line causes the code to be added
+twice. See the command line posted for an example of correct usage.
+</p><p>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><hr>
+</li><li><b>Question:<br>
+I'm making a function that returns a <tt>BinTreeNode*</tt> but the compiler is complaining that it doesn't
+know what a <tt>BinTreeNode</tt> is. What's wrong?
+</b>
+<p>
+
+<b>Answer:</b><br>
+You probably forgot to use the keyword <tt><b>typename</b></tt> with the return value. Here's an example
+of how you would specify a function called <tt>make_node</tt> that creates a node:
+
+</p><blockquote><pre><b>template</b> &lt;<b>typename</b> T&gt;
+<font color="red"><b>typename</b></font> BStree&lt;T&gt;::BinTreeNode* BStree&lt;T&gt;::make_node(<b>const</b> T&amp; Item) <b>const</b> <b>throw</b>(BSTException)
+</pre></blockquote>
+
+The keyword in <font color="red"><b>RED</b></font> above is probably what's missing. Since <tt>BSTree</tt> is a templated
+class, the compiler doesn't know the the type of <tt>T</tt> yet, so it can't look for <tt>BinTreeNode</tt>. Since
+it can't look it up, it <i>assumes</i> that <tt>BinTreeNode</tt> is a member variable of <tt>BSTree</tt>, which doesn't make sense
+when the compiler expects to find a type. (It is the return-<b>type</b> afterall). In order to tell the compiler that <tt>BinTreeNode</tt>
+is a type and not a member variable, use the <tt><b>typename</b></tt> keyword.
+<p>
+Refer to your CS170 or CS225 notes for more information or look 
+<a href="http://docs.redhat.com/docs/en-US/Red_Hat_Enterprise_Linux/4/html/Using_the_GNU_Compiler_Collection/c---misunderstandings.html#NAME-LOOKUP">
+here</a> for a refresher on this.
+
+</p><p>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><hr>
+</li><li><b>Question:<br>
+My ObjectAllocator isn't working correctly. How do I implement this assignment without a working
+allocator?
+</b>
+<p>
+
+<b>Answer:</b><br>
+Use the <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project4/dummy_oa.zip">dummy allocator</a> that I provided. It's just a wrapper around new/delete, but it 
+contains everything you need to implement this assignment properly. Your stress tests won't be as fast, but don't
+worry about that. I will be using the dummy allocator when I grade your code.
+</p><p>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><hr>
+</li><li><b>Question:<br>
+I'm not getting the same number of compares that your output shows. For example, in an empty tree,
+I have 0 compares, but the output shows 1. Why is that?
+</b>
+<p>
+
+<b>Answer:</b><br>
+Because compares is not actually counting comparisons. It's counting the number of times the 
+recursive
+method was called. So, when you first check the tree and find it empty (NULL), you haven't actually
+compared the value in the node with the value you are looking for. However, you did have to check
+(compare with NULL) the pointer, so we count that. Essentially, if you just increment the counter
+upon entering the recursive find method, you will get the correct results.
+</p><p>
+
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><hr>
+</li><li><b>Question:<br>
+I'm confused about the two parameters in the constructor: 
+<blockquote><pre>ObjectAllocator *OA = 0
+<b>bool</b> ShareOA = <b>false</b>
+</pre></blockquote>
+They seem to contradict each other. 
+</b>
+<p>
+
+<b>Answer:</b><br>
+The parameters are not related. 
+</p><p>
+The first one is used to provide an allocator to the BSTree/AVLTree object. There are two possible situations: 
+</p><ol>
+	<li>If the parameter is non-NULL, then a <b>valid</b> allocator has been provided. The BSTree object should use that allocator for all of its allocations. Also,
+		the object does not own the allocator and should not destroy (free) it. The owner of the allocator (the driver) will free it when it's finished with it.
+	</li><li>If the parameter is NULL, then the BSTree object must create its own allocator and use that for all of its allocations. The object now owns the allocator
+		and must destroy (free) it when the object is finished with it (most likely in the destructor). Make sure to set <i>UseCPPMemManager</i> to <b>true</b> when
+		you construct your own ObjectAllocator. This will make sure that the allocator will have enough memory (pages) for the client.
+</li></ol>
+<p>
+	
+The second parameter tells the copy constructor and assignment operator how to construct the copy or do the assignment (i.e. 
+whether or not to use the right-hand-side allocator). </p><ol> <li>If the object 
+being copied/assigned from has its SharedAllocator set to <b>true</b>, then the copy will use 
+the allocator from the copied (right-hand-side) object. The object does not own 
+the allocator and should not destroy (free) it. The value of SharedAllocator 
+should be propagated to other copies made from this object. This allows one 
+ObjectAllocator to be used for all BSTrees in the program. </li><li>If the object 
+being copied has its SharedAllocator set to <b>false</b>, then the copy will 
+create its own allocator and use that for all of its allocations. The object now 
+owns the allocator and must destroy (free) it when the object is finished with 
+it (most likely in the destructor). This means that the copy <b>will not</b> 
+share its allocator with other copies.
+
+<p>
+Some sample code should clarify this:
+
+</p><blockquote><pre><b>template</b> &lt;<b>typename</b> T&gt;
+BSTree&lt;T&gt;::BSTree(<b>const</b> BSTree &amp;rhs) 
+{
+    <font color="#003399"><i>// If we are to use rhs' allocator</i></font>
+  <b>if</b> (rhs.shareAllocator_)
+  {
+    objAllocator_ = rhs.objAllocator_; <font color="#003399"><i>// Use rhs' allocator</i></font>
+    freeAllocator_ = <b>false</b>;            <font color="#003399"><i>// We don't own it (won't free it)</i></font>
+    shareAllocator_ = <b>true</b>;            <font color="#003399"><i>// If a copy of 'this object' is made, share the allocator</i></font>
+  }
+  <b>else</b> <font color="#003399"><i>// No sharing, create our own personal allocator</i></font>
+  {
+    OAConfig config(<b>true</b>); <font color="#003399"><i>// Set UseCPPMemManager to true, default the others</i></font>
+    objAllocator_ = <b>new</b> ObjectAllocator(<b>sizeof</b>(BinTreeNode), config);
+
+    freeAllocator_ = <b>true</b>;   <font color="#003399"><i>// We own the allocator, we will have to free it</i></font>
+    shareAllocator_ = <b>false</b>; <font color="#003399"><i>// Do not share this allocator with any other list</i></font>
+  }
+
+  <font color="#003399"><i>// other stuff</i></font>
+
+}
+</pre></blockquote>
+
+</li></ol>
+
+Note: Don't copy the value of SharedAllocator or Allocator in the copy constructor or assignment operator.
+Also, DO NOT make a copy of the ObjectAllocator in your copy constructor!
+
+<blockquote><pre></pre></blockquote>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<hr>
+</li><li><b>Question:<br>
+I don't see a copy constructor or assignment operator in the AVLTree class. Is that a mistake?
+</b>
+<p>
+
+<b>Answer:</b><br>
+No. Since there is no additional data in AVLTree that needs to be copied or assigned, the default
+copy constructor and assignment operator generated by the compiler are adequate.
+Remember that the default copy constructor and assignment operator in the derived class will
+call the base class methods, which is where all of the work is done.
+</p><p>
+ If you do add
+additional fields to the AVLTree's private section, you <i>may</i> need to define and implement
+these methods for them to work properly. Consult your CS170 notes regarding when the compiler-generated
+methods are inadequate.
+</p><p>
+
+<br><br><br>
+
+</p><p>
+
+
+</p></li></ol>
+
+
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<hr>
+
+
+
+
+</body></html>

@@ -1,0 +1,140 @@
+
+<!-- saved from url=(0082)http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs180/project1/index.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./CS 180 - Assignment #1_files/new.css">
+<title>CS 180 - Assignment #1</title>
+<style>
+body {
+   background : #ffffff; 
+   margin-left : 50;
+   margin-right : 20;
+   background : url("../../../../../images/notebook.jpg");
+   }
+</style></head>
+
+
+
+<body>  
+<center>
+<h1>CS 180 - Assignment #1</h1>
+Due Wednesday, January 20, 2016 at 11:59 pm<br>
+<br>
+</center>
+
+
+<p class="SectionHeader">
+Information
+</p>
+
+<ul>
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs180/project1/cs180-programming-assignment-slist.pdf">Handout</a></li>
+<p>
+</p><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs180/project1/slist.h.html">slist.h</a> (<a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs180/project1/slist.h">Text</a>) This is the interface.</li>
+<p>
+</p><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs180/project1/slist-skeleton.c.html">slist.c</a> (<a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs180/project1/slist-skeleton.c">Text</a>) This is a 
+	skeleton to get you started. You'll need to modify it,
+	but be careful not to change the <i>sll_dump</i> function because you won't diff correctly if you do.
+	<b>Also: Make sure you document all functions with Doxygen, even if you didn't write the functions.</b>
+<p>
+</p></li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs180/project1/sample-driver.c.html">sample-driver.c</a> (<a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs180/project1/sample-driver.c">Text</a>) This is a 
+	sample driver to help you get started testing.</li>
+<p>
+</p><li>Random number generator files
+	<ul>
+		<li> - Header file (PRNG.h): <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs180/project1/PRNG.h.html">HTML</a> <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs180/project1/PRNG.h">Text</a>
+		</li><li> - Implementation (PRNG.c): <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs180/project1/PRNG.c.html">HTML</a> <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs180/project1/PRNG.c">Text</a>
+	</li></ul>
+	
+<p>
+	</p></li><li>Command line to compile the program:
+<blockquote><pre>gcc -Wall -Wextra -ansi -pedantic -g -O2 sample-driver.c slist.c PRNG.c -o slist
+</pre></blockquote>
+
+</li><li>Sample <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs180/project1/makefile">makefile</a> for the project. You should enhance it by adding rules 
+	so that you can run the executable and diff the output. You should also add a rule to run Doxygen.</li>
+<p>
+</p><li>A sample <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs180/project1/Doxyfile.txt">Doxyfile</a>.</li>
+<p>
+</p><li>To run the program, type this at the command line:
+<blockquote><pre>./slist <font color="blue"><b>X</b></font>
+</pre></blockquote>
+
+where <font color="blue"><b>X</b></font> is the test number to run. See the driver for details.
+<p>
+
+To detect memory errors and leaks, run it under valgrind like this:
+</p><blockquote><pre>valgrind -q --leak-check=full --show-reachable=yes --tool=memcheck ./slist <font color="blue"><b>X</b></font>
+</pre></blockquote>
+
+replace <font color="blue"><b>X</b></font> with the test number to run.
+<p>
+</p></li><li>Sample outputs:	<p>
+</p><ol>
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs180/project1/output-add1.txt">test_add1</a><br>
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs180/project1/output-remove1.txt">test_remove1</a><br>
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs180/project1/output-remove2.txt">test_remove2</a><br>
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs180/project1/output-insert-before1.txt">test_insert-before1</a><br>
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs180/project1/output-insert-after1.txt">test_insert-after1</a><br>
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs180/project1/output-stress1-4500.txt">test_stress1-4500</a><br>
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs180/project1/output-all.txt">all tests</a><br>
+</li></ol>
+
+<p>
+</p><hr width="100%">
+<p>
+
+</p></li><li><b>Using <a href="http://man7.org/linux/man-pages/man1/script.1.html"><tt>script</tt></a></b></li>
+<p>
+You need to capture your shell session that shows various things like compiling and running the program, 
+using <b>diff</b> to make sure your output is correct and running with valgrind and then running Doxygen. 
+After you've finished coding and testing everything and are sure everything is correct, use the 
+<b>script</b> command to make a text file of your session. From the bash shell in the directory you've 
+setup to test with, run these commands: (You'll need a proper Doxygen config file 
+called <tt>Doxyfile</tt> for the <tt>doxygen</tt> command to work. Make sure you set <tt>QUIET=YES</tt>
+in the config file so that you can see any warnings that might be displayed.)
+
+</p><blockquote><pre>script
+date
+uptime
+echo FIRSTNAME LASTNAME
+pwd
+whoami
+uname -a
+cat /proc/cpuinfo
+cat /proc/meminfo
+gcc -g -Wall -Wextra -ansi -pedantic sample-driver.c slist.c PRNG.c -o slist
+./slist | tee output.txt
+diff output.txt output-all.txt
+valgrind -q --leak-check=full --show-reachable=yes --tool=memcheck ./slist &gt; /dev/null
+doxygen
+ls -al html/
+</pre></blockquote>
+
+Then, press <tt><b>Ctrl-D</b></tt> to end the script session. A file named <b><tt>typescript</tt></b> 
+was created with all of the commands and output. Replace FIRSTNAME and LASTNAME with your real first 
+name and last name. This is how you get your name in the typescript file. Consult the man pages 
+<a href="http://man7.org/linux/man-pages/man1/script.1.html">here</a>.if you want more information on 
+<tt>script</tt>.
+
+	
+</ul>
+
+
+<blockquote>
+</blockquote>
+
+<blockquote>
+</blockquote>
+
+<blockquote>
+</blockquote>
+
+<br><br><br><br><br>
+
+
+
+
+<b><tt></tt></b>
+
+<blockquote><pre></pre></blockquote>
+</body></html>

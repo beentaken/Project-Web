@@ -1,0 +1,1789 @@
+
+<!-- saved from url=(0067)https://azrael.digipen.edu/~mmead/www/Courses/CS280/Recursion2.html -->
+<html class="gr__azrael_digipen_edu"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./Recursive Algorithms and Functions_files/new.css">
+<title>Recursive Algorithms and Functions</title>
+</head>
+
+<body data-gr-c-s-loaded="true">
+<center><h1>Recursive Algorithms and Functions</h1></center>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Terminology
+</p>
+
+<ul>
+<li><b>Recursive definition</b> - A definition in which something is defined
+in terms of smaller versions of itself.
+</li><li><b>Base case</b> - The case for which the solution can be stated non-recursively.
+</li><li><b>General case (recursive case)</b> - The case for which the solution is
+expressed in terms of a smaller version of itself.
+</li><li><b>Recursive algorithm</b> - A solution that is expressed in terms of
+(a) a base case and (b) a recursive case.
+</li><li><b>Recursive call</b> - A function call in which the function being called
+is the same as the one making the call.
+</li><li><b>Infinite recursion</b> - The situation in which a function calls
+itself over and over endlessly.
+</li><li><b>Divide and Conquer</b> - This describes the technique by which recursion works;
+  by dividing up the work to be done into smaller and smaller pieces and "conquering" those
+  smaller pieces. (This is the same idea we use to divide programs into functions.)
+<!--
+<li><b>Tail recursion</b> - A recursive algorithm in which no statements
+are executed after returning from the recursive call
+-->
+</li></ul>
+
+Recursive functions can call themselves either <i>directly</i> or <i>indirectly</i>:
+<ul>
+<li><b>Direct</b> - <i>FunctionA</i> calls <i>FunctionA</i><br>
+</li><li><b>Indirect</b> - <i>FunctionA</i> calls <i>FunctionB</i>, <i>FunctionB</i> calls <i>FunctionA</i> or
+<i>FunctionA</i> calls <i>FunctionB</i>, <i>FunctionB</i> calls <i>FunctionC</i>, <i>FunctionC</i>
+calls <i>FunctionA</i>.
+</li></ul>
+
+Reasons for creating <i>subproblems</i>:
+<ul>
+<li>The subproblems are smaller or simpler than the original problem.
+</li><li>The subproblem has an immediate solution, or can be solved by further recursion.
+</li><li>The results of the subproblems can be combined to give the overall solution to the original problem.
+</li></ul>
+
+The splitting of larger problems into smaller ones is known as the <i>Divide and Conquer</i>
+strategy. (You've been using a form of this strategy in all of your programming and that's
+why we don't put the entire program in <tt><b>main</b></tt>!)
+<p>
+
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><p class="SectionHeader">Recursive Algorithms
+</p>
+
+
+Recursive constructs are described in terms of themselves. From the
+<a href="http://www.catb.org/jargon/">Jargon File</a>:
+<blockquote><pre><b>recursion</b> /n./ See <i>recursion.</i>
+  or
+<b>GNU</b> /gnoo/ 1. [acronym: `GNU's Not  Unix!']
+</pre></blockquote>
+
+A recursive algorithm is simply one that is defined in terms of itself. Some examples:
+<p>
+Natural Numbers
+</p><ul>
+<li>1 is a Natural Number
+</li><li> The successor of any Natural Number is a Natural Number
+</li></ul>
+
+In C/C++ code:
+
+<pre class="sourcecode"><code><b>bool</b> IsNatural(<b>unsigned int</b> number)
+{
+  <b>if</b> (number == 1)
+    <b>return</b> true;
+  <b>else</b>
+    <b>return</b> IsNatural(number - 1);
+}</code></pre>
+
+
+<blockquote><pre></pre></blockquote>
+
+Call stack for <tt>IsNatural(5)</tt>:
+
+<blockquote><pre>IsNatural(int 1) line 127  <b> &lt;--- base case stops the recursion</b>
+IsNatural(int 2) line 132 + 12 bytes
+IsNatural(int 3) line 132 + 12 bytes
+IsNatural(int 4) line 132 + 12 bytes
+IsNatural(int 5) line 132 + 12 bytes
+main() line 335 + 12 bytes
+</pre></blockquote>
+
+<!--
+mainCRTStartup() line 206 + 25 bytes
+KERNEL32! 7c4e87f5()
+-->
+
+
+
+<p>
+</p><hr width="90%">
+<p>
+
+In programming terms, recursion is very much like iteration (looping). In fact, anything you can do iteratively, you can
+do recursively.
+</p><p>
+The fundamental difference between iteration and recursion is that you
+<i>make a function call</i> instead of jumping to the top of a loop. Here's an iterative example:
+</p><p>
+Counting down from 5 <i>iteratively</i>:
+</p><p>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th>Version 1</th><th>Version 2</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>void</b> PrintDown1()
+{
+  <b>for</b> (<b>int</b> i = 5; <font color="blue"><b>i &gt; 0</b></font>; i--)
+    cout &lt;&lt; i &lt;&lt; endl;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>void</b> PrintDown2()
+{
+  <b>int</b> i = 5;
+  <b>while</b> (<font color="blue"><b>i &gt; 0</b></font>)
+  {
+    cout &lt;&lt; i &lt;&lt; endl;
+    i--;
+  }
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</p><p>
+
+
+Counting down from 5 <i>recursively</i> using a global variable: (This is a less desirable way to implement a recursive function.)
+</p><p>
+</p><blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th>Version 1</th><th>Version 2</th><th>Version 3</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>int</b> Value = 5;
+
+<b>void</b> PrintDown1()
+{
+  <b>if</b> (<font color="blue"><b>Value &lt; 1</b></font>)
+    <b>return</b>;
+  <b>else</b>
+  {
+    cout &lt;&lt; Value &lt;&lt; endl;
+    <font color="red"><b>Value--</b></font>;
+    PrintDown1();
+  }
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>int</b> Value = 5;
+
+<b>void</b> PrintDown2()
+{
+  <b>if</b> (<font color="blue"><b>Value &gt; 0</b></font>)
+  {
+    cout &lt;&lt; Value &lt;&lt; endl;
+    <font color="red"><b>Value--</b></font>;
+    PrintDown2();
+  }
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>int</b> Value = 5;
+
+<b>void</b> PrintDown3()
+{
+  <b>if</b> (<font color="blue"><b>Value &gt; 0</b></font>)
+  {
+    cout &lt;&lt; <font color="red"><b>Value--</b></font> &lt;&lt; endl;
+    PrintDown3();
+  }
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+You would simply call it like this:
+
+<blockquote><pre>PrintDown1();
+</pre></blockquote>
+
+This is a special form of recursion called <i>tail recursion</i> because the very last 
+statement is the recursive call. Some compilers
+can optimize this into something like this, for example:
+
+<blockquote><pre><b>int</b> Value = 5;
+
+<b>void</b> PrintDown2()
+{
+  top:
+  <b>if</b> (<font color="blue"><b>Value &gt; 0</b></font>)
+  {
+    cout &lt;&lt; Value &lt;&lt; endl;
+    <font color="red"><b>Value--</b></font>;
+    <b>goto</b> top;
+  }
+}
+</pre></blockquote>
+
+With a very high number for <tt>Value</tt>, the non-optimized version will overflow the stack. 
+The optimized version (gcc with <tt>-O2</tt> or <tt>-O3</tt>) has no limitations. Also, if you
+remove the <tt>cout</tt> call, some compilers will simply set <i>Value</i> to 0, since that's 
+the ultimate goal.
+<p>
+<!--
+Microsoft's compiler does the above and the assembly is easier to read
+-->
+
+Counting down from 5 <i>recursively</i> using parameters: (This is a better way to implement 
+a recursive function.)
+</p><p>
+</p><blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th>Version 1</th><th>Version 2</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>void</b> PrintDown1(<b>int</b> Value)
+{
+  <b>if</b> (<font color="blue"><b>Value &lt; 1</b></font>)
+    <b>return</b>;
+  <b>else</b>
+  {
+    cout &lt;&lt; Value &lt;&lt; endl;
+    PrintDown1(<font color="red"><b>Value - 1</b></font>);
+  }
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>void</b> PrintDown2(<b>int</b> Value)
+{
+  <b>if</b> (<font color="blue"><b>Value &gt; 0</b></font>)
+  {
+    cout &lt;&lt; Value &lt;&lt; endl;
+    PrintDown2(<font color="red"><b>Value - 1</b></font>);
+  }
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+You would call it like this:
+
+<blockquote><pre>PrintDown1(5);
+</pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+
+
+
+
+
+
+
+<li>The fundamental idea behind recursion is that we expect that a smaller version of a problem
+will be easier to solve than the original "full" version.
+<blockquote>
+  For example, it is easier to sort 2 items than it is to sort 3, or 4 items.
+</blockquote>
+</li><li>The <i>quicksort</i> algorithm depends on the fact that "smaller" versions will arise quickly.
+<ul>
+  <li>Described recursively we'd say: <i>"1) Partition the data, then 2) quicksort the left and 3) quicksort the right."</i>
+  </li><li>But how do we quicksort the left?
+</li></ul>
+<ul>
+<ol>
+
+<table cellpadding="5" cellspacing="5">
+<tbody><tr>
+  <td>
+
+  <li>Partition the data</li>
+      <li>quicksort the left</li>
+      <ol type="A">
+        <li>Partition the data</li>
+        <li>quicksort the left</li>
+            <ol type="i">
+              <li>Partition the data</li>
+              <li>quicksort the left</li>
+              <li>quicksort the right</li>
+            </ol>
+        <li>quicksort the right</li>
+      </ol>
+            <ol>
+            <ol type="i">
+              <li>Partition the data</li>
+              <li>quicksort the left</li>
+              <li>quicksort the right</li>
+              </ol>
+        </ol>
+      
+      <li>quicksort the right</li>
+      <ol type="A">
+        <li>Partition the data</li>
+          <li>quicksort the left</li>
+            <ol type="i">
+              <li>Partition the data</li>
+              <li>quicksort the left</li>
+              <li>quicksort the right</li>
+              </ol>
+          <li>quicksort the right</li>
+            </ol>
+            <ol>
+            <ol type="i">
+              <li>Partition the data</li>
+              <li>quicksort the left</li>
+              <li>quicksort the right</li>
+              </ol>
+        </ol>
+      
+
+    </td>
+    <td width="40"></td>
+    <td>
+
+<blockquote>
+<img src="./Recursive Algorithms and Functions_files/Quicksort-partitioning-1.png">
+</blockquote>
+
+  </td>
+</tr></tbody></table>
+<p>
+
+</p></ol></ul>
+
+
+
+
+
+</li><li>What is a <i>smaller</i> version of the problem? When does the partitioning stop?
+</li><li>Here's a prototype and pseudo-code for a quicksort algorithm:
+<blockquote><pre><b>void</b> quicksort(<b>void</b> *base, size_t elem_count, size_t elem_size, <b>int</b> (* compare)(<b>const</b> <b>void</b> *, <b>const</b> <b>void</b> *))
+{
+  <font color="#003399"><i>// If there is more than 1 element in the array,</i></font>
+    <font color="#003399"><i>// Call partition to partition the array  </i></font>
+    <font color="#003399"><i>// Call quickqsort to sort the left portion  </i></font>
+    <font color="#003399"><i>// Call quickqsort to sort the right portion </i></font>
+  <font color="#003399"><i>// End                                           </i></font>
+}
+</pre></blockquote>
+
+
+
+<blockquote><pre></pre></blockquote>
+
+</li><li>Finding the maximum value in an array:
+  <ol>
+  <li>Find the maximum in the left half
+  </li><li>Find the maximum in the right half
+  </li><li>Choose the larger
+</li></ol>
+
+<blockquote><pre><b>int</b> maximum(<b>int</b> array[], <b>int</b> left, <b>int</b> right)
+{
+    <font color="#003399"><i>// One element in the array (the base case)</i></font>
+  <b>if</b> (left == right)
+    <b>return</b> array[left];
+
+  <b>int</b> middle = (left + right) / 2;
+  <b>int</b> x = maximum(array, left, middle);    <font color="#003399"><i>  // max in left</i></font>
+  <b>int</b> y = maximum(array, middle + 1, right); <font color="#003399"><i>// max in right</i></font>
+
+    <font color="#003399"><i>// Choose the larger</i></font>
+  <b>if</b> (x &gt; y)
+    <b>return</b> x;
+  <b>else</b>
+    <b>return</b> y;
+}
+</pre></blockquote>
+
+<a name="NAIVE"></a>
+A couple of other "optimized" functions: (<b>Never do this!</b>)
+<blockquote><pre><b>int</b> maximum2(<b>int</b> array[], <b>int</b> left, <b>int</b> right)
+{
+  <b>if</b> (left == right)
+    <b>return</b> array[left];
+
+  <b>int</b> middle = (left + right) / 2;
+  <b>if</b> (maximum2(array, left, middle) &gt; maximum2(array, middle + 1, right))
+    <b>return</b> maximum2(array, left, middle);
+  <b>else</b>
+    <b>return</b> maximum2(array, middle + 1, right);
+}
+
+<b>int</b> maximum3(<b>int</b> array[], <b>int</b> left, <b>int</b> right)
+{
+  <b>if</b> (left == right)
+    <b>return</b> array[left];
+
+  <b>int</b> middle = (left + right) / 2;
+  <b>return</b> maximum3(array, left, middle) &gt; maximum3(array, middle + 1, right)
+                                       ? maximum3(array, left, middle)
+                                       : maximum3(array, middle + 1, right);
+}
+</pre></blockquote>
+
+<p class="technote">
+<b>Self-check</b> Compile and run the different versions of <i>maximum</i> above with the test driver below and see what you get.
+</p>
+
+Test program:
+<blockquote><pre><b>void</b> TestMax()
+{
+  <b>int</b> a[] = {3, 6, 8, 3, 7, 5, 9, 1, 2, 6, 4};
+  <b>int</b> max = maximum(a, 0, 10);
+  printf(<font color="#9933CC">"Max is %i\n"</font>, max);
+}
+</pre></blockquote>
+
+<!--
+A "broken" version:
+
+<blockquote><pre>
+<b>int</b> middle = (left + right) / 2;
+<b>int</b> x = maximum(array, left, middle);    <font color="#003399"><i>// max in left</i></font>
+<b>int</b> y = maximum(array, <font color="blue"><b>left</b></font> + 1, right); <font color="#003399"><i>// max in right</i></font>
+</pre></blockquote>
+-->
+
+<blockquote>
+<center>
+<p>
+</p><p class="technote">
+<font size="+2">
+<b>Never</b> use a conditional operator ( <b><tt>? :</tt></b> ) in any code on any exam.
+</font>
+</p>
+</center>
+</blockquote>
+
+<!--
+<a href="CallStack.html">
+-->
+<p>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><p class="SectionHeader">Other Examples
+</p>
+
+
+A classic example is the definition of factorial. To calculate N! for all values &gt;= 0:
+
+<blockquote><pre>(base case)      If N = 0 then N! = 1
+(recursive case) If N &gt; 0 then N! = N * (N - 1)!
+</pre></blockquote>
+
+Expanded general form:
+<blockquote><pre>N! = N * (N - 1) * (N - 2) * ... * 2 * 1
+</pre></blockquote>
+
+Expanded example:
+<blockquote><pre>5! = 5 * 4!
+   = 5 * (4 * 3!)
+   = 5 * (4 * (3 * 2!))
+   = 5 * (4 * (3 * (2 * 1!)))
+   = 5 * (4 * (3 * (2 * (1 * 0!))))   (we've hit the base case)
+   = 5 * (4 * (3 * (2 * (1 * 1))))
+   = 5 * (4 * (3 * (2 * 1)))
+   = 5 * (4 * (3 * 2))
+   = 5 * (4 * 6)
+   = 5 * 24
+   = 120
+</pre></blockquote>
+
+Some other values:
+<blockquote><pre>0! = 1
+1! = 1
+2! = 2
+3! = 6
+4! = 24
+5! = 120
+6! = 720
+7! = 5040
+8! = 40320
+9! = 362880
+10! = 3628800
+</pre></blockquote>
+
+<p>
+</p><hr width="90%">
+<p>
+
+A very simplified BNF Grammar (Backus-Naur Form) describing an expression:
+
+</p><blockquote><pre>(recursive case) &lt;expression&gt; ::= &lt;number&gt; | &lt;number&gt; &lt;operator&gt; &lt;expression&gt;
+(recursive case) &lt;number&gt; :: = &lt;digit&gt; | &lt;digit&gt; &lt;number&gt;
+(base case)      &lt;digit&gt; ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+(base case)      &lt;operator&gt; ::= + | - | * | /
+</pre></blockquote>
+
+Some example expressions:
+<blockquote>
+5<br>
+3 + 5<br>
+12 / 7<br>
+6 - 14 * 11<br>
+</blockquote>
+
+
+
+<!--
+Other problems:
+<ul>
+<li>Factorial
+<li>String Reversal
+<li>Set Permutations
+<li>Recursive Binary Search
+</ul>
+-->
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<!--
+<p>
+<hr>
+<p>
+
+<h2>The Towers of Hanoi</h2>
+
+Two basic rules:
+<ol>
+<li>Only one disk can be moved at a time.
+<li>A larger disk cannot be moved onto a smaller disk.
+</ol>
+
+<blockquote><pre>
+<b>void</b> MoveDisks(<b>int</b> N, <b>int</b> begin, <b>int</b> end, <b>int</b> temp)
+{
+  <font color="#003399"><i>// Move N disks from the begin post to the end post</i></font>
+  <font color="#003399"><i>// using the temp post as intermediate storage</i></font>
+
+  <b>if</b> (N == 1)
+  {
+    <font color="#003399"><i>// Move the disk from the begin post to end post</i></font>
+  }
+  <b>else</b>
+  {
+    <font color="#003399"><i>// Move N - 1 disks from begin to temp</i></font>
+    <font color="#003399"><i>// Move one disk (the remaining one) from begin to end</i></font>
+    <font color="#003399"><i>// Move N - 1 disks from temp post to end post</i></font>
+  }
+}
+</pre></blockquote>
+
+
+<blockquote><pre>
+</pre></blockquote>
+->
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Recursion and Function Calls
+</p>
+
+
+
+<ul>
+<li><i>Recursion</i> is a form of <i>iteration</i>. All iterations need some way to <i>terminate</i>:
+
+<blockquote><pre><b>int</b> i = 5;
+
+  <font color="#003399"><i>// Terminates when i &lt;= 0</i></font>
+<b>while</b> (i &gt; 0)
+{
+  <font color="#003399"><i>// do stuff</i></font>
+  i--;
+}
+
+ <font color="#003399"><i>// Terminates when i &gt;= 10</i></font>
+<b>for</b> (i = 0; i &lt; 10; i++)
+{
+  <font color="#003399"><i>// do stuff</i></font>
+}
+
+  <font color="#003399"><i>// Terminates when something is true</i></font>
+<b>while</b> (1)
+{
+  <font color="#003399"><i>// do stuff </i></font>
+  <b>if</b> (<font color="#003399"><i>/* something is true */</i></font>)
+    <b>break</b>;
+}
+</pre></blockquote>
+
+</li></ul>
+
+<ul>
+<li>Some repetitions are more easily described with recursion and more easily implemented.
+</li></ul>
+
+<ul>
+<li>Looping can be accomplished in C++ by:
+<ul>
+<li>while
+</li><li>for
+</li><li>do . . . while
+</li></ul>
+</li><li>A recursive function is one that calls itself either directly or indirectly:
+<ul>
+<li>Directly - Function <i>F</i> calls function <i>F</i>.
+</li><li>Indirectly - Function <i>A</i> calls function <i>B</i>, function <i>B</i> calls function <i>A</i>.
+</li><li>Indirectly - Function <i>A</i> calls function <i>B</i>, function <i>B</i> calls function <i>C</i>, function
+<i>C</i> calls function <i>A</i>.
+</li></ul>
+
+
+</li><li>Unless a stop condition is included in the algorithm, we will have <i>infinite recursion</i> (must have a terminating condition)
+<!--
+<li>In mathematics we sometimes call these recurrence relations
+-->
+</li><li>Recursion is not unique to C++; many languages support it
+</li></ul>
+
+<b>Basic Idea</b>
+<ul>
+<li>Figure out the pattern of repetition that calls the recursive function. (What is being done repeatedly?)
+</li><li>Find out what changes in the parameters to cause the problem to
+change (get smaller) with each recursive call.
+</li><li>Figure out the base case or trivial case; this is what stops the recursion.
+</li></ul>
+
+
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<hr width="90%">
+<h2>Example</h2>
+
+
+<b>Printing a string iteratively</b>
+<p>
+First, write down the <i>algorithm</i> in English:
+
+</p><ol>
+<li>Start with the first character
+</li><li>If it's the NUL character, STOP.
+</li><li>If it's not NUL, print the character
+</li><li>Move to the next character
+</li><li>Go to step 2
+</li></ol>
+
+Another way to write the same algorithm:
+<ol>
+<li>Set the first character as the current character
+</li><li>While there are more characters in the string
+</li><li>Print the current character
+</li><li>Move to the next character
+</li><li>Go to step 2
+</li></ol>
+
+The code that implements the algorithm could look like this (assume a valid NUL-terminated string):
+
+<blockquote><pre><b>void</b> print_string(<b>const</b> <b>char</b> *string)
+{
+  <b>while</b> (*string)
+    putchar(*string++);
+}
+</pre></blockquote>
+
+
+<b>Printing a string recursively:</b>
+<p>
+First, write down the <i>algorithm</i> in English:
+
+</p><ol>
+<li>If the first character is NUL, STOP.
+</li><li>Print the first character (head)
+</li><li>Then <i>print the rest</i> of the string (tail).
+</li></ol>
+
+The <i>rest of the string</i> is itself a <b>string</b>, (albeit a shorter one), and we just stated above how to print a <b>string</b>.
+<p>
+Code to implement the algorithm might look like this:
+
+</p><blockquote><pre><font color="#003399"><i>// Print the first character, and then print the rest ... </i></font>
+<b>void</b> print_string_rec(<b>const</b> <b>char</b> *string)
+{
+  putchar(*string);           <font color="#003399"><i>// Print the first character</i></font>
+  print_the_rest(string + 1); <font color="#003399"><i>// Print the rest of the string</i></font>
+}
+</pre></blockquote>
+
+Of course, our <b>black box</b> function <tt>print_the_rest</tt> needs to be implemented at
+some point. How do we <i>print the rest</i> of the string? Same as before:
+<ol>
+<li>Print the first character, then
+</li><li>Print the rest of the string
+</li></ol>
+
+which leads to:
+
+<blockquote><pre><b>void</b> print_the_rest(<b>const</b> <b>char</b> *string)
+{
+  putchar(*string);            <font color="#003399"><i>// Print the first character</i></font>
+  print_the_rest2(string + 1); <font color="#003399"><i>// Print the rest of the string</i></font>
+}
+</pre></blockquote>
+
+and then:
+
+<blockquote><pre><b>void</b> print_the_rest2(<b>const</b> <b>char</b> *string)
+{
+  putchar(*string);            <font color="#003399"><i>// Print the first character</i></font>
+  print_the_rest3(string + 1); <font color="#003399"><i>// Print the rest of the string</i></font>
+}
+
+<b>void</b> print_the_rest3(<b>const</b> <b>char</b> *string)
+{
+  putchar(*string);            <font color="#003399"><i>// Print the first character</i></font>
+  print_the_rest4(string + 1); <font color="#003399"><i>// Print the rest of the string</i></font>
+}
+
+</pre></blockquote>
+
+etc. It's not difficult to see the pattern here and a lot of duplicated functionality
+(not to mention the limitation of printing only strings of a certain length). We only
+need one version of these identical functions:
+
+<blockquote><pre><b>void</b> <font color="blue">print_the_rest</font>(<b>const</b> <b>char</b> *string)
+{
+  putchar(*string);           <font color="#003399"><i>// Print the first character</i></font>
+  <font color="blue">print_the_rest</font>(string + 1); <font color="#003399"><i>// Print the rest <b>recursively</b></i></font>
+}
+</pre></blockquote>
+
+But this is still the same functionality as our original <tt>print_string_rec</tt> function:
+
+<blockquote><pre><b>void</b> print_string_rec(<b>const</b> <b>char</b> *string)
+{
+  putchar(*string);           <font color="#003399"><i>// Print the first character</i></font>
+  print_the_rest(string + 1); <font color="#003399"><i>// Print the rest of the string</i></font>
+}
+</pre></blockquote>
+
+So, we can fold all of this functionality into one function:
+
+<blockquote><pre><b>void</b> <font color="blue">print_string_rec</font>(<b>const</b> <b>char</b> *string)
+{
+  putchar(*string);             <font color="#003399"><i>// Print the first character</i></font>
+  <font color="blue">print_string_rec</font>(string + 1); <font color="#003399"><i>// Print the rest of the string</i></font>
+}
+</pre></blockquote>
+
+At this point, we're missing a very crucial piece of code: the <i>terminating condition</i>. (Recursion
+is a form of iteration and iterations (usually) need to end.)
+<p>
+The terminating condition for printing a string should be when we encounter the NUL character
+at the end:
+
+</p><blockquote><pre><b>void</b> print_string_rec(<b>char</b> *string)
+{
+    <font color="#003399"><i>// If it's the NUL character, do nothing and return</i></font>
+  <b>if</b> (*string)
+  {
+    putchar(*string);             <font color="#003399"><i>// Print the first character</i></font>
+    print_string_rec(string + 1); <font color="#003399"><i>// Print the rest of the string</i></font>
+  }
+}
+</pre></blockquote>
+
+This function will handle NUL-terminated strings of any length (including zero-length).
+<p>
+
+Notes:
+
+</p><ul>
+<li>Recursion works by applying its algorithm to a smaller version of the problem.
+(It should be less work to print the tail of a string than the whole string.)
+</li><li>Without a terminating condition we will have <i>infinite recursion</i>, which is not unlike
+an infinite loop in iteration. Infinite recursion will usually crash the program immediately (by
+exhausting the stack).
+</li><li>There is nothing special or magical about a recursive function. At runtime, it behaves exactly
+like any other function, meaning:
+<ul>
+<li>All local variables are re-initialized (or uninitialized) between invocations
+</li><li>The values of the locals are saved between calls, just as they would be if you called another
+function.
+</li><li>If you need to access previous values of a local variable between calls, you are going to need
+to pass the variable to the function as a parameter.
+</li></ul>
+</li></ul>
+
+Another <a href="https://azrael.digipen.edu/~mmead/www/Courses/CS280/Recursion-Example-2.html">recursion example</a>
+<p>
+
+</p><blockquote><pre></pre></blockquote>
+
+
+
+<blockquote><pre></pre></blockquote>
+<blockquote><pre></pre></blockquote>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">More Examples
+</p>
+
+
+<b>Printing a string in reverse (iteratively):</b>
+<p>
+Algorithm:
+
+</p><ol>
+<li>Set the position to the last character.
+</li><li>If the current position is less than 0, STOP, else print the character
+</li><li>Decrement the position.
+</li><li>Goto 2
+</li></ol>
+
+<blockquote><pre><b>void</b> print_string_rev1(<b>char</b> *string)
+{
+  <b>int</b> i;
+  <b>int</b> len = strlen(string);
+  <b>for</b> (i = len; i &gt; 0; i--)
+    putchar(*(string + i - 1));
+}
+</pre></blockquote>
+
+or
+
+<blockquote><pre><b>void</b> print_string_rev2(<b>char</b> *string)
+{
+  <b>int</b> len = strlen(string);
+  <b>while</b> (len)
+  {
+    putchar(*(string + len - 1));
+    len--;
+  }
+}
+</pre></blockquote>
+
+
+<b>Printing a string in reverse (recursively):</b>
+<p>
+Algorithm:
+
+</p><ol>
+<li>Print the rest of the string (tail) in reverse.
+</li><li>Then print the first character (head).
+</li></ol>
+
+Code:
+
+<blockquote><pre><b>void</b> print_string_rec_r(<b>char</b> *string)
+{
+  <b>if</b> (*string)
+  {
+    print_string_rec_r(string + 1);
+    putchar(*string);
+  }
+}
+</pre></blockquote>
+
+
+<p class="technote">
+<b>Self Check:</b>
+</p>
+<ol>
+<li>Write a recursive function to print the values 1 to 10. Here's the prototype: (Call it with a value of 1)
+<blockquote><pre>void PrintTen(int value);
+</pre></blockquote>
+
+</li><li>Write a recursive function to print an arbitrary range of numbers. Here's the prototype:
+<blockquote><pre>void PrintNumbers(int start, int end);
+</pre></blockquote>
+
+For example, <i>PrintNumbers(4, 8)</i> will print:
+<blockquote><pre>4
+5
+6
+7
+8
+</pre></blockquote>
+
+
+</li><li>Write a recursive function to print the values 10 to 1. (Modify the first function above.)
+</li><li>Write a recursive function, <b>rec_strlen</b>, to return the string length of a NUL-terminated string.
+(Think <i>head</i> and <i>tail</i> with respect to their lengths)
+
+For example, <i>rec_strlen("Hello")</i> will return 5.
+
+</li></ol>
+
+Before attempting to write the code for these, you should first state the
+recursive algorithm in English.
+<p>
+
+<a href="https://azrael.digipen.edu/~mmead/www/Courses/CS280/SolutionsForFunctions.html">Sample solutions</a>
+
+
+
+
+</p><blockquote><pre></pre></blockquote>
+
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">More Recursion Details
+</p>
+
+<p>
+Looking again at the factorial function defined recursively:
+</p><blockquote>
+<pre>N! = N · (N - 1)!
+</pre>
+</blockquote>
+
+This function assumes that N &gt; 0 and by definition 0! = 1. This function
+is recursive because it is defined in terms of itself. The traditional
+way of writing recursive definitions is like this:
+
+<blockquote>
+<pre>0! = 1             base case
+N! = N · (N - 1)!  recursive case
+</pre>
+</blockquote>
+
+For example, 5! is defined like this:
+<blockquote>
+<pre>5! = 5 · 4!
+</pre>
+</blockquote>
+And 4! is defined like this:
+<blockquote>
+<pre>4! = 4 · 3!
+</pre>
+</blockquote>
+And so on:
+<blockquote>
+<pre>3! = 3 · 2!
+2! = 2 · 1!
+1! = 1 · 0!
+0! = 1     this is the base case
+</pre>
+</blockquote>
+Which ultimately gives us:
+<blockquote>
+<pre>5 · 4 · 3 · 2 · 1 · 1 = 120
+</pre>
+</blockquote>
+<p>
+
+</p><p>
+<a href="https://azrael.digipen.edu/~mmead/www/Courses/CS280/RecursionCode.html#Factorial">Sample code</a>
+</p><p>
+<a href="https://azrael.digipen.edu/~mmead/www/Courses/CS280/RecursionAsm.html">Assembly</a>
+</p><p>
+
+Diagram of the recursive function calls:
+
+</p><blockquote>
+<img src="./Recursive Algorithms and Functions_files/factorial-1.png">
+</blockquote>
+
+<hr width="90%">
+<p>
+
+Another popular function that is defined recursively is the power function:
+</p><blockquote>
+<pre>X<sup>N</sup> = X · X<sup>(N - 1)</sup>
+</pre>
+</blockquote>
+
+This function assumes that N &gt; 0 and by definition X<sup>0</sup> = 1.
+We would write the recursive definition like this:
+<blockquote>
+<pre>X<sup>0</sup> = 1            base case
+X<sup>N</sup> = X · X<sup>(N - 1)</sup>  recursive case
+</pre>
+</blockquote>
+
+<p>
+<a href="https://azrael.digipen.edu/~mmead/www/Courses/CS280/RecursionCode.html#Power">Sample code</a>
+</p><p>
+
+</p><hr width="90%">
+<p>
+
+Find the maximum value in a list of integers recursively.
+(<i>Don't use this method in an actual project!</i>)
+
+</p><blockquote><pre>Base: MaxVal([x]) = x
+
+Recursive:
+MaxVal([a<sub>1</sub>, a<sub>2</sub>, a<sub>3</sub>, ..., a<sub>N</sub>]) = if a<sub>1</sub> &gt; MaxVal([a<sub>2</sub>, ..., a<sub>N</sub>]) then
+                                   a<sub>1</sub>
+                                else
+                                   MaxVal([a<sub>2</sub>, ..., a<sub>N</sub>])
+</pre></blockquote>
+
+<p>
+Complexities:
+</p><ul>
+<li>Best case: <i>O(n)</i> (Sorted high to low)
+</li><li>Worst case: <i>O(2<sup>n</sup>)</i> (Sorted low to high)
+</li></ul>
+
+<p>
+<a href="https://azrael.digipen.edu/~mmead/www/Courses/CS280/RecursionCode.html#MaxVal">Sample code</a>
+</p><p>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<!--
+<hr width=90%>
+<b>Factorial Examples</b>
+<p>
+The factorial function can be written non-recursively in C++:
+<blockquote>
+<pre>
+<b>int</b> iterativeFact(<b>int</b> number)
+{
+  <b>int</b> factor = 1;
+
+  <b>for</b> (<b>int</b> count = 2; count <= number; count++)
+    factor = factor * count;
+
+  <b>return</b> factor;
+}
+</pre>
+</blockquote>
+
+The factorial function can also be written recursively:
+<blockquote>
+<pre>
+<b>int</b> recursiveFact(<b>int</b> number)
+{
+  <b>if</b> (number == 0)
+    <b>return</b> 1;
+  <b>else</b>
+    <b>return</b> number * recursiveFact(number - 1);
+}
+</pre>
+</blockquote>
+
+Client code would call them in the normal fashion:
+
+<pre>
+<blockquote>
+cout << iterativeFact(5) << endl;
+cout << recursiveFact(5) << endl;
+
+Output:<b>
+120
+120
+</b>
+</pre>
+</blockquote>
+-->
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><p class="SectionHeader">Tracing Function Calls (Call stack review)
+</p>
+
+<p>
+Given the 3 functions as defined below:
+</p><p>
+
+<table cellpadding="10" border="1">
+<tbody><tr valign="top"><td>
+<pre><b>int</b> f1(<b>int</b> a, <b>int</b> b)
+{
+  <b>int</b> x, y;
+
+  x = f2(a);
+  y = 4 + b;
+
+
+  <b>return</b> x + y;
+}</pre>
+</td>
+<td>
+<pre><b>int</b> f2(<b>int</b> x)
+{
+  <b>int</b> a, b, c;
+
+  a = x;
+  b = 5;
+  c = f3(a + b);
+
+  <b>return</b> c;
+}</pre>
+</td>
+<td>
+<pre><b>int</b> f3(<b>int</b> x)
+{
+  <b>int</b> a;
+
+  // snapshot taken before
+  // this line executes:
+  a = x * 3;
+
+  <b>return</b> a;
+}</pre>
+</td>
+</tr>
+</tbody></table>
+
+
+
+What does the following program print?
+
+</p><blockquote><pre><b>void</b> main()
+{
+  <b>int</b> x;
+  <b>float</b> f;
+
+  f = 2.7f;
+  x = f1(2, 3);
+
+  cout &lt;&lt; x &lt;&lt; endl;
+}
+</pre></blockquote>
+
+This image below is a "snapshot" of what the runtime stack (memory) looks like just before
+the statement
+<blockquote>
+<pre>a = x * 3;
+</pre>
+</blockquote>
+
+in <b>f3</b> is executed. (Actually, it's not exactly like than this, but it gets the point across.)
+
+<blockquote>
+
+<table><tbody><tr valign="top">
+<td>
+<img src="./Recursive Algorithms and Functions_files/frame1.gif" height="520" width="290" border="3">
+</td>
+<td>
+<table cellpadding="10" border="0">
+<tbody><tr valign="top"><td>
+<pre><b>int</b> f1(<b>int</b> a, <b>int</b> b)
+{
+  <b>int</b> x, y;
+
+  x = f2(a);
+  y = 4 + b;
+
+
+  <b>return</b> x + y;
+}</pre>
+</td>
+<td>
+<pre><b>int</b> f2(<b>int</b> x)
+{
+  <b>int</b> a, b, c;
+
+  a = x;
+  b = 5;
+  c = f3(a + b);
+
+  <b>return</b> c;
+}</pre>
+</td></tr>
+
+<tr>
+<td>
+<pre><b>int</b> f3(<b>int</b> x)
+{
+  <b>int</b> a;
+
+  // snapshot taken before
+  // this line executes:
+  a = x * 3;
+
+  <b>return</b> a;
+}</pre>
+</td>
+<td>
+<blockquote><pre><b>int</b> main()
+{
+  <b>int</b> x;
+  <b>float</b> f;
+
+  f = 2.7f;
+  x = f1(2, 3);
+
+  cout &lt;&lt; x &lt;&lt; endl;
+
+  <b>return</b> 0;
+}
+</pre></blockquote>
+
+</td>
+</tr>
+</tbody></table>
+</td>
+</tr></tbody></table>
+
+
+<!--
+Output is 28
+21 + 7
+-->
+
+
+
+</blockquote>
+
+<p>
+
+<b>The "stack" and Recursive Programming</b>
+
+</p><ul>
+<li>Each function's portion of the stack is called an <i>activation record</i> or
+<i>stack frame</i>
+</li><li>The stack grows and shrinks during program execution.
+</li><li>This is why local variables are undefined and are called <i>automatic</i> variables
+</li><li>Global data and dynamically allocated data (and <b>static</b> variables in C++) are not created on
+the stack, so they stay around for the life of the program (or until you <b>delete</b> them.)
+</li><li>Can you see why "infinite recursion" will cause bad things to happen? What thing exactly?
+</li><li>The runtime stack is what enables recursion to work without any programmer intervention.
+  It's the LIFO (List In First Out) policy that makes it useful.
+</li></ul>
+
+
+
+<!-- ********************************************************** -->
+<!-- ********************************************************** -->
+<hr width="90%">
+<p>
+
+<!--
+Given this definition of the factorial function fact:
+<blockquote>
+<pre>
+<b>int</b> fact(<b>int</b> number)
+{
+  <b>if</b> (number == 0)
+    <b>return</b> 1;
+  <b>else</b>
+    <b>return</b> number * fact(number - 1);
+}
+</pre>
+</blockquote>
+
+Trace the function calls of this program:
+<blockquote>
+<pre>
+<b>void</b> main()
+{
+  <b>int</b> x;
+
+  x = fact(4);
+
+  cout << x << endl;
+}
+</pre>
+</blockquote>
+
+-->
+
+Given this recursive definition of <tt>Print</tt>: (which prints a section of an array)
+</p><blockquote>
+<pre><b>void</b> Print(<b>const int *</b>list, <b>int</b> first, <b>int</b> last)
+{
+  <b>if</b> (first &lt;= last)
+  {
+    cout &lt;&lt; list[first] &lt;&lt; endl;
+    Print(list, first + 1, last);
+  }
+}
+</pre>
+</blockquote>
+
+We can print the second, third, and fourth integers in the array using this syntax:
+
+<blockquote><pre>Print(list, 1, 3)
+</pre></blockquote>
+
+<p class="technote">
+<b>Self Check:</b>
+Write another version to print a "section" of the array. This function should only take 2 parameters:
+A pointer to an element in an array and the number of elements to print.
+</p>
+
+
+
+<!-- ********************************************************** -->
+<!-- ********************************************************** -->
+
+<!--
+<hr width=90%>
+<p>
+
+<b>Tracing Function Calls - 3</b>
+
+<blockquote>
+<pre>
+<b>void</b> displayReverse(<b>int</b> charCount)
+{
+  <b>char</b> inchar;
+
+  <b>if</b> (charCount == 1)
+  {
+    cin >> inchar;
+    cout << inchar;
+  }
+  <b>else if</b> (charCount > 1)
+  {
+    cin >> inchar;
+    displayReverse(charCount - 1);
+    cout << inchar;
+  }
+}
+</pre>
+</blockquote>
+
+This displayReverse function accepts input from the user.
+Assume that the user types:
+<blockquote>
+<pre>
+<b>ABC</b>
+</pre>
+</blockquote>
+after the program is started. The output from the program is
+<blockquote>
+<pre>
+<b>CBA</b>
+</pre>
+</blockquote>
+This is what a trace of the program looks like:
+<p>
+<IMG SRC="trace2.gif" HEIGHT=400 WIDTH=700 BORDER=3><p class=citation>Source: Modula-2</p>
+<p>
+
+-->
+
+<b>Simulating recursion</b>
+<p>
+<b>Print a range of integers in reverse recursively:</b>
+</p><p>
+Algorithm:
+</p><ol>
+<li>Print the rest of the list (tail)
+</li><li>Print the first value (head)
+</li></ol>
+
+<blockquote><pre><b>void</b> PrintRev1(<b>const</b> <b>int</b> *list, <b>int</b> first, <b>int</b> last)
+{
+  <b>if</b> (first &lt;= last)
+  {
+    PrintRev1(list, first + 1, last);
+    cout &lt;&lt; list[first] &lt;&lt; endl;
+  }
+}
+</pre></blockquote>
+
+<b>Print a range of integers in reverse iteratively, using a stack:</b>
+
+<blockquote><pre><b>void</b> PrintRev2(<b>const</b> <b>int</b> *list, <b>int</b> first, <b>int</b> last)
+{
+  std::stack&lt;<b>int</b>&gt; s;
+  <b>while</b> (first &lt;= last)
+    s.push(first++);
+
+  <b>while</b> (!s.empty())
+  {
+    cout &lt;&lt; list[s.top()] &lt;&lt; endl;
+    s.pop();
+  }
+}
+</pre></blockquote>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Reversing Strings
+</p>
+
+
+Here's a very simple function that reverses a range of characters in a string iteratively (in place without printing):
+<p>
+
+</p><blockquote><pre><b>void</b> ReverseStringIt(<b>char</b> *s, <b>int</b> from, <b>int</b> to)
+{
+  <b>char</b> c;
+  <b>while</b> (from &lt; to)
+  {
+      <font color="#003399"><i>// Swap the edges first </i></font>
+    c = s[from];
+    s[from] = s[to];
+    s[to] = c;
+
+      <font color="#003399"><i>// Advance the "edge pointers" </i></font>
+    from++;
+    to--;
+  }
+}
+</pre></blockquote>
+
+Simple usage:
+<p>
+
+</p><blockquote><pre><b>char</b> p[] = <font color="#9933CC">"123456789"</font>;
+
+ReverseStringIt(p, 0, 8);  <font color="#003399"><i>//987654321 </i></font>
+ReverseStringIt(p, 0, 3);  <font color="#003399"><i>//432156789 </i></font>
+ReverseStringIt(p, 3, 7);  <font color="#003399"><i>//123876549 </i></font>
+
+</pre></blockquote>
+
+
+<b>Implementing a recursive version:</b> How would you state the algorithm in English?
+<p>
+<br>
+
+</p><blockquote><pre><b>void</b> ReverseStringRec(<b>char</b> *s, <b>int</b> from, <b>int</b> to)
+{
+  <b>char</b> c;
+  <b>if</b> (from &lt; to)
+  {
+      <font color="#003399"><i>// Swap the edges </i></font>
+    c = s[from];
+    s[from] = s[to];
+    s[to] = c;
+
+      <font color="#003399"><i>// Reverse the "internal" characters </i></font>
+    ReverseStringRec(s, from + 1, to - 1);
+  }
+}
+</pre></blockquote>
+
+<p>
+</p><hr width="90%">
+<p>
+
+
+</p><p class="technote">
+<b>Self Check:</b>
+Write a recursive function that can reverse a singly-linked list in-place.
+Use the Node struct and function prototype below. (You may want to first try to do this iteratively.)
+</p>
+
+<blockquote><pre><b>struct</b> Node
+{
+  Node *next;
+  <b>int</b> data;
+};
+</pre></blockquote>
+
+
+<blockquote><pre><b>void</b> ReverseListRec(Node*&amp; list, Node *prev); <font color="#003399"><i>// Recursively reverse list in-place</i></font>
+</pre></blockquote>
+
+
+<p class="technote">
+<b>Self Check:</b>
+Take any existing linked-list implementation that you've written and rewrite some of the functions to be recursive. (e.g find, free, length, etc.)
+ <b>Caution:</b> using recursion on a linked-list
+is generally not a good idea, especially if the list can be very long as you can run out of stack space.
+</p>
+
+
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Fibonacci Example
+</p>
+
+
+For all values of <i>n &gt; 1</i>, we have the Fibonacci numbers defined recursively as:
+
+<blockquote><pre>F<sub>0</sub> = 0             base case
+F<sub>1</sub> = 1             base case
+F<sub>N</sub> = F<sub>n-1</sub> + F<sub>n-2</sub>   recursive case
+</pre></blockquote>
+
+So the first 10 Fibonacci numbers are: 0, 1, 1, 2, 3, 5, 8, 13, 21, and 34.
+<p>
+Implementing this iteratively causes the "elegance" to get lost:
+
+</p><blockquote><pre><b>int</b> IterFibonacci(<b>int</b> number)
+{
+  <b>if</b> (number == 0)
+    <b>return</b> 0;
+  <b>else</b> <b>if</b> (number == 1)
+    <b>return</b> 1;
+  <b>else</b>
+  {
+    <b>int</b> v1 = 1, v2 = 0;
+    <b>for</b> (<b>int</b> i = 2; i &lt;= number; i++)
+    {
+      <b>int</b> temp = v1;
+      v1 += v2;
+      v2 = temp;
+    }
+    <b>return</b> v1;
+  }
+}
+</pre></blockquote>
+
+<!--
+What's the complexity of the iterative function above?
+-->
+
+How many times does the <b>for</b> loop iterate? What is the complexity?
+<p>
+
+Now, implementing it recursively from the definition is trivial and almost writes itself:
+
+</p><blockquote><pre><b>int</b> RecFibonacci(<b>int</b> number)
+{
+  <b>if</b> (number == 0)       // Base case: F<sub>0</sub> = 0
+    <b>return</b> 0;
+  <b>else</b> <b>if</b> (number == 1)  // Base case: F<sub>1</sub> = 1
+    <b>return</b> 1;
+  <b>else</b>                   // Recursive case: F<sub>N</sub> = F<sub>n-1</sub> + F<sub>n-2</sub>
+    <b>return</b> RecFibonacci(number - 1) + RecFibonacci(number - 2);
+}
+</pre></blockquote>
+
+<!--
+What's the complexity of the recursive function above?
+-->
+
+How many times is the function called for a given number?
+<p>
+
+To help you really see how bad this is, we can build the execution tree:
+</p><p>
+<img src="./Recursive Algorithms and Functions_files/Fibonacci.gif" border="0"><!--<p class=citation>Source: Modula-2</p>-->
+
+</p><p>
+The parent/child relationship has the meaning:
+</p><p></p><blockquote>
+<i>"To calculate the parent, we have to calculate the children first." </i>
+</blockquote>
+
+So, to compute F<sub>5</sub>, we need to first compute <i>F<sub>4</sub></i> and <i>F<sub>3</sub></i>. But,
+in order to compute <i>F<sub>4</sub></i>, we need to compute <i>F<sub>3</sub></i> and <i>F<sub>2</sub></i>, etc.
+
+<p>
+This table shows the number of times the <i>RecFibonacci</i> function is called for each value:
+</p><p>
+
+</p><blockquote><pre>Number    F<sub>0</sub>   F<sub>1</sub>   F<sub>2</sub>   F<sub>3</sub>   F<sub>4</sub>   F<sub>5</sub>   F<sub>6</sub>   F<sub>7</sub>   F<sub>8</sub>   F<sub>9</sub>
+
+Value     0    1    1    2    3     5    8   13   21   34
+Calls     1    1    3    5    9    15   25   41   67  109
+</pre></blockquote>
+
+For example, the number of calls to <i>RecFibonacci</i> to evaluate <i>F<sub>7</sub></i> is
+41. This is because it evaluates <i>F<sub>6</sub></i> (25 calls) and <i>F<sub>5</sub></i> (15 calls)
+plus the original call for <i>F<sub>7</sub></i>.
+<p>
+So, the number of calls to evaluate <i>F<sub>N</sub></i> is <i>F<sub>(N - 1)</sub> + F<sub>(N - 2)</sub></i> + 1
+</p><p>
+This is roughly on the order of <tt>2<sup>N</sup></tt>.
+
+</p><p>
+<b>Notes</b>
+</p><ul>
+<li>The "problem" with the recursive version is that later calculations depend on the earlier ones, and these were discarded.
+</li><li>The iterative version saves and uses those previously-calculated values.
+</li><li>This "saving of previously calculated values" is termed <i><a href="http://en.wikipedia.org/wiki/Dynamic_programming">dynamic programming</a></i>.
+</li><li>When the smaller (sub-problems) of the original problem are not independent problems, (i.e. they depend on each other),
+the resulting algorithm can perform poorly.
+</li><li>Naive recursive implementations (like the one above) can lead to a lot redundant computations. We first saw that <a href="https://azrael.digipen.edu/~mmead/www/Courses/CS280/Recursion2.html#NAIVE">here</a>.
+</li></ul>
+
+<p class="technote">
+<b>Self-check</b> Modify the recursive Fibonacci implementation above to improve it (it should be <i>O(N)</i>).
+</p>
+<!--
+You would need to save the intermediate results. You have to pass them to the function
+on subsequent calls. A helper function will work best.
+-->
+
+
+<!--
+This implementation has <i>Fibonacci complexity</i>.
+-->
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Case Study: The Eight Queens Problem
+</p>
+
+
+
+The goal behind the problem is to place 8 queens on a chessboard so that no queen threatens another.
+Another way to state this (for those not familiar with the capabilities of the queen in chess) is to
+place 8 markers on a standard 8x8 chess board so that no two markers are on the same line vertically,
+horizontally, or diagonally.
+<p>
+
+</p><blockquote>
+<table>
+<tbody><tr><th>Queen's movements</th><th></th><th>A solution</th></tr>
+<tr><td>
+<img src="./Recursive Algorithms and Functions_files/ChessBoard-3.gif">
+</td>
+<td width="40"></td>
+<td>
+<img src="./Recursive Algorithms and Functions_files/ChessBoard-2.gif">
+</td>
+</tr></tbody></table>
+<p>
+</p></blockquote>
+
+<ul>
+<li>There are many solutions (arrangements of queens) that satisfy the criteria mentioned above.
+</li><li>As it turns out, a recursive solution is the simplest to implement (but not necessarily the fastest).
+</li><li>The implementation will involve a technique called <i>backtracking</i>.
+</li><li>Backtracking is a popular technique that computers use to solve problems by systematically evaluating all possible solutions.
+</li></ul>
+
+The algorithm is fairly trivial and is best demonstrated graphically with this application: (generalized for an NxN board)
+<p>
+<a href="https://azrael.digipen.edu/~mmead/www/Courses/CS280/QueensGUI.exe">N-Queens Test Application</a>
+</p><p>
+
+</p><blockquote>
+<img src="./Recursive Algorithms and Functions_files/EightQueens-1.gif">
+</blockquote>
+<p>
+
+Number of solutions for boards of size:
+
+</p><blockquote><pre>Solutions for  1 x  1:           1
+Solutions for  2 x  2:           0
+Solutions for  3 x  3:           0
+Solutions for  4 x  4:           2
+Solutions for  5 x  5:          10
+Solutions for  6 x  6:           4
+Solutions for  7 x  7:          40
+Solutions for  8 x  8:          92
+Solutions for  9 x  9:         352
+Solutions for 10 x 10:         724
+Solutions for 11 x 11:       2,680
+Solutions for 12 x 12:      14,200
+Solutions for 13 x 13:      73,712
+Solutions for 14 x 14:     365,596
+Solutions for 15 x 15:   2,279,184
+Solutions for 16 x 16:  14,772,512
+Solutions for 17 x 17:  95,815,104
+Solutions for 18 x 18: 666,090,624  <!-- Time: 156465.9024 ms (fermat) 43 hours, 1.6 GHz -->
+
+</pre></blockquote>
+
+
+Pseudo-code for a recursive implementation:
+<p>
+
+</p><pre class="sourcecode"><code><b>bool</b> board[8][8];
+<b>int</b> solutions = 0;
+
+<b>int</b> Solve()
+{
+    <font color="#003399"><i>// Initialize all squares to empty</i></font>
+
+    <font color="#003399"><i>// Call PlaceQueen with row 0 to start the search </i></font>
+  PlaceQueen(0);
+
+    <font color="#003399"><i>// Return number of solutions</i></font>
+}
+
+<b>void</b> PlaceQueen(<b>int</b> row)
+{
+    <font color="#003399"><i>// Put a queen in the specified row, starting at the first column </i></font>
+  <b>for</b>(<b>int</b> column = 0; column &lt; 8; column++)
+  {
+    board[row][column] = <b>true</b>;
+
+    <font color="#003399"><i>// Call Threatened to determine if placement was valid</i></font>
+    <font color="#003399"><i>//   (may have to remove it and try another column or go back to previous row)</i></font>
+    <font color="#003399"><i>// Call PlaceQueen recursively to place queens in subsequent rows</i></font>
+    <font color="#003399"><i>//   until a queen is successfully place in last row, or all rows/columns</i></font>
+    <font color="#003399"><i>//   have been attempted</i></font>
+  }
+}
+
+<b>int</b> Threatened(<b>int</b> row, <b>int</b> column)
+{
+    <font color="#003399"><i>// Determine if there is a collision with any other queen</i></font>
+    <font color="#003399"><i>//   (vertically, horizontally, and diagonally)</i></font>
+    <font color="#003399"><i>// If there is a collision, return TRUE, otherwise return FALSE</i></font>
+}
+</code></pre>
+
+A client would simply do this:
+
+<blockquote><pre>  <b>int</b> solutions = Solve(); <font color="#003399"><i>// Returns the number of solutions</i></font>
+</pre></blockquote>
+
+<p>
+</p><hr width="90%">
+<p>
+
+A similar algorithm called <i>"The Knight's Tour"</i> from the game of chess:
+
+</p><blockquote>
+<table cellspacing="5" cellpadding="5">
+<tbody><tr><th>Valid moves for the knight</th><th></th><th>A demo program</th></tr>
+<tr valign="top"><td>
+<img src="./Recursive Algorithms and Functions_files/KnightsTourSpy-3.gif">
+</td>
+<td width="20"></td>
+<td>
+<img src="./Recursive Algorithms and Functions_files/KnightsTourSpy-5.png">
+</td></tr>
+</tbody></table>
+</blockquote>
+<p>
+<a href="https://azrael.digipen.edu/~mmead/www/Courses/CS280/KnightsGUI.exe">Download/run</a> the demo program.
+<br><br><br><br>
+<!--
+
+<h2>Homework assignments too simple?</h2>
+
+A Direct 3D version of a graphical client:
+<p>
+<blockquote>
+<img src="EightQueensD3D-1.gif">
+</blockquote>
+<p>
+
+(This driver was implemented by John Lykins a few years ago. John was a member of DigiPen's team at
+the annual 
+<a href="http://icpc.baylor.edu/icpc/">ACM Programming Contest</a>
+each November where about 75 teams from the
+<a href="http://www.acmicpc-pacnw.org/">Pacific Northwest</a> (and surrounding area) competed for fame and prizes.)
+<p>
+
+<a href="QueensGUI-D3D.zip">Download</a> the files to run the D3D version.
+(Your computer must be configured to run Direct 3D programs using DX 8.1 or better.)
+
+-->
+
+<!--
+<ol>
+<li>Place the first queen at position 1,1 (upper left corner). There will be no conflicts since this is the only queen at this point.
+<li>Increment the row and place a queen in the first column.
+<ol>
+<li>If there is no collision with another queen and you are at the bottom row, you're done.
+<li>If there is no collision with another queen and you are NOT at the bottom row, goto step 2.
+<li>If there is a collision, increment column and place the queen there.
+<li>
+</ol>
+</ol>
+-->
+
+
+
+
+
+</p><blockquote><pre></pre></blockquote>
+</li></body></html>

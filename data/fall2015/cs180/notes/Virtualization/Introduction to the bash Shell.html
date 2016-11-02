@@ -1,0 +1,2298 @@
+
+<!-- saved from url=(0060)http://azrael.digipen.edu/~mmead/www/Courses/CS180/Bash.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./Introduction to the bash Shell_files/new.css">
+<link rel="stylesheet" type="text/css" href="./Introduction to the bash Shell_files/styles.css">
+<title>Introduction to the bash Shell</title>
+</head>
+
+<body>  
+<center><h1>Introduction to the Bash Shell</h1></center>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Overview</p>
+
+
+A very popular <span id="wpurl"><a class="wplabel">shell</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Shell_(computing)">shell</a> for Unix and Linux is called 
+<span id="wpurl"><a class="wplabel">bash</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Bash_(Unix_shell)">bash</a>, which is kind of short for
+<i>Bourne-again shell</i>, as it was a replacement for an early shell called the 
+<span id="wpurl"><a class="wplabel">Bourne</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Bourne_shell">Bourne</a> shell, written by Stephen Bourne.
+It is the default shell for the Unix-based <span id="wpurl"><a class="wplabel">MacOS X</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Mac_OS_X">MacOS X</a> 
+and most <span id="wpurl"><a class="wplabel">Linux</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Linux">Linux</a> 
+<span id="wpurl"><a class="wplabel">distributions</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Comparison_of_Linux_distributions">distributions</a>. It is an extremely powerful shell.
+Earlier shells that influenced bash are the <span id="wpurl"><a class="wplabel">Korn shell (ksh)</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Korn_shell">Korn shell (ksh)</a>,
+the <span id="wpurl"><a class="wplabel">C shell (csh)</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/C_shell">C shell (csh)</a>, 
+and the <span id="wpurl"><a class="wplabel">improved  C shell (tcsh)</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Tcsh">improved C shell (tcsh)</a>.
+Shells abound in the Unix-based world.
+
+<ul>
+  <li><b>B</b>ourne-<b>A</b>gain <b>SH</b>ell (<a href="http://www.gnu.org/software/bash/manual/bashref.html">reference manual</a>)</li>
+  <li>Provides extensive command line and scripting functionality</li>
+  <li>Available on UNIX-based platforms (including Linux and MacOS X)</li>
+  <li>Available under Windows using <a href="http://www.cygwin.com/">Cygwin</a></li>
+</ul>
+
+Bash comes with a powerful programming language built-in. It resembles C to some degree.
+  
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Short Reference</p>
+<!--
+This is a brief mapping of bash commands to Windows commands. Note that, even though commands appear on both systems,
+some of the bash commmands (or external commands in Unix, Linux, Cygwin, etc.) are significantly more powerful than their
+Windows counterpart.
+-->
+<p>
+<a href="http://www.linuxmanpages.com/">online man pages</a>
+</p><p>
+The first place to get information on any external command (program) used in bash is to use the switch <tt>--help</tt>
+on the program:
+
+</p><blockquote><pre>user@host:~&gt; <i>program</i> --help
+</pre></blockquote>
+
+
+This gives a short synopsis of what the program does and how some of the major command line switches can be used.
+To get the full help for a program, you would consult the <span id="wpurl"><a class="wplabel">man pages</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Man_pages">man pages</a>.
+The simplest way is to type:
+
+<blockquote><pre>user@host:~&gt; man <i>program</i>
+</pre></blockquote>
+
+You may need to specify the section if there are ambiguities:
+
+<blockquote><pre>man 1 mkdir
+man 2 mkdir
+man 1 printf
+man 3 printf
+</pre></blockquote>
+
+Sections of the man pages:
+<blockquote><pre>1   Executable programs or shell commands
+2   System calls (functions provided by the kernel)
+3   Library calls (functions within program libraries)
+4   Special files (usually found in /dev)
+5   File formats and conventions eg /etc/passwd
+6   Games
+7   Miscellaneous (including macro packages and conventions), e.g. man(7), groff(7)
+8   System administration commands (usually only for root)
+9   Kernel routines [Non standard]
+</pre></blockquote>
+
+You can use the <tt>-k</tt> option (equivalent to the <tt>apropos</tt> command) to get a list of related topics, for example:
+<blockquote><pre>man -k mkdir
+</pre></blockquote>
+
+Displays:
+
+<blockquote><pre>mkdir (1)            - make directories
+mkdir (2)            - create a directory
+mkdirat (2)          - create a directory relative to a directory file descriptor
+</pre></blockquote>
+
+These two techniques (<tt>man</tt> and <tt>--help</tt>) will only work on <i>external</i> commands, 
+i.e. programs. To get help on <i>built-in</i> commands, use the <tt>help</tt> command:
+
+<blockquote><pre><b>help</b> &lt;built-in command&gt;
+</pre></blockquote>
+
+Some examples:
+<blockquote><pre><b>help</b> cd
+<b>help</b> type
+<b>help</b> help
+</pre></blockquote>
+
+To discover whether or not a command is a built-in command or external command, use the <tt>type</tt>
+built-in command:
+
+<blockquote><pre>$ <b>type</b> cd
+$ cd is a shell builtin
+</pre></blockquote>
+
+<blockquote><pre>$ <b>type</b> diff
+$ diff is /usr/bin/diff
+</pre></blockquote>
+
+<blockquote><pre>$ <b>type</b> ls
+$ ls is aliased to `ls --color=auto'
+</pre></blockquote>
+
+<blockquote><pre>$ <b>type</b> dir
+$ dir is aliased to `ls -l --color --group-directories-first'
+</pre></blockquote>
+
+<blockquote><pre>$ <b>type</b> foo
+$ bash: type: foo: not found
+</pre></blockquote>
+
+<blockquote><pre>$ <b>type</b> sudo
+$ sudo is hashed (/usr/bin/sudo)
+</pre></blockquote>
+
+Commands are hashed for increased performance. See the 
+<a href="http://ss64.com/bash/hash.html">hash</a> command for details.
+<p>
+The 
+<span style="padding: 0pt;background-color: #D0D0D0;border-style:solid;border-color: #D0D0D0;border-width:1px"><font color="black">shaded</font></span>
+commands are external commands. All others are internal, although some can be both.
+</p><p>
+
+</p><blockquote>
+<table border="1" cellspacing="0" cellpadding="5">
+<tbody><tr><th>bash Command</th><th>Similar<br>Windows Command</th><th>Description</th></tr>
+<tr valign="top">
+<td bgcolor="#D0D0D0">
+<a href="http://ss64.com/bash/chmod.html">chmod</a> 
+</td>
+<td bgcolor="#D0D0D0">
+attrib.exe
+</td>
+<td>
+Change a file's mode (attributes)
+</td>
+</tr>
+
+<tr valign="top">
+<td bgcolor="#D0D0D0">
+<a href="http://ss64.com/bash/cat.html">cat</a> 
+</td>
+<td>
+type
+</td>
+<td>
+Display a text file (also concatenates files)
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<a href="http://ss64.com/bash/cd.html">cd</a> 
+</td>
+<td>
+cd
+</td>
+<td>
+Change directory
+</td>
+</tr>
+
+<tr valign="top">
+<td bgcolor="#D0D0D0">
+clear
+</td>
+<td>
+cls
+</td>
+<td>
+Clears the screen
+</td>
+</tr>
+
+<tr valign="top">
+<td bgcolor="#D0D0D0">
+<a href="http://ss64.com/bash/cp.html">cp</a> 
+</td>
+<td>
+copy
+</td>
+<td>
+Copy files
+</td>
+</tr>
+
+<tr valign="top">
+<td bgcolor="#D0D0D0">
+<a href="http://ss64.com/bash/date.html">date</a> 
+</td>
+<td>
+date/time
+</td>
+<td>
+Read/set the system date and time
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<a href="http://ss64.com/bash/echo.html">echo</a>*
+</td>
+<td>
+echo
+</td>
+<td>
+Print to the screen
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<a href="http://ss64.com/bash/for.html">for</a> 
+</td>
+<td>
+for
+</td>
+<td>
+Looping construct
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<a href="http://ss64.com/bash/if.html">if</a> 
+</td>
+<td>
+if
+</td>
+<td>
+Conditional construct
+</td>
+</tr>
+
+<tr valign="top">
+<td bgcolor="#D0D0D0">
+<a href="http://ss64.com/bash/less.html">less</a> 
+</td>
+<td bgcolor="#D0D0D0">
+more.com
+</td>
+<td>
+Display one page of text at a time.
+</td>
+</tr>
+
+<tr valign="top">
+<td bgcolor="#D0D0D0">
+<a href="http://ss64.com/bash/ls.html">ls</a> 
+</td>
+<td>
+dir
+</td>
+<td>
+List files
+</td>
+</tr>
+
+<tr valign="top">
+<td bgcolor="#D0D0D0">
+<a href="http://ss64.com/bash/man.html">man</a> 
+</td>
+<td bgcolor="#D0D0D0">
+help.exe
+</td>
+<td>
+Displays the man (manual) page for a given command
+</td>
+</tr>
+
+<tr valign="top">
+<td bgcolor="#D0D0D0">
+<a href="http://ss64.com/bash/mkdir.html">mkdir</a> 
+</td>
+<td>
+mkdir/md
+</td>
+<td>
+Create (make) a new directory
+</td>
+</tr>
+
+<tr valign="top">
+<td bgcolor="#D0D0D0">
+<a href="http://ss64.com/bash/mv.html">mv</a> 
+</td>
+<td>
+move/rename
+</td>
+<td>
+Move and/or rename files
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<a href="http://ss64.com/bash/popd.html">popd</a> 
+</td>
+<td>
+popd
+</td>
+<td>
+Pop most recent directory and change to it
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<a href="http://ss64.com/bash/pushd.html">pushd</a> 
+</td>
+<td>
+pushd
+</td>
+<td>
+Save current directory and change
+</td>
+</tr>
+
+<tr valign="top">
+<td bgcolor="#D0D0D0">
+<a href="http://ss64.com/bash/rm.html">rm</a> 
+</td>
+<td>
+del
+</td>
+<td>
+Removes (deletes) a file
+</td>
+</tr>
+
+<tr valign="top">
+<td bgcolor="#D0D0D0">
+<a href="http://ss64.com/bash/rmdir.html">rmdir</a> 
+</td>
+<td>
+rmdir/rd
+</td>
+<td>
+Removes (deletes) a directory
+</td>
+</tr>
+</tbody></table>
+</blockquote>
+  
+A brief list of other useful commands and programs:
+
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="5">
+<tbody><tr><th>Command</th><th>Description</th></tr>
+<tr valign="top">
+<td>
+<a href="http://ss64.com/bash/alias.html">alias</a> 
+</td>
+<td>
+Create an alias (shortcut) for a command
+</td>
+</tr>
+
+<tr valign="top">
+<td bgcolor="#D0D0D0">
+<a href="http://ss64.com/bash/cal.html">cal</a> 
+</td>
+<td>
+Display a calendar to the screen (text)
+</td>
+</tr>
+
+<tr valign="top">
+<td bgcolor="#D0D0D0">
+<a href="http://ss64.com/bash/chown.html">chown</a> 
+</td>
+<td>
+Change owner and group of a file
+</td>
+</tr>
+
+<tr valign="top">
+<td bgcolor="#D0D0D0">
+<a href="http://ss64.com/bash/dd.html">dd</a> 
+</td>
+<td>
+Data dump, raw read/write for files and devices
+</td>
+</tr>
+
+<tr valign="top">
+<td bgcolor="#D0D0D0">
+<a href="http://ss64.com/bash/diff.html">diff</a> 
+</td>
+<td>
+Display differences between files
+</td>
+</tr>
+
+<tr valign="top">
+<td bgcolor="#D0D0D0">
+<a href="http://ss64.com/bash/du.html">du</a> 
+</td>
+<td>
+Calculate disk usage
+</td>
+</tr>
+
+<tr valign="top">
+<td bgcolor="#D0D0D0">
+<a href="http://ss64.com/osx/file.html">file</a> 
+</td>
+<td>
+Determine a files type
+</td>
+</tr>
+
+<tr valign="top">
+<td bgcolor="#D0D0D0">
+<a href="http://ss64.com/bash/find.html">find</a> 
+</td>
+<td>
+Search for files matching certain criteria
+</td>
+</tr>
+
+<tr valign="top">
+<td bgcolor="#D0D0D0">
+<a href="http://ss64.com/bash/grep.html">grep</a> 
+</td>
+<td>
+Search files for lines matching specified text
+</td>
+</tr>
+
+<tr valign="top">
+<td bgcolor="#D0D0D0">
+<a href="http://ss64.com/bash/head.html">head</a> 
+</td>
+<td>
+Display first few lines in a file
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<a href="http://ss64.com/bash/history.html">history</a> 
+</td>
+<td>
+Display command history
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<a href="http://ss64.com/bash/kill.html">kill</a>* 
+</td>
+<td>
+Send a signal to a process
+</td>
+</tr>
+
+<tr valign="top">
+<td bgcolor="#D0D0D0">
+<a href="http://ss64.com/bash/ln.html">ln</a> 
+</td>
+<td>
+Create a link between files
+</td>
+</tr>
+
+<tr valign="top">
+<td bgcolor="#D0D0D0">
+<a href="http://ss64.com/bash/ps.html">ps</a> 
+</td>
+<td>
+List processes and status
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<a href="http://ss64.com/bash/pwd.html">pwd</a>*
+</td>
+<td>
+Print current working directory
+</td>
+</tr>
+
+<tr valign="top">
+<td bgcolor="#D0D0D0">
+<a href="http://ss64.com/bash/tail.html">tail</a> 
+</td>
+<td>
+Show last few lines of a file
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<a href="http://ss64.com/bash/time.html">time</a>*
+</td>
+<td>
+Measure the running time of a program (External command as well)
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<a href="http://ss64.com/bash/type.html">type</a>
+</td>
+<td>
+Determine the type of a command (e.g. file, alias, keyword, built-in, etc.)
+</td>
+</tr>
+
+<tr valign="top">
+<td bgcolor="#D0D0D0">
+<a href="http://ss64.com/bash/wc.html">wc</a> 
+</td>
+<td>
+Prints count of lines, words, and bytes
+</td>
+</tr>
+
+<tr valign="top">
+<td bgcolor="#D0D0D0">
+<a href="http://ss64.com/bash/which.html">which</a> 
+</td>
+<td>
+Shows where a program is in the file system
+</td>
+</tr>
+</tbody></table>
+</blockquote>
+*These commands also have external equivalents that are used by other shells (e.g. csh)
+<p>
+
+To create a PDF from the man pages, use this command (showing <tt>chmod</tt> as an example):
+</p><blockquote><pre>man -t chmod &gt; chmod.ps &amp;&amp; ps2pdf chmod.ps &amp;&amp; rm chmod.ps
+</pre></blockquote>
+
+For easier use, create a script called <tt>man2pdf.sh</tt> and put this text in it:
+
+<pre class="sourcecode"><code>#!/bin/bash
+
+if [[ $# -eq 0 ]]; then
+  echo "Usage: man2pdf topic"
+  exit
+fi
+
+man -t $1 &gt; $1.ps &amp;&amp; ps2pdf $1.ps &amp;&amp; rm $1.ps
+</code></pre>
+
+Make sure the script is executable and in your path somewhere (e.g. <tt>~/bin</tt>):
+<blockquote><pre>chmod +x man2pdf.sh
+</pre></blockquote>
+
+
+<p>
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><p class="SectionHeader">Redirection, Piping and Filters (Review)</p>
+<p>
+This is where the real power of the command line lies. It is simply impossible (or, at the very least, tremendously difficult) 
+to do these things using a graphical user interface (GUI). There is a wealth of information about this on the Internet. 
+</p><p>
+Recall from CS 120:
+</p><ul>
+  <li>To redirect input from a file to a program, use the <b><tt>&lt;</tt></b> operator. (Example: <tt>prog &lt; input.txt</tt>)</li>
+  <li>To redirect output from a program to a file, use the <b><tt>&gt;</tt></b> operator. (Example: <tt>prog &gt; output.txt</tt>)</li>
+  <li>To append output to a file (instead of overwrite the file), use the <b><tt>&gt;&gt;</tt></b> operator.  (Example: <tt>prog &gt;&gt; output.txt</tt>)
+  </li><li>To connect <tt>stdout</tt> of a one program to <tt>stdin</tt> of another program, use the <b><tt>|</tt></b> operator. (Example: <tt>prog1 | prog2</tt>)</li>
+  <li>You can mix and match these operators. (Example: <tt>prog1 &lt; input.txt | prog2 &gt; output.txt</tt>)</li>
+</ul>
+
+<p>
+Here's a couple of very simple examples that show how filters work. We'll use this
+file: <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/doi-nowrap.txt">Declaration of Independence</a> without word-wrap. There
+are actually 9 lines in the file, and 4 of them are empty.
+
+</p><ul>
+  <li>Counting lines, words, and characters with the 
+    <a href="http://man7.org/linux/man-pages/man1/wc.1.html"><tt><b>wc</b></tt></a> filter:
+    <blockquote><pre><b>cat</b> doi-nowrap.txt | <b>wc</b></pre>
+</blockquote>
+    Output:
+    <blockquote><pre>9     664    3980    </pre></blockquote></li>
+
+  <li>Wrapping lines to 60 characters using the 
+    <a href="http://man7.org/linux/man-pages/man1/fmt.1.html"><tt><b>fmt</b></tt></a> filter:
+    <blockquote><pre><b>cat</b> doi-nowrap.txt | <b>fmt</b> -w 60 &gt; doi-wrap60.txt</pre>
+Output file: <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/doi-wrap60.txt">doi-wrap60.txt</a></blockquote></li>
+
+  <li>Wrapping lines to 60 characters and adding line numbers with the 
+    <a href="http://man7.org/linux/man-pages/man1/nl.1.html"><tt><b>nl</b></tt></a> filter:
+    <blockquote><pre><b>cat</b> doi-nowrap.txt | <b>fmt</b> -w 60 | <b>nl</b> -ba &gt; doi-wrap60-nl.txt</pre>
+Output file: <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/doi-wrap60-nl.txt">doi-wrap60-nl.txt</a></blockquote></li>
+
+</ul>  
+  
+Examples showing commands, redirection, piping, switches, arguments. The
+<a href="http://man7.org/linux/man-pages/man1/cut.1.html"><tt><b>cut</b></tt></a> command is very
+  powerful.
+
+<tt><b></b></tt>
+<tt><b></b></tt>
+<tt><b></b></tt>
+<!--
+
+<tt><b></b></tt>
+
+<blockquote><pre>
+C:\> ipconfig | grep "IP Address" | cut -c 45- | grep "192.168" | sort
+
+C:\> ipconfig | grep "IP Address" | cut -c 45- | grep "192.168" | cut -b9- | sort
+
+C:\> ipconfig | grep "IP Address" | cut -c 45- | cut -d. -f1,2 | sort | uniq
+</pre></blockquote>
+
+$ ipconfig > ip.txt
+C:\> grep "IP Address" < ip.txt | cut -c 45- | cut -d. -f1,2 | sort | uniq > results.txt
+C:\> type results.txt
+
+Here is <a href="ip.txt">ip.txt</a> from a Windows XP computer. You'll have to modify the command above for Windows 7 because the format
+of the output has changed.
+-->
+
+<ul>
+  <li>This chain of commands displays all of the IP address of the computer except the localhost address (127.0.0.1):
+<blockquote><pre>$ <a href="http://man7.org/linux/man-pages/man8/ifconfig.8.html"><b>ifconfig</b></a> | <a href="http://ss64.com/bash/grep.html"><b>grep</b></a> "inet addr" | <b>grep</b> -v "127.0.0.1" | <b>cut</b> -c 21- | <b>cut</b> -d' ' -f1 | <b>sort</b> -n
+</pre></blockquote>
+<p>
+</p></li>The same thing reading from a file instead. Assume we did this:
+<blockquote><pre>$ <b>ifconfig</b> &gt; ip.txt
+</pre></blockquote>
+
+Now we can get the input from the file <tt>ip.txt</tt>:
+
+<blockquote><pre>$ <b>grep</b> "inet addr" &lt; ip.txt | <b>grep</b> -v "127.0.0.1" | <b>cut</b> -c 21- | <b>cut</b> -d' ' -f1 | <b>sort</b> -n
+</pre></blockquote>
+or
+<blockquote><pre>$ <b>cat</b> ip.txt | <b>grep</b> "inet addr" | <b>grep</b> -v "127.0.0.1" | <b>cut</b> -c 21- | <b>cut</b> -d' ' -f1 | <b>sort</b> -n
+</pre></blockquote>
+<p>
+
+</p><li>Here is an example for a Windows XP computer with 4 IP addresses: <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/ip.txt">ip.txt</a>
+(You'll have to modify the command for Windows 7 because the format of the output has changed.)
+I want to find out what class B networks are setup on the computer:
+<blockquote><pre>$ <b>cat</b> ip.txt | <b>grep</b> "IP Address" | <b>cut</b> -c 45- | <b>cut</b> -d. -f1,2 | <b>sort</b> | <a href="http://man7.org/linux/man-pages/man1/cut.1.html"><b>uniq</b></a>
+</pre></blockquote>
+The output is:
+<blockquote><pre>10.10
+192.168
+</pre></blockquote>
+</li><li>If I just wanted the count, instead of the addresses, I would just pipe it all to <b>wc</b>:
+<blockquote><pre>$ <b>cat</b> ip.txt | <b>grep</b> "IP Address" | <b>cut</b> -c 45- | <b>cut</b> -d. -f1,2 | <b>sort</b> | <b>uniq</b> | <b>wc</b> -l
+</pre></blockquote>
+The output is:
+<blockquote><pre>2
+</pre></blockquote>
+
+</li></ul>
+
+<ol>
+If we break it down one pipe at a time, we will see how this all works.
+<p>
+</p><li>First, we extract only the lines that contain the string <tt>IP Address</tt> using the <b>grep</b> filter:
+
+<blockquote><pre>$ <b>cat</b> ip.txt | <b>grep</b> "IP Address"
+</pre></blockquote>
+The output is (there are 8 leading spaces):
+<blockquote><pre>        IP Address. . . . . . . . . . . . : 192.168.17.1
+        IP Address. . . . . . . . . . . . : 192.168.13.1
+        IP Address. . . . . . . . . . . . : 10.10.32.67
+        IP Address. . . . . . . . . . . . : 192.168.56.1
+</pre></blockquote>
+
+</li><li>Next, we extract only the <i>characters</i> from position 45 until the end of the line, using the <b>cut</b> filter:
+<blockquote><pre>$ <b>cat</b> ip.txt | <b>grep</b> "IP Address" | <b>cut</b> -c 45-
+</pre></blockquote>
+The output is:
+<blockquote><pre>192.168.17.1
+192.168.13.1
+10.10.32.67
+192.168.56.1
+</pre></blockquote>
+
+</li><li>Then, we extract the first 2 <i>fields</i> of the string using <b>cut</b> again, specifying the dot as the field delimiter:
+
+<blockquote><pre>$ <b>cat</b> ip.txt | <b>grep</b> "IP Address" | <b>cut</b> -c 45- | <b>cut</b> -d. -f1,2 
+</pre></blockquote>
+The output is:
+<blockquote><pre>192.168
+192.168
+10.10
+192.168
+</pre></blockquote>
+
+</li><li>Now, sort the output using the <b>sort</b> filter:
+
+<blockquote><pre>$ <b>cat</b> ip.txt | <b>grep</b> "IP Address" | <b>cut</b> -c 45- | <b>cut</b> -d. -f1,2 | <b>sort</b> 
+</pre></blockquote>
+The output is:
+<blockquote><pre>10.10
+192.168
+192.168
+192.168
+</pre></blockquote>
+
+</li><li>To remove duplicates, we use the <b>uniq</b> filter (input must be sorted, hence the previous step):
+<blockquote><pre>$ <b>cat</b> ip.txt | <b>grep</b> "IP Address" | <b>cut</b> -c 45- | <b>cut</b> -d. -f1,2 | <b>sort</b> | <b>uniq</b>
+</pre></blockquote>
+The output is:
+<blockquote><pre>10.10
+192.168
+</pre></blockquote>
+
+</li><li>Finally, we send the output to the <b>wc</b> filter (word count) specifying we just want the line count:
+<blockquote><pre>$ <b>cat</b> ip.txt | <b>grep</b> "IP Address" | <b>cut</b> -c 45- | <b>cut</b> -d. -f1,2 | <b>sort</b> | <b>uniq</b> | <b>wc</b> -l
+</pre></blockquote>
+The output is:
+<blockquote><pre>2
+</pre></blockquote>
+ 
+All of the filters are configurable via command line options:
+<p>
+</p><ul>
+  <li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/cat--help.txt"><tt>cat --help</tt></a></li>
+  <li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/grep--help.txt"><tt>grep --help</tt></a></li>
+  <li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/cut--help.txt"><tt>cut --help</tt></a></li>
+  <li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/sort--help.txt"><tt>sort --help</tt></a></li>
+  <li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/uniq--help.txt"><tt>uniq --help</tt></a></li>
+  <li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/wc--help.txt"><tt>wc --help</tt></a></li>
+</ul>
+<p>
+
+By the way, the script above to create PDF documents from the man pages could have
+  been done using pipes:
+</p><blockquote><pre><b>man</b> -t grep | <b>ps2pdf</b> - &gt; grep.pdf
+</pre></blockquote>
+
+
+<p>
+And that, boys and girls, is what makes the command line indispensible for the experienced user. Imagine if
+you had to write a C/C++ program to do this; it would be quite lengthy. (It's not just the parsing, but
+you'd have to figure out a system-independent way to query the system for IP addresses, etc.)
+</p></li></ol>
+
+<p class="info">
+One of the best things you can do as a student learning the power of computers is to learn the filters in <tt>/usr/bin</tt>.
+There are hundreds and learning all of them is unlikely. However, you only really need to learn a
+couple of dozen to make your computing significantly more productive. 
+<br><br>
+Over time, you will find yourself spending more
+and more time at the command line because it enables you to do things that are impossible in a GUI. Also, 
+before you sit down to write a program in C or C++ to do some kind of system work, find out if there is
+a program or set of filters that will do what you want. Most likely, there is, or at
+least you may only need to write another filter to complete the task.
+</p>
+
+
+<p>
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><p class="SectionHeader">Simple bash Programming</p>
+
+Bash supports:
+
+<ul>
+  <li>Redirection (<tt>&gt;, &gt;&gt;, &lt;, 2&gt;</tt>)</li>
+  <li>Pipes (<tt>|</tt>)</li>
+  <li>Multiple commands (<tt>;  &amp;&amp;  ||</tt>)</li>
+  <li>Background processes/forking (<tt>&amp;</tt>)</li>
+  <li>Iteration (<tt>for, while, until</tt>)</li>
+  <li>Conditionals (<tt>if, case</tt>)</li>
+  <li>Functions (<tt>function</tt>)</li>
+  <li>Testing file types and variable values (<tt>test, []</tt>)</li>
+  <li><a href="http://www.gnu.org/software/bash/manual/bashref.html#Command-Substitution">Command substitution</a> (assign the output of a command/program/function to a variable)</li>
+</ul>
+
+<p></p><hr width="90%"><p>
+
+
+<a href="http://tldp.org/LDP/Bash-Beginners-Guide/html/sect_03_02.html">Variables</a> in bash:
+</p><ul>
+  <li>Variable values are generally character strings</li>
+  <li>Case sensitive</li>
+  <li>Global unless using the <tt>local</tt> keyword</li>
+  <li><tt><b>let</b></tt> command used for arithmetic</li>
+  <li>Values obtained using <tt>$var</tt> or <tt>${var}</tt> (The second way is a little safer.)</li>
+  <li>Special variables, e.g.: <tt>$PATH, $1, $2</tt></li>
+</ul>
+  
+Bash scripts:
+<ul>
+  <li>Can have any extension, but should have executable (<tt>x</tt>) privileges</li>
+  <li>Comments begin with <tt>#</tt></li>
+  <li>First line should be <tt>#!/bin/bash</tt></li>
+  <li>Can use command line arguments</li>
+</ul>
+
+As with any programming language, iteration (looping), conditionals (flow control, if/then...), and functions are
+really important and bash supports all of them very well.
+<p>
+  
+</p><p>
+</p><hr width="90%">
+<p>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><h3>Arithmetic operations</h3>
+<blockquote>
+
+<li>Arithmetic in bash seems a little strange at first. Examples will illustrate.</li>
+
+<li>Example 1 - Using the <tt>let</tt> command.</li>
+<p>
+<table border="1" cellspacing="0" cellpadding="10">
+<tbody><tr><th>Code</th><th>Output</th><th>Description</th></tr>
+<tr valign="top">
+
+<td>
+<pre>a=1+2
+echo $a
+
+let a=1+2
+echo $a
+
+let a = 1 + 2
+echo $a 
+
+let a="1 + 2"
+echo $a
+</pre>
+</td>
+
+<td>
+<pre>
+1+2
+
+
+3 
+
+error
+
+
+
+3
+</pre>
+</td>
+
+<td>
+No arithmetic done. Verbatim assignment.
+<br><br><br>
+The <tt>let</tt> command is for arithmetic.
+<br><br><br>
+Can't have any spaces with <tt>let</tt>.
+<br><br><br>
+Using quotes allows spaces.
+
+</td>
+</tr></tbody></table>
+
+</p><li>Example 2 - Using <tt>(( ))</tt> for arithmetic context.</li>
+<p>
+<table border="1" cellspacing="0" cellpadding="10">
+<tbody><tr><th>Code</th><th>Output</th><th>Description</th></tr>
+<tr valign="top">
+
+<td>
+<pre>a=1
+
+((a=$a+2))         
+echo $a
+
+((a = a + 2))      
+echo $a
+
+((a += 2))         
+echo $a
+</pre>
+</td>
+
+<td>
+<pre>
+
+
+3
+
+
+5 
+
+
+7
+</pre>
+</td>
+
+<td>
+Set <tt>a</tt> to 1
+<br><br>
+Add 2 to <tt>a</tt>
+<br><br><br>
+Same, but can use spaces and no <tt>$</tt>.
+<br><br><br>
+Same.
+
+</td>
+</tr></tbody></table>
+
+
+</p></blockquote>
+
+<p>
+</p><hr width="90%">
+<p>
+
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><h3><a href="http://tldp.org/LDP/Bash-Beginners-Guide/html/chap_11.html">Functions</a></h3>
+<ul>
+<li>Basic syntax:</li>
+<blockquote><pre>function_name() 
+{ 
+  command1...
+  command2...
+  ...
+} 
+</pre></blockquote>
+
+Functions in bash do not specify parameters nor return type, although both are supported.
+
+<p>
+
+</p><li>Example 1 - No parameters, no return</li>
+<p>
+<table border="1" cellspacing="0" cellpadding="10">
+<tbody><tr><th>Function</th><th>Calling it</th><th>Output</th></tr>
+<tr valign="top">
+<td>
+<pre>say_hello()
+{
+  echo "Hello!"
+}
+</pre>
+</td>
+<td>
+<pre>say_hello
+</pre>
+</td>
+<td>
+<pre>Hello!
+</pre>
+</td>
+</tr></tbody></table>
+
+
+
+</p><li>Example 2 - passing parameters</li>
+<p>
+<table border="1" cellspacing="0" cellpadding="10">
+<tbody><tr><th>Function</th><th>Calling it</th><th>Output</th></tr>
+<tr valign="top">
+<td>
+<pre>print3()
+{
+  echo "Printing: $1 $2 $3"
+}
+</pre>
+</td>
+<td>
+<pre>print3 apple banana cherry
+print3 apple "banana cherry" dog
+</pre>
+</td>
+<td>
+<pre>apple banana cherry
+apple banana cherry dog
+</pre>
+</td>
+</tr></tbody></table>
+
+
+</p><li>Example 3 - returning a value</li>
+<p>
+<table border="1" cellspacing="0" cellpadding="10">
+<tbody><tr><th>Function</th><th>Calling it</th><th>Output</th></tr>
+<tr valign="top">
+<td>
+<pre>count_files()
+{
+  local count=`ls -l | wc -l`
+  echo $count
+}
+</pre>
+</td>
+<td>
+<pre>num_files=$(count_files)
+echo $num_files
+
+echo "The number of files is $(count_files)"
+</pre>
+</td>
+<td>
+<pre>17
+
+
+The number of files is 17
+</pre>
+</td>
+</tr></tbody></table>
+
+
+</p><li>Example 4 - passing parameters and returning a value</li>
+<p>
+<table border="1" cellspacing="0" cellpadding="10">
+<tbody><tr><th>Function</th><th>Calling it</th><th>Output</th></tr>
+<tr valign="top">
+<td>
+<pre>multiply()
+{
+  local product=$(($1 * $2))
+  echo $product
+}
+</pre>
+</td>
+<td>
+<pre>total=$(multiply 3 5)
+echo $total
+</pre>
+</td>
+<td>
+<pre>15
+</pre>
+</td>
+</tr></tbody></table>
+
+
+</p><li>Exit codes - Functions can use the <tt>return</tt> command, but it's only for integers between 0 and 255.</li>
+
+<blockquote><pre></pre></blockquote>
+
+</ul>
+
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<p>
+</p><hr width="90%">
+<p>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><h3><a href="http://tldp.org/LDP/Bash-Beginners-Guide/html/chap_07.html">Conditionals</a></h3>
+<ul>
+<li>There are <a href="http://tldp.org/LDP/Bash-Beginners-Guide/html/sect_07_01.html"><tt>if</tt> Statements</a>.</li>
+<p>
+
+</p><li>Block-style if: (<tt>if</tt> and <tt>then</tt> must be on separate lines)</li>
+<li>This is the CS 180 style:</li>
+<blockquote><pre> if CONDITION-COMMANDS
+ then
+   COMMAND(S)...
+ elif CONDITION-COMMANDS   # optional
+ then
+   COMMAND(S)...
+ else            # optional
+   COMMAND(S)...
+ fi              # required
+</pre></blockquote>
+
+<li><tt>if</tt> and <tt>then</tt> on one line needs semicolons:</li>
+<blockquote><pre>if CONDITION-COMMANDS; then COMMAND(S)...; fi
+</pre></blockquote>
+
+
+
+<li>Example 1 - simple arithmetic comparison. (The space around the square brackets: <tt>[[ and ]]</tt> is required.)</li>
+<p>
+<table border="1" cellspacing="0" cellpadding="10">
+<tbody><tr><th>Code</th><th>Output</th></tr>
+<tr valign="top">
+<td>
+<pre>value=3
+if [[ $value -eq 3 ]]; then
+ echo "The value is 3"
+else
+  echo "The value is NOT 3"
+fi
+</pre>
+</td>
+<td>
+<pre>The value is 3
+</pre>
+</td>
+</tr></tbody></table>
+
+
+
+</p><li>Arithmetic comparison operators</li>
+<blockquote><pre><pre><table border="1" cellspacing="0" cellpadding="10">
+<tbody><tr><th>Bash operator</th><th>Equivalent<br>C operator</th><th>Meaning</th></tr>
+<tr align="center"><td>-eq</td><td>=</td><td>equal</td></tr>
+<tr align="center"><td>-ne</td><td>!=</td><td>not equal</td></tr>
+<tr align="center"><td>-lt</td><td>&lt;</td><td>less</td></tr>
+<tr align="center"><td>-gt</td><td>&gt;</td><td>greater</td></tr>
+<tr align="center"><td>-le</td><td>&lt;=</td><td>less or equal</td></tr>
+<tr align="center"><td>-ge</td><td>&gt;=</td><td>greater or equal</td></tr>
+</tbody></table>
+</pre></pre></blockquote>
+
+
+<li>Example 2 - string comparison</li>
+<p>
+<table border="1" cellspacing="0" cellpadding="10">
+<tbody><tr><th>Code</th><th>Output</th></tr>
+<tr valign="top">
+<td>
+<pre>string1="Hello"
+string2="hello"
+if [[ $string1 == $string2 ]]; then
+  echo "Same strings"
+else
+  echo "Different strings"
+fi
+</pre>
+</td>
+<td>
+<pre>Different strings
+</pre>
+</td>
+</tr></tbody></table>
+
+
+</p><li>String comparison operators</li>
+
+<pre><table border="1" cellspacing="0" cellpadding="10">
+<tbody><tr><th>Operator</th><th>Meaning</th></tr>
+<tr align="center"><td>==</td><td>equal</td></tr>
+<tr align="center"><td>!=</td><td>not equal</td></tr>
+<tr align="center"><td>&lt;</td><td>less</td></tr>
+<tr align="center"><td>&gt;</td><td>greater</td></tr>
+</tbody></table>
+</pre>
+
+
+<li>Example 3 - simple file test (See more <a href="http://tldp.org/LDP/Bash-Beginners-Guide/html/sect_07_01.html">file tests</a>.)</li>
+<p>
+<table border="1" cellspacing="0" cellpadding="10">
+<tbody><tr><th>Code</th><th>Output</th></tr>
+<tr valign="top">
+<td>
+<pre>filename="foo.txt"
+echo -n "$filename "
+if [[ -e $filename ]]; then
+  echo "exists"
+else
+  echo "does not exist"
+fi
+</pre>
+</td>
+<td>
+<pre>foo.txt does not exist
+</pre>
+</td>
+</tr></tbody></table>
+
+  
+</p><li>Example 4 - Calling a function (Function checks to see if the file is executable and returns true or false)</li>
+<p>
+
+<!--  
+<table border=1 cellspacing=0 cellpadding=10>
+<tr><th>Version 1</th><th>Version 2</th><th>Version 3</th></tr>
+<tr valign="top">
+<td>
+<pre>
+validate()
+{
+  local result
+  if [ -x $1 ]; then
+    result=$(true);
+  else
+    result=$(false);
+  fi
+}
+</pre>
+</td>
+<td>
+<pre>
+validate2()
+{
+  if [ -x $1 ]; then
+    $(true);
+  else
+    $(false);
+  fi
+}
+</pre>
+</td>
+<td>
+<pre>
+validate3()
+{
+  if [ -x $1 ]; then
+    true
+  else
+    false
+  fi
+}
+</pre>
+</td>
+</tr></table>
+</blockquote>
+-->
+
+</p><blockquote><pre>validate()
+{
+  if [[ -x $1 ]]; then
+    true
+  else
+    false
+  fi
+}
+</pre></blockquote>
+
+<p>
+  
+<table border="1" cellspacing="0" cellpadding="10">
+<tbody><tr><th>Code</th><th>Output</th></tr>
+<tr valign="top">
+<td>
+<pre>filename="a.out"
+echo -n "$filename "
+if validate $filename; then
+  echo "is executable"
+else
+  echo "is not executable"
+fi
+</pre>
+</td>
+<td>
+<pre>a.out is executable
+</pre>
+</td>
+</tr></tbody></table>
+
+</p><p>
+<!--Incidentally, <tt>true</tt> and <tt>false</tt> are actually external programs.-->
+
+</p><blockquote><pre></pre></blockquote>
+
+
+</ul>
+
+<b>Note:</b>
+<p>
+What's the deal with the single and the double brackets? (<tt>[ ]</tt> vs. <tt>[[ ]]</tt>).
+The best answer I've found on the subject is <a href="http://mywiki.wooledge.org/BashFAQ/031">here</a>.
+</p><p>
+In a nutshell, <tt>[ ]</tt> is older and more portable, while <tt>[[ ]]</tt> is newer, easier to use, 
+but doesn't work with all shells. Since we are talking about the bash shell, this will always work.
+By the way, there is actually a program in <tt>/usr/bin</tt> that is named <tt>[</tt>. That's right,
+do this:
+
+</p><blockquote><pre>ls -l /usr/bin/[
+</pre></blockquote>
+
+and you will see something like this:
+
+<blockquote><pre>-rwxr-xr-x 1 root root 30,244 2011-02-23 05:22 /usr/bin/[
+</pre></blockquote>
+
+
+<p>
+</p><hr width="90%">
+<p>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><h3><a href="http://tldp.org/LDP/Bash-Beginners-Guide/html/chap_09.html">Iteration</a></h3>
+<blockquote>
+<li>There are <a href="http://tldp.org/LDP/Bash-Beginners-Guide/html/sect_09_01.html">for loops</a> and
+<a href="http://tldp.org/LDP/Bash-Beginners-Guide/html/sect_09_02.html">while loops</a> of course.</li>
+<p>
+
+</p><li>Block-style for loop (CS 180 style):</li>
+<blockquote><pre>for arg in LIST
+do 
+  command(s)... 
+done
+</pre></blockquote>
+
+<li>One line needs semicolons:</li>
+<blockquote><pre>for arg in LIST; do command(s)...; done
+</pre></blockquote>
+
+<li>Example 1 - These all do the same thing</li>
+<p>
+<table border="1" cellspacing="0" cellpadding="10">
+<tbody><tr><th>1</th><th>2</th><th>3</th><th>4</th></tr>
+<tr valign="top">
+
+<td>
+<pre>for a in 1 2 3 4 5
+do
+  echo -n "$a "
+done  
+</pre>
+</td>
+
+<td>
+<pre>NUMS="1 2 3 4 5"
+for a in $NUMS
+do
+  echo -n "$a "
+done  
+</pre>
+</td>
+
+<td>
+<pre>for a in {1..5}
+do
+  echo -n "$a "
+done  
+</pre>
+</td>
+
+<td>
+<pre>for ((a = 1; a &lt;= 5; a++))
+do
+  echo -n "$a "
+done
+</pre>
+</td>
+
+</tr></tbody></table>
+</p><p>
+<b>Output:</b>
+</p><pre>1 2 3 4 5 
+</pre>
+
+Note that these two lines mean different things:
+
+<blockquote><pre>for a in 1 2 3 4 5
+
+for a in "1 2 3 4 5"
+</pre></blockquote>
+The first contains 5 separate items (numbers), but the second is a single item (a string).
+Notice in the second example above, the string <tt>"1 2 3 4 5"</tt> is assigned to a variable,
+<tt>NUMS</tt>, and that variable is used in the for loop. <!--It is a subtle but important difference.-->
+<p>
+  
+</p><li>Example 2 - This lists all of the <tt>.cpp</tt> files in the current directory</li>
+
+<blockquote><pre>for a in *.cpp
+do
+  echo "$a "
+done  
+</pre></blockquote>
+
+
+<li>Example 3 - Calling a function in the for loop</li>
+
+<blockquote><pre>generate_list()
+{
+  echo "one two three"
+}
+</pre></blockquote>
+
+<blockquote><pre>for word in $(generate_list)
+do
+  echo "$word"
+done
+</pre></blockquote>
+
+
+
+
+<li>Block-style while loop (CS 180 style):</li>
+<blockquote><pre>while CONTROL-COMMAND
+do 
+  COMMAND(S)... 
+done
+</pre></blockquote>
+
+<li>One line needs semicolons:</li>
+<blockquote><pre>while CONTROL-COMMAND; do COMMAND(S)...; done   
+
+</pre></blockquote>
+
+<li>Example 4 - Block-style while loop example</li>
+<p>
+</p><blockquote><pre>i=0
+while [ $i -lt 4 ]
+do
+  i=$(($i + 1))   # can also use ((i++))
+  echo -n "$i "
+done
+</pre></blockquote>
+  
+
+<li>Example 5 - Calling a function in the while loop</li>
+
+<blockquote><pre>t=0
+condition()
+{
+  ((t++))
+
+  if [ $t -lt 5 ]
+  then
+    return 0  # true
+  else
+    return 1  # false
+  fi
+}
+
+while condition
+do
+  echo "Still going: t = $t"
+done
+</pre></blockquote>
+
+
+</blockquote>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<li><b>Other useful tidbits</b></li>
+
+<ul>
+
+  <li>Arrays</li>
+  <p>
+    </p><ul>
+      <li>To create an empty array:</li>
+<blockquote><pre>list=()        
+</pre></blockquote>
+
+      <li>Fill it with values:</li>
+<blockquote><pre>num=5
+for ((a = 0; a &lt; num; a++))
+do
+  list[(($a))]=$a
+done
+</pre></blockquote>
+
+      <li>You can use <tt>+=</tt>:</li>
+<blockquote><pre>num=5
+for ((a = 0; a &lt; num; a++))
+do
+  list+=($a)
+done
+</pre></blockquote>
+
+      <li>Iterate over it and print the values:</li>
+<blockquote><pre>for ((a = 1; a &lt; num; a++))
+do
+  echo ${list[a]}
+done
+</pre></blockquote>
+
+      <li>Another way to iterate and print:</li>
+<blockquote><pre>for i in "${list[@]}"
+do
+  echo $i
+done
+</pre></blockquote>
+</ul>
+
+
+  <li>Command-line parameters:</li>
+  <p>
+  </p><ul>
+    <li>Parameters are separated by a space.</li>
+    <li>Accessed by position: <tt>$1 $2 $3 $4</tt> etc.</li>
+    <li>Positions 10 and above: <tt>${10} ${11} ${12}</tt> etc.</li>
+    <li>The number of parameters is in the variable <tt>$#</tt></li>
+    <li>The command line in one string is the variable <tt>$@</tt></li>
+    <li>Parameters with spaces require double-quotes.</li>
+    <li>Examples: Assume this is the command line: <tt>1 2 3 "4 5 6" 7 8</tt></li>
+<p>
+
+  
+<table border="1" cellspacing="0" cellpadding="10">
+<tbody><tr><th>Simple (no loop)</th><th>Loop with <tt>$@</tt></th><th>Loop with <tt>"$@"</tt></th><th>Loop with <tt>$*</tt></th><th>Loop with <tt>"$*"</tt></th></tr>
+<tr valign="top">
+
+<td>
+<pre>echo $#
+echo $@
+echo $1
+echo $2
+echo $3
+echo $4
+echo $5
+echo $6
+
+<b>Output:</b>
+6
+1 2 3 4 5 6 7 8
+1
+2
+3
+4 5 6
+7
+8
+</pre>
+</td>
+
+<td>
+<pre>for a in $@
+do
+  echo $a
+done
+
+<b>Output:</b>
+1
+2
+3
+4
+5
+6
+7
+8
+</pre>
+</td>
+
+<td>
+<pre>for a in "$@"
+do
+  echo $a
+done
+
+<b>Output:</b>
+1
+2
+3
+4 5 6
+7
+8
+</pre>
+</td>
+
+<td>
+<pre>for a in $*
+do
+  echo $a
+done
+
+<b>Output:</b>
+1
+2
+3
+4
+5
+6
+7
+8
+</pre>
+</td>
+
+<td>
+<pre>for a in "$*"
+do
+  echo $a
+done
+
+<b>Output:</b>
+1 2 3 4 5 6 7 8
+</pre>
+</td>
+
+
+</tr></tbody></table>
+
+</p><li>Other examples:</li>
+<p>
+  
+<table border="1" cellspacing="0" cellpadding="10">
+<tbody><tr><th>Loop with <tt>shift</tt></th><th>Copy to an array</th><th>Printing the array elements</th><th>Another way to print</th></tr>
+<tr valign="top">
+
+<td>
+<pre>num=$#
+for ((a = 1; a &lt;= num ; a++))
+do
+  echo $1
+  shift
+done
+
+<b>Output:</b>
+1
+2
+3
+4 5 6
+7
+8
+</pre>
+</td>
+
+<td>
+<pre>list=()
+num=$#
+for ((a = 1; a &lt;= num ; a++))
+do
+  list[(($a))]=$1
+  shift
+done
+</pre>
+</td>
+
+<td>
+<pre>for ((a = 1; a &lt;= num ; a++))
+do
+  echo ${list[a]}
+done
+
+<b>Output:</b>
+1
+2
+3
+4 5 6
+7
+8
+</pre>
+</td>
+
+<td>
+<pre>for i in "${list[@]}"
+do
+  echo $i
+done
+
+<b>Output:</b>
+1
+2
+3
+4 5 6
+7
+8
+</pre>
+</td>
+
+
+</tr></tbody></table>
+</p><p>
+
+</p><li>Nice explanation is <a href="http://www.ibm.com/developerworks/library/l-bash-parameters/index.html">here</a>.</li>
+</ul>
+<p>
+
+</p><li>Executing commands and capturing output.</li>
+<p>
+</p><ul>
+  <li>Various ways to do it.</li>
+  <li>Simple example using the <tt>date</tt> command:</li>
+  <ul>
+    <li>Typing <tt>date</tt> at the command prompt:</li>
+<blockquote><pre>$ date
+</pre></blockquote>
+Output:
+<blockquote><pre>Thu May 24 10:21:40 PDT 2012
+</pre></blockquote>
+    <li>In a bash script:</li>
+<blockquote><pre><b>Command        Output</b>
+-----------------------------------------------------------
+date           Thu May 24 10:24:11 PDT 2012
+dt=$(date)
+echo dt        dt
+echo $dt       Thu May 24 10:24:11 PDT 2012
+dt=`date`
+echo $dt       Thu May 24 10:24:11 PDT 2012
+$(date)        ./script3: line 42: Thu: command not found
+</pre></blockquote>
+
+</ul>
+</ul>
+      
+
+
+
+
+
+
+
+</ul>
+
+
+<p>
+</p><hr width="90%">
+<p>
+
+
+  
+
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/bash_script">bash_script</a> used to produce all of the examples. It ain't pretty, but here it is. 
+There are actually some lines in the script that aren't on this web page. Examples of looping over filenames
+in a directory.
+</p><p>
+
+This is an excellent place to start: 
+<a href="http://tldp.org/LDP/Bash-Beginners-Guide/html/index.html">Bash Guide for Beginners</a>
+</p><p>
+A <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/checkzips.html">real world example</a> that I use on student submissions.
+</p><p>
+
+
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><p class="SectionHeader">Enhancing Your bash Experience</p>
+
+Bash is infinitely customizable. You can do things such as:
+
+<ul>
+  <li>Define <a href="http://tldp.org/LDP/Bash-Beginners-Guide/html/sect_03_05.html">aliases </a> (abbreviations) for long commands</li>
+  <li>Create lengthy scripts and functions for common tasks</li>
+  <li>Customize the output color of many programs</li>
+</ul>
+    
+An important file used to customize your bash shell is a hidden file in your home directory. This file is a startup script
+called <span id="wpurl"><a class="wplabel">.bashrc</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Bash_(Unix_shell)#Startup_scripts">.bashrc</a> and it's a simple text file. (The dot <tt>.</tt> hides the file from the <tt>ls</tt> program.)
+I'm going to give you some useful customizations to put in your <b><tt>.bashrc</tt></b> file.
+<p>
+</p><h3>Aliases</h3>
+
+To create aliases, use this format in your startup script:
+
+<blockquote><pre><b>alias</b> <i>short_name</i><b>=<b>'</b></b><i>some_other_command</i><b>'</b>
+</pre></blockquote>
+
+Here are some common ones Windows users like to create:
+
+<blockquote><pre>alias dir='ls -l'
+alias del='rm'
+alias cp='cp --preserve=timestamps'
+</pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+<p>
+Example using the <tt>ls</tt> (list files) command:
+</p><p>
+
+Default <tt>ls</tt> command:
+
+</p><p>
+</p><blockquote>
+<table border="1" cellspacing="0" cellpadding="10">
+<tbody><tr bgcolor="black"><td>
+<font color="#C0C0C0">
+<xblockquote><pre><font color="yellow"><b>mmead@olga:~/digipen/cs180&gt;</b></font> ls 
+BatchFiles.html                ding.wav      quiz_material
+Hotel California.mp3           dumpit.exe    quiz_material.zip
+OperatingSystemConcepts8e.zip  exams         sandbox
+bash.odt                       foo.mmg       spanish.txt
+batch                          graph-0.jpg   start.wav
+batch.odt                      graph-1.jpg   temp.html
+book                           makehelp.bat
+didcgaf-setup.txt              new.css
+</pre></xblockquote>
+</font></td></tr></tbody></table>
+</blockquote>
+
+<p><br>
+
+<tt>ls</tt> using long listing (lowercase 'L': <tt>-l</tt>), and listing directories before files (<tt>--group-directories-first</tt>):
+</p><blockquote>
+<table border="1" cellspacing="0" cellpadding="10">
+<tbody><tr bgcolor="black"><td>
+<font color="#C0C0C0">
+<xblockquote><pre><font color="yellow"><b>mmead@olga:~/digipen/cs180&gt;</b></font> ls -l --group-directories-first
+total 145,592,320
+drwxr-xr-x  3 mmead mmead       4,096 2011-05-16 08:36 batch
+drwxr-xr-x 12 mmead mmead       4,096 2011-05-09 20:52 book
+drwxr-xr-x  2 mmead mmead       4,096 2011-05-18 19:29 exams
+drwxr-xr-x  2 mmead mmead       4,096 2011-05-09 21:11 quiz_material
+drwxr-xr-x  2 mmead mmead       4,096 2011-05-12 11:45 sandbox
+-rw-r--r--  1 mmead mmead      14,188 2011-05-18 19:25 bash.odt
+-rw-r--r--  1 mmead mmead      56,690 2011-05-15 20:39 BatchFiles.html
+-rw-r--r--  1 mmead mmead      30,568 2011-05-15 11:52 batch.odt
+-rw-------  1 mmead mmead       3,480 2010-10-10 22:09 didcgaf-setup.txt
+-rwxr-xr-x  1 mmead mmead      80,856 2001-08-23 05:00 ding.wav
+-rw-r--r--  1 mmead mmead      58,880 2011-05-10 20:19 dumpit.exe
+-rw-r--r--  1 mmead mmead           0 2011-05-18 19:20 foo.mmg
+-rw-r--r--  1 mmead mmead      25,932 2010-03-30 11:49 graph-0.jpg
+-rw-r--r--  1 mmead mmead      25,679 2010-03-30 11:52 graph-1.jpg
+-rw-------  1 mmead mmead   6,533,037 2010-10-31 17:22 Hotel California.mp3
+-rw-r--r--  1 mmead mmead       4,291 2011-05-16 08:34 makehelp.bat
+-rw-------  1 mmead mmead      11,140 2011-04-20 12:58 new.css
+-rw-r--r--  1 mmead mmead 138,465,681 2011-05-09 20:53 OperatingSystemConcepts8e.zip
+-rw-r--r--  1 mmead mmead      52,876 2011-05-06 18:30 quiz_material.zip
+-rw-r--r--  1 mmead mmead         153 2010-10-16 10:57 spanish.txt
+-rwxr-xr-x  1 mmead mmead       1,192 2001-08-23 05:00 start.wav
+-rw-r--r--  1 mmead mmead       1,253 2011-05-18 19:33 temp.html
+</pre></xblockquote>
+</font></td></tr></tbody></table>
+</blockquote>
+<p>
+
+Same as above but enabling color output (<tt>--color</tt>): 
+</p><blockquote>
+<table border="1" cellspacing="0" cellpadding="10">
+<tbody><tr bgcolor="black"><td>
+<font color="#C0C0C0">
+<xblockquote><pre><font color="yellow"><b>mmead@olga:~/digipen/cs180&gt;</b></font> ls -l --group-directories-first --color=auto
+total 145,592,320
+drwxr-xr-x  3 mmead mmead       4,096 2011-05-16 08:36 <font color="blue"><b>batch</b></font>
+drwxr-xr-x 12 mmead mmead       4,096 2011-05-09 20:52 <font color="blue"><b>book</b></font>
+drwxr-xr-x  2 mmead mmead       4,096 2011-05-18 19:29 <font color="blue"><b>exams</b></font>
+drwxr-xr-x  2 mmead mmead       4,096 2011-05-09 21:11 <font color="blue"><b>quiz_material</b></font>
+drwxr-xr-x  2 mmead mmead       4,096 2011-05-12 11:45 <font color="blue"><b>sandbox</b></font>
+-rw-r--r--  1 mmead mmead      14,188 2011-05-18 19:25 bash.odt
+-rw-r--r--  1 mmead mmead      56,690 2011-05-15 20:39 <font color="##CC6600"><b>BatchFiles.html</b></font>
+-rw-r--r--  1 mmead mmead      30,568 2011-05-15 11:52 batch.odt
+-rw-------  1 mmead mmead       3,480 2010-10-10 22:09 didcgaf-setup.txt
+-rwxr-xr-x  1 mmead mmead      80,856 2001-08-23 05:00 <font color="#00FF00">ding.wav</font>
+-rw-r--r--  1 mmead mmead      58,880 2011-05-10 20:19 <font color="#00FF00"><b>dumpit.exe</b></font>
+-rw-r--r--  1 mmead mmead           0 2011-05-18 19:20 <font color="white"><b>foo.mmg</b></font>
+-rw-r--r--  1 mmead mmead      25,932 2010-03-30 11:49 <font color="#FF00FF"><b>graph-0.jpg</b></font>
+-rw-r--r--  1 mmead mmead      25,679 2010-03-30 11:52 <font color="#FF00FF"><b>graph-1.jpg</b></font>
+-rw-------  1 mmead mmead   6,533,037 2010-10-31 17:22 <font color="#00FF00">Hotel California.mp3</font>
+-rw-r--r--  1 mmead mmead       4,291 2011-05-16 08:34 <font color="#00FF00"><b>makehelp.bat</b></font>
+-rw-------  1 mmead mmead      11,140 2011-04-20 12:58 new.css
+-rw-r--r--  1 mmead mmead 138,465,681 2011-05-09 20:53 <font color="red">OperatingSystemConcepts8e.zip</font>
+-rw-r--r--  1 mmead mmead      52,876 2011-05-06 18:30 <font color="red">quiz_material.zip</font>
+-rw-r--r--  1 mmead mmead         153 2010-10-16 10:57 spanish.txt
+-rwxr-xr-x  1 mmead mmead       1,192 2001-08-23 05:00 <font color="#00FF00">start.wav</font>
+-rw-r--r--  1 mmead mmead       1,253 2011-05-18 19:33 <font color="#CC6600"><b>temp.html</b></font>
+</pre></xblockquote>
+</font>
+</td></tr></tbody></table>
+</blockquote>
+
+Creating an alias for the above command in your <tt>.bashrc</tt> file:
+
+<blockquote><pre>alias dir='ls -l --color --group-directories-first'
+</pre></blockquote>
+
+Now you can simply type <tt>dir</tt> to get the above output. Oh, and to get all of your numbers to have 
+those nice commas in them, add this line to your startup script:
+
+<blockquote><pre>export BLOCK_SIZE=\'1
+</pre></blockquote>
+
+<!--
+Although this doesn't seem to be working with my version of Cygwin.
+-->
+
+<p>
+</p><hr width="95%">
+<p>
+
+</p><h3>Changing the Command Prompt</h3>
+You'll notice that in the examples above, my command prompt was colored yellow. There are a couple of very good reasons for this.
+<ol>
+  <li>First, by coloring the prompt, it is easy to find the commands in a sea of output. If all output is the same color as 
+  the prompt, it's very difficult to find the command.</li>
+  <li>Second, by using a different color prompt between "user" mode and "superuser" mode, it makes it less likely that
+    you'll do something bad to your computer. (This isn't a cure for that and I'm not going to get into the whole philosophy of
+  "when and why you should ever be root (administrator) while using the command line")</li>
+</ol>
+
+<blockquote><pre>export PS1="\[\033[<span style="background:yellow"><b>1;33</b></span>m\]\u@\h:\w&gt;\[\033[0m\]"
+</pre></blockquote>
+
+The highlighted portion is what's interesting. The '1' means <b>bold</b> and the '33' means yellow. Now, the prompt will be yellow on 
+black (the default background color). You could add a third number, say, '44' (<tt>1;33;44</tt>)which means a blue background. 
+The prompt is now hard-coded to be yellow. 
+However, I want the prompt to change based on
+what role I'm playing (normal user or admin). I want yellow for a normal user and red for admin. I'm going to write a function that
+will determine that and set the correct color based on that.
+
+<blockquote><pre># Assume that my user ID is 1234
+# 33=yellow, 31=red, admin/root/superuser is 0
+user_color()
+{
+  if [ "$UID" -eq "0" ]; then
+    echo 31
+  elif [ "$UID" -eq "1234" ]; then
+    echo 33
+  fi
+}
+</pre></blockquote>
+
+Then, change the prompt to call the function:
+
+<p>
+</p><blockquote><pre>export PS1="\[\033[<span style="background:yellow"><b>\$(user_color)</b></span>m\]\u@\h:\w&gt;\[\033[0m\]" 
+</pre></blockquote>
+
+Consult <a href="http://www.cyberciti.biz/tips/howto-linux-unix-bash-shell-setup-prompt.html">this page</a> to learn about
+all of the characters used above.
+
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="5">
+<tbody><tr><th>dircolors Abbreviations</th></tr>
+<tr>
+<td>
+<pre>fi = normal file
+di = directory
+ln = symbolic link
+pi = fifo pipe
+so = socket
+bd = block device
+cd = character device
+or = symbolic link to nonexistent file (orphan)
+mi = symbolic link pointing to non-existent file
+ex = executable
+</pre>
+</td>
+</tr></tbody></table>
+</blockquote>
+  
+<p>
+
+</p><blockquote>
+<table border="1" cellspacing="0" cellpadding="10">
+<tbody><tr><th>Color Codes</th><th>Color Codes (cont.)</th></tr>
+<tr valign="top">
+<td>
+<pre> 00 = normal
+ 01 = bold
+ 04 = underlined
+ 05 = blinking
+ 07 = reversed
+ 08 = concealed
+ 31 = red
+ 32 = green
+ 33 = orange
+ 34 = blue
+ 35 = purple
+ 36 = cyan
+ 37 = grey
+ 40 = black background
+ 41 = red background
+ 42 = green background
+ 43 = orange background
+ 44 = blue background
+ 45 = purple background
+ 46 = cyan background
+ 47 = grey background
+</pre>
+</td>
+<td>
+<pre> 90 = dark grey
+ 91 = light red
+ 92 = light green
+ 93 = yellow
+ 94 = light blue
+ 95 = light purple
+ 96 = turquoise
+100 = dark grey background
+101 = light red background
+102 = light green background
+103 = yellow background
+104 = light blue background
+105 = light purple background
+106 = turquoise background
+</pre>
+</td>
+</tr></tbody></table>
+<p>
+See the man pages for <a href="http://linux.die.net/man/1/dircolors">dircolors</a> and <a href="http://linux.die.net/man/5/dir_colors">dir_colors</a>
+</p></blockquote>
+<p>
+
+
+</p><p>
+</p><hr width="95%">
+<p>
+
+<!--In a Unix-based world, it's very easy to change between being a "normal" user to being a "superuser" (administrator).-->
+
+</p><h3>Colorize the Output from grep</h3>
+
+Add these lines to your startup script:
+
+<blockquote><pre># Add color to grep
+export GREP_COLOR="44;37;01"
+export GREP_OPTIONS="--color=auto"
+</pre></blockquote>
+
+The power of grep:
+
+<blockquote><pre>$ grep -i "^a.*t.*h.*f.*" allwords.txt
+antishoplifting
+antitheft
+
+
+$ grep -i "^b.*s.*g.*d.*" allwords.txt
+besieged
+besmudged
+</pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<p>
+</p><hr width="95%">
+<p>
+
+</p><h3>Colorizing man Pages</h3>
+
+Add these lines to your startup script:
+
+<blockquote><pre># Add color to man pages
+export LESS_TERMCAP_mb=$'\E[01;31m'      # begin blinking
+export LESS_TERMCAP_md=$'\E[01;34m'      # begin bold
+export LESS_TERMCAP_me=$'\E[0m'          # end mode
+export LESS_TERMCAP_se=$'\E[0m'          # end standout-mode
+export LESS_TERMCAP_so=$'\E[01;44;33m'   # begin standout-mode - info box
+export LESS_TERMCAP_ue=$'\E[0m'          # end underline
+export LESS_TERMCAP_us=$'\E[01;32m'      # begin underline
+</pre></blockquote>
+
+
+<p>
+</p><hr width="95%">
+<p>
+
+</p><h3>Cycle Through the Command History</h3>
+
+Like most modern shells, bash has command completion (default uses tab key), but not just for files. It can also complete 
+programs that are in the path. If more than one file/program match the prefix, it will beep. If you
+press tab twice, it will show you a list. If you want bash to cycle through the commands instead of showing them,
+add this line:
+
+<blockquote><pre>bind '"\t":menu-complete'
+</pre></blockquote>
+
+
+
+<blockquote><pre></pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+<p>
+</p><hr width="95%">
+<p>
+
+
+</p><h3>Making the Changes Permanent</h3>
+
+In your home directory, you may have file named <tt><b>.bashrc</b></tt> that is hidden. The dot/period is what makes it hidden. This file
+is read every time you open a terminal window. By placing the commands in this file, you will always have the functionality. You can place
+all of your personal modifications in this file.
+<p>
+If the file exists, just open it with a text editor and add the lines at the bottom. If the file doesn't exist, it will be created. 
+<tt>gedit</tt> is a decent text editor for new Linux users:
+
+</p><blockquote><pre>gedit ~/.bashrc
+</pre></blockquote>
+
+Add these lines to the file:
+
+<blockquote><pre># Now, the <tt>dir</tt> command will display files properly :)
+alias dir='ls -l --color --group-directories-first'
+
+# Add color to grep output
+export GREP_COLOR="44;37;01"
+export GREP_OPTIONS="--color=auto"
+
+# Add color to man pages
+export LESS_TERMCAP_mb=$'\E[01;31m'      # begin blinking
+export LESS_TERMCAP_md=$'\E[01;34m'      # begin bold
+export LESS_TERMCAP_me=$'\E[0m'          # end mode
+export LESS_TERMCAP_se=$'\E[0m'          # end standout-mode
+export LESS_TERMCAP_so=$'\E[01;44;33m'   # begin standout-mode - info box
+export LESS_TERMCAP_ue=$'\E[0m'          # end underline
+export LESS_TERMCAP_us=$'\E[01;32m'      # begin underline
+
+# This causes the TAB-completion to cycle through possible matches
+bind '"\t":menu-complete'
+
+# This causes commas to be inserted in numbers, e.g. 1234567890 becomes 1,234,567,890
+export BLOCK_SIZE=\'1
+</pre></blockquote>
+
+<p>
+</p><hr width="95%">
+<p>
+
+
+</p><h3>Creating functions</h3>
+If you have more than one line of code, it may be more convenient to create a function instead of an alias. This example shows
+a function that contains 3 lines:
+<blockquote><pre>lpath()
+{
+  perl -e 'print "\n";
+  print join("\n", split(/:/, $ENV{'PATH'}));
+  print "\n";'
+}
+</pre></blockquote>
+
+Typing:
+<blockquote><pre>lpath
+</pre></blockquote>
+at the command prompt will display all of the paths in the PATH environment variable, each on its own line.
+Of course, there's a bazillion ways to do the same thing, and this is almost as short as it gets:
+
+<blockquote><pre>echo $PATH | tr : '\n'
+</pre></blockquote>
+
+It uses the <a href="http://ss64.com/bash/tr.html"><b><tt>tr</tt></b> filter</a> (<b>tr</b>anslate) to replace each colon with a newline. Nice.
+
+<p>
+This example is more verbose. It will extract (unzip, untar, uncompress, etc.) a file based on the file's
+extension.
+
+</p><blockquote><pre>#------------------------------------------
+#------Extraction of compressed files------
+# from ARCH Wiki
+
+extract() 
+{
+  if [ -f $1 ]; then
+    case $1 in
+        *.tar.bz2)   tar xvjf $1    ;;
+        *.tar.gz)    tar xvzf $1    ;;
+        *.bz2)       bunzip2 $1     ;;
+        *.rar)       rar x $1       ;;
+        *.gz)        gunzip $1      ;;
+        *.tar)       tar xvf $1     ;;
+        *.tbz2)      tar xvjf $1    ;;
+        *.tgz)       tar xvzf $1    ;;
+        *.zip)       unzip $1       ;;
+        *.Z)         uncompress $1  ;;
+        *.7z)        7z x $1        ;;
+        *)           echo "don't know how to extract '$1'..." ;;
+    esac
+  else
+    echo "'$1' is not a valid file!"
+  fi
+}
+</pre></blockquote>
+
+<p>
+</p><hr width="95%">
+<p>
+</p><h3>Case-insensitive command completion</h3>
+Anyone who has worked in the bash shell (or most any shell, for that matter) knows that 
+command/filename completion is one of the most powerful features of the shell. Most of the time,
+I try to use all lowercase characters in my filenames. However, sometimes there are uppercase
+characters as well. By default, filename completion is case-sensitive. This means that if
+I have a directory named <b>Downloads</b> and I type this: (<tt>&lt;TAB&gt;</tt> is the Tab key)
+<blockquote><pre>ls d&lt;TAB&gt;
+</pre></blockquote>
+it will not complete the command. If it does, it's not completing it with what I want, which
+is this:
+<blockquote><pre>ls Downloads
+</pre></blockquote>
+If you want the completion to ignore the case of the characters (case-insensitive) then you
+have to configure your environment for that. However, the configuration doesn't go into your
+<tt><b>.bashrc</b></tt>, it goes into your <tt><b>.inputrc</b></tt> file. It's likely that
+you don't have a <tt><b>.inputrc</b></tt> in your home directory, so you'll have to create
+one with any text editor. In your <tt><b>.inputrc</b></tt> file, simply place this one line
+at the top:
+
+<blockquote><pre>set completion-ignore-case on
+</pre></blockquote>
+Now, when you open up a new bash shell, the completions will be case-insensitive. 
+<p>
+
+</p><p>
+</p><hr width="95%">
+<p>
+
+
+</p><h3>Global customization</h3>
+Suppose you want every user on the system to enjoy these modifications? If so, you can edit <tt>/etc/bash.bashrc</tt> to include them. (Go look at that file.)
+This is the system-wide startup file. You will have to use <tt><b>sudo</b></tt> to edit it because it is a system file. Also, in Real Life<sup>™</sup> you
+wouldn't necessarily force every user to have to use your settings. However, the local <tt><b>.bashrc</b></tt> file overrides the system one,
+so the users can set things up however they want. On my own Linux systems, I put a few things in the system <tt><b>bash.bashrc</b></tt> because I want them to be
+available when I'm masquerading around the system as <b>root</b> or some other user.
+Just as with
+<tt><b>.bashrc</b></tt>, there is a system-wide file also in <tt>/etc</tt> named
+<tt>inputrc</tt> (no leading dot) that is for all users on the system. So, if you want
+all of the users to have the settings in that file as well, you would edit that file instead.
+
+<hr>
+
+<br>
+Other useful links:
+<ul>
+<li><a href="http://tiswww.case.edu/php/chet/bash/bashref.html">Bash Reference Manual</a></li>
+<li><a href="http://tiswww.case.edu/php/chet/bash/bash.html">Bash man page</a></li>
+<li><a href="http://tiswww.case.edu/php/chet/bash/FAQ">Bash FAQ</a></li>
+<li><a href="http://mywiki.wooledge.org/BashPitfalls">Bash Pitfalls</a> </li>
+<li><a href="http://mywiki.wooledge.org/BashFAQ">BASH Frequently Asked Questions</a> </li>
+<li><a href="http://wiki.bash-hackers.org/start">Bash Hackers Wiki</a> </li>
+<li><a href="http://steve-parker.org/sh/first.shtml">Bash shell scripting tutorial</a> </li>
+<li><a href="http://tldp.org/LDP/abs/html/">Advanced Bash-Scripting Guide</a> </li>
+<p>
+</p><li><a href="https://wiki.archlinux.org/index.php/Color_Bash_Prompt">Custom bash colorizing</a>
+</li><li><a href="https://wiki.archlinux.org/index.php/Bash">More bash customizations</a> from Arch Wiki
+<p>
+</p></li><li><a href="http://bash.cyberciti.biz/guide/Main_Page">Lots of examples</a> It's still
+  appears to be a work in progress, but useful as it is.
+</li></ul>
+
+<p>
+</p><hr width="100%">
+<p>
+
+
+
+
+
+</p><blockquote><pre></pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<tt><b></b></tt>
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<blockquote>
+<blockquote>
+</blockquote><table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th></tr>
+<tr valign="top">
+
+</tr></tbody></table><table border="0" cellspacing="0" cellpadding="0">
+<tbody><tr><th></th></tr>
+<tr valign="top">
+<td>
+
+</td></tr></tbody></table>
+</blockquote>
+  
+
+
+
+
+<blockquote><pre></pre></blockquote>
+
+</body></html>

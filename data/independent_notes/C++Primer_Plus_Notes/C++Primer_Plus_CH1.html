@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <link rel="stylesheet" type="text/css" href="../../../D_style.css">
+      <link rel="icon" href="./Independent_Notes_Directory_files/Logo.ico">
+   </head>
+   <body style="background-color: #1a1a1a">
+      <div style="font-family:Helvetica; color:white;">
+         <p class="section_heading" ><b>Book Notes:</b> C++ Primer Plus By Stephen Prata</p>
+         <pre style="font-family:Helvetica;font-size: 115%">
+
+
+<h1>Chapter One - Getting Started with C++</h1>
+<hr color="green">
+<a class="link_nodec" href="#Learning C++: What Lies Before You">  Learning C++: What Lies Before You</a>
+
+<a class="link_nodec" href="#The Origins of C++: A Little History">  The Origins of C++: A Little History</a>
+
+<a class="link_nodec" href="#The C Language">  The C Language</a>
+
+<a class="link_nodec" href="#C Programming Philosophy">  C Programming Philosophy</a>
+
+<a class="link_nodec" href="#The C++ Shift: Object-Oriented Programming">  The C++ Shift: Object-Oriented Programming</a>
+
+<a class="link_nodec" href="#C++ and Generic Programming">  C++ and Generic Programming</a>
+
+<a class="link_nodec" href="#The Genesis of C++">  The Genesis of C++</a>
+
+<a class="link_nodec" href="#Portability and Standards">  Portability and Standards</a>
+
+<a class="link_nodec" href="#Language Growth">  Language Growth</a>
+
+<a class="link_nodec" href="#The Mechanics of Creating a Program">  The Mechanics of Creating a Program</a>
+
+<a class="link_nodec" href="#Creating the Source Code File">  Creating the Source Code File</a>
+
+<a class="link_nodec" href="#Compilation and Linking">  Compilation and Linking</a>
+
+<a class="link_nodec" href="#Unix Compiling and Linking">  Unix Compiling and Linking</a>
+
+<a class="link_nodec" href="#Linix Compiling and Linking">  Linix Compiling and Linking</a>
+
+<a class="link_nodec" href="#Command-Line Compilers for Windows Command Prompt Mode">  Command-Line Compilers for Windows Command Prompt Mode</a>
+
+<a class="link_nodec" href="#Windows Compilers">  Windows Compilers</a>
+
+<a class="link_nodec" href="#C++ on the Macintosh">  C++ on the Macintosh</a>
+
+<a class="link_nodec" href="#Summary">  Summary</a>
+<hr color="green">
+
+
+<h2 id="Learning C++: What Lies Before You" >Learning C++: What Lies Before You</h2>
+  There are three separate programming categories:
+
+  + The procedural language, represented by C
+  + The object-oriented language, represented by C++
+  + Generic Programming, supported by C++ templates
+
+<h2 id="The Origins of C++: A Little History">The Origins of C++: A Little History</h2>
+  In the 1970's, languages such as C and Pascal helped usher in an era of structured
+  programming, a philosophy that brought some order and discipline to a field badly in
+  need of these qualities.
+  
+  C was also able to produce compact, fast-running programs, along with the ability to
+  address hardware matters, such as managing communication ports and disk drivers.
+  Because of this C was the dominant programming language of the 1980's.
+  
+  1980 also created the idea of object-oriented programming, or OOP.
+
+<h2 id="The C Language">The C Language</h2>
+  In the early 1970's, Dennis Ritchie worked to develop the Unix operating system.
+  Operating systems require a language the was capable of producing compact, and fast
+  programs, that could control hardware efficiently.
+  
+  This need was satisfied by assembly language, however assembly is a low-level 
+  language 
+  that must be specific to a computer processor. This means that it could not be
+  transfered to another computer with a different processor. Doing so would require an
+  entire rewrite of the software using a different assembly language.
+  
+  Unix, however was intended to work on a variety of computer types. This required a
+  high-level programming language. High-level languages is focused around problem 
+  solving
+  instead of being tied in with the hardware like low-level languages.
+  
+  Compilers translate a high-level language to the the internal assembly language of a
+  particular computer. The same high-level program can be used on several different
+  platforms by using a separate compiler for each.
+  
+  Ritchie decided to develop a new programming language for the Unix operating system.
+  So building from older languages, he created the high-level language C.
+
+<h2 id="C Programming Philosophy">C Programming Philosophy</h2>
+  In general, computer languages deal with two concepts - data and algorithms.
+  The data constitutes the information a program uses and processes.
+  The algorithms are the methods the program uses.
+  
+  C is a procedural which means it focus uses on the algorithm side of programming.
+  
+  FORTRAN and BASIC are early examples of procedural languages.
+  These early procedural languages ran into organizational problems as programs grew 
+  larger.
+  
+  Programs often used branching statements which route execution to various sets of 
+  instructions. However with larger programs, these programs had such tangled routing that
+  they were a disaster from a maintainability stand point and impossible to modify once the
+  program got big enough.
+  
+  In response to this problem, computer scientists developed a more disciplined style of
+  programming called "Structured Programming." C includes features to facilitate this
+  approach.
+  
+  Structured programming limits branching to a small set of well-behaved constructions. 
+  C incorporates these as the for loop the while loop the do while loop and the if else
+  statement.
+  
+  With C the idea is to break a large program into small, easily programmed modules.
+  C encourages this by developing program units called functions to represent individual
+  task modules.
+
+<h2 id="The C++ Shift: Object-Oriented Programming">The C++ Shift: Object-Oriented Programming</h2>
+  Although Structured Programming improved the clarity, reliability, and ease of 
+  maintenance, large scale programs still remained a challenge. Object-oriented
+  programming brings a new approach to that challenge.
+  
+  Unlike procedural programming which emphasizes algorithms, OOP emphasizes the data.
+  The idea is to design data forms that correspond to essential features of a problem.
+  
+  In C++, a class is a specification describing such a new data form, and an object is a
+  particular data structure constructed according to that plan.
+  
+  For example, a class could describe the general properties of a corporation executive
+  (name, title, salary), while an object would be a specific executive.
+  
+  The OOP approach to program design is to first design classes that accurately represent 
+  those thins with which the program deals.
+  
+  The process of going from a lower level organization to a higher level organization is 
+  called bottom-up programming.
+  
+  Object-oriented programming facilitates creating reusable code, and that can eventually 
+  save a lot of work.
+
+<h2 id="C++ and Generic Programming">C++ and Generic Programming</h2>
+  Generic programming is yet another programming paradigm supported by C++. It is similar
+  to OOP in that it also aims to make it easier to reuse code and provide a good 
+  abstraction. However, while OOP emphasizes the data, generic programming emphasizes
+  independence from a particular data type.
+  
+  Generic programs are type independent. C++ data comes in many forms such as integers,
+  floats, doubles, strings, etc. If yo wanted to make an add function in OOP for integers, 
+  doubles, and floats you would need 3 different functions. Generic programming allows
+  you to make one function that will work for all three data types and more.
+  C++ templates id the feature that allows this to work.
+
+<h2 id="The Genesis of C++">The Genesis of C++</h2>
+  Like C,C++ began its life at Bell Labs, where Bjarne Stroustrup developed the language 
+  in the early 1980's
+  
+  Stroustrup based C++ on C because of C's brevity, its suitability to system programming,
+  its widespread availability, and its close ties to the Unix operating system.
+  
+  Stroustrup added OOP features and generic programming support to C without 
+  significantly 
+  changing the C component. This means any valid C program is a valid C++ program.
+  
+  Fun Fact: C++ comes from the C increment operator, which adds one to the value of a
+  variable. Therefore, the name C++ correctly suggests and augmented version of C.
+  
+  Only after Stroustrup achieved some success with C++ did he add templates, enabling
+  generic programming support.
+
+<h2 id="Portability and Standards">Portability and Standards</h2>
+  Portability refers to a programs capability to run on a range of platforms without 
+  modification.
+  
+  Hardware is the first challenge to portability. A program that is hardware
+  specific is not likely to be portable. For example, one that takes direct control of an
+  IBM PC video board, speaks gibberish as far as, say, a sun is concerned.
+  
+  You can localize the hardware dependent code to small modules, that way you only need 
+  to make one module for each desired platform. 
+  
+  The second challenge to portability is language divergence.
+  The same problem can show up with spoken language. A Yorkshireman's dexcription of the
+  day's events may not be portable to Brooklyn, even though english is said to be spoken
+  in both areas. Computer programs too can develop dialects.
+  
+  Computer scientists required a published standard on exactly how the language should 
+  work so that their versions of C++ would be compatible with other C++ code.
+  So, the American National Standards Institute (ANSI) created a comitee in 1990
+  (ANSI X3J16) to develop a standard for C++. (ANSI had already developed a standard for C).
+  
+  The International Organization for Standardization (ISO) soon joined the process with
+  its own commitee (ISO-WG-21), creating a joint ANSI/ISO effort to develop the standard
+  for C++.
+  
+  Several years of work eventually led to the International Standard (ISO/IEC 14882:1998)
+  , which was adopted in 1998 by the ISOm, the International Electrotechnical Commision 
+  (IEC), and ANSI. This standard, often called C++98, not only refined the description of
+  existing C++ features but also extended the language with exceptions, run time type
+  identification (RTTI), templates, and the Standard Template Library (STL).
+  
+  The year 2003 brought the publication of the second edition of the C++ standard (ISO/IEC
+  14882:2003); the new edition was only meant to tidy up the first edition, not to add
+  any new language features. This edition is often called C++03, however, because C++03
+  did not add any language features, often it is common to call C++98/C++03 just C++98.
+  
+  C++ continues to evolve,and the ISO committee approved a new standard August
+  2011 titled ISO/IEC 14882:2011 and informally called it C++11. Like C++98, C++11
+  adds many features to the language. In addition, it has the goals of removing
+  inconsistencies and of making C++ easier to learn and use.
+  
+  The C Standard was last revised as C99, which was adopted by the ISO in 1999 and
+  ANSI in 2000.This standard adds some features to C, such as a new integer type, that
+  some C++ compilers support.
+
+<h2 id="Language Growth">Language Growth</h2>
+  The original de facto standard for C++ was a 65-page reference manual included in the
+  328-page "The C++ Programming Language",by Stroustrup (Addison-Wesley, 1986).
+  
+  The next major publishes de facto standard was "The Annotated C++ Reference Manual",by
+  Ellis and Stroustrup (Addison-Wesely, 1990). This was a 453-page work.
+  
+  The C++98 standard, with the addition of many features, reached nearly 800 pages, even
+  with only minimal commentary.
+  
+  The C++11 standard is over 1,350 pages long, so it augments the old standard substantially.
+
+<h2 id="The Mechanics of Creating a Program">The Mechanics of Creating a Program</h2>
+  Suppose you've wriitten a C++ program. How do you get it running?
+  
+  The general step are:
+  
+  1. Use a text editor of some sort to write a program and save it in a file. This file
+      constitutes the source code of your program.
+  
+  2. Compile the source code. This means running a program that translates the source
+      code to internal language called, machine language, used by the host computer. The
+      file containing the translated program is the object code for your program.
+  
+  3. Link the object code with additional code. For example, C++ programs normally use 
+      libraries. A C++ library contains object code for a collection of computer routines,
+      called functions, to do various tasks. The linker combines your object code with the
+      object code of any library your using as well as a little startup code. The 
+      resulting file is a runtime version of your program called the executable. 
+  
+  The g++ flag for compiling under C++11 is "-std=c++11".
+  Example g++ -std=c++11 use_auto.cpp
+
+<h2 id="Creating the Source Code File">Creating the Source Code File</h2>
+  Some C++ implementations, such as Microsoft Visual C++, Embarcadero C++ Builder, Apple XCode,
+  Open Watcom C++, Digital Mars C++, and Freescale Code Warrior, provide integrated development 
+  enviornments(IDEs) that let you manage all steps of program development, including
+  editing from one master program.
+  
+  Other implementation, such as GNU C++ on Unix and Linux, IBM XL C/C++ on AIX, and the 
+  free versions of the Borland 5.5 (distributed by Embarcadero) and Digital Marc 
+  compilers, just handle the compilation and linking stages and expect you to type 
+  commands on the system command line.
+
+  In such cases, you can use any available text editor to create and modify source code. On a Unix
+  system, for example, you can use vi or ed or ex or emacs. On a Windows system runnin Command Prompt
+  mode you can use edlin or edit or any of several available program editors. (Sublime!).
+
+  In naming a source file, you must use the proper suffix to identify it as a C++ file.
+
+<pre class="SourceCode" ><code>
+  Source Code Extensions
+  __________________________________________________
+  C++ Implementation      Source Code Extension(s)
+                          
+  Unix                    C, cc, cxx, c
+  GNU C++                 C, cc, cxx, cpp, c++
+  Digital Mars            cpp, cxx
+  Borland C++             cpp
+  Watcom                  cpp
+  Microsoft Visual C++    cpp, cxx, cc
+  Freestyle CodeWarrior   cpp, cp, cc, cxx, c++
+  __________________________________________________
+
+</code></pre>
+<h2 id="Compilation and Linking">Compilation and Linking</h2>
+  Originally, Stroustrup implemented C++ with a C++-to-C compiler program
+  instead of developing a direct C++-to-object code compiler. This program
+  called cfront (for C front end), translated C++ source code to C source 
+  code, which could then be compiled by a standard C compiler. This made it
+  alot easier on the predominately C community.
+
+<h2 id="Unix Compiling and Linking">Unix Compiling and Linking</h2>
+  Originally, the Unix cc command invoked cfront. However, cfront didn't keep
+  pace with the evolution of C++, and its last release was in 1993. You use
+  the CC command to compile your program. The name is in uppercase letters to
+  distinguish it from the standard Unix C compiler cc. 
+
+  For example, to compile the C++ source code file spiffy.c, you would type this 
+  command at the unix prompt:
+
+<pre class="Terminal" ><code>
+  <span style="color:#66ff33;">user@machine:~$</span> CC spiffy.C
+  <!---->
+</code></pre>
+
+  If, there are no errors, the compiler generates an object code file with a .o 
+  extension. This produced the file spiffy.o
+  
+  Next, the compiler automatically passes the object code file to the system linker, 
+  which produces the finished executable which it names a.out.
+  
+  To run the program, you just type the name of the exectuable file: 
+
+<pre class="Terminal" ><code>
+  <span style="color:#66ff33;">user@machine:~$</span> a.out
+  <!---->
+</code></pre>
+
+  Note that if you compile a new program, the new a.out executable file replaces the
+  previous a.out. But if you develop an executable program that you want to keep, you
+  just use the Unix mv command to change the name of the executable file.
+
+
+<h2 id="Linix Compiling and Linking">Linux Compiling and Linking</h2>
+
+<pre class="Terminal" ><code>
+  <span style="color:#66ff33;">user@machine:~$</span> CC spiffy.C
+  <!---->
+</code></pre>
+
+<h2 id="Command-Line Compilers for Windows Command Prompt Mode">Command-Line Compilers for Windows Command Prompt Mode</h2>
+
+
+<h2 id="Windows Compilers">Windows Compilers</h2>
+
+
+<h2 id="C++ on the Macintosh">C++ on the Macintosh</h2>
+
+
+<h2 id="Summary">Summary</h2>
+
+
+
+</pre>
+      </div>
+   </body>
+</html>

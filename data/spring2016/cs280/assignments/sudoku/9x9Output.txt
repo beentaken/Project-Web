@@ -1,0 +1,1706 @@
+Moves: 0
++-------+-------+-------+
+| 4     | 6   8 |   7   |
+|   2 7 |     5 |   4 8 |
+| 6 1 8 |       | 9   5 |
++-------+-------+-------+
+| 9   6 | 5     | 2 3 7 |
+|       |   7   |       |
+| 7 5 4 |     3 | 8   9 |
++-------+-------+-------+
+| 8   2 |       | 7 9 4 |
+| 5 4   | 7     | 1 6   |
+|   7   | 9   6 |     2 |
++-------+-------+-------+
+
+
+==================== Board: [3x3]9x9.txt ====================
+================================================
+Conflict Down
+Conflict = 1  board_[1] = 1
+================================================
+Conflict Down
+Conflict = 1  board_[1] = 2  Moves = 1
+================================================
+No Conflict
+Conflict = 0  board_[1] = 3  Moves = 2
+================================================
+Conflict Neighborhood
+Conflict = 1  board_[2] = 1
+================================================
+Conflict Down
+Conflict = 1  board_[2] = 2  Moves = 4
+================================================
+Conflict Left
+Conflict = 1  board_[2] = 3  Moves = 5
+================================================
+Conflict Down
+Conflict = 1  board_[2] = 4  Moves = 6
+================================================
+No Conflict
+Conflict = 0  board_[2] = 5  Moves = 7
+================================================
+No Conflict
+Conflict = 0  board_[4] = 1
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 1
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 2  Moves = 10
+================================================
+Conflict Left
+Conflict = 1  board_[6] = 3  Moves = 11
+================================================
+Conflict Left
+Conflict = 1  board_[6] = 4  Moves = 12
+================================================
+Conflict Left
+Conflict = 1  board_[6] = 5  Moves = 13
+================================================
+Conflict Left
+Conflict = 1  board_[6] = 6  Moves = 14
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 7  Moves = 15
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 8  Moves = 16
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 9  Moves = 17
+================================================
+No Conflict
+Conflict = 0  board_[4] = 2  Moves = 18
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 1
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 2  Moves = 20
+================================================
+Conflict Left
+Conflict = 1  board_[6] = 3  Moves = 21
+================================================
+Conflict Left
+Conflict = 1  board_[6] = 4  Moves = 22
+================================================
+Conflict Left
+Conflict = 1  board_[6] = 5  Moves = 23
+================================================
+Conflict Left
+Conflict = 1  board_[6] = 6  Moves = 24
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 7  Moves = 25
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 8  Moves = 26
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 9  Moves = 27
+================================================
+Conflict Left
+Conflict = 1  board_[4] = 3  Moves = 28
+================================================
+Conflict Left
+Conflict = 1  board_[4] = 4  Moves = 29
+================================================
+Conflict Left
+Conflict = 1  board_[4] = 5  Moves = 30
+================================================
+Conflict Left
+Conflict = 1  board_[4] = 6  Moves = 31
+================================================
+Conflict Down
+Conflict = 1  board_[4] = 7  Moves = 32
+================================================
+Conflict Right
+Conflict = 1  board_[4] = 8  Moves = 33
+================================================
+No Conflict
+Conflict = 0  board_[4] = 9  Moves = 34
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 1
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 2  Moves = 36
+================================================
+Conflict Left
+Conflict = 1  board_[6] = 3  Moves = 37
+================================================
+Conflict Left
+Conflict = 1  board_[6] = 4  Moves = 38
+================================================
+Conflict Left
+Conflict = 1  board_[6] = 5  Moves = 39
+================================================
+Conflict Left
+Conflict = 1  board_[6] = 6  Moves = 40
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 7  Moves = 41
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 8  Moves = 42
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 9  Moves = 43
+================================================
+Conflict Down
+Conflict = 1  board_[2] = 6  Moves = 44
+================================================
+Conflict Down
+Conflict = 1  board_[2] = 7  Moves = 45
+================================================
+Conflict Down
+Conflict = 1  board_[2] = 8  Moves = 46
+================================================
+No Conflict
+Conflict = 0  board_[2] = 9  Moves = 47
+================================================
+No Conflict
+Conflict = 0  board_[4] = 1
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 1
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 2  Moves = 50
+================================================
+Conflict Left
+Conflict = 1  board_[6] = 3  Moves = 51
+================================================
+Conflict Left
+Conflict = 1  board_[6] = 4  Moves = 52
+================================================
+Conflict Neighborhood
+Conflict = 1  board_[6] = 5  Moves = 53
+================================================
+Conflict Left
+Conflict = 1  board_[6] = 6  Moves = 54
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 7  Moves = 55
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 8  Moves = 56
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 9  Moves = 57
+================================================
+No Conflict
+Conflict = 0  board_[4] = 2  Moves = 58
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 1
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 2  Moves = 60
+================================================
+Conflict Left
+Conflict = 1  board_[6] = 3  Moves = 61
+================================================
+Conflict Left
+Conflict = 1  board_[6] = 4  Moves = 62
+================================================
+Conflict Neighborhood
+Conflict = 1  board_[6] = 5  Moves = 63
+================================================
+Conflict Left
+Conflict = 1  board_[6] = 6  Moves = 64
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 7  Moves = 65
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 8  Moves = 66
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 9  Moves = 67
+================================================
+Conflict Left
+Conflict = 1  board_[4] = 3  Moves = 68
+================================================
+Conflict Left
+Conflict = 1  board_[4] = 4  Moves = 69
+================================================
+Conflict Neighborhood
+Conflict = 1  board_[4] = 5  Moves = 70
+================================================
+Conflict Left
+Conflict = 1  board_[4] = 6  Moves = 71
+================================================
+Conflict Down
+Conflict = 1  board_[4] = 7  Moves = 72
+================================================
+Conflict Right
+Conflict = 1  board_[4] = 8  Moves = 73
+================================================
+Conflict Left
+Conflict = 1  board_[4] = 9  Moves = 74
+================================================
+Conflict Down
+Conflict = 1  board_[1] = 4  Moves = 75
+================================================
+Conflict Down
+Conflict = 1  board_[1] = 5  Moves = 76
+================================================
+Conflict Right
+Conflict = 1  board_[1] = 6  Moves = 77
+================================================
+Conflict Down
+Conflict = 1  board_[1] = 7  Moves = 78
+================================================
+Conflict Right
+Conflict = 1  board_[1] = 8  Moves = 79
+================================================
+No Conflict
+Conflict = 0  board_[1] = 9  Moves = 80
+================================================
+Conflict Neighborhood
+Conflict = 1  board_[2] = 1
+================================================
+Conflict Down
+Conflict = 1  board_[2] = 2  Moves = 82
+================================================
+No Conflict
+Conflict = 0  board_[2] = 3  Moves = 83
+================================================
+No Conflict
+Conflict = 0  board_[4] = 1
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 1
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 2  Moves = 86
+================================================
+Conflict Left
+Conflict = 1  board_[6] = 3  Moves = 87
+================================================
+Conflict Left
+Conflict = 1  board_[6] = 4  Moves = 88
+================================================
+Conflict Neighborhood
+Conflict = 1  board_[6] = 5  Moves = 89
+================================================
+Conflict Left
+Conflict = 1  board_[6] = 6  Moves = 90
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 7  Moves = 91
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 8  Moves = 92
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 9  Moves = 93
+================================================
+No Conflict
+Conflict = 0  board_[4] = 2  Moves = 94
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 1
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 2  Moves = 96
+================================================
+Conflict Left
+Conflict = 1  board_[6] = 3  Moves = 97
+================================================
+Conflict Left
+Conflict = 1  board_[6] = 4  Moves = 98
+================================================
+Conflict Neighborhood
+Conflict = 1  board_[6] = 5  Moves = 99
+================================================
+Conflict Left
+Conflict = 1  board_[6] = 6  Moves = 100
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 7  Moves = 101
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 8  Moves = 102
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 9  Moves = 103
+================================================
+Conflict Left
+Conflict = 1  board_[4] = 3  Moves = 104
+================================================
+Conflict Left
+Conflict = 1  board_[4] = 4  Moves = 105
+================================================
+Conflict Neighborhood
+Conflict = 1  board_[4] = 5  Moves = 106
+================================================
+Conflict Left
+Conflict = 1  board_[4] = 6  Moves = 107
+================================================
+Conflict Down
+Conflict = 1  board_[4] = 7  Moves = 108
+================================================
+Conflict Right
+Conflict = 1  board_[4] = 8  Moves = 109
+================================================
+Conflict Left
+Conflict = 1  board_[4] = 9  Moves = 110
+================================================
+Conflict Down
+Conflict = 1  board_[2] = 4  Moves = 111
+================================================
+No Conflict
+Conflict = 0  board_[2] = 5  Moves = 112
+================================================
+No Conflict
+Conflict = 0  board_[4] = 1
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 1
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 2  Moves = 115
+================================================
+No Conflict
+Conflict = 0  board_[6] = 3  Moves = 116
+================================================
+Conflict Left
+Conflict = 1  board_[8] = 1
+================================================
+No Conflict
+Conflict = 0  board_[8] = 2  Moves = 118
+================================================
+Conflict Neighborhood
+Conflict = 1  board_[9] = 1
+================================================
+Conflict Right
+Conflict = 1  board_[9] = 2  Moves = 120
+================================================
+No Conflict
+Conflict = 0  board_[9] = 3  Moves = 121
+================================================
+Conflict Neighborhood
+Conflict = 1  board_[12] = 1
+================================================
+Conflict Left
+Conflict = 1  board_[12] = 2  Moves = 123
+================================================
+Conflict Left
+Conflict = 1  board_[12] = 3  Moves = 124
+================================================
+Conflict Right
+Conflict = 1  board_[12] = 4  Moves = 125
+================================================
+Conflict Down
+Conflict = 1  board_[12] = 5  Moves = 126
+================================================
+Conflict Up
+Conflict = 1  board_[12] = 6  Moves = 127
+================================================
+Conflict Down
+Conflict = 1  board_[12] = 7  Moves = 128
+================================================
+Conflict Right
+Conflict = 1  board_[12] = 8  Moves = 129
+================================================
+Conflict Down
+Conflict = 1  board_[12] = 9  Moves = 130
+================================================
+Conflict Right
+Conflict = 1  board_[9] = 4  Moves = 131
+================================================
+Conflict Down
+Conflict = 1  board_[9] = 5  Moves = 132
+================================================
+Conflict Down
+Conflict = 1  board_[9] = 6  Moves = 133
+================================================
+Conflict Down
+Conflict = 1  board_[9] = 7  Moves = 134
+================================================
+Conflict Down
+Conflict = 1  board_[9] = 8  Moves = 135
+================================================
+Conflict Down
+Conflict = 1  board_[9] = 9  Moves = 136
+================================================
+Conflict Left
+Conflict = 1  board_[8] = 3  Moves = 137
+================================================
+Conflict Down
+Conflict = 1  board_[8] = 4  Moves = 138
+================================================
+Conflict Down
+Conflict = 1  board_[8] = 5  Moves = 139
+================================================
+Conflict Left
+Conflict = 1  board_[8] = 6  Moves = 140
+================================================
+Conflict Down
+Conflict = 1  board_[8] = 7  Moves = 141
+================================================
+Conflict Down
+Conflict = 1  board_[8] = 8  Moves = 142
+================================================
+Conflict Down
+Conflict = 1  board_[8] = 9  Moves = 143
+================================================
+Conflict Left
+Conflict = 1  board_[6] = 4  Moves = 144
+================================================
+Conflict Left
+Conflict = 1  board_[6] = 5  Moves = 145
+================================================
+Conflict Left
+Conflict = 1  board_[6] = 6  Moves = 146
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 7  Moves = 147
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 8  Moves = 148
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 9  Moves = 149
+================================================
+No Conflict
+Conflict = 0  board_[4] = 2  Moves = 150
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 1
+================================================
+Conflict Down
+Conflict = 1  board_[6] = 2  Moves = 152
+================================================
+No Conflict
+Conflict = 0  board_[6] = 3  Moves = 153
+================================================
+No Conflict
+Conflict = 0  board_[8] = 1
+================================================
+Conflict Neighborhood
+Conflict = 1  board_[9] = 1
+================================================
+Conflict Right
+Conflict = 1  board_[9] = 2  Moves = 156
+================================================
+No Conflict
+Conflict = 0  board_[9] = 3  Moves = 157
+================================================
+No Conflict
+Conflict = 0  board_[12] = 1
+================================================
+Conflict Left
+Conflict = 1  board_[13] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[13] = 2  Moves = 160
+================================================
+Conflict Left
+Conflict = 1  board_[13] = 3  Moves = 161
+================================================
+Conflict Right
+Conflict = 1  board_[13] = 4  Moves = 162
+================================================
+Conflict Right
+Conflict = 1  board_[13] = 5  Moves = 163
+================================================
+Conflict Neighborhood
+Conflict = 1  board_[13] = 6  Moves = 164
+================================================
+Conflict Down
+Conflict = 1  board_[13] = 7  Moves = 165
+================================================
+Conflict Right
+Conflict = 1  board_[13] = 8  Moves = 166
+================================================
+No Conflict
+Conflict = 0  board_[13] = 9  Moves = 167
+================================================
+Conflict Down
+Conflict = 1  board_[15] = 1
+================================================
+Conflict Down
+Conflict = 1  board_[15] = 2  Moves = 169
+================================================
+Conflict Up
+Conflict = 1  board_[15] = 3  Moves = 170
+================================================
+Conflict Right
+Conflict = 1  board_[15] = 4  Moves = 171
+================================================
+Conflict Left
+Conflict = 1  board_[15] = 5  Moves = 172
+================================================
+No Conflict
+Conflict = 0  board_[15] = 6  Moves = 173
+================================================
+Conflict Up
+Conflict = 1  board_[21] = 1
+================================================
+Conflict Neighborhood
+Conflict = 1  board_[21] = 2  Moves = 175
+================================================
+No Conflict
+Conflict = 0  board_[21] = 3  Moves = 176
+================================================
+Conflict Left
+Conflict = 1  board_[22] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[22] = 2  Moves = 178
+================================================
+Conflict Left
+Conflict = 1  board_[22] = 3  Moves = 179
+================================================
+No Conflict
+Conflict = 0  board_[22] = 4  Moves = 180
+================================================
+Conflict Left
+Conflict = 1  board_[23] = 1
+================================================
+Conflict Neighborhood
+Conflict = 1  board_[23] = 2  Moves = 182
+================================================
+Conflict Down
+Conflict = 1  board_[23] = 3  Moves = 183
+================================================
+Conflict Left
+Conflict = 1  board_[23] = 4  Moves = 184
+================================================
+Conflict Up
+Conflict = 1  board_[23] = 5  Moves = 185
+================================================
+Conflict Down
+Conflict = 1  board_[23] = 6  Moves = 186
+================================================
+No Conflict
+Conflict = 0  board_[23] = 7  Moves = 187
+================================================
+Conflict Left
+Conflict = 1  board_[25] = 1
+================================================
+No Conflict
+Conflict = 0  board_[25] = 2  Moves = 189
+================================================
+Conflict Up
+Conflict = 1  board_[28] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[28] = 2  Moves = 191
+================================================
+Conflict Right
+Conflict = 1  board_[28] = 3  Moves = 192
+================================================
+Conflict Down
+Conflict = 1  board_[28] = 4  Moves = 193
+================================================
+Conflict Down
+Conflict = 1  board_[28] = 5  Moves = 194
+================================================
+Conflict Right
+Conflict = 1  board_[28] = 6  Moves = 195
+================================================
+Conflict Down
+Conflict = 1  board_[28] = 7  Moves = 196
+================================================
+No Conflict
+Conflict = 0  board_[28] = 8  Moves = 197
+================================================
+No Conflict
+Conflict = 0  board_[31] = 1
+================================================
+Conflict Left
+Conflict = 1  board_[32] = 1
+================================================
+Conflict Right
+Conflict = 1  board_[32] = 2  Moves = 200
+================================================
+Conflict Down
+Conflict = 1  board_[32] = 3  Moves = 201
+================================================
+No Conflict
+Conflict = 0  board_[32] = 4  Moves = 202
+================================================
+No Conflict
+Conflict = 0  board_[36] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[37] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[37] = 2  Moves = 205
+================================================
+No Conflict
+Conflict = 0  board_[37] = 3  Moves = 206
+================================================
+Conflict Left
+Conflict = 1  board_[38] = 1
+================================================
+Conflict Down
+Conflict = 1  board_[38] = 2  Moves = 208
+================================================
+Conflict Left
+Conflict = 1  board_[38] = 3  Moves = 209
+================================================
+Conflict Down
+Conflict = 1  board_[38] = 4  Moves = 210
+================================================
+Conflict Up
+Conflict = 1  board_[38] = 5  Moves = 211
+================================================
+Conflict Up
+Conflict = 1  board_[38] = 6  Moves = 212
+================================================
+Conflict Up
+Conflict = 1  board_[38] = 7  Moves = 213
+================================================
+Conflict Up
+Conflict = 1  board_[38] = 8  Moves = 214
+================================================
+Conflict Neighborhood
+Conflict = 1  board_[38] = 9  Moves = 215
+================================================
+Conflict Down
+Conflict = 1  board_[37] = 4  Moves = 216
+================================================
+Conflict Down
+Conflict = 1  board_[37] = 5  Moves = 217
+================================================
+Conflict Neighborhood
+Conflict = 1  board_[37] = 6  Moves = 218
+================================================
+Conflict Down
+Conflict = 1  board_[37] = 7  Moves = 219
+================================================
+Conflict Up
+Conflict = 1  board_[37] = 8  Moves = 220
+================================================
+Conflict Up
+Conflict = 1  board_[37] = 9  Moves = 221
+================================================
+No Conflict
+Conflict = 0  board_[36] = 2  Moves = 222
+================================================
+Conflict Up
+Conflict = 1  board_[37] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[37] = 2  Moves = 224
+================================================
+No Conflict
+Conflict = 0  board_[37] = 3  Moves = 225
+================================================
+No Conflict
+Conflict = 0  board_[38] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[39] = 1
+================================================
+Conflict Left
+Conflict = 1  board_[39] = 2  Moves = 228
+================================================
+Conflict Up
+Conflict = 1  board_[39] = 3  Moves = 229
+================================================
+Conflict Neighborhood
+Conflict = 1  board_[39] = 4  Moves = 230
+================================================
+Conflict Up
+Conflict = 1  board_[39] = 5  Moves = 231
+================================================
+Conflict Up
+Conflict = 1  board_[39] = 6  Moves = 232
+================================================
+Conflict Down
+Conflict = 1  board_[39] = 7  Moves = 233
+================================================
+No Conflict
+Conflict = 0  board_[39] = 8  Moves = 234
+================================================
+Conflict Left
+Conflict = 1  board_[41] = 1
+================================================
+Conflict Left
+Conflict = 1  board_[41] = 2  Moves = 236
+================================================
+Conflict Down
+Conflict = 1  board_[41] = 3  Moves = 237
+================================================
+Conflict Up
+Conflict = 1  board_[41] = 4  Moves = 238
+================================================
+Conflict Up
+Conflict = 1  board_[41] = 5  Moves = 239
+================================================
+Conflict Down
+Conflict = 1  board_[41] = 6  Moves = 240
+================================================
+Conflict Up
+Conflict = 1  board_[41] = 7  Moves = 241
+================================================
+Conflict Up
+Conflict = 1  board_[41] = 8  Moves = 242
+================================================
+No Conflict
+Conflict = 0  board_[41] = 9  Moves = 243
+================================================
+Conflict Down
+Conflict = 1  board_[42] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[42] = 2  Moves = 245
+================================================
+Conflict Up
+Conflict = 1  board_[42] = 3  Moves = 246
+================================================
+No Conflict
+Conflict = 0  board_[42] = 4  Moves = 247
+================================================
+Conflict Left
+Conflict = 1  board_[43] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[43] = 2  Moves = 249
+================================================
+Conflict Up
+Conflict = 1  board_[43] = 3  Moves = 250
+================================================
+Conflict Up
+Conflict = 1  board_[43] = 4  Moves = 251
+================================================
+No Conflict
+Conflict = 0  board_[43] = 5  Moves = 252
+================================================
+Conflict Up
+Conflict = 1  board_[44] = 1
+================================================
+Conflict Left
+Conflict = 1  board_[44] = 2  Moves = 254
+================================================
+Conflict Left
+Conflict = 1  board_[44] = 3  Moves = 255
+================================================
+Conflict Down
+Conflict = 1  board_[44] = 4  Moves = 256
+================================================
+Conflict Up
+Conflict = 1  board_[44] = 5  Moves = 257
+================================================
+No Conflict
+Conflict = 0  board_[44] = 6  Moves = 258
+================================================
+Conflict Up
+Conflict = 1  board_[48] = 1
+================================================
+No Conflict
+Conflict = 0  board_[48] = 2  Moves = 260
+================================================
+Conflict Up
+Conflict = 1  board_[49] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[49] = 2  Moves = 262
+================================================
+Conflict Right
+Conflict = 1  board_[49] = 3  Moves = 263
+================================================
+Conflict Up
+Conflict = 1  board_[49] = 4  Moves = 264
+================================================
+Conflict Left
+Conflict = 1  board_[49] = 5  Moves = 265
+================================================
+No Conflict
+Conflict = 0  board_[49] = 6  Moves = 266
+================================================
+No Conflict
+Conflict = 0  board_[52] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[55] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[55] = 2  Moves = 269
+================================================
+Conflict Up
+Conflict = 1  board_[55] = 3  Moves = 270
+================================================
+Conflict Down
+Conflict = 1  board_[55] = 4  Moves = 271
+================================================
+Conflict Up
+Conflict = 1  board_[55] = 5  Moves = 272
+================================================
+No Conflict
+Conflict = 0  board_[55] = 6  Moves = 273
+================================================
+Conflict Up
+Conflict = 1  board_[57] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[57] = 2  Moves = 275
+================================================
+Conflict Up
+Conflict = 1  board_[57] = 3  Moves = 276
+================================================
+Conflict Right
+Conflict = 1  board_[57] = 4  Moves = 277
+================================================
+Conflict Up
+Conflict = 1  board_[57] = 5  Moves = 278
+================================================
+Conflict Up
+Conflict = 1  board_[57] = 6  Moves = 279
+================================================
+Conflict Down
+Conflict = 1  board_[57] = 7  Moves = 280
+================================================
+Conflict Up
+Conflict = 1  board_[57] = 8  Moves = 281
+================================================
+Conflict Down
+Conflict = 1  board_[57] = 9  Moves = 282
+================================================
+Conflict Down
+Conflict = 1  board_[55] = 7  Moves = 283
+================================================
+Conflict Up
+Conflict = 1  board_[55] = 8  Moves = 284
+================================================
+Conflict Up
+Conflict = 1  board_[55] = 9  Moves = 285
+================================================
+Conflict Up
+Conflict = 1  board_[52] = 2  Moves = 286
+================================================
+Conflict Up
+Conflict = 1  board_[52] = 3  Moves = 287
+================================================
+Conflict Up
+Conflict = 1  board_[52] = 4  Moves = 288
+================================================
+Conflict Up
+Conflict = 1  board_[52] = 5  Moves = 289
+================================================
+Conflict Down
+Conflict = 1  board_[52] = 6  Moves = 290
+================================================
+Conflict Up
+Conflict = 1  board_[52] = 7  Moves = 291
+================================================
+Conflict Left
+Conflict = 1  board_[52] = 8  Moves = 292
+================================================
+Conflict Down
+Conflict = 1  board_[52] = 9  Moves = 293
+================================================
+Conflict Up
+Conflict = 1  board_[49] = 7  Moves = 294
+================================================
+Conflict Right
+Conflict = 1  board_[49] = 8  Moves = 295
+================================================
+Conflict Up
+Conflict = 1  board_[49] = 9  Moves = 296
+================================================
+Conflict Up
+Conflict = 1  board_[48] = 3  Moves = 297
+================================================
+Conflict Left
+Conflict = 1  board_[48] = 4  Moves = 298
+================================================
+Conflict Up
+Conflict = 1  board_[48] = 5  Moves = 299
+================================================
+Conflict Up
+Conflict = 1  board_[48] = 6  Moves = 300
+================================================
+Conflict Down
+Conflict = 1  board_[48] = 7  Moves = 301
+================================================
+Conflict Up
+Conflict = 1  board_[48] = 8  Moves = 302
+================================================
+Conflict Down
+Conflict = 1  board_[48] = 9  Moves = 303
+================================================
+Conflict Up
+Conflict = 1  board_[44] = 7  Moves = 304
+================================================
+Conflict Up
+Conflict = 1  board_[44] = 8  Moves = 305
+================================================
+Conflict Down
+Conflict = 1  board_[44] = 9  Moves = 306
+================================================
+Conflict Down
+Conflict = 1  board_[43] = 6  Moves = 307
+================================================
+Conflict Up
+Conflict = 1  board_[43] = 7  Moves = 308
+================================================
+Conflict Left
+Conflict = 1  board_[43] = 8  Moves = 309
+================================================
+Conflict Down
+Conflict = 1  board_[43] = 9  Moves = 310
+================================================
+No Conflict
+Conflict = 0  board_[42] = 5  Moves = 311
+================================================
+Conflict Left
+Conflict = 1  board_[43] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[43] = 2  Moves = 313
+================================================
+Conflict Up
+Conflict = 1  board_[43] = 3  Moves = 314
+================================================
+Conflict Up
+Conflict = 1  board_[43] = 4  Moves = 315
+================================================
+Conflict Left
+Conflict = 1  board_[43] = 5  Moves = 316
+================================================
+Conflict Down
+Conflict = 1  board_[43] = 6  Moves = 317
+================================================
+Conflict Up
+Conflict = 1  board_[43] = 7  Moves = 318
+================================================
+Conflict Left
+Conflict = 1  board_[43] = 8  Moves = 319
+================================================
+Conflict Down
+Conflict = 1  board_[43] = 9  Moves = 320
+================================================
+Conflict Up
+Conflict = 1  board_[42] = 6  Moves = 321
+================================================
+Conflict Down
+Conflict = 1  board_[42] = 7  Moves = 322
+================================================
+Conflict Down
+Conflict = 1  board_[42] = 8  Moves = 323
+================================================
+Conflict Up
+Conflict = 1  board_[42] = 9  Moves = 324
+================================================
+Conflict Down
+Conflict = 1  board_[39] = 9  Moves = 325
+================================================
+Conflict Down
+Conflict = 1  board_[38] = 2  Moves = 326
+================================================
+Conflict Left
+Conflict = 1  board_[38] = 3  Moves = 327
+================================================
+Conflict Down
+Conflict = 1  board_[38] = 4  Moves = 328
+================================================
+Conflict Up
+Conflict = 1  board_[38] = 5  Moves = 329
+================================================
+Conflict Up
+Conflict = 1  board_[38] = 6  Moves = 330
+================================================
+Conflict Up
+Conflict = 1  board_[38] = 7  Moves = 331
+================================================
+Conflict Up
+Conflict = 1  board_[38] = 8  Moves = 332
+================================================
+Conflict Neighborhood
+Conflict = 1  board_[38] = 9  Moves = 333
+================================================
+Conflict Down
+Conflict = 1  board_[37] = 4  Moves = 334
+================================================
+Conflict Down
+Conflict = 1  board_[37] = 5  Moves = 335
+================================================
+Conflict Neighborhood
+Conflict = 1  board_[37] = 6  Moves = 336
+================================================
+Conflict Down
+Conflict = 1  board_[37] = 7  Moves = 337
+================================================
+Conflict Up
+Conflict = 1  board_[37] = 8  Moves = 338
+================================================
+Conflict Up
+Conflict = 1  board_[37] = 9  Moves = 339
+================================================
+Conflict Up
+Conflict = 1  board_[36] = 3  Moves = 340
+================================================
+Conflict Neighborhood
+Conflict = 1  board_[36] = 4  Moves = 341
+================================================
+Conflict Down
+Conflict = 1  board_[36] = 5  Moves = 342
+================================================
+Conflict Up
+Conflict = 1  board_[36] = 6  Moves = 343
+================================================
+Conflict Down
+Conflict = 1  board_[36] = 7  Moves = 344
+================================================
+Conflict Down
+Conflict = 1  board_[36] = 8  Moves = 345
+================================================
+Conflict Up
+Conflict = 1  board_[36] = 9  Moves = 346
+================================================
+Conflict Up
+Conflict = 1  board_[32] = 5  Moves = 347
+================================================
+Conflict Down
+Conflict = 1  board_[32] = 6  Moves = 348
+================================================
+Conflict Up
+Conflict = 1  board_[32] = 7  Moves = 349
+================================================
+Conflict Up
+Conflict = 1  board_[32] = 8  Moves = 350
+================================================
+Conflict Left
+Conflict = 1  board_[32] = 9  Moves = 351
+================================================
+Conflict Up
+Conflict = 1  board_[31] = 2  Moves = 352
+================================================
+Conflict Right
+Conflict = 1  board_[31] = 3  Moves = 353
+================================================
+Conflict Up
+Conflict = 1  board_[31] = 4  Moves = 354
+================================================
+Conflict Left
+Conflict = 1  board_[31] = 5  Moves = 355
+================================================
+Conflict Left
+Conflict = 1  board_[31] = 6  Moves = 356
+================================================
+Conflict Down
+Conflict = 1  board_[31] = 7  Moves = 357
+================================================
+Conflict Left
+Conflict = 1  board_[31] = 8  Moves = 358
+================================================
+Conflict Up
+Conflict = 1  board_[31] = 9  Moves = 359
+================================================
+Conflict Up
+Conflict = 1  board_[28] = 9  Moves = 360
+================================================
+Conflict Down
+Conflict = 1  board_[25] = 3  Moves = 361
+================================================
+Conflict Up
+Conflict = 1  board_[25] = 4  Moves = 362
+================================================
+Conflict Right
+Conflict = 1  board_[25] = 5  Moves = 363
+================================================
+Conflict Down
+Conflict = 1  board_[25] = 6  Moves = 364
+================================================
+Conflict Up
+Conflict = 1  board_[25] = 7  Moves = 365
+================================================
+Conflict Left
+Conflict = 1  board_[25] = 8  Moves = 366
+================================================
+Conflict Down
+Conflict = 1  board_[25] = 9  Moves = 367
+================================================
+Conflict Up
+Conflict = 1  board_[23] = 8  Moves = 368
+================================================
+Conflict Right
+Conflict = 1  board_[23] = 9  Moves = 369
+================================================
+Conflict Right
+Conflict = 1  board_[22] = 5  Moves = 370
+================================================
+Conflict Left
+Conflict = 1  board_[22] = 6  Moves = 371
+================================================
+Conflict Down
+Conflict = 1  board_[22] = 7  Moves = 372
+================================================
+Conflict Left
+Conflict = 1  board_[22] = 8  Moves = 373
+================================================
+Conflict Up
+Conflict = 1  board_[22] = 9  Moves = 374
+================================================
+No Conflict
+Conflict = 0  board_[21] = 4  Moves = 375
+================================================
+Conflict Left
+Conflict = 1  board_[22] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[22] = 2  Moves = 377
+================================================
+No Conflict
+Conflict = 0  board_[22] = 3  Moves = 378
+================================================
+Conflict Left
+Conflict = 1  board_[23] = 1
+================================================
+Conflict Neighborhood
+Conflict = 1  board_[23] = 2  Moves = 380
+================================================
+Conflict Down
+Conflict = 1  board_[23] = 3  Moves = 381
+================================================
+Conflict Left
+Conflict = 1  board_[23] = 4  Moves = 382
+================================================
+Conflict Up
+Conflict = 1  board_[23] = 5  Moves = 383
+================================================
+Conflict Down
+Conflict = 1  board_[23] = 6  Moves = 384
+================================================
+No Conflict
+Conflict = 0  board_[23] = 7  Moves = 385
+================================================
+Conflict Left
+Conflict = 1  board_[25] = 1
+================================================
+No Conflict
+Conflict = 0  board_[25] = 2  Moves = 387
+================================================
+Conflict Up
+Conflict = 1  board_[28] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[28] = 2  Moves = 389
+================================================
+Conflict Right
+Conflict = 1  board_[28] = 3  Moves = 390
+================================================
+Conflict Down
+Conflict = 1  board_[28] = 4  Moves = 391
+================================================
+Conflict Down
+Conflict = 1  board_[28] = 5  Moves = 392
+================================================
+Conflict Right
+Conflict = 1  board_[28] = 6  Moves = 393
+================================================
+Conflict Down
+Conflict = 1  board_[28] = 7  Moves = 394
+================================================
+No Conflict
+Conflict = 0  board_[28] = 8  Moves = 395
+================================================
+No Conflict
+Conflict = 0  board_[31] = 1
+================================================
+Conflict Left
+Conflict = 1  board_[32] = 1
+================================================
+Conflict Right
+Conflict = 1  board_[32] = 2  Moves = 398
+================================================
+Conflict Down
+Conflict = 1  board_[32] = 3  Moves = 399
+================================================
+No Conflict
+Conflict = 0  board_[32] = 4  Moves = 400
+================================================
+No Conflict
+Conflict = 0  board_[36] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[37] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[37] = 2  Moves = 403
+================================================
+No Conflict
+Conflict = 0  board_[37] = 3  Moves = 404
+================================================
+Conflict Left
+Conflict = 1  board_[38] = 1
+================================================
+Conflict Down
+Conflict = 1  board_[38] = 2  Moves = 406
+================================================
+Conflict Left
+Conflict = 1  board_[38] = 3  Moves = 407
+================================================
+Conflict Down
+Conflict = 1  board_[38] = 4  Moves = 408
+================================================
+Conflict Up
+Conflict = 1  board_[38] = 5  Moves = 409
+================================================
+Conflict Up
+Conflict = 1  board_[38] = 6  Moves = 410
+================================================
+Conflict Up
+Conflict = 1  board_[38] = 7  Moves = 411
+================================================
+Conflict Up
+Conflict = 1  board_[38] = 8  Moves = 412
+================================================
+Conflict Neighborhood
+Conflict = 1  board_[38] = 9  Moves = 413
+================================================
+Conflict Down
+Conflict = 1  board_[37] = 4  Moves = 414
+================================================
+Conflict Down
+Conflict = 1  board_[37] = 5  Moves = 415
+================================================
+Conflict Neighborhood
+Conflict = 1  board_[37] = 6  Moves = 416
+================================================
+Conflict Down
+Conflict = 1  board_[37] = 7  Moves = 417
+================================================
+Conflict Up
+Conflict = 1  board_[37] = 8  Moves = 418
+================================================
+Conflict Up
+Conflict = 1  board_[37] = 9  Moves = 419
+================================================
+No Conflict
+Conflict = 0  board_[36] = 2  Moves = 420
+================================================
+Conflict Up
+Conflict = 1  board_[37] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[37] = 2  Moves = 422
+================================================
+No Conflict
+Conflict = 0  board_[37] = 3  Moves = 423
+================================================
+No Conflict
+Conflict = 0  board_[38] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[39] = 1
+================================================
+Conflict Left
+Conflict = 1  board_[39] = 2  Moves = 426
+================================================
+Conflict Left
+Conflict = 1  board_[39] = 3  Moves = 427
+================================================
+Conflict Up
+Conflict = 1  board_[39] = 4  Moves = 428
+================================================
+Conflict Up
+Conflict = 1  board_[39] = 5  Moves = 429
+================================================
+Conflict Up
+Conflict = 1  board_[39] = 6  Moves = 430
+================================================
+Conflict Down
+Conflict = 1  board_[39] = 7  Moves = 431
+================================================
+No Conflict
+Conflict = 0  board_[39] = 8  Moves = 432
+================================================
+Conflict Left
+Conflict = 1  board_[41] = 1
+================================================
+Conflict Left
+Conflict = 1  board_[41] = 2  Moves = 434
+================================================
+Conflict Down
+Conflict = 1  board_[41] = 3  Moves = 435
+================================================
+Conflict Up
+Conflict = 1  board_[41] = 4  Moves = 436
+================================================
+Conflict Up
+Conflict = 1  board_[41] = 5  Moves = 437
+================================================
+Conflict Down
+Conflict = 1  board_[41] = 6  Moves = 438
+================================================
+Conflict Up
+Conflict = 1  board_[41] = 7  Moves = 439
+================================================
+Conflict Up
+Conflict = 1  board_[41] = 8  Moves = 440
+================================================
+No Conflict
+Conflict = 0  board_[41] = 9  Moves = 441
+================================================
+Conflict Down
+Conflict = 1  board_[42] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[42] = 2  Moves = 443
+================================================
+Conflict Up
+Conflict = 1  board_[42] = 3  Moves = 444
+================================================
+No Conflict
+Conflict = 0  board_[42] = 4  Moves = 445
+================================================
+Conflict Left
+Conflict = 1  board_[43] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[43] = 2  Moves = 447
+================================================
+Conflict Up
+Conflict = 1  board_[43] = 3  Moves = 448
+================================================
+Conflict Up
+Conflict = 1  board_[43] = 4  Moves = 449
+================================================
+No Conflict
+Conflict = 0  board_[43] = 5  Moves = 450
+================================================
+Conflict Up
+Conflict = 1  board_[44] = 1
+================================================
+Conflict Left
+Conflict = 1  board_[44] = 2  Moves = 452
+================================================
+Conflict Left
+Conflict = 1  board_[44] = 3  Moves = 453
+================================================
+Conflict Down
+Conflict = 1  board_[44] = 4  Moves = 454
+================================================
+Conflict Up
+Conflict = 1  board_[44] = 5  Moves = 455
+================================================
+No Conflict
+Conflict = 0  board_[44] = 6  Moves = 456
+================================================
+Conflict Up
+Conflict = 1  board_[48] = 1
+================================================
+No Conflict
+Conflict = 0  board_[48] = 2  Moves = 458
+================================================
+Conflict Up
+Conflict = 1  board_[49] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[49] = 2  Moves = 460
+================================================
+Conflict Up
+Conflict = 1  board_[49] = 3  Moves = 461
+================================================
+Conflict Left
+Conflict = 1  board_[49] = 4  Moves = 462
+================================================
+Conflict Left
+Conflict = 1  board_[49] = 5  Moves = 463
+================================================
+No Conflict
+Conflict = 0  board_[49] = 6  Moves = 464
+================================================
+No Conflict
+Conflict = 0  board_[52] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[55] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[55] = 2  Moves = 467
+================================================
+Conflict Up
+Conflict = 1  board_[55] = 3  Moves = 468
+================================================
+Conflict Down
+Conflict = 1  board_[55] = 4  Moves = 469
+================================================
+Conflict Up
+Conflict = 1  board_[55] = 5  Moves = 470
+================================================
+No Conflict
+Conflict = 0  board_[55] = 6  Moves = 471
+================================================
+Conflict Up
+Conflict = 1  board_[57] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[57] = 2  Moves = 473
+================================================
+No Conflict
+Conflict = 0  board_[57] = 3  Moves = 474
+================================================
+Conflict Up
+Conflict = 1  board_[58] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[58] = 2  Moves = 476
+================================================
+Conflict Up
+Conflict = 1  board_[58] = 3  Moves = 477
+================================================
+Conflict Right
+Conflict = 1  board_[58] = 4  Moves = 478
+================================================
+No Conflict
+Conflict = 0  board_[58] = 5  Moves = 479
+================================================
+No Conflict
+Conflict = 0  board_[59] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[65] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[65] = 2  Moves = 482
+================================================
+No Conflict
+Conflict = 0  board_[65] = 3  Moves = 483
+================================================
+Conflict Up
+Conflict = 1  board_[67] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[67] = 2  Moves = 485
+================================================
+Conflict Up
+Conflict = 1  board_[67] = 3  Moves = 486
+================================================
+Conflict Left
+Conflict = 1  board_[67] = 4  Moves = 487
+================================================
+Conflict Up
+Conflict = 1  board_[67] = 5  Moves = 488
+================================================
+Conflict Up
+Conflict = 1  board_[67] = 6  Moves = 489
+================================================
+Conflict Up
+Conflict = 1  board_[67] = 7  Moves = 490
+================================================
+No Conflict
+Conflict = 0  board_[67] = 8  Moves = 491
+================================================
+Conflict Up
+Conflict = 1  board_[68] = 1
+================================================
+No Conflict
+Conflict = 0  board_[68] = 2  Moves = 493
+================================================
+Conflict Up
+Conflict = 1  board_[71] = 1
+================================================
+Conflict Left
+Conflict = 1  board_[71] = 2  Moves = 495
+================================================
+Conflict Left
+Conflict = 1  board_[71] = 3  Moves = 496
+================================================
+Conflict Up
+Conflict = 1  board_[71] = 4  Moves = 497
+================================================
+Conflict Up
+Conflict = 1  board_[71] = 5  Moves = 498
+================================================
+Conflict Up
+Conflict = 1  board_[71] = 6  Moves = 499
+================================================
+Conflict Up
+Conflict = 1  board_[71] = 7  Moves = 500
+================================================
+Conflict Up
+Conflict = 1  board_[71] = 8  Moves = 501
+================================================
+Conflict Up
+Conflict = 1  board_[71] = 9  Moves = 502
+================================================
+Conflict Up
+Conflict = 1  board_[68] = 3  Moves = 503
+================================================
+Conflict Up
+Conflict = 1  board_[68] = 4  Moves = 504
+================================================
+Conflict Up
+Conflict = 1  board_[68] = 5  Moves = 505
+================================================
+Conflict Down
+Conflict = 1  board_[68] = 6  Moves = 506
+================================================
+Conflict Up
+Conflict = 1  board_[68] = 7  Moves = 507
+================================================
+Conflict Up
+Conflict = 1  board_[68] = 8  Moves = 508
+================================================
+Conflict Up
+Conflict = 1  board_[68] = 9  Moves = 509
+================================================
+Conflict Up
+Conflict = 1  board_[67] = 9  Moves = 510
+================================================
+Conflict Up
+Conflict = 1  board_[65] = 4  Moves = 511
+================================================
+Conflict Up
+Conflict = 1  board_[65] = 5  Moves = 512
+================================================
+Conflict Up
+Conflict = 1  board_[65] = 6  Moves = 513
+================================================
+Conflict Up
+Conflict = 1  board_[65] = 7  Moves = 514
+================================================
+Conflict Up
+Conflict = 1  board_[65] = 8  Moves = 515
+================================================
+No Conflict
+Conflict = 0  board_[65] = 9  Moves = 516
+================================================
+Conflict Up
+Conflict = 1  board_[67] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[67] = 2  Moves = 518
+================================================
+Conflict Up
+Conflict = 1  board_[67] = 3  Moves = 519
+================================================
+Conflict Left
+Conflict = 1  board_[67] = 4  Moves = 520
+================================================
+Conflict Up
+Conflict = 1  board_[67] = 5  Moves = 521
+================================================
+Conflict Up
+Conflict = 1  board_[67] = 6  Moves = 522
+================================================
+Conflict Up
+Conflict = 1  board_[67] = 7  Moves = 523
+================================================
+No Conflict
+Conflict = 0  board_[67] = 8  Moves = 524
+================================================
+Conflict Up
+Conflict = 1  board_[68] = 1
+================================================
+No Conflict
+Conflict = 0  board_[68] = 2  Moves = 526
+================================================
+Conflict Up
+Conflict = 1  board_[71] = 1
+================================================
+Conflict Left
+Conflict = 1  board_[71] = 2  Moves = 528
+================================================
+No Conflict
+Conflict = 0  board_[71] = 3  Moves = 529
+================================================
+No Conflict
+Conflict = 0  board_[72] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[74] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[74] = 2  Moves = 532
+================================================
+No Conflict
+Conflict = 0  board_[74] = 3  Moves = 533
+================================================
+Conflict Up
+Conflict = 1  board_[76] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[76] = 2  Moves = 535
+================================================
+Conflict Up
+Conflict = 1  board_[76] = 3  Moves = 536
+================================================
+No Conflict
+Conflict = 0  board_[76] = 4  Moves = 537
+================================================
+Conflict Up
+Conflict = 1  board_[78] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[78] = 2  Moves = 539
+================================================
+Conflict Up
+Conflict = 1  board_[78] = 3  Moves = 540
+================================================
+Conflict Up
+Conflict = 1  board_[78] = 4  Moves = 541
+================================================
+No Conflict
+Conflict = 0  board_[78] = 5  Moves = 542
+================================================
+Conflict Up
+Conflict = 1  board_[79] = 1
+================================================
+Conflict Up
+Conflict = 1  board_[79] = 2  Moves = 544
+================================================
+Conflict Up
+Conflict = 1  board_[79] = 3  Moves = 545
+================================================
+Conflict Up
+Conflict = 1  board_[79] = 4  Moves = 546
+================================================
+Conflict Up
+Conflict = 1  board_[79] = 5  Moves = 547
+================================================
+Conflict Up
+Conflict = 1  board_[79] = 6  Moves = 548
+================================================
+Conflict Up
+Conflict = 1  board_[79] = 7  Moves = 549
+================================================
+No Conflict
+Conflict = 0  board_[79] = 8  Moves = 550
+Solution found in 551 moves.
+Moves: 551
++-------+-------+-------+
+| 4 9 5 | 6 2 8 | 3 7 1 |
+| 3 2 7 | 1 9 5 | 6 4 8 |
+| 6 1 8 | 4 3 7 | 9 2 5 |
++-------+-------+-------+
+| 9 8 6 | 5 1 4 | 2 3 7 |
+| 2 3 1 | 8 7 9 | 4 5 6 |
+| 7 5 4 | 2 6 3 | 8 1 9 |
++-------+-------+-------+
+| 8 6 2 | 3 5 1 | 7 9 4 |
+| 5 4 9 | 7 8 2 | 1 6 3 |
+| 1 7 3 | 9 4 6 | 5 8 2 |
++-------+-------+-------+
+Solution found in 551 moves.
+Moves: 551
++-------+-------+-------+
+| 4 9 5 | 6 2 8 | 3 7 1 |
+| 3 2 7 | 1 9 5 | 6 4 8 |
+| 6 1 8 | 4 3 7 | 9 2 5 |
++-------+-------+-------+
+| 9 8 6 | 5 1 4 | 2 3 7 |
+| 2 3 1 | 8 7 9 | 4 5 6 |
+| 7 5 4 | 2 6 3 | 8 1 9 |
++-------+-------+-------+
+| 8 6 2 | 3 5 1 | 7 9 4 |
+| 5 4 9 | 7 8 2 | 1 6 3 |
+| 1 7 3 | 9 4 6 | 5 8 2 |
++-------+-------+-------+
+  Basesize: 3
+     Moves: 551
+    Placed: 0
+Backtracks: 0
+  Filename: 9x9.txt
+

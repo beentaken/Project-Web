@@ -1,0 +1,1 @@
+void Create_Window(HINSTANCE instance, int show);

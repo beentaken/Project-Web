@@ -1,0 +1,808 @@
+
+<!-- saved from url=(0065)http://azrael.digipen.edu/~mmead/www/Courses/CS280/SkipLists.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./Skip Lists_files/new.css">
+<title>CS 280 - Skip Lists</title>
+</head>
+
+<body>  
+<center><h1>Skip Lists</h1></center>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Linked Lists</p>
+
+Pros:
+<ul>
+<li>Efficient to insert/remove anywhere in the list
+</li><li>Easy to grow and shrink at runtime
+</li><li>Only use as much memory as we need
+</li></ul>
+
+Cons:
+<ul>
+<li>Allocating and deallocating individual nodes
+</li><li>No random access to elements, locating a random element is <i>O(N)</i> (even if sorted)
+</li></ul>
+
+Simple analysis:
+
+<ul>
+<li>It's easy to solve the first con simply by using some kind of object allocator
+  and pre-allocating nodes.<br>
+</li><li>The second con can also be "solved". (Not solved, per se, but minimized.)
+</li><li>One way we've seen attempting to "solve" the second problem is with some kind of balanced tree. This
+gives us worst case of <i>O(lg N)</i>, which is significantly better than <i>O(N)</i>. 
+</li><li>Using trees comes at a cost in both runtime (re-balancing) and implementation (code complexity).
+</li><li>We'd like our data structures to have the benefits of linked lists and trees, but with
+less runtime and implementation costs.
+</li><li>The result will be some kind of <i>super</i> linked list or <i>high-performance</i> linked list.
+</li></ul>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Skip Lists (High-Performance Linked Lists)</p>
+
+The fundamental problem with linked lists is that during a search, we must look at
+every node in the list that comes before the target node, even if the list is sorted. (No binary search methods are possible.)
+<p>
+Searching for <b>T</b> in the list below requires looking at 12 nodes before reaching the node with <b>T</b>. We 
+would pass through <b>B, C, E, G, H, I, K, L, M, P, R, S</b> then we would reach <b>T</b>.
+
+</p><blockquote>
+<img src="./Skip Lists_files/SkipLists-1.gif">
+</blockquote>
+
+If we create some nodes with 2 pointers, we can have them point "further" into the list, say 2 nodes ahead. This
+let's us traverse 2 nodes at a time, effectively cutting the number of node traversals in half. We would look 
+at <b>C, G, I, L, P, S, V</b> then "back up" to <b>S</b>, and then traverse the "normal" pointer to reach <b>T</b>.
+<blockquote>
+<img src="./Skip Lists_files/SkipLists-2.gif">
+</blockquote>
+
+We can take this notion further and move ahead 4 nodes at a time instead. Now we'd look at <b>G, L, S, Y</b>, then
+backup to <b>S</b> to reach <b>T</b>.
+
+<blockquote>
+<img src="./Skip Lists_files/SkipLists-3.gif">
+</blockquote>
+
+or 8 nodes at a time, looking at <b>L</b> and <b>Y</b>, backing up to <b>L</b>, and then traversing
+through <b>M, P, R, S</b> to reach <b>T</b>.
+
+<blockquote>
+<img src="./Skip Lists_files/SkipLists-4.gif">
+</blockquote>
+<br><br>
+Finally, we could combine all of the "jump ahead" pointers:
+
+<blockquote>
+<img src="./Skip Lists_files/SkipLists-5.gif">
+</blockquote>
+
+Showing the <b>traversed</b> links as darker lines and the non-traversed but compared links as dotted lines:
+<p>
+
+</p><blockquote>
+<img src="./Skip Lists_files/SkipLists-5a.gif">
+</blockquote>
+
+In the above list, the nodes we would have to look at are <b>L, Y, S, V, T</b>. (We'd actually look at <b>Y</b> twice.)
+<p>
+By having multiple <i>next</i> pointers, we can vary the speed at which we move through the list. Kind of 
+a built-in <i>fast-forward</i> mechanism. Locating an item is a very simple:
+
+</p><ol>
+<li>Start out skipping through the list making the largest jumps.
+</li><li>Continue until we land on a node with the an item that is greater than or equal to the item we're looking for.
+</li><li>If we land on a node that contains the value we're looking for, we're done.
+</li><li>If we "pass" the value, we backup one and traverse links on the next "lower" level.
+</li><li>Goto step 2
+</li></ol>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Structure of a Skip List</p>
+
+There are several key factors involved in building a skip list:
+<ul>
+<li>Should the list be single or double linked?
+</li><li>How do we choose the size of our skip intervals? (Skip 2, 3, 4, 5, etc. nodes at-a-time?)
+</li><li>How do we determine which nodes will be of what type? (How many pointers in a particular node?)
+</li><li>How do we deal with different node sizes which implies different types? (A pointer can only point to one type of node)
+</li></ul>
+
+In this example, at the base level (level 0), we have a double-linked list where nodes contain a <i>next</i> and a <i>previous</i> pointer.
+This is no different from a double-linked list we've been using. Some nodes have 0 or more <i>forward</i> pointers
+which point (<i>skip</i>) into the list at larger intervals. (Using a dummy tail node can simply the
+algorithm.)
+
+<blockquote>
+<img src="./Skip Lists_files/SkipLists-6aa.gif">
+</blockquote>
+
+In the diagram above, at level 0 we have the next (and previous) pointer. At level 1, we have forward pointers
+that jump two nodes at a time. Level 2 forward pointers jump 4 nodes at a time and the forward pointers at level
+3 jump 8 nodes at a time.
+
+<p>
+Given the scheme above:
+</p><ul>
+<li>Each level skips twice as many nodes as the previous level. 
+</li><li>Level 0 moves 1 node at a time, level 1 moves 2 nodes, level 2 moves 4, level 3 moves 8, etc. 
+</li><li>We can observe that at a given level, <i>n</i>, we can move <i>2<sup>n</sup></i> nodes at a time. 
+</li><li>It's not hard to see that the complexity of finding an item in the worst case is <i>O(log<sub>2</sub> N)</i>.
+<!--(Much like binary trees.)-->
+</li></ul>
+
+Of course, computer memory is finite, so there is a practical limit to how many levels we can have in 
+our nodes. At level 32, we'd be moving over 4 billion nodes at a time, so clearly we have a 
+practical limit to how large the nodes can grow.
+<p>
+Pointers required (for a double-linked list):
+</p><ul>
+<li>A level 0 node needs to store 2 pointers. (next and previous)
+</li><li>Level 1 nodes need to store 3 pointers. (next, previous, 1 forward)
+</li><li>At level 2, we store 4 pointers. (next, previous, 2 forward)
+</li><li>At level <i>n</i>, we need to store <i>n + 2</i> pointers. (next, previous, <i>n</i> forward) 
+</li></ul>
+
+<p>
+This doesn't account for the data itself. Also, as we'll
+see, we will want to store the level of the node (an integral value).
+</p><p>
+
+With this scheme above, there are <i>2N</i> links at level 0 (<i>N</i> if singly-linked), <i>N/2</i> links at level 1, <i>N/4</i> links 
+at level 2, <i>N/8</i> links at level 3, and <i>N/2<sup>L</sup></i> links at level <i>L</i>, which gives us
+(assuming single-linked at level 0)
+</p><blockquote>
+<i>N + N/2 + N/4 + . . . = 
+N(1 + 1/2<sup>1</sup> + 1/2<sup>2</sup> + 1/2<sup>3</sup> . . .) = 2N</i> 
+</blockquote>
+<!--
+<i>N + N/2 + N/4 + . . . = 
+N(1 + 1/2<sup>1</sup> + 1/2<sup>2</sup> + 1/2<sup>3</sup> . . .) = N/(1 - 1/2) = N/(1/2) = 2N</i> 
+
+N(1 + 1/2<sup>1</sup> + 1/2<sup>2</sup> + 1/2<sup>3</sup> . . .) = N/(1/2) = 2N</i> 
+
+-->
+
+In this example, we've been using a <i>skip factor</i> of 2, meaning that each successive level skips
+over 2 times as many nodes as the previous level. We can set our skip factor to any number, such as 3 or 4. 
+Using <i>t</i> as our skip factor, the equations become:
+
+<blockquote>
+<i>N/t<sup>0</sup> + N/t<sup>1</sup> + N/t<sup>2</sup> . . . = 
+N(1 + 1/t<sup>1</sup> + 1/t<sup>2</sup> + 1/t<sup>3</sup> . . .) = (t / (t - 1))N</i>
+</blockquote>
+<!--
+<i>N/t<sup>0</sup> + N/t<sup>1</sup> + N/t<sup>2</sup> . . . = 
+N(1 + 1/t<sup>1</sup> + 1/t<sup>2</sup> + 1/t<sup>3</sup> . . .) = N/(1 - 1/t) = N/(1/t) = (t/t-1)N</i>
+	
+N(1 + 1/t<sup>1</sup> + 1/t<sup>2</sup> + 1/t<sup>3</sup> . . .) = N/(1 - 1/t) = (t/t-1)N</i>
+
+-->
+<p>
+Based on the skip factor, the number of nodes required is:
+
+</p><blockquote><pre>  <i>t</i>   Pointers
+--------------------------
+  2    2N    
+  3    3N/2  
+  4    4N/3  
+  5    5N/4
+  6    6N/5
+</pre></blockquote>
+
+With an arbitrary skip factor, we have this: (SF is the skip factor, N is the number of nodes, and L is the level)
+
+<blockquote><pre> (SF - 1)N
+-----------
+   SF<sup>L+1</sup> 
+</pre></blockquote>
+
+which is the number of nodes at each level. Plugging values into 
+<i>N</i>, <i>SF</i>, and <i>L</i> in the equation gives us these numbers:
+<p>
+With a list of 262,144 (256K) nodes, we'd expect to see this distribution of nodes at each level:
+       
+</p><p>           
+<table border="0" cellspacing="5">
+<tbody><tr><th>Skip factor 2</th><th>Skip factor 4</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>Level   0 nodes:  131072
+Level   1 nodes:   65536
+Level   2 nodes:   32768
+Level   3 nodes:   16384 
+Level   4 nodes:    8192
+Level   5 nodes:    4096
+Level   6 nodes:    2048
+Level   7 nodes:    1024
+Level   8 nodes:     512
+Level   9 nodes:     256
+Level  10 nodes:     128
+Level  11 nodes:      64
+Level  12 nodes:      32
+Level  13 nodes:      16
+Level  14 nodes:       8
+Level  15 nodes:       4
+Level  16 nodes:       2
+Level  17 nodes:       1
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>Level  0 nodes:  196608
+Level  1 nodes:   49152
+Level  2 nodes:   12288
+Level  3 nodes:    3072
+Level  4 nodes:     768
+Level  5 nodes:     192
+Level  6 nodes:      48
+Level  7 nodes:      12
+Level  8 nodes:       3
+Level  9 nodes:       1
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+Notice that the values at the levels with a skip factor of 2 resemble an inverted binary tree.
+
+</p><blockquote><pre></pre></blockquote>
+
+
+
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Implementation Details</p>
+
+For these examples, we'll assume that the data is simply a 4-byte void pointer (32-bit computer):
+<p>
+
+</p><blockquote><pre><b>const</b> <b>unsigned</b> MaxSkipLevels = 32; <font color="#003399"><i>// can skip 4 billion nodes!</i></font>
+<b>typedef</b> <b>struct</b> SLNode* SLNodeArray[MaxSkipLevels];
+
+<b>struct</b> SLNode
+{
+  <b>void</b> *data;        <font color="#003399"><i>// The arbitrary data in the node</i></font>
+  <b>unsigned</b> level;    <font color="#003399"><i>// The type (level) of node</i></font>
+  SLNode *prev;      <font color="#003399"><i>// Previous pointer (assume doubly-linked at level 0)</i></font>
+  SLNodeArray next;  <font color="#003399"><i>// Array of "forward" pointers, including the "next" pointer at level 0</i></font>
+};
+</pre></blockquote>
+
+<blockquote>
+<p class="technote">
+<b>Note:</b> Although the structure above appears to have a lot of wasted space, we won't ever actually create an SLNode directly.
+We will allocate "raw" memory and treat it (cast it) as an SLNode.
+</p>
+</blockquote>
+
+<blockquote>
+<table border="0" cellpadding="10">
+<tbody><tr valign="top">
+<th>SLNode created by declaration<br>(32-bit pointers)</th><th>SLNodes representing different levels<br>(32-bit pointers)</th>
+</tr>
+<tr valign="top">
+
+<td>
+<blockquote>
+<img src="./Skip Lists_files/SkipLists-SLNode.gif"><br>
+</blockquote>
+<pre>  <font color="#003399"><i>// C++ code</i></font>
+  <font color="#003399"><i>// sizeof(SLNode) is 140</i></font>
+SLNode node;
+</pre>
+</td>
+
+<td>
+<blockquote>
+<img src="./Skip Lists_files/SkipLists-SLNodes.gif">
+</blockquote>
+</td>
+</tr>
+</tbody></table>
+</blockquote>
+
+Memory-efficient code to allow variable-sized SLNode structures:
+<p>
+
+</p><pre class="sourcecode"><code>SkipList::SLNode* SkipList::allocate_node(<b>unsigned</b> level) <b>const</b><!-- <b>throw</b>(SLException)-->
+{
+    <font color="#003399"><i>// On 32-bit computer: sizeof(data) + sizeof(level) + sizeof(prev) = 12</i></font>
+  <b>unsigned</b> size = <b>sizeof</b>(data) + <b>sizeof</b>(level) + <b>sizeof</b>(prev) + (level + 1) * <b>sizeof</b>(<b>void</b> *);
+  SLNode *node = 0;
+  <b>try</b>
+  {
+    node = <b>reinterpret_cast</b>&lt;SLNode *&gt;( <b>new</b> <b>char</b>[size] );
+  }
+  <b>catch</b> (<b>const</b> std::bad_alloc &amp;)
+  {
+    <b>throw</b> SLException(SLException::E_NO_MEMORY, <font color="#9933CC">"allocate_node: Out of memory"</font>);
+  }
+  <!--memset(node, 0, size);-->
+    <font color="#003399"><i>// initialize fields</i></font>  
+  node-&gt;level = level;
+  node-&gt;prev = 0;
+  <b>for</b> (<b>unsigned</b> <b>int</b> i = 0; i &lt;= level; i++)
+    node-&gt;next[i] = 0;
+  
+  <b>return</b> node;
+}
+</code></pre>
+
+Note that this code is very inefficient (memory-wise):
+<blockquote><pre>node = <b>new</b> SLNode; <font color="#003399"><i>// allocates 140 bytes for all nodes in the list</i></font>
+</pre></blockquote>
+
+Since most (94%) of the nodes are less than level 4, this wastes far too much memory.
+
+<!--
+The number of pointers we need 
+
+Also, there is no reason that we are confined to doubling our skip intervals at every level. We could choose to triple or
+quadruple the number of nodes skipped at each successive interval.
+-->
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Inserting into a Skiplist</p>
+
+Suppose we want to insert <b>U</b> into this list:
+
+<blockquote>
+<img src="./Skip Lists_files/SkipLists-6bb.gif">
+</blockquote>
+
+We can easily find where to insert <b>U</b>: between <b>T</b> and <b>V</b>. However, this leads us to other questions:
+
+<ul>
+<li>Ok, so what kind of node do we construct? 
+</li><li>A level 0 node? Level 1? Level 5? 
+</li><li>What happens to the structure when we delete a node? (It's going to happen at some point.) 
+</li><li>Since we are inserting/deleting random data, how can we be sure we can build the proper list with the exact kinds of
+nodes in exact places?
+</li><li>The simple answer is that we can't. (Not without a lot of work.) 
+</li><li>However, we don't have to be exact. We can approximate.
+</li></ul>
+
+<p>
+
+Looking at the (perfect and unrealizable) list above, we can see the distribution of nodes. Given a list with <i>N</i>
+nodes, at each level we'd expect to see <i>N / 2<sup>L + 1</sup></i>, where <i>L</i> is the level. So, given the 16 nodes
+above, we'd expect:
+
+</p><blockquote><pre>        Node
+Level   Count     Frequency             Nodes
+----------------------------------------------------
+  0       8      0.5     (50%)     B E H K M R T X
+  1       4      0.25    (25%)     C I P V
+  2       2      0.125   (12.5%)   G S
+  3       1      0.0625  (6.25%)   L Y
+</pre></blockquote>
+
+The exception is the node with the highest level, which will have an extra count.
+
+A <i>perfect</i> list with 2<sup>14</sup> nodes (16,384), will have a distribution like this:
+<p>
+
+</p><blockquote><pre>Level   Nodes     Frequency	
+--------------------------------
+  0     8192    0.5
+  1     4096    0.25
+  2     2048    0.125
+  3     1024    0.0625
+  4      512    0.03125
+  5      256    0.015625
+  6      128    0.0078125
+  7       64    0.00390625
+  8       32    0.001953125
+  9       16    0.0009765625
+ 10        8    0.00048828125
+ 11        4    0.000244140625
+ 12        2    0.0001220703125
+ 13        1    0.00006103515625
+</pre></blockquote>
+
+<!--Again, in practice, the largest node having one extra count.-->
+<p>
+Ok, so what kind of node <i>do</i> we create when we insert an item? 
+</p><ul>
+<li>Simple, we just roll the dice and see what kind of node (<i>level</i>) we get. (Well, sort of...)
+</li><li>We need our "dice" to have the frequencies (<i>probabilities</i>) shown above. 
+</li><li>So, in the example above, we'd want to create a level 0 node 50% of the time, a level 1 node 25% of the time, 
+	a level 2 node 12.5% of the time, a level 3 node 6.25% of the time, etc.
+</li></ul>
+
+<p>
+Code similar to this would be used during the insertion phase:
+</p><p>
+
+</p><pre class="sourcecode">  <code><font color="#003399"><i>// calculate the level for the new node</i></font>
+<b>unsigned</b> Level = 0;
+<b>double</b> d = drand();  <font color="#003399"><i>// roll the dice (returns number 0 &lt; x &lt; 1)</i></font>
+
+  <font color="#003399"><i>// maxLevel_ is the largest node currently constructed</i></font>
+  <font color="#003399"><i>// and is initilized to 0 in the constructor.</i></font>
+<b>while</b> ( (Level &lt;= maxLevel_) &amp;&amp; (d &lt; (1.0 / skipFactor_)) )
+{
+  Level++;
+  d = drand();  <font color="#003399"><i>// produces a number between 0 and 1</i></font>
+}
+
+  <font color="#003399"><i>// if we've gone beyond the maximum level, raise the max</i></font>
+<b>if</b> (Level &gt; maxLevel_)
+  maxLevel_++;
+  
+  <font color="#003399"><i>// allocate the new node</i></font>
+SLNode *NewNode = allocate_node(Level);
+</code></pre>
+
+<blockquote><p class="technote">
+The reason for the <tt>Level &lt;= maxLevel_</tt> above is to constrain the size of the largest node.
+If we have a small number of items in the list, we don't want (or need) large nodes that can skip
+over large numbers of items. However, as the number of items grows, the size of the largest node
+(maxLevel_) will increase.
+</p>
+</blockquote>
+
+Sample run of 256K items:
+<p>
+
+</p><blockquote><pre>Statistics with skip factor: 2 
+                 Ideal    Actual    Ideal Probability     Act. Probability
+---------------------------------------------------------------------------------
+Level  0 nodes:   131072  133590     50%                   50.960540771484375%
+Level  1 nodes:    65536   65926     25%                   25.148773193359375%
+Level  2 nodes:    32768   31846     12.5%                 12.148284912109375%
+Level  3 nodes:    16384   15630      6.25%                 5.962371826171875%
+Level  4 nodes:     8192    7652      3.125%                2.91900634765625%
+Level  5 nodes:     4096    3859      1.5625%               1.4720916748046875%
+Level  6 nodes:     2048    1816      0.78125%              0.69274902343749989%
+Level  7 nodes:     1024     958      0.390625%             0.36544799804687506%
+Level  8 nodes:      512     426      0.1953125%            0.162506103515625%
+Level  9 nodes:      256     223      0.09765625%           0.0850677490234375%
+Level 10 nodes:      128     106      0.048828125%          0.040435791015625%
+Level 11 nodes:       64      61      0.0244140625%         0.0232696533203125%
+Level 12 nodes:       32      24      0.01220703125%        0.0091552734375%
+Level 13 nodes:       16      13      0.006103515625%       0.0049591064453125%
+Level 14 nodes:        8      10      0.0030517578125%      0.003814697265625%
+Level 15 nodes:        4       3      0.00152587890625%     0.0011444091796875%
+Level 16 nodes:        2       1      0.000762939453125%    0.0003814697265625%
+
+   Total nodes:   262144
+Total pointers:   513961
+pointers/nodes:   1.9606
+</pre></blockquote>
+
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Insert a Node</p>
+
+<p>
+The original list:
+
+</p><p>
+</p><blockquote>
+<img src="./Skip Lists_files/SkipLists-6c.gif">
+</blockquote>
+<p>
+
+
+Inserting <b>U</b>:
+</p><p>
+As a level 0 node:
+
+</p><p>
+</p><blockquote>
+<img src="./Skip Lists_files/SkipLists-Insert-0a.gif">
+</blockquote>
+<p>
+
+As a level 1 node:
+</p><p>
+
+</p><blockquote>
+<img src="./Skip Lists_files/SkipLists-Insert-1a.gif">
+</blockquote>
+<p>
+
+As a level 2 node:
+</p><p>
+
+</p><blockquote>
+<img src="./Skip Lists_files/SkipLists-Insert-2a.gif">
+</blockquote>
+<p>
+
+As a level 3 node:
+</p><p>
+</p><blockquote>
+<img src="./Skip Lists_files/SkipLists-Insert-3a.gif">
+</blockquote>
+<p>
+
+As a level 4 node:
+</p><p>
+</p><blockquote>
+<img src="./Skip Lists_files/SkipLists-Insert-4a.gif">
+</blockquote>
+
+A couple of issues with inserting that's different from a "regular" linked list:
+<ul>
+<li>Need to choose a size (level) for the new node. (Random with given probability)
+</li><li>Need to keep track of <i>all</i> of the nodes that led to the new one.
+</li></ul>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Deleting a Node</p>
+
+The current list:
+
+<blockquote>
+<img src="./Skip Lists_files/SkipLists-Insert-5aa.gif">
+</blockquote>
+
+Deleting <b>S</b> from the list:
+<p>
+
+</p><blockquote>
+<img src="./Skip Lists_files/SkipLists-Delete-1a.gif">
+</blockquote>
+
+
+Like insertion, we need to keep track of <i>all</i> of the nodes that led to the new one
+so that we can update the pointers correctly. There is only slightly more work to be done due
+to the fact that not all of the nodes that lead to the deleted node were traversed during the
+find. In the example above, nodes <b>P</b> and <b>R</b> need to be updated, yet they didn't
+lead to <b>S</b>.
+
+<blockquote><pre></pre></blockquote>
+
+
+
+
+<p>
+Notes:
+</p><ul>
+<li>The head pointer will always be of the largest size with all of the pointers initialized to the tail.
+</li><li>The tail pointer is just a level 0 node. <!-- (although some of the diagrams make it look like the head node.)-->
+</li><li>Skip lists are another form of <i>randomized</i> algorithms. We add "randomness" to help the performance. (Much like hash tables)
+</li><li>Compared to some balanced tree algorithms, the skip list is much simpler to implement.
+</li><li>Like hash tables, we trade memory for speed. (More pointers/node <tt>==</tt> faster search) 
+</li><li>Most of the implementation complexity is in keeping track of the forward pointers when inserting/deleting.
+</li><li>Node based<!-- (like trees) -->, so we'd use some kind of object allocator. What's the "problem" with using an
+object allocator for the nodes?
+</li><li>What happens to our <i>locality of reference</i> that the object allocator provides?
+</li><li>Some claim the complexity of implementing balanced trees (and their associated recursiveness)
+  makes skip-lists a more practical data structure to implement.
+</li></ul>
+
+<!--
+<p>
+<a href="http://iamwww.unibe.ch/~wenger/DA/SkipList/">Skip list animation</a>
+<br>
+-->
+<p><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS280/SkipLists-Pugh.pdf">Skip list paper</a> written by the inventor. (.pdf document)
+</p><p>
+</p><blockquote>
+<p class="technote">
+<b>Skip Lists: A Probabilistic Alternative to Balanced Trees: </b>
+<i>Skip lists are a data structure that can be used in place of balanced trees.
+Skip lists use probabilistic balancing rather than strictly enforced balancing
+and as a result the algorithms for insertion and deletion in skip lists are
+much simpler and significantly faster than equivalent algorithms for
+balanced trees.</i>
+</p>
+</blockquote>
+
+<a href="http://groups.google.com/group/comp.programming/browse_frm/thread/17084ba72641d3f0/dd5f2df8dcc58875?lnk=st&amp;q=Red+Black+Trees+Vs+Skip+Lists&amp;rnum=2#dd5f2df8dcc58875">Google Groups Red-Black vs. SkipList</a>
+<br>
+<a href="http://groups.google.com/group/comp.lang.ruby/browse_frm/thread/fc00f4d148aa7fbe/0d28d3ac1c6fb667?lnk=st&amp;q=Red+Black+Trees+Vs+Skip+Lists&amp;rnum=9#0d28d3ac1c6fb667">Skip lists and other data structures</a>
+<br>
+<!--
+<a href="http://groups.google.com/group/comp.programming/browse_frm/thread/17084ba72641d3f0/dd5f2df8dcc58875?lnk=st&q=Red+Black+Trees+Vs+Skip+Lists&rnum=2#dd5f2df8dcc58875">Skip lists</a>
+-->
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Additional Diagrams</p>
+
+<p>
+<b>Inserting 'S'</b>
+</p><p> 
+
+</p><blockquote>
+
+Locating the position to insert <b>S</b> into the list. The thick <b>black lines</b> represent pointers in nodes that <b>WILL</b> be affected
+by the insertion of a new node. This is regardless of the size of the new node. (All nodes are at least at level 0.) The thick 
+<font color="red"><b>red lines</b></font> represent pointers in nodes that <font color="red"><b>MAY</b></font> be affected by the insertion of a new node. 
+This will depend entirely on the size of the new node which can be any size from 
+0 to MaxLevel + 1.
+<p> 
+</p><blockquote>
+<img src="./Skip Lists_files/SkipLists-Insert-S1.gif">
+</blockquote>
+
+<tt>MaxLevel</tt> is currently set to 4. This is the level where the search for <b>S</b> will begin from 
+the head node. Assume we have a method called <i>locate</i> that is used to find a node, or the position
+in the list where a new node will go. The method must keep track of the affected nodes. In this case, the 
+<i>SLNodeArray</i> will contain pointers to <tt><b>head, head, L, L, P, R</b></tt>. These pointers will 
+reside at index 5 through 0, respectively. Assuming a function called <i>locate</i>, which locates the 
+position for the new node and fills in an array called <i>BeforeNodes</i>, this is what the 
+<i>BeforeNodes</i> array should look like:
+
+<blockquote>
+<p>
+<table cellspacing="5" cellpadding="5">
+<tbody><tr><th>Before calling locate</th><th></th><th>After calling locate</th></tr>
+<tr>
+<td align="center">
+<blockquote>
+<img src="./Skip Lists_files/SkipLists-BeforeNodes-1.gif">
+</blockquote>
+</td>
+<td width="60"></td>
+<td align="center">
+<img src="./Skip Lists_files/SkipLists-BeforeNodes-2.gif">
+</td>
+</tr></tbody></table>
+</p></blockquote>
+<p>
+
+
+</p><p>
+If the level of the new node happens to be 3 (randomly chosen based on the ideal distribution of nodes), then only 
+4 of the 6 potential pointers will be affected. The thick <b>black lines</b> represent
+existing pointers that need to be modified in response to the level 3 node that was inserted. 
+The <font color="blue"><b>blue lines</b></font> represent the pointers in the new node that need to be setup.
+</p><p> 
+</p><blockquote>
+<img src="./Skip Lists_files/SkipLists-Insert-S2.gif">
+</blockquote>
+
+<p>
+If, however, the level of the new node happens to be 5 (again, randomly chosen), then all 
+6 of the potential pointers will be affected (and <tt>MaxLevel</tt> will be increased to 5):
+</p><p> 
+</p><blockquote>
+<img src="./Skip Lists_files/SkipLists-Insert-S3.gif">
+</blockquote>
+
+
+
+</blockquote>
+
+
+
+<p>
+</p><hr width="90%">
+<p>
+  
+</p><p>
+<b>Deleting 'S'</b>
+</p><p> 
+
+</p><blockquote>
+As with inserting, we need to first locate the position where <b>S</b> resides in the list. 
+<p>
+Assuming we added a level 3 node: 
+The thick <b>black lines</b> represent pointers in nodes that <b>WILL</b> be affected by the deletion. Notice
+that the number of pointers affected is different for the delete operation. Unlike with insertion, we
+know exactly which pointers will be affected because we know the size (level) of the node being deleted.
+
+</p><p> 
+</p><blockquote>
+<img src="./Skip Lists_files/SkipLists-Delete-S1.gif">
+</blockquote>
+
+<tt>MaxLevel</tt> is still set to 4 so we will begin the search from this level. Again, the <i>locate</i> method
+will fill in the array of affected nodes. In this case, the <i>SLNodeArray</i> will only contain one non-head pointer. This pointer will always
+be at the highest level pointing to the node. In this case, since node <b>S</b> is a level 3 node, then only the pointer at level 3 in the
+<i>BeforeNodes</i> array will be changed. 
+<p>
+The search started at level 4 and looked ahead to <b>U</b>. Since <b>U</b> was larger than <b>S</b>, we had to step down
+to level 3. At level 3 we looked ahead to <b>L</b>. <b>L</b> is less than <b>S</b>, so we moved to node <b>L</b>. When
+we look ahead from <b>L</b>, we see <b>S</b>, which is the node we are looking for, so we set index 3 in the <i>BeforeNodes</i> to <b>L</b>.
+</p><p>
+This is what the <i>BeforeNodes</i> array should look like:
+
+</p><blockquote>
+<p>
+<table cellspacing="5" cellpadding="5">
+<tbody><tr><th>Before calling locate</th><th></th><th>After calling locate</th></tr>
+<tr valign="top">
+<td align="center">
+<blockquote>
+<img src="./Skip Lists_files/SkipLists-BeforeNodes-1.gif">
+</blockquote>
+</td>
+<td width="60"></td>
+<td align="center">
+<img src="./Skip Lists_files/SkipLists-BeforeNodes-3.gif">
+</td>
+</tr></tbody></table>
+</p></blockquote>
+<p>
+
+This is where deletion differs from insertion. With insertion, our array of pointers included <i>every</i> node from the highest level down
+to 0. With deletion, we may not have traversed through every level to find the node. In fact, we only find the affected node at the level of the 
+deleted node. This means that after finding the node to delete, we have to go back and fill in the rest of the <i>BeforeNodes</i> so it looks like 
+this:
+</p><p>
+  
+</p><blockquote>
+<p>
+<table cellspacing="5" cellpadding="5">
+<tbody><tr><th>After calling locate</th><th></th><th>After "fixing" the array</th></tr>
+<tr>
+<td align="center" valign="top">
+<blockquote>
+<img src="./Skip Lists_files/SkipLists-BeforeNodes-3.gif">
+</blockquote>
+</td>
+<td width="60"></td>
+<td align="center" valign="top">
+<img src="./Skip Lists_files/SkipLists-BeforeNodes-2.gif">
+</td>
+</tr></tbody></table>
+</p></blockquote>
+<p>
+
+Before deleting the node, you need to "hook up" the affected nodes. If you delete the node before hooking up the pointers, you 
+won't know where to point the pointers. The diagram shows how the pointers are modified before the deletion:
+
+</p><p> 
+</p><blockquote>
+<img src="./Skip Lists_files/SkipLists-Delete-S2.gif">
+</blockquote>
+
+Setting the pointers is as simple as copying the values from the deleted node, <b>S</b> in this case, to the affected nodes.
+This is done by copying the level 3 pointer to node <b>L</b> (at level 3), copying the level 2 pointer to node <b>L</b>,
+copying the level 1 pointer to node <b>P</b>, and copying the level 0 pointer to node <b>R</b>. The last step is to
+copy the previous pointer from <b>S</b> to the previous pointer in <b>T</b>.
+<p>
+
+Finally, realize that, although I drew the pictures above showing the tail node as the maximum
+level, it really only needs to be a level 0 node:
+</p><blockquote>
+<img src="./Skip Lists_files/SkipLists-6aa.gif">
+</blockquote>
+
+ The head node still requires all levels (not shown above) because it is pointing at other nodes. The tail 
+ node points at nothing. It is merely being pointed at by the other nodes and is used as a sentinel, 
+ marking the end. (Sometimes, using a separate tail-pointer can lead to simpler code.)
+<p> 
+<br>
+<br>
+
+<!--
+<p class="technote">
+<b>NOTE</b>: Although the diagrams show the tail pointer as a large node (having <tt>MAX_SKIP_LEVELS</tt> pointers), it's
+really only a
+</p>
+-->
+
+
+</p></blockquote>
+
+
+<p>
+</p><hr width="90%">
+<p>
+
+
+
+
+
+  
+</p><blockquote><pre></pre></blockquote>
+</body></html>

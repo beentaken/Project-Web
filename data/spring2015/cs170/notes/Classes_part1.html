@@ -1,0 +1,2188 @@
+
+<!-- saved from url=(0065)http://azrael.digipen.edu/~mmead/www/Courses/CS170/Classes-1.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"> <link rel="stylesheet" type="text/css" href="./Classes 1_files/new.css"> 
+<title>Classes 1</title> </head>
+
+<body>  
+<center><h1>Classes and Objects</h1></center>
+
+<!--
+<blockquote>
+<i>
+"The road to hell is paved with global variables"</i> -- Steve McConnell
+</blockquote>
+-->
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Introduction to Object-Oriented Programming
+</p>
+
+Procedural programming vs. Object-Oriented programming
+<p>
+	
+Procedural programming:
+</p><ul>
+<li>There is a distinct division between code (functions) and data.
+</li><li>Data is passive, it gets acted upon by functions.
+</li><li>We generally pass the data between functions.
+</li></ul>
+
+Object-Oriented programming:
+<ul>
+<li>Code and data are encapsulated together in a single <i>object</i>.
+</li><li>The functions that work on the data are part of the object.
+</li><li>We don't have to pass data to the functions.
+</li></ul>
+
+Usually, for a language to be considered object-oriented, it should have these
+three properties:
+
+<ol>
+<li>Encapsulation (data abstraction/hiding)
+</li><li>Inheritance (relationships between entities)
+</li><li>Polymorphism (runtime decisions)
+</li></ol>
+
+In C++, these three properties are realized as:
+
+<ol>
+<li>Classes and objects
+</li><li>Extending classes with an <i>is-a</i> relationship
+</li><li>Virtual methods and dynamic binding
+</li></ol>	
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Procedural Programming
+</p>
+
+Let's use this structure that represents a student: (What is <b><tt>sizeof</tt></b><tt>(Student)</tt>)?
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>const</b> <b>int</b> MAXLENGTH = 10;
+
+<b>struct</b> Student           
+{
+  <b>char</b> login[MAXLENGTH];
+  <b>int</b> age;
+  <b>int</b> year;
+  <b>float</b> GPA;
+};
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>void</b> display_student(<b>const</b> Student &amp;student)
+{
+  <b>using</b> std::cout;
+  <b>using</b> std::endl;
+
+  cout &lt;&lt; <font color="#9933CC">"login: "</font> &lt;&lt; student.login &lt;&lt; endl;
+  cout &lt;&lt; <font color="#9933CC">"  age: "</font> &lt;&lt; student.age &lt;&lt; endl;
+  cout &lt;&lt; <font color="#9933CC">" year: "</font> &lt;&lt; student.year &lt;&lt; endl;
+  cout &lt;&lt; <font color="#9933CC">"  GPA: "</font> &lt;&lt; student.GPA &lt;&lt; endl;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>This allows this code:</th><th>as well as this:</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>void</b> f1()
+{
+  Student st1;
+
+  st1.age = 20;
+  st1.GPA = 3.8;
+  std::strcpy(st1.login, <font color="#9933CC">"jdoe"</font>);
+  st1.year = 3;
+
+  display_student(st1);
+}
+
+<b>Output:</b>
+login: jdoe
+  age: 20
+ year: 3
+  GPA: 3.8
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>void</b> f2()
+{
+  Student st2;
+
+  st2.age = -5;
+  st2.GPA = 12.9;
+  std::strcpy(st2.login, <font color="#9933CC">"rumplestiltzkin"</font>);
+  st2.year = 150;
+
+  display_student(st2);
+}
+
+<b>Output:</b> (May get lucky)
+login: rumplestiltzkin
+  age: 7235947
+ year: 150
+  GPA: 12.9
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+A second attempt to "protect" the data by using functions to set the data instead of the user
+<i>directly</i> modifying it.
+
+<blockquote><pre><b>void</b> set_login(Student &amp;student, <b>const</b> <b>char</b>* login);
+<b>void</b> set_age(Student &amp;student, <b>int</b> age);
+<b>void</b> set_year(Student &amp;student, <b>int</b> year);
+<b>void</b> set_GPA(Student &amp;student, <b>float</b> GPA);
+</pre></blockquote>
+
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>void</b> set_login(Student &amp;student, <b>const</b> <b>char</b>* login)
+{
+  <b>int</b> len = std::strlen(login);
+  std::<a href="http://www.cplusplus.com/reference/cstring/strncpy/?kw=strncpy">strncpy</a>(student.login, login, MAXLENGTH - 1);
+  <b>if</b> (len &gt;= MAXLENGTH)
+    student.login[MAXLENGTH - 1] = 0;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>void</b> set_age(Student &amp;student, <b>int</b> age)
+{
+  <b>if</b> ( (age &lt; 18) || (age &gt; 100) )
+  {
+    std::cout &lt;&lt; <font color="#9933CC">"Error in age range!\n"</font>;
+    student.age = 18;
+  }
+  <b>else</b>
+    student.age = age;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>void</b> set_year(Student &amp;student, <b>int</b> year)
+{
+  <b>if</b> ( (year &lt; 1) || (year &gt; 4) )
+  {
+    std::cout &lt;&lt; <font color="#9933CC">"Error in year range!\n"</font>;
+    student.year = 1;
+  }
+  <b>else</b>
+    student.year = year;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>void</b> set_GPA(Student &amp;student, <b>float</b> GPA)
+{
+  <b>if</b> ( (GPA &lt; 0.0) || (GPA &gt; 4.0) )
+  {
+    std::cout &lt;&lt; <font color="#9933CC">"Error in GPA range!\n"</font>;
+    student.GPA = 0.0;
+  }
+  <b>else</b>
+    student.GPA = GPA;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th>Now this code:</th><th>results in this:</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>void</b> f3()
+{
+  Student st3;
+
+  set_age(st3, -5);
+  set_GPA(st3, 12.9);
+  set_login(st3, <font color="#9933CC">"rumplestiltzkin"</font>);
+  set_year(st3, 150);
+
+  display_student(st3);
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>Error in age range!
+Error in GPA range!
+Error in year range!
+login: rumplesti
+  age: 18
+ year: 1
+  GPA: 0
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+Notes:
+<ul>
+<li>It may not be perfect yet, but at least we can try to prevent memory corruption.
+</li><li>There is still nothing preventing the user (programmer) from accessing the fields directly.
+</li><li>We can "hide" (<i>encapsulate</i>) the data fields by using the <tt><b>private</b></tt> access specifier:
+
+<blockquote><pre><b>struct</b> Student           
+{
+    <font color="#003399"><i>// All data is inaccessible from outside </i></font>
+  <b>private</b>:
+    <b>char</b> login[MAXLENGTH];
+    <b>int</b> age;
+    <b>int</b> year;
+    <b>float</b> GPA;
+};
+</pre></blockquote>
+
+
+This code will give errors now:
+
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th>Illegal code:</th><th>Errors:</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>Student st1;
+
+st1.age = 20;
+st1.GPA = 3.8;
+std::strcpy(st1.login, <font color="#9933CC">"jdoe"</font>);
+st1.year = 3;
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>error: `int Student::age' is private
+error: within this context
+error: `float Student::GPA' is private
+error: within this context
+error: `char Student::login[10]' is private
+error: within this context
+error: `int Student::year' is private
+error: within this context
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+However, even this code will no longer work:
+
+<blockquote><pre><b>void</b> set_age(Student &amp;student, <b>int</b> age)
+{
+  <b>if</b> ( (age &lt; 18) || (age &gt; 100) )
+  {
+    std::cout &lt;&lt; <font color="#9933CC">"Error in age range!\n"</font>;
+    student.age = 18;  <font color="#003399"><i>// ERROR, age is private</i></font>
+  }
+  <b>else</b>
+    student.age = age; <font color="#003399"><i>// ERROR, age is private</i></font>
+}
+</pre></blockquote>
+
+</li></ul>
+
+The solution? Put the functions <i>inside</i> the Student <tt><b>struct</b></tt> along with the data. This is
+	<i>encapsulation</i>. 
+	
+<blockquote>
+<p class="technote">
+In C++, encapsulated functions are generally called <i>methods</i> or <i>member functions</i>
+(because they are <i>members</i> of the structure).
+</p>
+</blockquote>
+	
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Encapsulating Functions and Data
+</p>
+
+Adding functions to the structure is simple. By declaring them in a <tt><b>public</b></tt> section, the
+functions (methods) will be accessible from outside of the structure:
+
+<p>
+		
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Structure with private data, public methods</th><th>Client access is through the public methods</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>const</b> <b>int</b> MAXLENGTH = 10;
+
+<b>struct</b> Student           
+{
+  <b>private</b>:
+    <b>char</b> login_[MAXLENGTH];
+    <b>int</b> age_;
+    <b>int</b> year_;
+    <b>float</b> GPA_;
+
+  <b>public</b>:
+    <b>void</b> set_login(<b>const</b> <b>char</b>* login);
+    <b>void</b> set_age(<b>int</b> age);
+    <b>void</b> set_year(<b>int</b> year);
+    <b>void</b> set_GPA(<b>float</b> GPA);
+};
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>void</b> f1()
+{
+    <font color="#003399"><i>// Create a Student struct (object)</i></font>
+  Student st1;
+
+    <font color="#003399"><i>// Set the fields using the public methods</i></font>
+  st1.set_login(<font color="#9933CC">"jdoe"</font>);
+  st1.set_age(22);
+  st1.set_year(4);
+  st1.set_GPA(3.8);
+
+  st1.age_ = 10; <font color="#003399"><i>// ERROR, private</i></font>
+  st1.year_ = 2; <font color="#003399"><i>// ERROR, private</i></font>
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+	
+The implementation of the methods will change slightly:
+
+</p><p>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>void</b> Student::set_login(<b>const</b> <b>char</b>* login)
+{
+  <b>int</b> len = std::strlen(login);
+  std::strncpy(login_, login, MAXLENGTH - 1);
+  <b>if</b> (len &gt;= MAXLENGTH)
+    login_[MAXLENGTH - 1] = 0;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>void</b> Student::set_age(<b>int</b> age)
+{
+  <b>if</b> ( (age &lt; 18) || (age &gt; 100) )
+  {
+    std::cout &lt;&lt; <font color="#9933CC">"Error in age range!\n"</font>;
+    age_ = 18;
+  }
+  <b>else</b>
+    age_ = age;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>void</b> Student::set_year(<b>int</b> year)
+{
+  <b>if</b> ( (year &lt; 1) || (year &gt; 4) )
+  {
+    std::cout &lt;&lt; <font color="#9933CC">"Error in year range!\n"</font>;
+    year_ = 1;
+  }
+  <b>else</b>
+    year_ = year;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>void</b> Student::set_GPA(<b>float</b> GPA)
+{
+  <b>if</b> ( (GPA &lt; 0.0) || (GPA &gt; 4.0) )
+  {
+    std::cout &lt;&lt; <font color="#9933CC">"Error in GPA range!\n"</font>;
+    GPA_ = 0.0;
+  }
+  <b>else</b>
+    GPA_ = GPA;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+
+You'll notice a few things about these implementations:
+</p><ul>
+<li>We no longer need to pass a reference to the Student to the method. (The methods "know" which object they are accessing.)
+</li><li>This means we don't have to use the structure dot operator (i.e. <tt>age_</tt> instead of <tt>st1.age_</tt>)
+</li><li>We need to indicate that the method belongs to the Student structure by using the scope resolution operator:
+<p>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><font color="#003399"><i>// This method belongs to the Student struct</i></font>
+<b>void</b> <font color="blue"><b>Student::</b></font>set_year(<b>int</b> year)
+{
+  <b>if</b> ( (year &lt; 1) || (year &gt; 4) )
+  {
+    std::cout &lt;&lt; <font color="#9933CC">"Error in year range!\n"</font>;
+    year_ = 1;
+  }
+  <b>else</b>
+    year_ = year;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><font color="#003399"><i>// This is a "normal" global function</i></font>
+<font color="#003399"><i>// not part of any struct</i></font>
+<b>void</b> set_year(<b>int</b> year)
+{
+  <font color="#003399"><i>// body of function</i></font>
+}
+
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+</p></li></ul>
+
+Incidentally, the default access for a <tt><b>struct</b></tt> is public. (This is for C compatibility.) These two structures
+are identical:
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Members are public by default</th><th>OK, but redundant</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>struct</b> Student
+{
+  <b>char</b> login_[MAXLENGTH];
+  <b>int</b> age_;
+  <b>int</b> year_;
+  <b>float</b> GPA_;
+};
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>struct</b> Student
+{
+  <b>public</b>:
+    <b>char</b> login_[MAXLENGTH];
+    <b>int</b> age_;
+    <b>int</b> year_;
+    <b>float</b> GPA_;
+};
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+You generally won't see the <tt><b>public</b></tt> keyword used with structures.
+<p>
+Finally, we need to get back a way to display the values. Our original <i>display_student</i> no longer can
+access the private members, so we have to make it part of the <i>Student</i> structure:
+
+</p><blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th>Add the <tt>display</tt> method</th><th>Modify the implementation</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>struct</b> Student           
+{
+  <b>private</b>:
+    <b>char</b> login_[MAXLENGTH];
+    <b>int</b> age_;
+    <b>int</b> year_;
+    <b>float</b> GPA_;
+
+  <b>public</b>:
+    <b>void</b> set_login(<b>const</b> <b>char</b>* login);
+    <b>void</b> set_age(<b>int</b> age);
+    <b>void</b> set_year(<b>int</b> year);
+    <b>void</b> set_GPA(<b>float</b> GPA);
+    <font color="blue"><b>void</b> display();</font>
+};
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>void</b> <font color="blue">Student::</font>display(<font color="blue"><b>void</b></font>)
+{
+  <b>using</b> std::cout;
+  <b>using</b> std::endl;
+
+  cout &lt;&lt; <font color="#9933CC">"login: "</font> &lt;&lt; <font color="blue">login_</font> &lt;&lt; endl;
+  cout &lt;&lt; <font color="#9933CC">"  age: "</font> &lt;&lt; <font color="blue">age_</font> &lt;&lt; endl;
+  cout &lt;&lt; <font color="#9933CC">" year: "</font> &lt;&lt; <font color="blue">year_</font> &lt;&lt; endl;
+  cout &lt;&lt; <font color="#9933CC">"  GPA: "</font> &lt;&lt; <font color="blue">GPA_</font> &lt;&lt; endl;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+
+Now, this is how we use it:
+
+<blockquote><pre><b>void</b> f1()
+{
+    <font color="#003399"><i>// Create a Student object</i></font>
+  Student st1;
+
+    <font color="#003399"><i>// Using the public methods</i></font>
+  st1.set_login(<font color="#9933CC">"jdoe"</font>);
+  st1.set_age(22);
+  st1.set_year(4);
+  st1.set_GPA(3.8);
+
+    <font color="#003399"><i>// Tell the object to display itself</i></font>
+  st1.display();  
+}
+</pre></blockquote>
+
+<ul>
+  <li>Now that the data in the structure is private, the user can't "screw" it up by assigning
+    arbitrary values.</li>
+  <li>This is one of the major reasons for "hiding" (encapsulating) the data.</li> 
+  <li>There are still many problems with the code and we will address those soon.</li>
+</ul>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Classes
+</p>
+
+In short, a <b>class</b> is identical to a <b>struct</b> with one (almost) exception: the default accessibility
+is <b>private</b>. 
+<p>
+	
+These will work the same:
+
+</p><blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th>Default for struct is public</th><th>Explicit public keyword</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><font color="blue"><b>struct</b></font> Student
+{
+  <b>char</b> login_[MAXLENGTH];
+  <b>int</b> age_;
+  <b>int</b> year_;
+  <b>float</b> GPA_;
+};
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><font color="blue"><b>class</b></font> Student
+{
+  <b>public</b>:
+    <b>char</b> login_[MAXLENGTH];
+    <b>int</b> age_;
+    <b>int</b> year_;
+    <b>float</b> GPA_;
+};
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+And these will work the same:
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th>Explicitly private</th><th>Default for class is private</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><font color="blue"><b>struct</b></font> Student
+{
+  <b>private</b>:
+    <b>char</b> login_[MAXLENGTH];
+    <b>int</b> age_;
+    <b>int</b> year_;
+    <b>float</b> GPA_;
+};
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><font color="blue"><b>class</b></font> Student
+{
+  <b>char</b> login_[MAXLENGTH];
+  <b>int</b> age_;
+  <b>int</b> year_;
+  <b>float</b> GPA_;
+};
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<!--
+So why have both <tt><b>struct</b></tt> and <tt><b>class</b></tt>? Here's what 
+<a href="http://cpptips.hyperformix.com/cpptips/struct_vs_class.txt">the C++'s inventor says</a>. 
+-->
+
+<p>
+We will generally be using the <tt><b>class</b></tt> keyword when creating new types that have methods associated
+with them. We'll use the <tt><b>struct</b></tt> keyword for POD types. (<b>P</b>lain <b>O</b>ld <b>D</b>ata types).
+</p><p>
+If you think a little more in-depth about what a data-type is, you'll see it's more than just the range of values.
+It is also the <i>operations</i> that can be performed on it. (e.g. you can't use the mod operator, <tt>%</tt>, with
+floating point values.)
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><p class="SectionHeader">Initializing Objects: The Constructor
+</p>
+
+This is the problem we need to solve:
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Client code</th><th>Output (random garbage, might crash)</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>Student s;   <font color="#003399"><i>// Uninitialized student</i></font>
+s.display(); <font color="#003399"><i>// ???</i></font>
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>login:  PA
+  age: 4280352
+ year: 4225049
+  GPA: 1.89223e-307
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+We never want to have any objects that are in an <i>undefined</i> state. Ever.
+ <p>
+Recall how we initialize structures:
+
+</p><blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>struct</b> Student           
+{
+    <font color="#003399"><i>// Public by default</i></font>
+  <b>char</b> login[MAXLENGTH];
+  <b>int</b> age;
+  <b>int</b> year;
+  <b>float</b> GPA;
+};
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>void</b> f()
+{
+    <font color="#003399"><i>// Uninitialized Student</i></font>
+  Student st1;
+
+    <font color="#003399"><i>// Set values by assignment</i></font>
+  std::strcpy(st1.login, <font color="#9933CC">"jdoe"</font>);
+  st1.age = 20;
+  st1.year = 3;
+  st1.GPA = 3.08;
+
+    <font color="#003399"><i>// Set values by initialization</i></font>
+  Student john = {<font color="#9933CC">"jdoe"</font>, 20, 3, 3.10f};
+  Student jane = {<font color="#9933CC">"jsmith"</font>, 19, 2, 3.95f};
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+
+But with private data, using the initializer list is illegal:
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>class</b> Student           
+{
+    <font color="#003399"><i>// Private by default</i></font>
+  <b>char</b> login[MAXLENGTH];
+  <b>int</b> age;
+  <b>int</b> year;
+  <b>float</b> GPA;
+};
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>void</b> f()
+{
+    <font color="#003399"><i>// This is now illegal</i></font>
+  Student john = {<font color="#9933CC">"jdoe"</font>, 20, 3, 3.10f};
+  Student jane = {<font color="#9933CC">"jsmith"</font>, 19, 2, 3.95f};
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+You'll get errors like these:
+<p>
+	
+GNU:
+</p><blockquote><pre>error: 'john' must be initialized by constructor, not by '{...}'
+error: 'jane' must be initialized by constructor, not by '{...}'
+</pre></blockquote>
+
+Microsoft:
+<blockquote><pre>main1.cpp(116) : error C2552: 'john' : non-aggregates cannot be initialized with initializer list
+        'Student' : Types with private or protected data members are not aggregate
+main1.cpp(117) : error C2552: 'jane' : non-aggregates cannot be initialized with initializer list
+        'Student' : Types with private or protected data members are not aggregate
+</pre></blockquote>
+
+Clang:
+<blockquote><pre>error: non-aggregate type 'Student' cannot be initialized with an initializer list
+  Student john = {"jdoe", 20, 3, 3.10};
+          ^      ~~~~~~~~~~~~~~~~~~~~~
+error: non-aggregate type 'Student' cannot be initialized with an initializer list
+  Student jane = {"jsmith", 19, 2, 3.95};
+          ^      ~~~~~~~~~~~~~~~~~~~~~~~
+</pre></blockquote>
+
+<!--
+Borland:
+<blockquote><pre>
+Error E2131 main1.cpp 116: Objects of type 'Student' cannot be initialized with { } in function f()
+</pre></blockquote>
+-->
+
+The error message from GNU indicates what you need to do: <i>initialize by constructor</i>.
+<p>
+
+So, we declare another method that will be called to <i>construct</i> (initialize) the object: (notice the order of <tt><b>public</b></tt> and <tt><b>private</b></tt>, the order is arbitrary)
+
+</p><blockquote><pre><b>class</b> Student           
+{
+  <b>public</b>:
+      <font color="#003399"><i>// Constructor</i></font>
+    Student(<b>const</b> <b>char</b> * login, <b>int</b> age, <b>int</b> year, <b>float</b> GPA);
+
+    <b>void</b> set_login(<b>const</b> <b>char</b>* login);
+    <b>void</b> set_age(<b>int</b> age);
+    <b>void</b> set_year(<b>int</b> year);
+    <b>void</b> set_GPA(<b>float</b> GPA);
+    <b>void</b> display();
+
+  <b>private</b>:
+    <b>char</b> login_[MAXLENGTH];
+    <b>int</b> age_;
+    <b>int</b> year_;
+    <b>float</b> GPA_;
+};
+</pre></blockquote>
+
+We can easily implement this method by simply calling the other methods:
+<p>
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Implementation</th><th>Client can initialize now</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>Student::Student(<b>const</b> <b>char</b> * login, <b>int</b> age, 
+                 <b>int</b> year, <b>float</b> GPA)
+{
+  set_login(login);
+  set_age(age);
+  set_year(year);
+  set_GPA(GPA);
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>void</b> f()
+{
+    <font color="#003399"><i>// Set values by constructor</i></font>
+  Student john(<font color="#9933CC">"jdoe"</font>, 20, 3, 3.10f);
+  Student jane(<font color="#9933CC">"jsmith"</font>, 19, 2, 3.95f);
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+Notes:
+</p><ul>
+<li>The constructor solves the initialization problem.
+</li><li>The initialization seems almost automatic.
+</li><li>It also prevents any Student structs from ever being uninitialized. This is a very important and powerful feature.
+</li><li>C++11 allows <i>brace-initialization</i>:
+<blockquote><pre><b>void</b> f()
+{
+    <font color="#003399"><i>// Set values by constructor</i></font>
+  Student john {<font color="#9933CC">"jdoe"</font>, 20, 3, 3.10f};
+  Student jane {<font color="#9933CC">"jsmith"</font>, 19, 2, 3.95f};
+}
+</pre></blockquote>
+
+More on this and other initialization techniques later.</li>
+</ul>
+
+	
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Accessors and Mutators (Gettors and Settors)
+</p>
+
+Since the data in a class is usually <tt><b>private</b></tt>, the only way to gain access to it is by
+providing <tt><b>public</b></tt> methods that explicitly allow it.
+
+<ul>
+<li>A method that allows you to <i>read</i> a private value is called an <i>accessor method</i>. (Also called a <i>gettor method</i>)
+</li><li>A method that allows you to <i>write</i> (change) a private value is called a <i>mutator method</i>. (Also called a <i>settor method</i>)
+</li><li>A class may provide one, both, or none of these method types.
+	<ul>
+<li>If only an accessor is provided for a private data member, the data is considered <i>read-only</i>
+</li><li>If only a mutator is provided for a private data member, the data is considered <i>write-only</i>
+</li><li>If both methods are provided for a private data member, the data is considered <i>read-write</i>
+</li></ul>
+</li></ul>
+
+All of the data in the Student class is write-only, since we can change it, but we can't read it.
+<p>
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Adding accessors</th><th>Implementations</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>struct</b> Student           
+{
+  <b>public</b>:
+      <font color="#003399"><i>// Constructor</i></font>
+    Student(<b>const</b> <b>char</b> * login, <b>int</b> age, 
+            <b>int</b> year, <b>float</b> GPA);
+
+      <font color="#003399"><i>// Accessors (gettors)</i></font>
+    <font color="blue"><b>int</b> get_age();
+    <b>int</b> get_year();
+    <b>float</b> get_GPA();
+    <b>const</b> <b>char</b> *get_login(); </font>
+    
+      <font color="#003399"><i>// Mutators (settors)</i></font>
+    <b>void</b> set_login(<b>const</b> <b>char</b>* login);
+    <b>void</b> set_age(<b>int</b> age);
+    <b>void</b> set_year(<b>int</b> year);
+    <b>void</b> set_GPA(<b>float</b> GPA);
+
+    <b>void</b> display();
+
+  <b>private</b>:
+    <b>char</b> login_[MAXLENGTH];
+    <b>int</b> age_;
+    <b>int</b> year_;
+    <b>float</b> GPA_;
+};
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>int</b> Student::get_age()
+{
+  <b>return</b> age_;
+}
+
+<b>int</b> Student::get_year()
+{
+  <b>return</b> year_;
+}
+
+<b>float</b> Student::get_GPA()
+{
+  <b>return</b> GPA_;
+}
+
+<b>const</b> <b>char</b> *Student::get_login()
+{
+  <b>return</b> login_;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+Providing (or not providing) accessors and mutators is how you control access and modifications to
+the private data. What if you didn't want to allow the client to change the login?
+
+<!--
+Remove the set_login method. Now, the login is set through the constructor
+and can never change.
+-->
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><p class="SectionHeader">Resource Management
+</p>
+
+The Student class so far:
+<ul>
+	<li>All Student objects are initialzed.
+	</li><li>Can't corrupt private data. (Public methods validate)
+	</li><li>Login name is limited to 10 chars and can be truncated. (Safe, but not ideal)
+</li></ul>
+
+We need to change the login so its length is determined <i>at run-time</i> (read: dynamically). By the way, what is <tt><b>sizeof</b></tt>(<tt><b>struct</b></tt> Student) now?
+<p>
+	
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Change type of <tt>login_</tt></th><th>Implementation change (not 100% correct yet)</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>struct</b> Student
+{
+  <b>public</b>:
+      <font color="#003399"><i>// Public interface ...</i></font>
+  <b>private</b>:
+    <font color="blue"><b>char</b> *login_; </font>
+    <b>int</b> age_;
+    <b>int</b> year_;
+    <b>float</b> GPA_;
+};
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>void</b> Student::set_login(<b>const</b> <b>char</b>* login)
+{
+  <b>int</b> len = (<b>int</b>)std::strlen(login);
+  login_ = <b>new</b> <b>char</b>[len + 1]; 
+  std::strcpy(login_, login);
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+</p><p>
+	
+The client doesn't even know there has been a change:
+
+</p><blockquote><pre><b>void</b> foo()
+{
+    <font color="#003399"><i>// Construct a Student object</i></font>
+  Student john(<font color="#9933CC">"rumplestiltzkin"</font>, 20, 3, 3.10f);
+
+    <font color="#003399"><i>// This will display all of the data</i></font>
+  john.display();
+}
+</pre></blockquote>
+
+That is the only change required (sort of). What is the problem?
+<p>
+<br><br><br><br>
+
+<!--
+Actually, two problems.
+1. When the object goes out of scope, the login is not freed.
+2. If the user changes the login, a new buffer is allocated but
+   the old one is not freed.
+-->
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Add interface method</th><th>Add implementation</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>struct</b> Student
+{
+  <b>public</b>:
+    <font color="#003399"><i>// Public stuff ...</i></font>
+    <b>void</b> free_login();
+  <b>private</b>:
+    <font color="#003399"><i>// Private stuff ...</i></font>
+};
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>void</b> Student::free_login()
+{
+  <b>delete</b> [] login_;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+
+Now, the client will do this:
+
+</p><blockquote><pre><b>void</b> foo()
+{
+    <font color="#003399"><i>// Construct a Student object</i></font>
+  Student john(<font color="#9933CC">"jdoe"</font>, 20, 3, 3.10f);
+
+    <font color="#003399"><i>// This will display all of the data</i></font>
+  john.display();
+
+    <font color="#003399"><i>// Release the memory for login_</i></font>
+  john.free_login();
+}
+</pre></blockquote>
+
+But this is wrong on so many levels... Here are two of them:
+
+<p>
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>void</b> foo()
+{
+    <font color="#003399"><i>// Construct a Student object</i></font>
+  Student john(<font color="#9933CC">"jdoe"</font>, 20, 3, 3.10f);
+
+    <font color="#003399"><i>// This will display all of the data</i></font>
+  john.display();
+  
+    <font color="#003399"><i>// Oops, memory leak now!</i></font>
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>void</b> foo()
+{
+    <font color="#003399"><i>// Construct a Student object</i></font>
+  Student john(<font color="#9933CC">"jdoe"</font>, 20, 3, 3.10f);
+
+    <font color="#003399"><i>// Release the memory for login_</i></font>
+  john.free_login();
+  
+    <font color="#003399"><i>// Oops, very bad now!</i></font>
+  john.display();
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+The Bad News:
+</p><ul>
+<li>The client is responsible for the class' private memory.
+</li><li>The client <i>will</i> forget to call the method.
+</li><li>The client <i>will</i> call it and continue to use the object
+</li><li>The client <i>will</i> call it twice (or more).
+</li><li>The client needs to understand about the internal data structures in use.
+</li><li>Probably other reasons...		
+</li></ul>	
+
+Incidentally, if you are going to allow the user to call <tt>set_login</tt>, then you'll
+need to modify the function slightly:
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Original method</th><th>Modified (correct) method</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>void</b> Student::set_login(<b>const</b> <b>char</b>* login)
+{
+  <b>int</b> len = (<b>int</b>)strlen(login);
+  login_ = <b>new</b> <b>char</b>[len + 1]; 
+  std::strcpy(login_, login);
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>void</b> Student::set_login(<b>const</b> <b>char</b>* login)
+{
+    <font color="#003399"><i>// In case we already had a login</i></font>
+  <b>delete</b> [] login_;
+
+    <font color="#003399"><i>// Now create a new one</i></font>
+  <b>int</b> len = (<b>int</b>)strlen(login);
+  login_ = <b>new</b> <b>char</b>[len + 1]; 
+  std::strcpy(login_, login);
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+You will also need to add this line as the first line in the constructor, to ensure that
+it has been initialized.
+
+<blockquote><pre>login_ = 0;
+</pre></blockquote>
+
+
+
+
+In order to make sure that the memory is deleted, we need something like a constructor in reverse. 
+Let's call it a <i>destructor</i>.
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Destroying Objects: The Destructor
+</p>
+
+We'd like some code that will be called when the client is done with the object. The code
+is another method called a <i>destructor</i> and is similar to the constructor.
+<p>
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Add destructor</th><th>Add implementation</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>struct</b> Student           
+{
+  <b>public</b>:
+      <font color="#003399"><i>// Constructor</i></font>
+    Student(<b>const</b> <b>char</b> * login, <b>int</b> age, 
+            <b>int</b> year, <b>float</b> GPA);
+
+      <font color="#003399"><i>// Destructor</i></font>
+    ~Student();
+
+    <font color="#003399"><i>// Other public members ...</i></font>
+
+  <b>private</b>:
+    <font color="#003399"><i>// Private members ...</i></font>
+};
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>Student::~Student()
+{
+    <font color="#003399"><i>// Free the memory that was allocated</i></font>
+  <b>delete</b> [] login_;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+Now this code is fine:
+
+</p><blockquote><pre><b>void</b> foo()
+{
+    <font color="#003399"><i>// Construct a Student object</i></font>
+  Student john(<font color="#9933CC">"jdoe"</font>, 20, 3, 3.10f);
+
+    <font color="#003399"><i>// This will display all of the data</i></font>
+  john.display();
+  
+} <font color="#003399"><i>// Destructor is called here.</i></font>
+</pre></blockquote>
+
+The destructor will be called automagically when the object <i>goes out of scope</i>. (The meaning of scope here 
+is the same meaning we've been using since the beginning of C.)
+<p>
+
+</p><blockquote><pre><b>void</b> foo()
+{
+  Student john(<font color="#9933CC">"jdoe"</font>, 20, 3, 3.10f);
+  <b>if</b> (john.get_age() &gt; 10)
+  {
+    Student jane(<font color="#9933CC">"jsmith"</font>, 19, 2, 3.95f);
+  } <font color="#003399"><i>// jane's destructor called</i></font>
+
+} <font color="#003399"><i>// john's destructor called</i></font>
+</pre></blockquote>
+
+The compiler is smart about calling the destructor for local objects:
+
+<blockquote><pre><b>void</b> f7()
+{
+    <font color="#003399"><i>// Construct a Student object</i></font>
+  Student john(<font color="#9933CC">"jdoe"</font>, 20, 3, 3.10f);
+  <b>if</b> (john.get_age() &gt; 10)
+  {
+    Student jane(<font color="#9933CC">"jsmith"</font>, 19, 2, 3.95f);
+    <b>if</b> (jane.get_age() &gt; 2)
+      <b>return</b>; <font color="#003399"><i>// Destructor's for jane</i></font>
+              <font color="#003399"><i>//   and john called</i></font>
+  }
+}
+</pre></blockquote>
+
+This makes the destructor an extremely powerful concept.
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Creating Objects
+</p>
+
+Let's modify the constructor and destructor to print a message each time they are called:
+
+<p>
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Constructor</th><th>Destructor</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>Student::Student(<b>const</b> <b>char</b> * login, <b>int</b> age, 
+                 <b>int</b> year, <b>float</b> GPA)
+{
+  login_ = 0;
+  set_login(login);
+  set_age(age);
+  set_year(year);
+  set_GPA(GPA);
+  std::cout &lt;&lt; <font color="#9933CC">"Student constructor for "</font> 
+            &lt;&lt; login_ &lt;&lt; std::endl;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>Student::~Student()
+{
+  std::cout &lt;&lt; <font color="#9933CC">"Student destructor for "</font> 
+            &lt;&lt; login_ &lt;&lt; std::endl;
+  <b>delete</b> [] login_;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+Example:
+</p><p>
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Program</th><th>Output</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>void</b> foo()
+{
+  std::cout &lt;&lt; <font color="#9933CC">"***** Begin *****\n"</font>;
+  Student john(<font color="#9933CC">"jdoe"</font>, 20, 3, 3.10f);
+  Student jane(<font color="#9933CC">"jsmith"</font>, 19, 2, 3.95f);
+  Student jim(<font color="#9933CC">"jbob"</font>, 22, 4, 2.76f);
+
+    <font color="#003399"><i>// Modify john</i></font>
+  john.set_age(21);
+  john.set_GPA(3.25f);
+
+    <font color="#003399"><i>// Modify jane</i></font>
+  jane.set_age(24);
+  jane.set_GPA(4.0f);
+
+    <font color="#003399"><i>// Modify jim</i></font>
+  jim.set_age(23);
+  jim.set_GPA(2.98f);
+
+    <font color="#003399"><i>// Display all</i></font>
+  john.display(); 
+  jane.display();
+  jim.display();
+  std::cout &lt;&lt; <font color="#9933CC">"***** End *****\n"</font>;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>***** Begin *****
+Student constructor for jdoe
+Student constructor for jsmith
+Student constructor for jbob
+login: jdoe
+  age: 21
+ year: 3
+  GPA: 3.25
+login: jsmith
+  age: 24
+ year: 2
+  GPA: 4
+login: jbob
+  age: 23
+ year: 4
+  GPA: 2.98
+***** End *****
+Student destructor for jbob
+Student destructor for jsmith
+Student destructor for jdoe
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+These three lines:
+</p><blockquote><pre>Student john(<font color="#9933CC">"jdoe"</font>, 20, 3, 3.10f);
+Student jane(<font color="#9933CC">"jsmith"</font>, 19, 2, 3.95f);
+Student jim(<font color="#9933CC">"jbob"</font>, 22, 4, 2.76f);
+</pre></blockquote>
+
+will look something like this in memory: (the addresses are arbitrary as usual)
+<a name="STUDENT_DIAGRAM">
+<blockquote>
+<img src="./Classes 1_files/Classes-1.png">
+</blockquote>
+</a>
+
+Notes:
+<ul>
+<li>Each object is a separate entity in memory, unrelated to the others.
+</li><li>Each object has the same exact <i>structure</i> (layout) in memory, with possibly different values.
+</li><li>The names of the fields are for the programmer's convenience (the compiler discards them during compilation).
+</li><li>A field is accessed via its <i>offset</i> from the address of the object. (Much like how array elements are accessed.)
+</li><li>Like arrays, the address of the first member is the same as the address of the struct/class.
+</li><li>For example, assuming a 32-bit compiler, the compiler finds the <tt>login_</tt> member at offset 0, the <tt>age_</tt> member at offset 4, 
+	the <tt>year_</tt> member at offset 8, and the <tt>GPA_</tt> member at offset 12:
+<blockquote>
+<img src="./Classes 1_files/Student-offsets-1.png">
+</blockquote>
+</li><li>Given the diagrams above, this means that the <tt>age_</tt> field for <tt>jane</tt> is at address 204 and the <tt>GPA_</tt>
+	field for <tt>jim</tt> is at address 312.
+</li><li>In fact, for any <tt>Student</tt> object at address <i>XYZ</i>, the <tt>age_</tt> member will be at address <i>XYZ + 4</i>. Always.
+  <ul>
+    <li>This means that, given the address of <i>any</i> object, its members can be found using offsets.</li>
+  </ul>
+</li></ul>
+
+<p>
+Notice that the methods are <b>not part of the object</b>. This may seem surprising at first. So how does the <i>display</i>
+method know which data to show?
+
+</p><blockquote><pre>john.display(); 
+jane.display();
+jim.display();
+</pre></blockquote>
+
+<blockquote><pre><font color="#003399"><i>// Nowhere does this code reference john, jane, or jim</i></font>
+<b>void</b> Student::display()
+{
+  <b>using</b> std::cout;
+  <b>using</b> std::endl;
+
+    <font color="#003399"><i>// These members are just offsets. But offsets from <b>what</b> exactly?</i></font>
+  cout &lt;&lt; <font color="#9933CC">"login: "</font> &lt;&lt; <font color="blue">login_</font> &lt;&lt; endl;
+  cout &lt;&lt; <font color="#9933CC">"  age: "</font> &lt;&lt; <font color="blue">age_</font> &lt;&lt; endl;
+  cout &lt;&lt; <font color="#9933CC">" year: "</font> &lt;&lt; <font color="blue">year_</font> &lt;&lt; endl;
+  cout &lt;&lt; <font color="#9933CC">"  GPA: "</font> &lt;&lt; <font color="blue">GPA_</font> &lt;&lt; endl;
+}
+</pre></blockquote>
+
+<br><br>
+
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">The <tt>this</tt> Pointer
+</p>
+
+All methods of a class/struct are passed a hidden parameter. This parameter is the address of the 
+invoking object. In other words, the address of the object that you are calling a method on:
+
+<blockquote><pre>john.display(); <font color="#003399"><i>// john is the invoking object</i></font>
+jane.display(); <font color="#003399"><i>// jane is the invoking object</i></font>
+jim.display();  <font color="#003399"><i>// jim is the invoking object</i></font>
+</pre></blockquote>
+
+Really, the <i>display</i> method is more like this (with the items in <font color="blue"><b>blue</b></font> hidden):
+
+<blockquote><pre><b>void</b> Student::display(<font color="blue"><b>Student *this</b></font>)
+{
+  <b>using</b> std::cout;
+  <b>using</b> std::endl;
+
+    <font color="#003399"><i>// Members are offset from "this"</i></font>
+  cout &lt;&lt; <font color="#9933CC">"login: "</font> &lt;&lt; <font color="blue"><b>this-&gt;</b></font>login_ &lt;&lt; endl;
+  cout &lt;&lt; <font color="#9933CC">"  age: "</font> &lt;&lt; <font color="blue"><b>this-&gt;</b></font>age_ &lt;&lt; endl;
+  cout &lt;&lt; <font color="#9933CC">" year: "</font> &lt;&lt; <font color="blue"><b>this-&gt;</b></font>year_ &lt;&lt; endl;
+  cout &lt;&lt; <font color="#9933CC">"  GPA: "</font> &lt;&lt; <font color="blue"><b>this-&gt;</b></font>GPA_ &lt;&lt; endl;
+}
+</pre></blockquote>
+
+The <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS170/Classes-1.html#STUDENT_DIAGRAM">example above</a> would look something like this after compiling:
+<blockquote><pre>display(&amp;john); <font color="#003399"><i>// Address of <b>john</b> object passed to display: display(100)</i></font>
+display(&amp;jane); <font color="#003399"><i>// Address of <b>jane</b> object passed to display: display(200)</i></font>
+display(&amp;jim);  <font color="#003399"><i>// Address of <b>jim</b> object passed to display: display(300)</i></font>
+</pre></blockquote>
+
+So, in a nutshell, this (no pun intended) is how the magic works. The programmer has access to the <tt><b>this</b></tt> pointer
+inside of the methods. (<tt><b>this</b></tt> is a keyword.) 
+<p>
+Both of these lines are the same within <i>Student::display</i>:
+
+</p><blockquote><pre>  <font color="#003399"><i>// Normal code</i></font>	
+cout &lt;&lt; <font color="#9933CC">"login: "</font> &lt;&lt; login_ &lt;&lt; endl;
+
+  <font color="#003399"><i>// Explicit use of this. (Generally only seen in beginner's code.)</i></font>	
+  <font color="#003399"><i>// But is required in certain more advanced C++ code.</i></font>	
+cout &lt;&lt; <font color="#9933CC">"login: "</font> &lt;&lt; <b>this</b>-&gt;login_ &lt;&lt; endl;
+</pre></blockquote>
+
+
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader"><tt>const</tt> Member Functions
+</p>
+
+Example:
+
+<blockquote><pre><b>void</b> foo()
+{
+    <font color="#003399"><i>// Create a constant object </i></font>
+  <b>const</b> Student john(<font color="#9933CC">"jdoe"</font>, 20, 3, 3.10f);
+
+  john.set_age(25); <font color="#003399"><i>// Error, as expected.</i></font>
+  john.set_year(3); <font color="#003399"><i>// Error, as expected.</i></font>
+
+  john.get_age();   <font color="#003399"><i>// Error, not expected.</i></font>
+  john.display();   <font color="#003399"><i>// Error, not expected.</i></font>
+}
+</pre></blockquote>
+
+In the "old days", we would make our parameters <b>const</b> if we were not going to modify them:
+
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>void</b> display_student(<b>const</b> Student &amp;student)
+{
+  <b>using</b> std::cout;
+  <b>using</b> std::endl;
+  cout &lt;&lt; <font color="#9933CC">"login: "</font> &lt;&lt; student.login &lt;&lt; endl;
+  cout &lt;&lt; <font color="#9933CC">"  age: "</font> &lt;&lt; student.age &lt;&lt; endl;
+  cout &lt;&lt; <font color="#9933CC">" year: "</font> &lt;&lt; student.year &lt;&lt; endl;
+  cout &lt;&lt; <font color="#9933CC">"  GPA: "</font> &lt;&lt; student.GPA &lt;&lt; endl;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>void</b> foo()
+{
+    <font color="#003399"><i>// Create constant object</i></font>
+  <b>const</b> Student john = {<font color="#9933CC">"jdoe"</font>, 20, 3, 3.10f};
+
+    <font color="#003399"><i>// This works just fine with const object</i></font>
+  display_student(john);
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+<b>Q:</b> How do we accomplish the same thing with member functions (methods) when we don't pass the data as a parameter?<br>
+<b>A:</b> We mark the method as <b>const</b>.
+<p>
+	
+You must tag both the declaration (in the class definition) and implementation with the <tt><b><font color="blue">const</font></b></tt> keyword:
+</p><p>
+	
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>struct</b> Student           
+{
+  <b>public</b>:
+      <font color="#003399"><i>// Constructor</i></font>
+    Student(<b>const</b> <b>char</b> * login, <b>int</b> age, 
+            <b>int</b> year, <b>float</b> GPA);
+
+      <font color="#003399"><i>// Destructor</i></font>
+    ~Student();
+
+      <font color="#003399"><i>// Mutators (settors) are non-const</i></font>
+    <b>void</b> set_login(<b>const</b> <b>char</b>* login);
+    <b>void</b> set_age(<b>int</b> age);
+    <b>void</b> set_year(<b>int</b> year);
+    <b>void</b> set_GPA(<b>float</b> GPA);
+
+      <font color="#003399"><i>// Accessor (gettors) are const</i></font>
+    <b>int</b> get_age() <b><font color="blue">const</font></b>;
+    <b>int</b> get_year() <b><font color="blue">const</font></b>;
+    <b>float</b> get_GPA() <b><font color="blue">const</font></b>;
+    <b>const</b> <b>char</b> *get_login() <b><font color="blue">const</font></b>;
+
+      <font color="#003399"><i>// Nothing will be modified </i></font>
+    <b>void</b> display() <b><font color="blue">const</font></b>;
+
+  <b>private</b>:
+    <b>char</b> *login_; 
+    <b>int</b> age_;
+    <b>int</b> year_;
+    <b>float</b> GPA_;
+};
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>void</b> Student::display() <b>const</b>
+{
+  <b>using</b> std::cout;
+  <b>using</b> std::endl;
+
+  cout &lt;&lt; <font color="#9933CC">"login: "</font> &lt;&lt; login_ &lt;&lt; endl;
+  cout &lt;&lt; <font color="#9933CC">"  age: "</font> &lt;&lt; age_ &lt;&lt; endl;
+  cout &lt;&lt; <font color="#9933CC">" year: "</font> &lt;&lt; year_ &lt;&lt; endl;
+  cout &lt;&lt; <font color="#9933CC">"  GPA: "</font> &lt;&lt; GPA_ &lt;&lt; endl;
+}
+
+<b>int</b> Student::get_age() <b>const</b>
+{
+  <b>return</b> age_;
+}
+
+<b>int</b> Student::get_year() <b>const</b>
+{
+  <b>return</b> year_;
+}
+
+<b>float</b> Student::get_GPA() <b>const</b>
+{
+  <b>return</b> GPA_;
+}
+
+<b>const</b> <b>char</b> *Student::get_login() <b>const</b>
+{
+  <b>return</b> login_;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</p><p>
+	
+Now, this works as expected:
+
+</p><blockquote><pre><b>void</b> foo()
+{
+    <font color="#003399"><i>// Create a constant object </i></font>
+  <b>const</b> Student john(<font color="#9933CC">"jdoe"</font>, 20, 3, 3.10f);
+
+  john.set_age(25); <font color="#003399"><i>// Error, as expected.</i></font>
+  john.set_year(3); <font color="#003399"><i>// Error, as expected.</i></font>
+
+  john.get_age();   <font color="#003399"><i>// Ok, as expected.</i></font>
+  john.display();   <font color="#003399"><i>// Ok, as expected.</i></font>
+}
+</pre></blockquote>
+
+<p class="technote">
+<b>Note:</b> If a method does not modify the private data members, it should be marked as <tt><b>const</b></tt>. This
+will save you lots of time and headaches in the future. Unfortunately, the compiler won't remind you to do this
+until you try and use the method on a constant object.
+</p>
+
+
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Separating the Interface from the Implementation
+</p>
+
+Typically, each class will reside in its own file. In fact, it will generally be in two files:
+<ul>
+<li>The header file - contains the class defininition, usually in a <tt>.h</tt> file.
+</li><li>The implementation file - contains all of the methods (in a <tt>.cpp</tt>) that are declared in the class file.
+</li></ul>
+
+Here's our simple project split into three files:
+<ol>
+<li>The header file, <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS170/Student.h.html">Student.h</a>
+</li><li>The implementation file, <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS170/Student.cpp.html">Student.cpp</a>
+</li><li>The client code, <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS170/main.cpp.html">main.cpp</a>
+</li></ol>
+
+We could then build <tt><b>project.exe</b></tt> something like this:
+
+<blockquote><pre>g++ -o project.exe main.cpp Student.cpp -Wall -Wextra -ansi -pedantic
+</pre></blockquote>
+
+
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Default Constructors and Destructors
+</p>
+
+Recall one of the reasons for a constructor: "To ensure that an object's data is not left undefined."<br>
+Recall one of the reasons for a destructor: "To ensure that any resources (e.g. memory) acquired are released."
+<p>
+First, constructors:
+</p><p>
+
+Here's an example:
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>struct</b> Point
+{
+  <b>double</b> x;
+  <b>double</b> y;
+};
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>void</b> foo()
+{
+    <font color="#003399"><i>// Create a Point object</i></font>
+    <font color="#003399"><i>// x/y are uninitialized</i></font>
+  Point pt1;
+
+    <font color="#003399"><i>// Display random values for x/y</i></font>
+  std::cout &lt;&lt; pt1.x &lt;&lt; <font color="#9933CC">","</font> &lt;&lt; pt1.y &lt;&lt; std::endl;
+}
+
+<b>Output: (random)</b>
+1.89121e-307,1.89121e-307
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+Of course, the client could have initialized the data, but you can't count on that. The solution is to create
+a <i>default constructor</i>. A default constructor is simply a constructor that can be called without any
+arguments.
+
+</p><p>
+	
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Add default constructor</th><th>Implement the default constructor</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>struct</b> Point
+{
+    <font color="#003399"><i>// Default constructor</i></font>
+  Point();
+
+  <b>double</b> x;
+  <b>double</b> y;
+};
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>Point::Point()
+{
+    <font color="#003399"><i>// Give default values</i></font>
+  x = 0;
+  y = 0;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+Now, this object will be defined:
+
+</p><blockquote><pre>  <font color="#003399"><i>// Create a Point object</i></font>
+  <font color="#003399"><i>// x/y are defined now</i></font>
+Point pt1;
+
+  <font color="#003399"><i>// Display values for x/y</i></font>
+std::cout &lt;&lt; pt1.x &lt;&lt; <font color="#9933CC">","</font> &lt;&lt; pt1.y &lt;&lt; std::endl;
+
+<b>Output: (defined values)</b>
+0,0
+</pre></blockquote>
+
+It is not uncommon to provide other constructors in addition to a default constructor. (The example below uses the
+<b>class</b> keyword instead of <b>struct</b> just to demonstrate the technique works for both.)
+<p>
+	
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Multiple constructors</th><th>Implementations</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>class</b> Point
+{
+  <b>public</b>:
+      <font color="#003399"><i>// Default constructor</i></font>
+    Point();
+
+      <font color="#003399"><i>// Non-default constructor</i></font>
+    Point(<b>double</b> x, <b>double</b> y);
+
+      <font color="#003399"><i>// For convenience</i></font>
+    <b>void</b> display() <b>const</b>;
+
+  <b>private</b>:
+    <b>double</b> x_;
+    <b>double</b> y_;
+};
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>Point::Point()
+{
+    <font color="#003399"><i>// Give default values</i></font>
+  x_ = 0.0;
+  y_ = 0.0;
+}
+
+Point::Point(<b>double</b> x, <b>double</b> y)
+{
+    <font color="#003399"><i>// Give values from params</i></font>
+  x_ = x;
+  y_ = y;
+}
+
+<b>void</b> Point::display() <b>const</b>
+{
+    <font color="#003399"><i>// Display random values for x/y</i></font>
+  std::cout &lt;&lt; x_ &lt;&lt; <font color="#9933CC">","</font> &lt;&lt; y_ &lt;&lt; std::endl;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+Now the user can construct "default" objects or specify the values:
+
+</p><blockquote><pre>  <font color="#003399"><i>// Both are accepted</i></font>
+Point pt1; 
+Point pt2(3.5, 7);
+
+pt1.display();  <font color="#003399"><i>// 0,0</i></font>
+pt2.display();  <font color="#003399"><i>// 3.5,7</i></font>
+</pre></blockquote>
+
+
+Note that we can combine the default constructor into a non-default constructor by using default arguments:
+<p>
+	
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>class</b> Point
+{
+  <b>public</b>:
+      <font color="#003399"><i>// Default constructor</i></font>
+    Point(<b>double</b> x = 0.0, <b>double</b> y = 0.0);
+
+    <font color="#003399"><i>// Other stuff ...</i></font>
+
+};
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>Point::Point(<b>double</b> x, <b>double</b> y)
+{
+    <font color="#003399"><i>// Use params to set values</i></font>
+  x_ = x;
+  y_ = y;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+Also, realize that this is now ambiguous:
+
+</p><blockquote><pre>  <font color="#003399"><i>// Two default constructors (illegal)</i></font>	
+Point();
+Point(<b>double</b> x = 0.0, <b>double</b> y = 0.0);
+
+Point pt1; <font color="#003399"><i>// Which one?</i></font>
+</pre></blockquote>
+
+
+Notes:
+<li>The only way to construct an object from a class/struct is with a constructor (either default or non-default).
+</li><li>If you don't provide a constructor, the <b>compiler will provide a default constructor for you</b>.
+</li><li>Here's what we get from the compiler (sort of) if we don't provide any constructors for the Point class:
+
+<blockquote><pre>Point::Point()
+{
+}
+</pre></blockquote>
+
+</li><li>Unfortunately, this compiler-provided default constructor doesn't do much. 
+</li><li>The compiler will provide a default constructor <b>ONLY</b> if you don't provide any constructors at all.
+	</li><li>Put another way, if you provide <b>ANY</b> constructors (default or otherwise) the compiler
+		<b>WILL NOT</b> provide a default for you.
+
+
+
+
+Adding a default constructor to the <tt>Student</tt> class:
+<p>
+	
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>struct</b> Student           
+{
+  <b>public</b>:
+      <font color="#003399"><i>// Default constructor</i></font>
+    Student();
+
+      <font color="#003399"><i>// Constructor</i></font>
+    Student(<b>const</b> <b>char</b> * login, <b>int</b> age, 
+            <b>int</b> year, <b>double</b> GPA);
+
+      <font color="#003399"><i>// Other public stuff ...</i></font>
+
+  <b>private</b>:
+    <b>char</b> *login_; 
+    <b>int</b> age_;
+    <b>int</b> year_;
+    <b>double</b> GPA_;
+};
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><font color="#003399"><i>// Default constructor (not really a good idea here)</i></font>
+Student::Student()
+{
+  login_ = 0;
+  set_login(<font color="#9933CC">"Noname"</font>);
+  set_age(18);
+  set_year(1);
+  set_GPA(0.0);
+}
+
+<font color="#003399"><i>// Constructor</i></font>
+Student::Student(<b>const</b> <b>char</b> * login, <b>int</b> age, 
+                 <b>int</b> year, <b>double</b> GPA)
+{
+  login_ = 0;
+  set_login(login);
+  set_age(age);
+  set_year(year);
+  set_GPA(GPA);
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+Of course, it's up to you (the class implementor) to decide if something has a "sane" default or must be
+provided by the user.
+
+</p><p>
+</p><hr width="90%">
+<p>
+Recall one of the reasons for a destructor: "To ensure that any resources (memory) created are released."
+</p><p>
+Just like constructors, the compiler will provide a destructor for us if we fail to do so. Here's what
+the compiler will generate (sort of) if we don't provide a destructor for the <tt>Point</tt> class or
+the <tt>Student</tt> class:
+</p><p>
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>Point::~Point()
+{
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>Student::~Student()
+{
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+</p><ul>
+<li>Like the compiler-generated constructor, these destructors don't do anything useful. 
+</li><li>For the <tt>Point</tt> class, this is sufficient since there is nothing to "clean up".
+</li><li>The <tt>Student</tt> class is different because it dynamically allocates memory for the <tt>login_</tt> member:
+<blockquote><pre><b>void</b> Student::set_login(<b>const</b> <b>char</b>* login)
+{
+  <b>delete</b> [] login_;
+  
+  <b>int</b> len = std::strlen(login);
+  login_ = <b>new</b> <b>char</b>[len + 1]; <font color="#003399"><i>// Dynamic memory allocation</i></font>
+  std::strcpy(login_, login);
+}
+</pre></blockquote>
+</li><li>We need a better destructor, which we created:
+	
+
+
+<blockquote><pre>Student::~Student()
+{
+    <font color="#003399"><i>// Since <b>our</b> class allocated the memory,</i></font>
+    <font color="#003399"><i>// <b>our</b> class must release the memory.</i></font>
+  <b>delete</b> [] login_;
+}
+</pre></blockquote>
+</li></ul>
+
+Example using constructors, destructors, static allocation, and dynamic allocation:
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>class</b> Point
+{
+  <b>public</b>:
+      <font color="#003399"><i>// Default constructor</i></font>
+    Point(<b>double</b> x = 0.0, <b>double</b> y = 0.0);
+
+      <font color="#003399"><i>// Destructor</i></font>
+    ~Point();
+
+      <font color="#003399"><i>// For convenience</i></font>
+    <b>void</b> display() <b>const</b>;
+
+  <b>private</b>:
+    <b>double</b> x_;
+    <b>double</b> y_;
+};
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>Point::~Point()
+{
+  std::cout &lt;&lt; <font color="#9933CC">"Point destructor: "</font>
+            &lt;&lt; x_ &lt;&lt; <font color="#9933CC">","</font> &lt;&lt; y_
+            &lt;&lt; std::endl;
+}
+
+Point::Point(<b>double</b> x, <b>double</b> y)
+{
+    <font color="#003399"><i>// Assign from the parameters</i></font>
+  x_ = x;
+  y_ = y;
+  std::cout &lt;&lt; <font color="#9933CC">"Point constructor: "</font>
+            &lt;&lt; x_ &lt;&lt; <font color="#9933CC">","</font> &lt;&lt; y_
+            &lt;&lt; std::endl;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Program</th><th>Output</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>void</b> foo()
+{
+    <font color="#003399"><i>// Static allocation</i></font>
+  Point pt1;       <font color="#003399"><i>// 0,0</i></font>
+  Point pt2(4);    <font color="#003399"><i>// 4,0</i></font>
+  Point pt3(4, 5); <font color="#003399"><i>// 4,5</i></font>
+
+    <font color="#003399"><i>// Similar using dynamic allocation</i></font>
+  Point *pt4 = <b>new</b> Point;
+  Point *pt5 = <b>new</b> Point(8);
+  Point *pt6 = <b>new</b> Point(7, 9);
+
+    <font color="#003399"><i>// Must delete manually (calls destructor)</i></font>
+  <b>delete</b> pt4;
+  <b>delete</b> pt5;
+  <b>delete</b> pt6;
+
+}  <font color="#003399"><i>// Destructors for pt1,pt2,pt3 called here</i></font>
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>Point constructor: 0,0
+Point constructor: 4,0
+Point constructor: 4,5
+Point constructor: 0,0
+Point constructor: 8,0
+Point constructor: 7,9
+Point destructor: 0,0
+Point destructor: 8,0
+Point destructor: 7,9
+Point destructor: 4,5
+Point destructor: 4,0
+Point destructor: 0,0
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Arrays of Objects
+</p>
+
+Just like any other type, you can create arrays of objects.
+
+<ul>
+<li>You can initialize the array with an initializer list.
+</li><li>If the size of the array is larger than the number of initializers, the compiler will initialize
+	the remaining elements by calling the default constructor.
+</li><li>This means that unless you initialize each element individually, the class must have a default constructor.
+</li><li>If a class does not have a default constructor, you cannot create an array without initializers.
+</li></ul>
+<p>
+
+Built-in types:
+</p><blockquote><pre>  <font color="#003399"><i>// Compiler initializers elements that you don't</i></font>
+<b>int</b> a[3] = {1, 2, 3}; <font color="#003399"><i>// 1, 2, 3</i></font>
+<b>int</b> b[3] = {1, 2};    <font color="#003399"><i>// 1, 2, 0</i></font>
+<b>int</b> c[3] = {0}        <font color="#003399"><i>// 0, 0, 0</i></font>
+<b>double</b> d[3] = {1.0}   <font color="#003399"><i>// 1.0, 0.0, 0.0</i></font>
+</pre></blockquote>
+
+
+User-defined types:
+<p>
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>  <font color="#003399"><i>// Requires default constructor</i></font>
+Student st1[2];
+<b>for</b> (<b>int</b> i = 0; i &lt; 2; i++)
+  st1[i].display();
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>login: Noname
+  age: 18
+ year: 1
+  GPA: 0
+login: Noname
+  age: 18
+ year: 1
+  GPA: 0
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>  <font color="#003399"><i>// Requires default constructor</i></font>
+Student st2[3] = {
+                    Student(<font color="#9933CC">"jdoe"</font>, 20, 3, 3.10F), 
+                    Student(<font color="#9933CC">"jsmith"</font>, 19, 2, 3.95F)
+                  };
+<b>for</b> (<b>int</b> i = 0; i &lt; 3; i++)
+  st2[i].display();
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>login: jdoe
+  age: 20
+ year: 3
+  GPA: 3.1
+login: jsmith
+  age: 19
+ year: 2
+  GPA: 3.95
+login: Noname
+  age: 18
+ year: 1
+  GPA: 0
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>  <font color="#003399"><i>// No default constructor required</i></font>
+Student st3[2] = {
+                    Student(<font color="#9933CC">"jdoe"</font>, 20, 3, 3.10F), 
+                    Student(<font color="#9933CC">"jsmith"</font>, 19, 2, 3.95F)
+                  };
+<b>for</b> (<b>int</b> i = 0; i &lt; 2; i++)
+  st3[i].display();
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>login: jdoe
+  age: 20
+ year: 3
+  GPA: 3.1
+login: jsmith
+  age: 19
+ year: 2
+  GPA: 3.95
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+If the <tt>Student</tt> class does not have a default constructor, then the first two examples above would 
+cause a compiler error.
+</p><p>
+	
+	</p><p>
+</p><hr width="90%">
+<p>
+
+<b>Understanding the Big Picture™</b>
+</p><p>
+What problems are solved by 
+
+</p><ol>
+<li>encapsulation?
+</li><li>access specifiers? (e.g. private)
+</li><li>constructors? 
+</li><li>default constructors?
+</li><li>destructors?
+</li><li>const member functions?
+</li></ol>
+<p></p>
+<br><br>
+
+
+
+<!--
+structs and classes - encapsulation (data and functions together)
+Can protect struct/class members with private keyword
+what problems are solved by:
+Constructors 
+Destructors
+const member functions
+
+-->
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+
+
+
+
+<blockquote><pre></pre></blockquote>
+
+
+
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<tt><b></b></tt>
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+
+</li></body></html>

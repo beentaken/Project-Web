@@ -1,0 +1,75 @@
+﻿Build started 3/11/2015 9:32:25 PM.
+     1>Project "C:\Users\Tardis\Desktop\ihuoih\Project 3 Part 2 - Platformer.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I..\Alpha_Engine /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TC /analyze- /errorReport:prompt GameStateMgr.c GameState_Platformer.c Main.c Math2D.c Matrix2D.c Vector2D.c
+         Vector2D.c
+         Matrix2D.c
+     1>c:\users\tardis\desktop\ihuoih\matrix2d.c(130): warning C4244: 'function' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\tardis\desktop\ihuoih\matrix2d.c(131): warning C4244: 'function' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\tardis\desktop\ihuoih\matrix2d.c(134): warning C4244: 'function' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\tardis\desktop\ihuoih\matrix2d.c(135): warning C4244: 'function' : conversion from 'double' to 'float', possible loss of data
+         Math2D.c
+         Main.c
+         GameState_Platformer.c
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(292): warning C4244: 'function' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(306): warning C4101: 'Pos' : unreferenced local variable
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(305): warning C4101: 'pInst' : unreferenced local variable
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(473): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(489): warning C4244: 'function' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(593): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(594): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(614): warning C4133: 'function' : incompatible types - from 'Matrix2D *' to 'AEMtx33 *'
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(395): warning C4101: 'Gravity' : unreferenced local variable
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(391): warning C4101: 'pInst' : unreferenced local variable
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(390): warning C4101: 'j' : unreferenced local variable
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(652): warning C4047: 'function' : 'Matrix2D *' differs in levels of indirection from 'float (*)[3][3]'
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(652): warning C4024: 'Matrix2DConcat' : different types for formal and actual parameter 1
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(652): warning C4024: 'Matrix2DConcat' : different types for formal and actual parameter 3
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(653): warning C4047: 'function' : 'float (*)[3]' differs in levels of indirection from 'float (*)[3][3]'
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(653): warning C4024: 'AEGfxSetTransform' : different types for formal and actual parameter 1
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(671): warning C4047: 'function' : 'Matrix2D *' differs in levels of indirection from 'float (*)[3][3]'
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(671): warning C4024: 'Matrix2DConcat' : different types for formal and actual parameter 1
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(671): warning C4024: 'Matrix2DConcat' : different types for formal and actual parameter 3
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(672): warning C4047: 'function' : 'float (*)[3]' differs in levels of indirection from 'float (*)[3][3]'
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(672): warning C4024: 'AEGfxSetTransform' : different types for formal and actual parameter 1
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(626): warning C4101: 'strBuffer' : unreferenced local variable
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(742): warning C4028: formal parameter 1 different from declaration
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(742): warning C4028: formal parameter 2 different from declaration
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(745): warning C4018: '<=' : signed/unsigned mismatch
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(765): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(766): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(768): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(769): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(772): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(773): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(775): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(776): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(779): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(780): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(782): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(783): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(786): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(787): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(789): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(790): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(817): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(930): warning C4244: 'function' : conversion from 'float' to 'unsigned int', possible loss of data
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(968): warning C4244: 'function' : conversion from 'float' to 'unsigned int', possible loss of data
+         GameStateMgr.c
+         Generating Code...
+     1>c:\users\tardis\desktop\ihuoih\gamestate_platformer.c(729): warning C4715: 'gameObjInstCreate' : not all control paths return a value
+     1>c:\users\tardis\desktop\ihuoih\main.c(94): warning C4715: 'WinMain' : not all control paths return a value
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Tardis\Desktop\ihuoih\Debug\Project 3 Part 2 - Platformer.exe" /INCREMENTAL /NOLOGO /LIBPATH:..\Lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Tardis\Desktop\ihuoih\Debug\Project 3 Part 2 - Platformer.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Tardis\Desktop\ihuoih\Debug\Project 3 Part 2 - Platformer.lib" /MACHINE:X86 /SAFESEH Debug\GameStateMgr.obj
+         Debug\GameState_Platformer.obj
+         Debug\Main.obj
+         Debug\Math2D.obj
+         Debug\Matrix2D.obj
+         Debug\Vector2D.obj
+     1>GameStateMgr.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/SAFESEH' specification
+         Project 3 Part 2 - Platformer.vcxproj -> C:\Users\Tardis\Desktop\ihuoih\Debug\Project 3 Part 2 - Platformer.exe
+     1>Done Building Project "C:\Users\Tardis\Desktop\ihuoih\Project 3 Part 2 - Platformer.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:01.75

@@ -1,0 +1,213 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="../new.css">
+<title>CS 170 - FAQ for Assignment #1</title>
+</head>
+
+<body>  
+
+<center><H1>
+<A HREF="cs170-programming-assignment-warboats.pdf">Programming Assignment #1</A> FAQ
+<p>
+<h2>(Frequently Asked Questions)</h2>
+</H1>
+</center>
+
+<br>
+
+<p>
+
+Here are some popular Questions and Answers for assignment #1.<BR>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<hr width="100%">
+
+<ol>
+<li>
+<b>
+Question:<br>
+Can I modify the <tt>Ocean.h</tt> file and add more members?
+</b>
+<p>
+
+<b>Answer:</b><br>
+No. Everything you need for this assignment is already there. Of course, there are many ways that
+you could implement this assignment, but I want everyone to work with the same structures. The only
+file that you are to modify is <tt>Ocean.cpp</tt> that I gave you. There's a comment in that file
+that shows you exactly where all of your code belongs. You should probably only need to write five
+functions in the file (one for each of the functions listed in <tt>WarBoats.h</tt>).
+
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<hr width="100%">
+<li>
+<b>
+Question:<br>
+What do we do if the client asks us to create an ocean with five boats, and then calls <i>PlaceBoat</i>
+more than five times?
+</b>
+<p>
+
+<b>Answer:</b><br>
+You don't have to worry about things like that. At this stage of the program, there are many things that
+the client can do that will cause bad things to happen. We will see later on how we can prevent many
+of those behaviors. For now, don't try to account for everything that could go wrong. If the client
+says there will be five boats, you can assume that's how many you'll get. Also, you will get the boat IDs 
+from 1 to 5, which makes them easy to use as indexes into the Boats array. 
+
+<p>
+<b>Don't forget, though, that the arrays are zero-based, so you'll have use <tt>ID - 1</tt> as the index.</b>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<hr width="100%">
+<li>
+<b>
+Question:<br>
+The function <i>CreateBoat</i> is supposed to return a pointer. Isn't that going to be unsafe? Returning
+a pointer from a function means that the pointer is no longer defined.
+</b>
+<p>
+
+<b>Answer:</b><br>
+It's safe to return a pointer, as long as the pointer is pointing at something that will still exist when
+the function returns. The handout says that an ocean will be created <i>dynamically</i> and a pointer to it
+will be returned. This means that you will use <tt><b>new</b></tt> to dynamically allocate the memory
+for the ocean. Your code will look something like this:
+
+<blockquote><pre>
+Ocean *CreateOcean(int num_boats, int x_quadrants, int y_quadrants)
+{
+    // Create an ocean dynamically
+  Ocean *ocean = new Ocean;
+
+    // Create the array for the boats dynamically (use [] with new for arrays)
+  ocean->boats = new Boat[num_boats];
+
+    // Create the 2D array for the grid
+  ocean->grid = new int[x_quadrants * y_quadrants];
+
+    /*
+       Here, you must initialize all of the fields of the
+       structs being used (Ocean, Stats, Boats, grid, etc.)
+
+    */
+
+    // Return a pointer to the ocean
+  return ocean;
+}
+</pre></blockquote>
+
+Don't forget that everything that you allocated with <tt><b>new</b></tt> must be de-allocated
+with <tt><b>delete</b></tt>. This will be done in <i>DestroyOcean</i>. (Don't forget the difference
+between <tt><b>delete</b></tt> and <tt><b>delete[]</b></tt>.)
+
+
+<blockquote><pre>
+</pre></blockquote>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<hr width="100%">
+<li>
+<b>
+Question:<br>
+If the <b>Ocean</b> is supposed to represent a 2-dimensional array, why is <tt>Ocean.grid</tt> a pointer to the
+first element of a single-dimensional array?
+</b>
+<p>
+<b>Answer:</b><br>
+Long story short: It's easier. (This is because it's a <i>dynamic</i> array, not a static one, so you
+have no way of determining how many rows/columns there will be when you declare the <tt>Ocean.grid</tt>
+variable. Treating a 2D array as a 1D array is trivial. You just have to do the math (read: pointer arithmetic) 
+yourself. 
+<p>
+<b>Example:</b><br>
+Compare a static 2D array called <tt>points</tt> with a dynamic 1D array. There are 3 rows and 4 columns. The address
+of each cell is displayed to the left and the subscript for that cell is displayed to the right.
+<p>
+
+<table border=0 cellspacing=5>
+<tr>
+<td valign="top">
+<blockquote><pre>
+<b>double</b> points[3][4];
+
+
+<p>
+<br>
+<img src="PointsArray-2.gif">
+</pre></blockquote>
+</td>
+<td>
+</td>
+<td valign="top">
+<blockquote><pre>
+<b>double</b> *pd = <b>new</b> double[3 * 4];
+<p>
+<font size=0>&nbsp;</font>
+<img src="PointsArrayDynamic-1.gif">
+</pre></blockquote>
+</td>
+</tr></table>
+
+Given a row and column:
+
+<blockquote><pre>
+<b>int</b> row = 1, column = 2;
+<b>double</b> value;
+</pre></blockquote>
+
+<ul>
+<li>The static 2D array can be accessed using two subscripts, but the dynamic "2D array" can 
+only be indexed with a single subscript.
+<blockquote><pre>
+value = points[row][column]; <font color="#003399"><i>/* OK      */</i></font>
+value = pd[row][column];     <font color="#003399"><i>/* ILLEGAL */</i></font>
+</pre></blockquote>
+
+<li>We (the programmers) have to do all of the arithmetic to locate an element using two subscripts:
+<blockquote><pre>
+value = pd[row * 4 + column];
+</pre></blockquote>
+
+<li>The compiler is still doing some of the work for us:
+
+<blockquote><pre>
+value = *(address-of-pd + (row * 4 + column) * sizeof(double));
+</pre></blockquote>
+
+<li> The general form to access a cell in a 2D array (represented as a 1D array) where ROW is the row, COL is the column,	WIDTH is 
+	the number of columns, and ARRAY is the name of the array is:
+	
+<blockquote><pre>
+ARRAY[ ROW * WIDTH + COL ]
+</pre></blockquote>
+	
+So, to access row 2, column 1 in the example above:
+
+<blockquote><pre>
+pd[ 2 * 4 + 1 ] = pd[ 9 ]
+</pre></blockquote>
+
+which coincides with the diagram that shows <tt>point[2][1]</tt> (address 172) is the same as <tt>pd[9]</tt> (address 172).
+Sorry, but there's no magic here.
+<p>
+<li>Refer to <a href="../../../../../CS120/Arrays-2D.html">2D arrays</a> from your CS120 notes 
+  for more information.
+
+</ul>
+<br><br><br><br>
+
+</ol>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<hr>
+
+</body>
+</html>

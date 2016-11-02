@@ -1,0 +1,48 @@
+
+****************************** TestSearch1 ******************************
+Depth first, greatest first, from node 1:
+A  C  D  G  F  E  H  B  
+Breadth first, greatest first, from node 1:
+A  C  D  B  G  H  E  F  
+
+****************************** TestSearch1 ******************************
+Depth first, greatest first, from node 2:
+B  E  F  
+Breadth first, greatest first, from node 2:
+B  E  F  
+
+****************************** TestSearch1 ******************************
+Depth first, greatest first, from node 3:
+C  
+Breadth first, greatest first, from node 3:
+C  
+
+****************************** TestSearch1 ******************************
+Depth first, greatest first, from node 4:
+D  G  A  C  B  E  F  H  
+Breadth first, greatest first, from node 4:
+D  G  H  A  F  C  B  E  
+
+****************************** TestSearch1 ******************************
+Depth first, greatest first, from node 5:
+E  
+Breadth first, greatest first, from node 5:
+E  
+
+****************************** TestSearch1 ******************************
+Depth first, greatest first, from node 6:
+F  E  
+Breadth first, greatest first, from node 6:
+F  E  
+
+****************************** TestSearch1 ******************************
+Depth first, greatest first, from node 7:
+G  A  C  D  H  F  E  B  
+Breadth first, greatest first, from node 7:
+G  A  F  C  D  B  E  H  
+
+****************************** TestSearch1 ******************************
+Depth first, greatest first, from node 8:
+H  F  E  
+Breadth first, greatest first, from node 8:
+H  F  E  

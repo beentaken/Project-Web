@@ -1,0 +1,680 @@
+
+<!-- saved from url=(0068)http://azrael.digipen.edu/~mmead/www/Courses/CS170/Namespaces-1.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./Namespaces_files/new.css">
+<link rel="stylesheet" type="text/css" href="./Namespaces_files/styles.css">
+<title>Namespaces</title>
+</head>
+
+<body>  
+<center><h1>Namespaces</h1></center>
+
+<blockquote>
+<i>
+"The road to hell is paved with global variables"</i> -- Steve McConnell
+</blockquote>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Namespaces
+</p>
+
+<ul>
+<li>Every type, function, or object declared at the global scope (or any scope, for that matter) 
+  must have a unique name. </li><li>The global scope is also referred to as the <i>global namespace scope</i>. 
+  (To distinguish it from other namespaces.)
+</li><li>In small programs, this is not a problem, since one person may produce all of these names.
+</li><li>With very large programs, however, it can be a problem, especially with libraries from other sources
+  or programs written by many programmers.
+</li></ul>
+
+A simple program with 3 global symbols:
+
+<blockquote><pre><b>#include</b> &lt;iostream&gt;  <font color="#003399"><i>// cout, endl</i></font>
+
+<b>int</b> foo = 1;         <font color="#003399"><i>// <b>foo</b> in global namespace</i></font>
+<b>int</b> bar = 2;         <font color="#003399"><i>// <b>bar</b> in global namespace</i></font>
+
+<b>int</b> Div2(<b>int</b> value) <font color="#003399"><i>// <b>Div2</b> in global namespace</i></font>
+{
+  <b>return</b> value / 2;
+}
+
+<b>int</b> main()
+{
+  std::cout &lt;&lt; foo &lt;&lt; std::endl;     <font color="#003399"><i>// use global foo</i></font>
+  std::cout &lt;&lt; bar &lt;&lt; std::endl;     <font color="#003399"><i>// use global bar</i></font>
+  std::cout &lt;&lt; Div2(8) &lt;&lt; std::endl; <font color="#003399"><i>// use global Div2</i></font>
+  <b>return</b> 0;
+}
+</pre></blockquote>
+
+<ul>
+<li>If another source file (.cpp) has <b>foo, bar</b>, or <b>Div2</b>, it will cause problems.
+</li><li>One solution is to make them static (which is what we would do in C):
+
+<blockquote><pre><b>static int</b> foo = 1;  <font color="#003399"><i>// file scope</i></font>
+<b>static int</b> bar = 2;  <font color="#003399"><i>// file scope</i></font>
+
+<b>static int</b> Div2(<b>int</b> value) <font color="#003399"><i>// file scope</i></font>
+{
+  <b>return</b> value / 2;
+}
+</pre></blockquote>
+
+but this will limit their use to this file only. A better solution is to put them in a unique namespace:
+
+
+<blockquote><pre><b>namespace</b> IntroCppProgramming 
+{
+  <b>int</b> foo = 1;
+  <b>int</b> bar = 2;
+  <b>int</b> Div2(<b>int</b> value)
+  {
+    <b>return</b> value / 2;
+  }
+}
+</pre></blockquote>
+
+</li></ul>
+
+However, placing these symbols in a namespace will prevent the program from compiling:
+
+<blockquote><pre><b>int</b> main()
+{
+  std::cout &lt;&lt; foo &lt;&lt; std::endl;     <font color="#003399"><i>// error, foo is undefined</i></font>
+  std::cout &lt;&lt; bar &lt;&lt; std::endl;     <font color="#003399"><i>// error, bar is undefined</i></font>
+  std::cout &lt;&lt; Div2(8) &lt;&lt; std::endl; <font color="#003399"><i>// error, Div2 is undefined</i></font>
+  <b>return</b> 0;
+}
+</pre></blockquote>
+
+We need to <i>qualify</i> the symbols in the namespace:
+
+<blockquote><pre><b>int</b> main()
+{
+  std::cout &lt;&lt; IntroCppProgramming::foo &lt;&lt; std::endl;     
+  std::cout &lt;&lt; IntroCppProgramming::bar &lt;&lt; std::endl;     
+  std::cout &lt;&lt; IntroCppProgramming::Div2(8) &lt;&lt; std::endl; 
+  <b>return</b> 0;
+}
+</pre></blockquote>
+
+The general form of a namespace definition is:
+
+<blockquote><pre><b>namespace</b> <i>user-defined-name</i>
+{
+  <i>declaration/definition</i>
+  <i>declaration/definition</i>
+  ...
+}
+</pre></blockquote>
+
+<ul>
+<li>The <i>user-defined-name</i> must be unique in the global namespace (or else it will be part of an existing namespace).
+</li><li>Any declaration that can appear in the global namespace scope can appear in a user-defined namespace.
+</li><li>This includes classes, variables (declared/defined), functions (declared/defined), and templates.
+</li><li>The names within the namespace include the namespace (e.g. <i>IntroCppProgramming::Div2</i> 
+is <b>not</b> the same as <i>Div2</i> by itself.)
+</li><li>Namespace definitions do not have to be contiguous:
+
+<blockquote><pre><b>namespace</b> IntroCppProgramming 
+{
+  <b>int</b> foo = 1;
+  <b>int</b> bar = 2;
+}
+
+<font color="#003399"><i>// Lots of other code here ...</i></font>
+
+<b>namespace</b> IntroCppProgramming 
+{
+  <b>int</b> Div2(<b>int</b> value)
+  {
+    <b>return</b> value / 2;
+  }
+}
+</pre></blockquote>
+
+</li><li>However, if there are definitions needed by the program, they must still be seen by the compiler before they
+are used:
+
+<blockquote><pre><b>namespace</b> IntroCppProgramming 
+{
+  <b>int</b> foo = 1;
+  <b>int</b> bar = 2;
+}
+
+<b>int</b> main()
+{
+  std::cout &lt;&lt; IntroCppProgramming::foo &lt;&lt; std::endl;     <font color="#003399"><i>// Ok</i></font>
+  std::cout &lt;&lt; IntroCppProgramming::bar &lt;&lt; std::endl;     <font color="#003399"><i>// Ok</i></font>
+  std::cout &lt;&lt; IntroCppProgramming::Div2(8) &lt;&lt; std::endl; <font color="#003399"><i>// error, Div2 is not part of namespace (yet)</i></font>
+  <b>return</b> 0;
+}
+
+<b>namespace</b> IntroCppProgramming 
+{
+    <font color="#003399"><i>// Now Div2 is part of the namespace</i></font>
+  <b>int</b> Div2(<b>int</b> value)
+  {
+    <b>return</b> value / 2;
+  }
+}
+</pre></blockquote>
+
+</li><li>We can declare portions in one namespace definition and define them in another. This is now OK:
+
+<blockquote><pre><b>namespace</b> IntroCppProgramming 
+{
+  <b>int</b> foo = 1;
+  <b>int</b> bar = 2;
+  <b>int</b> Div2(<b>int</b> value); <font color="#003399"><i>// Declaration/prototype</i></font>
+}
+
+<b>int</b> main()
+{
+  std::cout &lt;&lt; IntroCppProgramming::foo &lt;&lt; std::endl;     <font color="#003399"><i>// Ok</i></font>
+  std::cout &lt;&lt; IntroCppProgramming::bar &lt;&lt; std::endl;     <font color="#003399"><i>// Ok</i></font>
+  std::cout &lt;&lt; IntroCppProgramming::Div2(8) &lt;&lt; std::endl; <font color="#003399"><i>// Ok, compiles and links</i></font>
+  <b>return</b> 0;
+}
+
+<b>namespace</b> IntroCppProgramming 
+{
+  <b>int</b> Div2(<b>int</b> value)  <font color="#003399"><i>// Definition</i></font>
+  {
+    <b>return</b> value / 2;
+  }
+}
+</pre></blockquote>
+
+</li><li>What is the specific problem if the second namespace definition (for <tt>Div2</tt>) above is missing? (Hint: Will it <i>compile</i> without it?)
+<!-- Yes, but it won't link -->
+</li><li>Note also that the separate definitions of the same namespace (as above) can be in separate files
+as well. They don't have to be in the same physical source file (and often they won't be).
+</li><li>This gives you the flexibility to put the <i>interface</i> for your code into the public files
+(header files) where your users can see it, and keep the <i>implementation</i> hidden in the
+.cpp files:
+
+<p>
+
+<table border="0" cellpadding="5">
+<tbody><tr align="center">
+<th>Helpers.h</th><th width="10"></th><th>Helpers.cpp</th></tr>
+<tr valign="top">
+<td> 
+<blockquote><pre><b>namespace</b> Helpers
+{
+  <b>extern</b> <b>int</b> Counter;
+  <b>int</b> FooFn();
+  <b>int</b> BarFn();
+}
+</pre></blockquote>
+</td>
+<td width="10"></td>
+<td>
+<blockquote><pre><b>namespace</b> Helpers
+{
+  <b>int</b> Counter = 25;
+  <b>int</b> FooFn() { <b>return</b> 123; }
+  <b>int</b> BarFn() { <b>return</b> 456; }
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+You can use these from <tt>main.cpp</tt> like this:
+
+</p><blockquote><pre><b>#include</b> &lt;iostream&gt; <font color="#003399"><i>// cout, endl</i></font>
+<b>#include</b> <font color="#9933CC">"Helpers.h"</font>
+
+<b>int</b> main()
+{
+  std::cout &lt;&lt; FooFn() &lt;&lt; std::endl;           <font color="#003399"><i>// error, FooFn undeclared</i></font>
+  std::cout &lt;&lt; Helpers::FooFn() &lt;&lt; std::endl;  <font color="#003399"><i>// Ok</i></font>
+  std::cout &lt;&lt; Helpers::BarFn() &lt;&lt; std::endl;  <font color="#003399"><i>// Ok</i></font>
+  std::cout &lt;&lt; Helpers::Counter &lt;&lt; std::endl;  <font color="#003399"><i>// Ok</i></font>
+  <b>return</b> 0;
+}
+</pre></blockquote>
+
+Why do we use the <tt><b>extern</b></tt> keyword in the header file?
+
+</li></ul>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Unnamed Namespaces
+</p>
+
+
+What happens when we run out of unique names for namespaces? 
+<ul>
+<li>It's unlikely to happen, but as more and more code uses namespaces, the chances for a collision are high. 
+</li><li>Namespace names are global, so there's no way to protect them from other global names. (Think <b>static</b>)
+</li><li>This is a problem if code uses lots of small namespaces.
+</li><li>We could come up with some kind of GUID (Globally Unique ID) scheme to guarantee unique namespaces:
+
+<blockquote><pre><b>namespace</b> NS_1E266980_A661_48B6_94D1_C9DEA80A328B
+{
+  <font color="#003399"><i>// stuff</i></font>
+}
+
+<b>namespace</b> NS_6FB60AE7_AEEE_4285_88A7_6F0C28B34B5B
+{
+  <font color="#003399"><i>// other stuff</i></font>
+}
+</pre></blockquote>
+
+
+</li><li>A better approach is <i>unnamed namespaces</i>.
+</li></ul>
+
+
+<blockquote><pre><b>#include</b> &lt;iostream&gt; <font color="#003399"><i>// cout, endl</i></font>
+
+<b>namespace</b>
+{
+  <b>double</b> sqrt(<b>double</b> x) { <b>return</b> x; }
+}
+
+<b>int</b> main()
+{
+  std::cout &lt;&lt; sqrt(25.0) &lt;&lt; std::endl;   <font color="#003399"><i>// No qualification needed</i></font>
+  <b>return</b> 0;
+}
+</pre></blockquote>
+
+<ul>
+<li>There is only one <i>sqrt</i> function in our program, and it is in an unnamed namespace.
+</li><li>No qualification (couldn't even if you wanted to because it has no name.)
+</li><li>Symbols in the unnamed namespace are local to this file (similar to the <b>static</b> keyword).
+</li></ul>
+
+If we have a symbol in an unnamed namespace that is the same as a global symbol in our program, we won't be able to 
+access the symbol in the unnamed namespace. 
+
+<blockquote><pre><b>#include</b> &lt;iostream&gt; <font color="#003399"><i>// cout, endl</i></font>
+<b>#include</b> &lt;cmath&gt;    <font color="#003399"><i>// sqrt</i></font>
+
+<b>namespace</b>
+{
+  <b>double</b> sqrt(<b>double</b> x) { <b>return</b> x; };
+}
+
+<b>double</b> sqrt(<b>double</b> x) { <b>return</b> x; }; <font color="#003399"><i>// global </i></font>
+
+<b>int</b> main()
+{
+  std::cout &lt;&lt; ::sqrt(25.0) &lt;&lt; std::endl;      <font color="#003399"><i>// Global sqrt function defined in this file</i></font>
+  std::cout &lt;&lt; std::sqrt(25.0) &lt;&lt; std::endl;   <font color="#003399"><i>// sqrt from std namespace</i></font>
+  std::cout &lt;&lt; sqrt(25.0) &lt;&lt; std::endl;        <font color="#003399"><i>// <b>Line 15:</b> Ambiguous (from global or unnamed namespace?)</i></font>
+  
+  <b>return</b> 0;
+}
+</pre></blockquote>
+
+These are the error messages from the GNU compiler:
+
+<blockquote><pre>sqrt.cpp: In function 'int main()':
+sqrt.cpp:15: error: call of overloaded 'sqrt(double)' is ambiguous
+sqrt.cpp:9: note: candidates are: double sqrt(double)
+sqrt.cpp:6: note:  double<unnamed>::sqrt(double)
+</unnamed></pre></blockquote>
+
+<blockquote>
+<p class="info">
+<b>Class Design Tip</b>
+<br> When hiding symbols at the file scope, prefer to use unnamed namespaces over the already-overloaded-too-much C
+<b>static</b> keyword. 
+</p></blockquote>
+
+<!--
+Refresh your knowledge of the <a href="http://www.informit.com/guides/content.asp?g=cplusplus&seqNum=210">use of static</a>.
+
+<p>
+<a href="Namespaces-MathTest.html">Test cases</a> for your compilers.
+<p>
+-->
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">
+	Scope Resolution Operator
+</p>
+
+Example:
+<pre class="sourcecode"><code><b>#include</b> &lt;iostream&gt; <font color="#003399"><i>// cout, endl</i></font>
+
+<b>int</b> foo = 1; <font color="#003399"><i>// global</i></font>
+<b>int</b> bar = 2; <font color="#003399"><i>// global</i></font>
+
+<b>void</b> fn1()
+{
+  <b>int</b> foo = 10;    <font color="#003399"><i>// local foo #1 hides global foo</i></font>
+  <b>int</b> bar = foo;   <font color="#003399"><i>// local bar #1 hides global bar (set to local foo)</i></font>
+  <b>int</b> baz = ::foo; <font color="#003399"><i>// local baz #1 is set to global foo</i></font>
+
+  <b>if</b> (bar == 10)   <font color="#003399"><i>// local bar #1</i></font>
+  {
+    <b>int</b> foo = 100; <font color="#003399"><i>// local foo #2 hides local #1 and global</i></font>
+    bar = foo;     <font color="#003399"><i>// local bar #1 is set to local foo #2</i></font>
+    foo = ::bar;   <font color="#003399"><i>// local foo #2 is set to global bar</i></font>
+  }
+
+  ::foo = foo;   <font color="#003399"><i>// global foo is set to local foo #1</i></font>
+  ::bar = ::foo; <font color="#003399"><i>// global bar is set to global foo</i></font>
+
+  std::cout &lt;&lt; <font color="#9933CC">"foo is "</font> &lt;&lt; foo &lt;&lt; std::endl;     <font color="#003399"><i>// local foo #1 is 10</i></font>
+  std::cout &lt;&lt; <font color="#9933CC">"bar is "</font> &lt;&lt; bar &lt;&lt; std::endl;     <font color="#003399"><i>// local bar #1 is 100</i></font>
+  std::cout &lt;&lt; <font color="#9933CC">"::foo is "</font> &lt;&lt; ::foo &lt;&lt; std::endl; <font color="#003399"><i>// global foo is 10</i></font>
+  std::cout &lt;&lt; <font color="#9933CC">"::bar is "</font> &lt;&lt; ::bar &lt;&lt; std::endl; <font color="#003399"><i>// global bar is 10</i></font>
+}
+</code></pre>
+
+Marked-up <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS170/scope-resolution-2.png">diagram</a>
+<p>
+
+Notes:
+</p><ul>
+<li>When the <i>scope resolution operator</i> is placed before a symbol (as above), it indicates that the symbol
+	should be accessed from the global namespace. (Always global)
+</li><li>Within the <tt><b>if</b></tt> statement above, the newly defined <i>foo</i> hides local <i>foo</i> #1. 
+</li><li>There is no way to access local <i>foo</i> #1 within the <tt><b>if</b></tt> statement. 
+</li><li>This means that if you hide a symbol in an outer scope, you can never refer to it unless the hidden symbol was global. 
+	(No way to access any symbols in any <i>intermediate</i> scope.)
+</li><li>In C, if you hide a global variable, there is no way to access the global variable. (There is no scope resolution operator in C.)
+</li></ul>
+
+
+<p></p>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Namespace Aliases</p>
+
+Given these namespaces:
+
+<blockquote><pre><b>namespace</b> AdvancedProgramming 
+{
+  <b>int</b> foo = 11;    
+  <b>int</b> bar = 12;    
+  <b>int</b> f1(<b>int</b> x)  { <b>return</b> x / 2; }
+}
+
+<b>namespace</b> IntroductoryProgramming
+{
+  <b>int</b> foo = 21;    
+  <b>int</b> bar = 22;    
+  <b>int</b> Div2(<b>int</b> x) {<b>return</b> x / 2; }
+}
+
+</pre></blockquote>
+
+using them requires a lot of typing:
+
+<blockquote><pre><b>int</b> main()
+{
+  std::cout &lt;&lt; AdvancedProgramming::foo &lt;&lt; std::endl;
+  std::cout &lt;&lt; IntroductoryProgramming::Div2(8) &lt;&lt; std::endl;
+
+  <b>return</b> 0;
+}
+</pre></blockquote>
+
+To allow unique namespaces and to shorten the names, you can create a <i>namespace alias</i>
+
+<blockquote><pre>  <font color="#003399"><i>// Declare these after the namespace definitions above</i></font>
+<b>namespace</b> AP = AdvancedProgramming;
+<b>namespace</b> IP = IntroductoryProgramming;
+
+<b>int</b> main()
+{
+    <font color="#003399"><i>// Now, use the shorter aliases</i></font>
+  std::cout &lt;&lt; AP::foo &lt;&lt; std::endl;
+  std::cout &lt;&lt; IP::foo &lt;&lt; std::endl;
+  
+  std::cout &lt;&lt; AP::f1(8) &lt;&lt; std::endl;
+  std::cout &lt;&lt; IP::Div2(8) &lt;&lt; std::endl;
+
+  <b>return</b> 0;
+}
+</pre></blockquote>
+
+<blockquote>
+<p class="info">
+<b>Design Tip</b><br> Don't create very terse namespaces (like <b>std</b>). Create unique and meaningful namespaces and <b>let the user</b>
+ create shorthand notation with aliases.
+</p>
+</blockquote>
+
+<p class="SectionHeader">
+	Using Directives
+</p>
+
+A <i>using directive</i> allows you to make all of the names in a namespace visible at once:<p>
+
+</p><ul>
+<li>Assume we have these symbols in a namespace:
+<p>
+</p><blockquote><pre><b>namespace</b> Stuff
+{
+  <b>int</b> foo = 11;  <font color="#003399"><i>// Stuff::foo </i></font>    
+  <b>int</b> bar = 12;  <font color="#003399"><i>// Stuff::bar </i></font>        
+  <b>int</b> baz = 13;  <font color="#003399"><i>// Stuff::baz </i></font>    
+}
+</pre></blockquote>
+
+We can make them all accessible with a using directive:
+
+<blockquote><pre><b>using</b> <b>namespace</b> Stuff; <font color="#003399"><i>// <b>Everything</b> in Stuff (foo, bar, baz) is visible from here down in the file</i></font>
+
+<b>int</b> main()
+{
+  std::cout &lt;&lt; foo &lt;&lt; std::endl;  <font color="#003399"><i>// Stuff::foo</i></font>
+  std::cout &lt;&lt; bar &lt;&lt; std::endl;  <font color="#003399"><i>// Stuff::bar</i></font>
+  std::cout &lt;&lt; baz &lt;&lt; std::endl;  <font color="#003399"><i>// Stuff::baz</i></font>
+
+  <b>return</b> 0;
+}
+</pre></blockquote>
+
+</li><li>Using directives are scoped; they apply only within the block where the directive is specified:
+
+<blockquote><pre><b>int</b> main()
+{
+  <b>using</b> <b>namespace</b> Stuff; <font color="#003399"><i>// Everything in Stuff (foo, bar, baz) is visible <b>only</b> in main, now</i></font>
+  
+  std::cout &lt;&lt; foo &lt;&lt; std::endl;  <font color="#003399"><i>// Stuff::foo</i></font>
+  std::cout &lt;&lt; bar &lt;&lt; std::endl;  <font color="#003399"><i>// Stuff::bar</i></font>
+  std::cout &lt;&lt; baz &lt;&lt; std::endl;  <font color="#003399"><i>// Stuff::baz</i></font>
+
+  <b>return</b> 0;
+}
+
+<font color="#003399"><i>// Unqualified members in Stuff not available here.</i></font>
+</pre></blockquote>
+
+</li><li>Ambiguity errors are detected when an ambiguous name is referenced, not when the directive is encountered.
+</li><li>Qualified names can override the using directive.
+</li></ul>
+
+More detailed example:
+
+<pre class="sourcecode"><code><b>namespace</b> Stuff
+{
+  <b>int</b> foo = 11;       <font color="#003399"><i>// Stuff::foo </i></font>    
+  <b>int</b> bar = 12;       <font color="#003399"><i>// Stuff::bar </i></font>        
+  <b>int</b> baz = 13;       <font color="#003399"><i>// Stuff::baz </i></font>    
+}
+
+<b>void</b> f1()
+{
+  <b>int</b> foo = 3;        <font color="#003399"><i>// local, hides nothing</i></font>
+  <b>int</b> x = Stuff::foo; <font color="#003399"><i>// OK</i></font>
+  <b>int</b> y = bar;        <font color="#003399"><i>// error, bar is unknown</i></font>
+}
+
+<b>int</b> foo = 20;         <font color="#003399"><i>// global ::foo </i></font>
+
+<b>int</b> main()
+{
+  <b>using</b> <b>namespace</b> Stuff;               <font color="#003399"><i>// Stuff's members are now accessible without <b>Stuff::</b></i></font>
+                                         <font color="#003399"><i>//  qualifier within main</i></font>
+  std::cout &lt;&lt; ::foo &lt;&lt; std::endl;      <font color="#003399"><i>// no problem, global</i></font>
+  std::cout &lt;&lt; Stuff::foo &lt;&lt; std::endl; <font color="#003399"><i>// no problem, Stuff::foo</i></font>
+  std::cout &lt;&lt; foo &lt;&lt; std::endl;        <font color="#003399"><i>// error, foo is ambiguous (global ::foo or Stuff::foo?) </i></font>
+
+  std::cout &lt;&lt; bar &lt;&lt; std::endl;  <font color="#003399"><i>// Stuff::bar</i></font>
+  std::cout &lt;&lt; baz &lt;&lt; std::endl;  <font color="#003399"><i>// Stuff::baz</i></font>
+
+  <b>int</b> foo = 3;        <font color="#003399"><i>// OK, hides Stuff::foo and global ::foo </i></font>
+  <b>int</b> x = Stuff::foo; <font color="#003399"><i>// OK, use qualified name</i></font>
+  x = foo;            <font color="#003399"><i>// OK, local foo above</i></font>
+  x = ::foo;          <font color="#003399"><i>// OK, global foo</i></font>
+
+  <b>return</b> 0;
+}
+</code></pre>
+
+
+<!--
+No ambiguity, all unqualified foo refer to the local.
+Note that local declarations will always trump using directives. 
+If there are no local declarations, then outer-scope and namespaces are searched,
+and this is what causes the ambiguity.
+-->
+
+<p>
+
+Summary:
+</p><ul>
+<li>Using directives were created to help migrate existing (pre-namespace) code.
+</li><li>It is not meant to be used to make it "easier" on the programmer (by saving keystrokes). 
+</li><li>Many using directives will cause the global namespace to be polluted, which is the primary purpose of namespaces to begin with.
+</li><li>It's best to avoid using directives, but may be useful if you are dealing with a lot of legacy code (old code that you didn't write).
+</li><li><b>Never</b> use them in header files that are meant to be used by others. (Aren't all header files for others to use?)
+</li></ul>
+
+<blockquote>
+<p class="info">
+Using directives were designed for backward-compatibility with existing C++ code (which doesn't understand
+namespaces) to help support older code. They should be used cautiously when writing new code, especially
+if they are used at a global scope.
+</p>
+</blockquote>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">
+	The Standard Namespace (and <i>using</i> declarations)
+</p>
+
+
+Now that we've seen some of the details of how namespaces are created and used, we can see how they can be applied.
+<p>
+
+</p><ul>
+<li>This code should be easy to understand now (not recommended, but typically seen in high-school C++ courses):
+
+<blockquote><pre><b>#include</b> &lt;iostream&gt;   <font color="#003399"><i>// For cout and endl</i></font>
+<b>using</b> <b>namespace</b> std; <font color="#003399"><i>// For access to *all* names inside <b>std</b> namespace</i></font>
+
+<b>int</b> main()
+{
+  cout &lt;&lt; <font color="#9933CC">"Hello"</font> &lt;&lt; endl;
+  <b>return</b> 0;
+}
+</pre></blockquote>
+
+</li><li>A better way to write the above with a <i>using declaration</i> (one per line). (This allows you to control <b>exactly</b> which symbols to bring into the program.)
+
+<blockquote><pre><b>#include</b> &lt;iostream&gt; <font color="#003399"><i>// For cout and endl</i></font>
+<b>using</b> std::cout;    <font color="#003399"><i>// <b>using declaration</b>, global scope</i></font>
+<b>using</b> std::endl;    <font color="#003399"><i>// <b>using declaration</b>, global scope</i></font>
+
+<b>int</b> main()
+{
+  cout &lt;&lt; <font color="#9933CC">"Hello"</font> &lt;&lt; endl;  <font color="#003399"><i>// std::cout and std::endl</i></font>
+  <b>return</b> 0;
+}
+</pre></blockquote>
+
+</li><li>An even better way to write the above:
+
+<blockquote><pre><b>#include</b> &lt;iostream&gt; <font color="#003399"><i>// For cout and endl</i></font>
+
+<b>int</b> main()
+{
+  <b>using</b> std::cout;    <font color="#003399"><i>// <b>using declaration</b>, local scope</i></font>
+  <b>using</b> std::endl;    <font color="#003399"><i>// <b>using declaration</b>, local scope</i></font>
+  
+  cout &lt;&lt; <font color="#9933CC">"Hello"</font> &lt;&lt; endl;  <font color="#003399"><i>// std::cout and std::endl</i></font>
+  <b>return</b> 0;
+}
+</pre></blockquote>
+
+
+</li><li>Yet the preferred way to write code that uses the C++ standard library:
+
+<blockquote><pre><b>#include</b> &lt;iostream&gt;  <font color="#003399"><i>// For cout and endl</i></font>
+
+<b>int</b> main()
+{
+  std::cout &lt;&lt; <font color="#9933CC">"Hello"</font> &lt;&lt; std::endl;
+  <b>return</b> 0;
+}
+</pre></blockquote>
+</li></ul>
+
+Now we can write code like this (to ensure job security):
+
+<blockquote><pre><b>#include</b> &lt;iostream&gt; <font color="#003399"><i>// For cout and endl;</i></font>
+
+<b>int</b> main()
+{
+  <b>int</b> cout = 16;  <font color="#003399"><i>// cout is an int</i></font>
+  cout &lt;&lt; 1;      <font color="#003399"><i>// no effect</i></font>
+  std::cout &lt;&lt; cout &lt;&lt; 3 &lt;&lt; std::endl;   <font color="#003399"><i>// std::cout is a stream, prints: 163</i></font>
+  std::cout &lt;&lt; (cout &lt;&lt; 3) &lt;&lt; std::endl; <font color="#003399"><i>// std::cout is a stream, prints: 128</i></font>
+  <b>return</b> 0;
+}
+</pre></blockquote>
+
+<a href="http://azrael.digipen.edu/~mmead/www/docs/OperatorPrecedence-CPP.html">Operator precedence chart for C++</a>
+<p>
+
+</p><ul>
+<li>Of course, we would never write code like the above!
+</li><li>But, there are thousands of names in the C++ global namespace, so the
+chances that you collide with one is pretty good.
+</li><li>You should learn to take control over when, where, and how names are introduced into your programs.
+<ul>
+  <li>Don't introduce names "accidentally".</li>
+</ul>
+</li><li>C++ gives the programmer complete control, but this power is often abused (or not fully understood) by beginning C++ programmers.
+</li></ul>
+
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS170/NamespacesExamples.html">Self check</a> You should understand why these examples are legal or illegal.
+<p>
+
+</p><p>
+</p><hr width="90%">
+<p>
+
+<b>Understanding the Big Picture™</b>
+</p><ol>
+<li>What is the purpose of namespaces in C++? In other words, what problem from C was solved by inventing them?<br>
+</li><li>Are there times when namespaces aren't very useful? When?
+</li></ol>
+<p></p>
+<br><br>
+
+
+
+
+
+<blockquote><pre></pre></blockquote>
+
+</body></html>

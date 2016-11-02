@@ -1,0 +1,447 @@
+
+<!-- saved from url=(0073)http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/index.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/new.css">
+<title>CS 280 Winter 2016</title>
+</head>
+
+<body>
+
+<center><h1>CS 280 - Data Structures</h1>
+<big><i>"You get the data structures you deserve"</i> -- Mead</big>
+<p>
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/index.html">
+http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/index.html</a>
+</p></center>
+
+<!--
+<table>
+<tr>
+<td>
+<img src="../../../../images/annew3.gif" xxwidth=80 xxheight=40>
+</td>
+<td>
+<p class="technote">
+<font size=+2>
+<b>Reminder:</b> These notes will be taken down permanently on Friday, December 11, 2015. If you 
+want to save a copy for yourself, please download them before that time.
+</font>
+</p>
+</td>
+<td>
+<img src="../../../../images/annew3.gif" xxwidth=80 xxheight=40>
+</td>
+</tr></table>
+-->
+
+<p>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><p class="SectionHeader">
+Information
+</p>
+
+
+<p>
+</p><blockquote>
+<p class="technote">
+If you have any questions about any assignment, please post the questions in the
+<a href="https://distance.digipen.edu/2016-spring/mod/forum/view.php?id=10108">CS280 Forum</a> on the
+<a href="https://distance.digipen.edu/2016-spring/course/view.php?id=52">CS280 Moodle website</a>.
+Most questions get answered by other students. If you
+just send your question to me in an email, it may be a while until (or if) I get back to you. Also,
+if you have a question about the assignment, it's very likely that other students have the same
+question and they will benefit from the posted answers.
+</p>
+</blockquote>
+
+
+<ul>
+
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/cs280-winter2016-syllabus.pdf">Syllabus</a>
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/faculty-office-hour-form-winter2016.pdf">Office hours</a></li>
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/important-dates-winter2016.pdf">Important dates</a> for this semester
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/spring-tutoring-schedule.pdf">Academic Support Center Schedule</a>
+	<ul>
+		<li>For specific help with the Clang compiler on Windows, talk to Johannes in the
+			ASC. You can also find him in his team space on the 3rd floor, Tesla, Row N. 
+			Look for the Lego Wall-E. This is his
+			<a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/JohannesPeter-schedule-spring-2016.jpg">schedule</a>. You can
+			also email or text him: <a href="mailto:j.peter@digipen.edu">j.peter@digipen.edu</a> - (773) 603-4508
+			to schedule an appointment.
+	</li></ul>
+<p>
+</p></li><li>Information for becoming a Universal Note Taker for this course:
+<ul>
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/Universal_Note_Taker_Application_final_Dec_2015.pdf">Application</a></li>
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/Universal_Note_Taker_Contract_Form_Final_Dec_2015.pdf">Contract</a></li>
+</ul>
+<!--
+<li><a href="../ASC-schedule-Fall-2015.pdf">Academic Support Center Schedule</a>
+-->
+
+<!--
+<p>
+<li><a href="../../../../docs/lecture-walter-bright.html">Guest lecture</a> this Friday at 5:00 pm in Plato</li>
+-->
+</li></ul>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">
+References
+</p>
+<ul>
+<li><a href="http://azrael.digipen.edu/~mmead/www/docs/GradingTags-CS280.html">Grading Tags</a>
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/docs/doxygen/index.html">Code documentation</a>
+
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/docs/Deliverables.html">Delivering code</a>
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/docs/CodeQuality.pdf">Code Quality Guidelines</a>
+<!--
+<li><a href="../../../../docs/StudentHomeworkChecklist-CS280.pdf">Checklist</a>
+-->
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/docs/CS280-GradingCodes.html">Understanding the marks</a> on your programming assignments.
+</li><li>Sample report files: <a href="http://azrael.digipen.edu/~mmead/www/docs/sample-report-good.txt">Good</a>
+	<a href="http://azrael.digipen.edu/~mmead/www/docs/sample-report-bad.txt">Not good</a>
+	<a href="http://azrael.digipen.edu/~mmead/www/docs/sample-report-really-bad.txt">Really bad</a>
+<!--
+<li><a href="../../../../videos/VS-Warnings/">Modifying Visual Studio Warnings</a> in the IDE to detect
+	potentially unsafe and non-portable code. This demonstrates the technique using Microsoft's Visual Studio 2003, but
+	you can apply the same technique with any version of the IDE.
+-->
+
+</li><li><a href="http://www.cs.princeton.edu/~rs/Algs3.cxx1-4/code.txt">Source code</a> for the optional textbook.
+
+<!--
+<li><a href="../../../../docs/CompilingWarningLevel4.html">Compiling MSVC++ projects</a> at warning level 4 (without all of the
+irrelevant messages) Mostly applies to version 6.0, but is a good example of how to deal with warnings from others' (Microsoft's) code.
+<li><a href="http://msdn.microsoft.com/visualc/vctoolkit2003/">Microsoft C++ 7.1</a>
+Microsoft is now giving away the compiler for free. Just download and install.
+-->
+
+</li><li><a href="http://www.gnu.org/manual/manual.html">GNU Manuals Online</a> Look here first if you have a question. (<tt>make, gdb, gcc, g++,</tt> etc.)
+<ul>
+	<li><a href="http://gcc.gnu.org/onlinedocs/">GCC Manuals</a> Explains all of the compiler switches
+</li></ul>
+
+
+</li><li>STL References
+<ul>
+	<li><a href="http://www.josuttis.com/libbook/">The C++ Standard Library - A Tutorial and Reference</a>
+		An excellent book for learning and using the STL.</li>
+	<li><a href="http://www.aristeia.com/books_frames.html">Scott Meyers' books</a> Especially <i>Effective STL</i>
+</li></ul>
+
+</li><li><a href="http://www.drmemory.org/">Dr. Memory</a> A tool to catch memory leaks and other memory-related bugs. 
+	Works on Linux, Mac, and Windows.
+Some people have discovered that the version of Dr. Memory used at Digipen does not work with 
+Windows 10. You may have to use a new version. See 
+<a href="https://github.com/DynamoRIO/drmemory/issues/1669">this article</a> for more information.</li>
+<blockquote>
+	<li><a href="http://azrael.digipen.edu/~mmead/www/docs/mem.leaks.cpp">mem.leaks.cpp</a> Sample program to test out the memory debuggers.</li>
+	<li><a href="http://azrael.digipen.edu/~mmead/www/docs/drmem170.txt">Command line switches</a> for Dr. Memory.</li>
+	<li><a href="http://drmemory.org/docs/">Documentation</a>, especially 
+		<a href="http://drmemory.org/docs/page_prep.html">how to build</a> your 
+		program with each compiler.</li>
+	<li>A <a href="http://azrael.digipen.edu/~mmead/www/docs/drmem-CGO11.pdf">technical document</a> from the authors of the tool.
+		It gets a little technical, but interesting for those that might want to write their own memory
+		debugger at some point.</li>
+</blockquote>
+<li><a href="http://www.llvm.org/releases/download.html">Clang (LLVM)</a> We're using version 3.4.</li>
+<ul>
+	<li><a href="http://blog.johannesmp.com/2015/09/01/installing-clang-on-windows-pt1/">Installing Clang on Windows</a>
+		This is a guide to getting Clang to build executables on Windows by Digipen's own Johannes Peter.</li>
+</ul>
+<li><a href="http://www.mingw.org/download/installer">MinGW</a> Clang may need this on Windows.</li>
+
+
+<!--
+<li><a href="../../../../public/leaks/MemDebug.html"> Detecting Memory Leaks with Visual Studio</a> 
+Links and sample code
+-->
+
+</ul>
+<!--
+<li><a href="https://faculty.digipen.edu/~mmead/www/videos/CodeGuard-1/">Using CodeGuard in the IDE</a> to detect
+	problems within your code.
+-->
+
+<!--
+
+</ul>
+
+
+<li><a href="../../../../docs/GradingTags-CS280.html">Grading tags</a> Codes added to your assignments.
+
+-->
+
+
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">
+Notes
+</p>
+<ul>
+<!--
+<li><a href="../../../CS280/Methodology.html">Program Design Methodology</a><br>
+-->
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS280/MemoryManagement.html">Memory Management</a>
+<ul>
+<li>An <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS280/GammaSutra-MemManager.htm">article</a>
+about memory managers from a game programmer's perspective. (They talk specifically 
+about Madden NFL 97 and Madden NFL 2002. A little old, but still relevant.)
+</li><li>An <a href="http://www.memorymanagement.org/articles/">introduction to memory management</a> that is referenced
+by the above article on Gamasutra.
+</li><li>Another <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS280/MemoryFragmentationProblemSolved.pdf">memory-management article</a>.
+This is a little more in-depth, but still worth the read for those interested.
+</li></ul>
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS280/Analysis.html">Introduction to Algorithm Analysis</a> Complexity, constant-time vs. linear-time, <i>O( )</i> notation, worst-case analysis, simple sorting
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS280/Recursion2.html">Recursive Algorithms and Functions</a> Recursion and the run-time stack, back-tracking
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS280/AbstractDataTypes.html">Abstract Data Types</a> Abstractions, interfaces, arrays, lists, stacks, queues
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS280/Trees.html">Trees (Part 1)</a> Tree algorithms, traversals, binary search trees, expression trees
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS280/Trees-2.html">Trees (Part 2)</a> Balancing algorithms, AVL trees, 2-3-4 trees, red-black trees
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS280/Hashing-1.html">Hashing</a> Hash tables, hash functions, more randomization techniques
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS280/Graphs-1.html">Introduction to Graphs</a> Graphs - directed, undirected, weighted, paths, cycles, adjacency, 
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS280/Heaps-1.html">Heaps</a> Including another look at priority queues, node-based trees vs. array-based trees
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS280/BTrees-1.html">B-Trees</a> External searching for very large data sets
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS280/SkipLists.html">Skip lists</a> High-performance linked-lists using randomization
+<!--
+<p>
+-->	
+
+<p>
+</p></li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/notes/">Student notes</a>
+</li></ul>
+
+<!--
+<b>Other stuff:</b>
+<ul>
+		<li><a href="gperf-samples.zip">gperf sample code</a> This is what I demonstrated during class
+			on Tuesday, December 2.The documentation is <a href="http://www.gnu.org/software/gperf/gperf.html">here</a>.
+		<li>Here are the files from the DLL demonstration: <a href="DLL.zip">DLL.zip</a>. 
+			All of the projects are there in a Visual Studio solution for you to experiment with.
+
+</ul>
+-->
+<!--
+spanning trees, shortest path
+-->
+
+<!--
+<ul>
+	GNU Profiler
+	<ul>
+	<li><a href="http://www-128.ibm.com/developerworks/linux/library/l-gnuprof.html?ca=dgr-lnxw04GNUProfiler">Short tutorial</a> This will get you up to speed quickly
+	<li><a href="http://www.gnu.org/software/binutils/manual/gprof-2.9.1/html_mono/gprof.html">Online Documentation</a> Good information about the profiler.
+	</ul>
+	<li><a href="http://unixhelp.ed.ac.uk/CGI/man-cgi?time">time command reference</a> A very easy way to time your programs. (You may have to specify
+		the path to the program, e.g. <tt>C:\cygwin\bin\time</tt>)
+</ul>
+</ul>
+-->
+
+
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">
+Assignments
+</p>
+
+<ul>
+<li>Read this <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS280/GammaSutra-MemManager.htm">article</a>
+about memory managers from a game programmer's perspective. (Notice the <i>O(n)</i> notation being used. 
+You don't have to completely understand it at this point.)
+<p>
+</p></li><li>Make sure that you refresh your knowledge of Doxygen for documenting your source code. An example 
+	can be found on this page <a href="http://azrael.digipen.edu/~mmead/www/docs/doxygen/index.html">here</a>. 
+<!--
+	<b>Make sure you 
+	remember how to create a CHM (Compiled Help File) file from your code.</b>
+	<ul>
+		<li>Download the necessary files to create CHM 
+			from <a href="../../../../Files/htmlhelp.zip">here</a>. The archive contains two files:
+			<tt>hhc.exe</tt> and <tt>itcc.dll</tt>. Just put those files your PATH somewhere.</li>
+	</ul> 
+-->
+
+<p>
+</p></li><li>Make sure that you review how to compile projects from the command line with these compilers:
+<ul>
+	<p>
+</p><li>GNU C++ 4.8.3 (<a href="http://gcc.gnu.org/projects/cxx0x.html">C++11 support)</a> This is the version 
+	installed on the computers here
+	and it is also 64-bit. It implements all of C++11. 
+	<p>
+</p></li><li>Clang 3.4 (<a href="http://clang.llvm.org/cxx_status.html">C++11 support)</a> This is the version 
+	installed on the computers here.
+	It is 32-bit only for Windows. Linux and Mac OS X have both 32-bit and 64-bit. It implements all of C++11.
+	The nice thing about Clang is that the command-line options are identical to GNU g++, so you can just
+    change <tt><b>g++</b></tt> to <tt><b>clang++</b></tt> when compiling.
+	<p>
+	<b>Note:</b> Building a project with Clang under Windows may fail to <i>link</i> properly. The code 
+	will compile (if you didn't have any
+errors), but will fail to link properly. This means that no executable will be created, or if one is 
+created, it may fail to execute. 
+You don't have to worry about that at this time. I will only be checking to see that your code 
+<i>compiles</i> cleanly with Clang. You can use <a href="http://blog.johannesmp.com/2015/09/01/installing-clang-on-windows-pt1">
+this guide</a> to get it working on Windows, if you'd like.</p></li>
+
+
+	<p>
+<!--
+<li>Microsoft C++ 12.0 (<a href="http://msdn.microsoft.com/en-us/library/vstudio/hh567368.aspx">C++11 support</a>) 
+	This is the compiler that comes with VS 2013 and is installed here. 
+	This is supposed to be the default compiler (64-bit) when you open a command window. If it isn't,  
+	you must first type <tt><b>setvc12</b></tt> to enable the command line tools for this version. 
+	If you want the 32-bit compiler, you need to type <tt><b>setvc12-32</b></tt>.
+	You need to do 	this everytime that you open a command window. As long as you don't close the window, 
+	the command line tools will be enabled.)
+	It implements most (but not all) of C++11.
+-->
+	<!--
+	<li>If you are having problems configuring your computer to use Microsoft's compiler from the command line
+			look <a href="../../../../docs/CommandLineConfigs.html">at this page</a>.
+			-->
+
+</p></ul>
+<p>
+</p></li><li>Download the <a href="http://azrael.digipen.edu/~mmead/www/public/Files/preinstalls/">preinstalled programs</a> 
+and put them on your computer. There is also a PDF there that explains what to do: 
+<a href="http://azrael.digipen.edu/~mmead/www/public/Files/preinstalls/readme-2014-RTIS-image.pdf">readme-2014-RTIS-image.pdf</a>.
+You can ignore the stuff about Visual Studio, as it's not required for this class.
+</li>
+
+<p>
+
+</p><p>
+</p><hr width="90%">
+<p>
+
+<b>Programming Assignments</b>
+</p><p>
+</p><ul>
+	<li><a href="https://pontus.digipen.edu/cgi-bin/submission.cgi">Assignment Submission Page</a>
+		- Submit all programming assignments from this page.
+<!--
+		 (Check to see if you are in the
+		<a href="classlist.txt">classlist</a> for the submission server.)</li>
+-->
+</li></ul>
+
+
+<p>
+</p><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project1/index.html">Programming Assignment #1</a>&nbsp;&nbsp; Due Wednesday, January 20, 2016 at 11:59 pm</li>
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project2/index.html">Programming Assignment #2</a>&nbsp;&nbsp; Due Wednesday, February 3, 2016 at 11:59 pm</li>
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project3/index.html">Programming Assignment #3</a>&nbsp;&nbsp; Due Wednesday, February 17, 2016 at 11:59 pm</li>
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project4/index.html">Programming Assignment #4</a>&nbsp;&nbsp; Due Monday, March 7, 2016 at 11:59 pm</li>
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project5/index.html">Programming Assignment #5</a>&nbsp;&nbsp; Due Monday, March 28, 2016 at 11:59 pm</li>
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project6/index.html">Programming Assignment #6</a>&nbsp;&nbsp; Due Sunday, April 10, 2016 at 11:59 pm</li>
+<!--
+-->
+
+<p>
+
+
+</p></ul>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">
+Interesting reading/viewing
+</p>
+
+<!--
+This reading isn't strictly required, but students that want a more serious computer science type 
+background (e.g. RTIS) will want to know this stuff.
+-->
+
+<ul>
+<a href="http://azrael.digipen.edu/~mmead/www/docs/java-cpp.gif">Java vs. C++</a> The smart money is on C++.
+<p>
+	
+</p><li><a href="https://www.youtube.com/watch?v=WDIkqP4JbkE">Scott Meyers: Cpu Caches and Why You Care</a>
+	If you're a programmer concerned with efficiency, this is a must see.</li>
+<p>
+	</p><li><a href="https://en.wikipedia.org/wiki/LLP64#64-bit_data_models">64-bit data models</a> - 10 years ago, everyone assumed everything was 32-bit. 10 years
+from now, everyone is going to assume everything is 64-bit. Unfortunately during the next few years, no one is going to be able to assume anything and
+will need to test both. Here's a <a href="http://azrael.digipen.edu/~mmead/www/docs/sizes2.c.html">sample</a> for you to compile and run.</li>
+<p>
+
+	
+</p><li><a href="http://azrael.digipen.edu/~mmead/www/docs/DesignInConstruction.pdf">Design in Construction</a>
+This is chapter 5 of <i>Code Complete 2</i>. This book is highly rated on <a href="http://stackoverflow.com/questions/1711/what-is-the-single-most-influential-book-every-programmer-should-read">a thread on stackoverflow</a>.
+
+<p>
+</p></li><li><a href="http://www.zdnet.com/valve-ceo-why-linux-is-the-future-of-gaming-7000020735/">Valve CEO: Why Linux is the future of gaming.</a>
+	Gabe Newell explains in a presentation given at LinuxCon 2013. There's a video of the presentation
+	<a href="http://www.omgubuntu.co.uk/2013/09/valve-promise-linux-steambox-info-next-week">here</a>.
+</li>
+<p>
+</p><li><a href="http://www.joelonsoftware.com/articles/ThePerilsofJavaSchools.html">The Perils of JavaSchools</a>
+Think that DigiPen is asking too much in the programming courses? It could be worse. 
+"When I was a kid, I learned to program on punched cards. If you made a mistake, you didn't have any of these 
+modern features like a backspace key to correct it. You threw away the card and started over."
+
+
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/docs/GameDevsAndGraduates.pdf">What Game Developers Look for in a New Graduate</a>
+	Interviews and Surveys at One Game Company.
+
+</li><li><a href="http://www.joelonsoftware.com/articles/ThePerilsofJavaSchools.html">The Perils of JavaSchools</a>
+Think that DigiPen is asking too much in the programming courses? It could be worse.
+"When I was a kid, I learned to program on punched cards. If you made a mistake, you didn't have any of these
+modern features like a backspace key to correct it. You threw away the card and started over."
+
+</li><li><a href="http://cacm.acm.org/magazines/2010/1/55760-what-should-we-teach-new-software-developers-why/fulltext">
+What Should We Teach New Software Developers? Why?</a> This is written by none other than Bjarne Stroustrup, the Father of C++.
+He's basically saying that the world needs more software developers that went to Digipen.
+
+</li><li><a href="http://www.joelonsoftware.com/articles/fog0000000073.html">The Guerrilla Guide to Interviewing</a>
+When I interview people, I'm trying to find someone to add to <i>my</i> team. Someone who is going to bring something to the table.
+Someone who is going to help me get the product shipped on time and on budget, not someone who is a liability to the project.
+Basically, someone who is <i>Smart and Gets Things Done.</i> This article is from the point of view of the interviewer, and may
+give you some insight into what they are looking at while you are sitting there in front of them.
+
+
+</li><li>Here's <a href="http://www.joelonsoftware.com/articles/fog0000000319.html">another article</a> about complexity that every student should understand now.
+
+
+</li><li><a href="http://www.artima.com/weblogs/viewpost.jsp?thread=221622">The Mythical 5%</a> There's only so much you can learn in school, and it's only tenuously connected with what you will end up doing
+	in your work. So I'm going to try to soften the blow a little, and arm you with a few insights that will help when you crash into the actual world of software development.
+
+</li><li><a href="http://www.philosophicalgeek.com/2008/01/20/5-attributes-of-highly-effective-programmers/">Top 5 Attributes of Highly Effective Programmers</a>
+	What attributes can contribute to a highly successful software developer versus the ordinary run-of-the-mill kind?
+
+</li><li><a href="http://steve.yegge.googlepages.com/five-essential-phone-screen-questions">The Five Essential Phone-Screen Questions (For hiring a software developer)</a>
+	It's usually pretty obvious when the candidate should have been eliminated during the phone screens. Well, it's obvious in retrospect,
+	anyway: during the interviews, we find some horrible flaw in the candidate which, had anyone thought to ask about it during the phone
+	screen, would surely have disqualified the person.
+
+<!--
+<li><a href="http://www.wired.com/politics/security/commentary/securitymatters/2007/11/securitymatters_1115">
+Did NSA Put a Secret Backdoor in New Encryption Standard?</a>Talks about random numbers and cryptography
+
+<li><a href="http://developers.slashdot.org/developers/08/01/08/0348239.shtml">Computer Science Education: Where Are the Software Engineers of Tomorrow?</a>
+This is a slashdot article (so you have to be prepared for a certain kind of "conversation"), but it references a real article that
+has been a topic of much debate in recent years.
+
+<li>Read this <a href="http://blogs.ign.com/D3Publisher/2009/01/30/111426/">game article</a> about the problems with making games for various platforms.
+
+-->
+
+</li></ul>
+
+<br><br><br>
+
+
+
+
+
+
+<blockquote><pre></pre></blockquote>
+
+</body></html>

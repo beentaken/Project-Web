@@ -1,0 +1,30 @@
+============= CHECK CONTENT BEGINS 2015-11-24 23:27:40 ===============
+Archive:  ../2015-11-24-23-27-40.zip
+  inflating: memmgr.h                
+  inflating: memmgr.c                
+  inflating: typescript              
+  inflating: shared.c                
+  inflating: shared.h                
+Checking content of 2015-11-24-23-27-40.zip
+memmgr.c found
+shared.c found
+typescript found
+============= CHECK CONTENT ENDS ==========================
+
+============= REPORT BEGINS 2015-11-24 23:27:40 ===============
+Archive:  ../2015-11-24-23-27-40.zip
+  inflating: memmgr.c                
+  inflating: shared.c                
+  inflating: typescript              
+======== COMPILE gcc0 ==============
+gcc -o 1memmgr-damien.baca.exe  driver-s.c memmgr.c -Werror -Wall -Wextra -ansi -pedantic -g -O
+======== COMPILE gcc1 ==============
+gcc -Werror -Wall -Wextra -ansi -pedantic -g -O -fPIC -c memmgr.c -o memmgr.o
+======== COMPILE gcc2 ==============
+gcc -shared memmgr.o -o libmemmgr.so
+======== COMPILE gcc3 ==============
+gcc -c shared.c -o shared.o
+======== COMPILE gcc4 ==============
+gcc driver-d.c shared.o -o 2memmgr-damien.baca.exe -ldl
+=========RUN=================
+======END REPORT=============

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <link rel="stylesheet" type="text/css" href="../../../D_style.css">
+      <link rel="icon" href="./Independent_Notes_Directory_files/Logo.ico">
+   </head>
+   <body style="background-color: #1a1a1a">
+      <div style="font-family:Helvetica; color:white;">
+         <p class="section_heading" ><b>Book Notes:</b> C++ Primer Plus By Stephen Prata</p>
+         <pre style="font-family:Helvetica;font-size: 115%">
+
+
+<h1>Chapter Two - Setting Out to C++</h1>
+<hr color="green">
+<a class="link_nodec" href="#C++ Initiation">  C++ Initiation</a>
+
+<a class="link_nodec" href="#Features of the main() Function">  Features of the main() Function</a>
+
+<a class="link_nodec" href="#The Function Header as an Interface">  The Function Header as an Interface</a>
+
+<a class="link_nodec" href="#C++ Comments">  C++ Comments</a>
+
+<a class="link_nodec" href="#The C++ Preprocessor and the iostream File">  The C++ Preprocessor and the iostream File</a>
+
+<a class="link_nodec" href="#Header Filenames">  Header Filenames</a>
+
+<a class="link_nodec" href="#Namespaces">  Namespaces</a>
+
+<a class="link_nodec" href="#C++ Output with cout">  C++ Output with cout</a>
+
+<a class="link_nodec" href="#The Manipulator endl">  The Manipulator endl</a>
+
+<a class="link_nodec" href="#The Newline Charachter">  The Newline Charachter</a>
+
+<a class="link_nodec" href="#C++ Source Code Formatting">  C++ Source Code Formatting</a>
+
+<a class="link_nodec" href="#Tokens and White Space in Source Code">  Tokens and White Space in Source Code</a>
+
+<a class="link_nodec" href="#C++ Source Code Style">  C++ Source Code Style</a>
+
+<a class="link_nodec" href="#C++ Statements">  C++ Statements</a>
+
+<a class="link_nodec" href="#Declaration Statements and Variables">  Declaration Statements and Variables</a>
+
+<a class="link_nodec" href="#Assignment Statements">  Assignment Statements</a>
+
+<a class="link_nodec" href="#A New Trick for cout">  A New Trick for cout</a>
+
+<a class="link_nodec" href="#More C++ Statements">  More C++ Statements</a>
+
+<a class="link_nodec" href="#Using cin">  Using cin</a>
+
+<a class="link_nodec" href="#Concatenating with cout">  Concatenating with cout</a>
+
+<a class="link_nodec" href="#cin and cout: a Touch of Class">  cin and cout: a Touch of Class</a>
+
+<a class="link_nodec" href="#Functions">  Functions</a>
+
+<a class="link_nodec" href="#Using a Function That Has a Return Value">  Using a Function That Has a Return Value</a>
+
+<a class="link_nodec" href="#Function Variations">  Function Variations</a>
+
+<a class="link_nodec" href="#User-Defined Functions">  User-Defined Functions</a>
+
+<a class="link_nodec" href="#Function Form">  Function Form</a>
+
+<a class="link_nodec" href="#Function Headers">  Function Headers</a>
+
+<a class="link_nodec" href="#Using a User-Defined Function That Has a Return Value">  Using a User-Defined Function That Has a Return Value</a>
+
+<a class="link_nodec" href="#Placing the using Directive in Multifunction Programs">  Placing the using Directive in Multifunction Programs</a>
+
+<a class="link_nodec" href="#Summary">  Summary</a>
+
+<a class="link_nodec" href="#Chapter Review">  Chapter Review</a>
+
+<a class="link_nodec" href="#Programming Exercises">  Programming Exercises</a>
+<hr color="green">
+<!--
+            ///
+            -->
+<h2 id="C++ Initiation">C++ Initiation</h2>
+
+<!--==== CODE SAMPLE ====================================================================================================-->
+<pre class="SourceCode"><code><font color="#003399">// myfirst.cpp -- displays a message</font>
+
+#include &lt;<b>iostream</b>&gt;                         <font color="#003399">// a PREPROCESSOR directive</font>
+<b>int</b> main()                                  <font color="#003399">// function header</font>
+{                                           <font color="#003399">// start of function body</font>
+  <b>using</b> namespace std;                      <font color="#003399">// make definitions visible</font>
+  cout << <font color="#9933CC">"Come up and C++ me some time."</font>;  <font color="#003399">// message</font>
+  cout << endl;                             <font color="#003399">// start a new line</font>
+  cout << <font color="#9933CC">"You won't regret it!"</font> << endl;   <font color="#003399">// more output</font>
+  return 0;                                 <font color="#003399">// terminate main()</font>
+}                                           <font color="#003399">// end of function body</font>
+</code></pre>
+<!--==== CODE SAMPLE ====================================================================================================-->
+
+<h2 id="Features of the main() Function">Features of the main() Function</h2>
+<h2 id="The Function Header as an Interface">The Function Header as an Interface</h2>
+<h2 id="C++ Comments">C++ Comments</h2>
+<h2 id="The C++ Preprocessor and the iostream File">The C++ Preprocessor and the iostream File</h2>
+<h2 id="Header Filenames">Header Filenames</h2>
+<h2 id="Namespaces">Namespaces</h2>
+<h2 id="C++ Output with cout">C++ Output with cout</h2>
+<h2 id="The Manipulator endl">The Manipulator endl</h2>
+<h2 id="The Newline Charachter">The Newline Charachter</h2>
+<h2 id="C++ Source Code Formatting">C++ Source Code Formatting</h2>
+<h2 id="Tokens and White Space in Source Code">Tokens and White Space in Source Code</h2>
+<h2 id="C++ Source Code Style">C++ Source Code Style</h2>
+<h2 id="C++ Statements">C++ Statements</h2>
+<h2 id="Declaration Statements and Variables">Declaration Statements and Variables</h2>
+<h2 id="Assignment Statements">Assignment Statements</h2>
+<h2 id="A New Trick for cout">A New Trick for cout</h2>
+<h2 id="More C++ Statements">More C++ Statements</h2>
+<h2 id="Using cin">Using cin</h2>
+<h2 id="cin and cout: a Touch of Class">cin and cout: a Touch of Class</h2>
+<h2 id="Functions">Functions</h2>
+<h2 id="Using a Function That Has a Return Value">Using a Function That Has a Return Value</h2>
+<h2 id="Function Variations">Function Variations</h2>
+<h2 id="User-Defined Functions">User-Defined Functions</h2>
+<h2 id="Function Form">Function Form</h2>
+<h2 id="Function Headers">Function Headers</h2>
+<h2 id="Using a User-Defined Function That Has a Return Value">Using a User-Defined Function That Has a Return Value</h2>
+<h2 id="Placing the using Directive in Multifunction Programs">Placing the using Directive in Multifunction Programs</h2>
+<h2 id="Summary">Summary</h2>
+<h2 id="Chapter Review">Chapter Review</h2>
+<h2 id="Programming Exercises">Programming Exercises</h2>
+1. Write a C++ program that displays your name  and address (or if you value your
+    privacy, a fictitious name and address).
+
+<!--==== CODE SAMPLE ====================================================================================================-->
+Answer:
+<pre class="SourceCode"><code>
+#include &lt;<b>iostream</b>&gt;
+<b>int</b> main()
+{
+  <b>using</b> namespace std;
+  cout << <font color="#9933CC">"Damien Paige Baca"</font>
+       << endl
+       << <font color="#9933CC">"19462 E Gunnison pl"</font>
+       << endl;
+  <b>return</b> 0;
+}
+</code></pre>
+<!--==== CODE SAMPLE ====================================================================================================-->
+
+2. Write a C++ program that asks for a distance in furlongs and converts it to yards.
+    (One furlong is 220 yards.)
+
+<!--==== CODE SAMPLE ====================================================================================================-->
+Answer:
+<pre class="SourceCode"><code>
+#include &lt;<b>iostream</b>&gt;
+#include &lt;<b>stdlib.h</b>&gt;
+
+<b>int</b> FtoY(<b>int</b> furlongs)
+{
+  <b>return</b> (furlongs * 220);
+}
+
+<b>int</b> main(<b>int</b> argc, <b>char</b>* argv[])        <font color="#003399">// Using main decleration for console input</font>
+{
+  <b>using</b> namespace std;                  <font color="#003399">// Setting std to default namespace</font>
+  <b>if</b>(argc > 1)                          <font color="#003399">// If a furlong ammount was provided</font>
+    cout << atoi(argv[1])               <font color="#003399">// Print Output:</font>
+         << <font color="#9933CC">" Furlongs is equal to "</font>    <font color="#003399">//  V        V</font>
+         << FtoY(atoi(argv[1]))         <font color="#003399">//  V        V</font>
+         << <font color="#9933CC">" Yards."</font>                   <font color="#003399">//  V        V</font>
+         << endl;                       <font color="#003399">//  V        V</font>
+  <b>return</b> 0;                             <font color="#003399">// return 0</font>
+}
+</code></pre>
+<!--==== CODE SAMPLE ====================================================================================================-->
+</pre>
+      </div>
+   </body>
+</html>

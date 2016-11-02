@@ -1,0 +1,10 @@
+Sun Nov  1 20:20:33 PST 2015
+====================================================
+Archive:  ../2015-11-01-20-20-32.zip
+  inflating: parent-matrix.c         
+  inflating: child-matrix.c          
+  inflating: typescript              
+Checking content of 2015-11-01-20-20-32.zip
+child-matrix.c found
+parent-matrix.c found
+typescript found

@@ -1,0 +1,1143 @@
+
+<!-- saved from url=(0073)http://azrael.digipen.edu/~mmead/www/Courses/CS280/AbstractDataTypes.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./CS 280 Data Structures - Abstract Data Types_files/new.css">
+<title>CS 280 Data Structures - Abstract Data Types</title>
+</head>
+
+<body>
+<center><h1>Abstract Data Types</h1></center>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">History of Abstractions
+</p>
+
+
+All computer systems are based on <i>layers of abstraction</i>
+<ul>
+<li>As programmers, we typically consider the bit level, 0 and 1, as the lowest level
+<ul>
+<li>Hardware engineers actually go down to the electron level
+</li></ul>
+</li><li>We talk about a sequence of 8 bits as a byte, representing any of 256 "values"
+<ul>
+<li>01000001 is the character 'A'
+</li><li>01000001 is the integer 65
+</li></ul>
+</li><li>A larger sequence of bits (or bytes) can instruct the computer to do things
+<ul>
+<li>01001101001010010010100101010001110 might cause the CPU to store the value 65 in some register
+</li><li>This sequence may have an abstract representation as <b>MOV AX, 65</b>
+</li></ul>
+</li><li>An even larger sequence can implement a larger instruction or an entire program
+</li></ul>
+
+Programming languages are abstractions
+
+<ul>
+<li>A CPU only "speaks" its native language, usually assembly language (abstraction)
+</li><li>Higher-level languages (e.g BASIC, C, C++, C#, Pascal, Python) are another level of abstraction
+<ul>
+<li>Languages that can <i>translate</i> into ASM are essentially equivalent in capability
+</li><li>One reason, then, for the multitude of languages is in the effort required by the
+programmer to express the solution
+</li><li>Also, the quality of the resulting translated code is of concern in the real world,
+  although not necessarily related to the source language.
+</li></ul>
+</li></ul>
+
+High-level languages came about by identifying the necessary constructs (abstractions):
+
+<ul>
+<li>load/store (assignment)
+</li><li>arithmetic (add, subtract, multiply, divide)
+</li><li>decisions (conditionals)
+</li><li>repetition (loops)
+</li><li>sub-programs (function calls)
+</li></ul>
+These are the basic building-blocks of all programs.
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Data Structure Abstractions
+</p>
+
+
+From the book:
+<p>
+</p><blockquote><i>
+An <b>abstract data type (ADT)</b> is a data type (a set of values and a collection of operations on those values)
+that is accessed only through an <b>interface</b>. We refer to a program that uses an ADT as a <b>client</b>, and
+a program that specifies the data type as an <b>implementation</b>.
+</i></blockquote>
+
+<ul>
+<li>Clients can only access the ADT through the interface (public methods in C++)
+</li><li>The interface is <i>opaque</i>. (Handles (pointers to pointers) are considered opaque)
+</li><li>C++ is a hybrid in that the internal private data types are visible (to the programmer) but are not
+accessible from client code.
+</li></ul>
+
+Why use an ADT?
+<ul>
+<li>Can implement the functionality in different ways (memory use vs. speed) <i>without</i> changing client code.
+</li><li>Don't have to recompile the client code (may have to re-link the code)
+</li><li>Supports code reuse and modular programming
+</li><li>Can limit the size and complexity for a given solution
+</li><li>Easier to test localized functionality with driver programs
+</li></ul>
+
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS280/ArrayLists.html">A linked list abstraction</a> using an array to implement a linked list. The client
+has no knowledge of the underlying data structures.
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Collections of Data
+</p>
+
+
+<ul>
+<li>In addition to an ADT itself, we are interested in <i>collections</i> of ADTs.
+</li><li>The algorithms we study are particularly geared towards collections.
+</li><li>A collection is also an ADT.
+</li><li>We manipulate the collection using a public interface, just like a "simple" ADT.
+</li><li>Unlike a simple ADT (which is generally unique), collections have a common interface
+<ul>
+<li>Adding or Inserting an item
+</li><li>Removing an item
+</li><li>Counting the number of items
+</li><li>Searching the items (traversing)
+</li><li>Sorting the items
+</li><li>Performing <i>some operation</i> on all of the data (think functors)
+</li></ul>
+</li></ul>
+
+Once we have the fundamental operations implemented, we can create specific ADTs (concrete types)
+from the more general ADT.
+
+<h2>Pushdown Stack ADT</h2>
+
+From the book:
+
+<blockquote><i>
+A <b>pushdown stack</b> is an ADT that comprises two basic operations: Insert (<b>push</b>) a new item, and
+remove (<b>pop</b>) the item that was most recently inserted.
+</i></blockquote>
+
+The stack is a <b>LIFO</b> (last-in, first-out) paradigm. <b>Q:</b> What data structure employs
+the <b>FIFO</b> (first-in, first-out) paradigm? <b>A:</b> a queue
+<p>
+
+The <i><b>interface</b></i> to our stack looks like this:
+
+</p><blockquote><pre>Stack1(<b>int</b> capacity)  <font color="#003399"><i>// constructor</i></font>
+<b>void</b> Push(<b>char</b> item) <font color="#003399"><i>// add an item to the top</i></font>
+<b>char</b> Pop()           <font color="#003399"><i>// remove the top item</i></font>
+<b>bool</b> IsEmpty()       <font color="#003399"><i>// check if empty</i></font>
+
+</pre></blockquote>
+
+
+<!--
+<p>
+<h2>Stack Implementation #0</h2>
+
+Very lame, very limited, but very fast.
+
+<pre class="sourcecode"><code>
+<b>static</b> <b>const</b> <b>int</b> SIZE = 10;
+
+<b>class</b> Stack0
+{
+  <b>private</b>:
+    <b>char</b> items[SIZE];
+    <b>int</b> size;
+  <b>public</b>:
+    Stack0()
+    {
+      size = 0;
+    }
+
+    ~Stack0()
+    {
+    }
+
+    <b>void</b> Push(<b>char</b> item)
+    {
+      items[size++] = item;
+    }
+
+    <b>char</b> Pop()
+    {
+      <b>return</b> items[--size];
+    }
+
+    <b>bool</b> IsEmpty()
+    {
+      <b>return</b> (size == 0);
+    }
+};
+</code></pre>
+-->
+
+Our first implementation (array) of a Stack: (notice the <b>capacity</b> in the constructor)
+<p>
+
+</p><p>
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><p class="SectionHeader">Stack Implementation #1
+</p>
+
+
+
+<pre class="sourcecode"><code><b>class</b> Stack1
+{
+  <b>private</b>:
+    <b>char</b> *items;
+    <b>int</b> size;
+  <b>public</b>:
+    Stack1(<b>int</b> capacity)
+    {
+      items = <b>new</b> <b>char</b>[capacity];
+      size = 0;
+    }
+
+    ~Stack1()
+    {
+      <b>delete</b>[] items;
+    }
+
+    <b>void</b> Push(<b>char</b> item)
+    {
+      items[size++] = item;
+    }
+
+    <b>char</b> Pop()
+    {
+      <b>return</b> items[--size];
+    }
+
+    <b>bool</b> IsEmpty()
+    {
+      <b>return</b> (size == 0);
+    }
+};</code></pre>
+
+Using the first Stack class:
+
+<pre class="sourcecode"><code><b>void</b> main()
+{
+  <b>const int</b> SIZE = 10;
+  Stack1 stack(SIZE);
+
+  <b>char</b> *p = <font color="#9933CC">"ABCDEFG"</font>;
+
+  <b>for</b> (<b>unsigned</b> <b>int</b> i = 0; i &lt; strlen(p); i++)
+    stack.Push(p[i]);
+
+  <b>while</b> (!stack.IsEmpty())
+    cout &lt;&lt; stack.Pop();
+
+  cout &lt;&lt; endl;
+}
+
+The output:
+<b>GFEDCBA</b>
+</code></pre>
+
+There are some limitations of this Stack class:
+<ul>
+<li>Only accepts <b>char</b> type. (Can use C++ <b>template</b> classes)
+</li><li>No error checking (e.g. Stack may be empty when calling Pop method.)
+</li><li>Size is kind of hard-coded (can't grow the Stack if we need more space, could be wasted unused space.)
+</li><li>Complexity of <i>push</i> and <i>pop</i>?
+</li><li>Suppose we wanted to grow and/or shrink the data. What is the complexity?
+
+</li></ul>
+
+
+<p>
+
+</p><p>
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><p class="SectionHeader">Stack Implementation #2
+</p>
+
+
+A second (linked-list) version of the Stack class will require a Node structure of some sort:
+
+<blockquote><pre><b>struct</b> CharItem
+{
+  CharItem *next;
+  <b>char</b> data;
+};
+</pre></blockquote>
+
+The second implementation of a Stack class:
+
+<pre class="sourcecode"><code><b>class</b> Stack2
+{
+  <b>private</b>:
+    CharItem *head;
+    <b>int</b> size;
+    <b>int</b> capacity;
+  <b>public</b>:
+    Stack2(<b>int</b> capacity)
+    {
+      head = 0;
+      <b>this</b>-&gt;capacity = capacity;
+      size = 0;
+    }
+
+    ~Stack2()
+    {
+      <b>while</b> (head)
+      {
+        CharItem *t = head-&gt;next;
+        Free(head);
+        head = t;
+      }
+    }
+
+    <b>void</b> Push(<b>char</b> c)
+    {
+      <b>if</b> (size &gt;= capacity)
+        <b>return</b>;
+
+      CharItem *item = Allocate();
+
+      item-&gt;data = c;
+      item-&gt;next = head;
+      head = item;
+      size++;
+    }
+
+    <b>char</b> Pop()
+    {
+      <b>char</b> c = head-&gt;data;
+      CharItem *temp = head;
+      head = head-&gt;next;
+      Free(temp);
+      <b>return</b> c;
+    }
+
+    <b>bool</b> IsEmpty()
+    {
+      <b>return</b> (head == 0);
+    }
+};</code></pre>
+
+In this implementation:
+
+<ul>
+<li>The client code doesn't change at all. (Stack abstraction)
+</li><li>There really is no limit to the size
+</li><li>The class includes a <i>capacity</i> field to detect a "full" stack
+</li><li>Complexity of <i>push</i> and <i>pop</i>? Complexity of growing the stack? 
+  Complexity of the destructor?
+</li><li>The class uses the generic <i>Allocate</i> and <i>Free</i> routines
+</li></ul>
+
+Here's an implementation of the generic allocation/deallocation that do nothing special.
+You can easily replace these with your own memory manager.
+
+<blockquote><pre>CharItem *Allocate()
+{
+  <b>return</b> <b>new</b> CharItem;
+}
+
+<b>void</b> Free(CharItem *item)
+{
+  <b>delete</b> item;
+}
+</pre></blockquote>
+
+We still have some limitations:
+
+<ul>
+<li>Still only accepts <b>char</b> type.
+</li><li>No error checking (e.g. Stack may be empty when calling Pop method.)
+</li><li>With small data there can be significant overhead.
+</li><li>However, there is no real size limit at all and we don't waste any space.
+</li></ul>
+
+
+<div style="display: none;">
+<p>
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><p class="SectionHeader">Stack Implementation #3
+</p>
+
+
+A third version (array) using a <b>template</b> class: (almost identical to the first implementation)
+<p>
+
+<table><tbody><tr valign="top"><td>
+<pre class="sourcecode"><code><b>template</b> &lt;<b>typename</b> <font color="blue">Item</font>&gt;
+<b>class</b> Stack3
+{
+  <b>private</b>:
+    <font color="blue">Item</font> *items;
+    <b>int</b> size;
+  <b>public</b>:
+    Stack3(<b>int</b> capacity)
+    {
+      items = <b>new</b> <font color="blue">Item</font>[capacity];
+      size = 0;
+    }
+
+    ~Stack3()
+    {
+      <b>delete</b>[] items;
+    }
+
+    <b>void</b> Push(<font color="blue">Item</font> item)
+    {
+      items[size++] = item;
+    }
+
+    <font color="blue">Item</font> Pop()
+    {
+      <b>return</b> items[--size];
+    }
+
+    <b>bool</b> IsEmpty()
+    {
+      <b>return</b> (size == 0);
+    }
+};</code></pre>
+</td>
+<td width="10"></td>
+<td>
+<pre class="sourcecode"><code>
+<b>class</b> Stack1
+{
+  <b>private</b>:
+    <b>char</b> *items;
+    <b>int</b> size;
+  <b>public</b>:
+    Stack1(<b>int</b> capacity)
+    {
+      items = <b>new</b> <b>char</b>[capacity];
+      size = 0;
+    }
+
+    ~Stack1()
+    {
+      <b>delete</b>[] items;
+    }
+
+    <b>void</b> Push(<b>char</b> item)
+    {
+      items[size++] = item;
+    }
+
+    <b>char</b> Pop()
+    {
+      <b>return</b> items[--size];
+    }
+
+    <b>bool</b> IsEmpty()
+    {
+      <b>return</b> (size == 0);
+    }
+};</code></pre>
+</td>
+</tr></tbody></table>
+
+Client code is <i>almost</i> identical:
+
+</p><pre class="sourcecode"><code><b>void</b> main()
+{
+  <b>const int</b> SIZE = 10;
+  Stack3<font color="blue"><b>&lt;char&gt;</b></font> stack(SIZE); <font color="#9933CC">// This is the only change</font>
+
+  <b>char</b> *p = <font color="#9933CC">"ABCDEFG"</font>;
+
+  <b>for</b> (<b>unsigned</b> <b>int</b> i = 0; i &lt; strlen(p); i++)
+    stack.Push(p[i]);
+
+  <b>while</b> (!stack.IsEmpty())
+    cout &lt;&lt; stack.Pop();
+
+  cout &lt;&lt; endl;
+}
+
+The output:
+<b>GFEDCBA</b>
+</code></pre>
+
+An advantage of this implementation:
+<p>
+
+<table><tbody><tr valign="top"><td>
+<p>
+</p><pre class="sourcecode"><code><b>void</b> main()
+{
+  <b>const</b> <b>int</b> SIZE = 5;
+  Stack3&lt;<b>int</b>&gt; stack(SIZE);
+
+  <b>for</b> (<b>unsigned</b> <b>int</b> i = 1; i &lt;= SIZE; i++)
+  {
+    cout &lt;&lt; 1000 * i &lt;&lt; endl;
+    stack.Push(1000 * i);
+  }
+
+  cout &lt;&lt; endl;
+
+  <b>while</b> (!stack.IsEmpty())
+    cout &lt;&lt; stack.Pop() &lt;&lt; endl;
+}
+</code></pre>
+</td>
+<td>
+<blockquote><pre>The output:<b>
+1000
+2000
+3000
+4000
+5000
+
+5000
+4000
+3000
+2000
+1000</b>
+</pre></blockquote>
+
+</td></tr></tbody></table>
+</p><p>
+
+In this implementation:
+
+</p><ul>
+<li>The client code changes only slightly (but only once and it's simple)
+</li><li>Still no error checking.
+</li><li>It's still an array, so we have pros/cons of that data type (complexity, growth).
+</li><li>Accepts any data type (almost).
+</li><li>Templates in C++ can potentially generate a lot of code.
+</li></ul>
+
+
+
+<p>
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><p class="SectionHeader">Stack Implementation #4
+</p>
+
+
+A fourth implementation using linked-lists of generic pointers.
+<p>
+We use this Node structure:
+
+</p><blockquote><pre><b>struct</b> Item
+{
+  Item *next;
+  <b>void</b> *data;
+};
+</pre></blockquote>
+
+<ul>
+<li>Similar to the second version, change CharItem to Item (generic)
+</li><li>The data is untyped (<b>void *</b>)
+</li><li>Many frameworks are implemented this way.
+</li><li>Simpler than a <b>template</b> class (not C++ specific) with possibly less memory requirements, but not as safe.
+</li><li>Many languages have pointers, very few have generic programming (templates in C++.)
+</li></ul>
+
+The interface/implementation:
+
+<pre class="sourcecode"><code><b>class</b> Stack4
+{
+  <b>private</b>:
+    Item *head;
+    <b>int</b> size;
+    <b>int</b> capacity;
+  <b>public</b>:
+    Stack4(<b>int</b> capacity)
+    {
+      head = 0;
+      size = 0;
+      <b>this</b>-&gt;capacity = capacity;
+    }
+
+    ~Stack4()
+    {
+      <font color="#003399"><i>// walk the list and delete each item</i></font>
+      <b>while</b> (head)
+      {
+        Item *t = head-&gt;next;
+        Free(head);
+        head = t;
+      }
+    }
+
+    <b>void</b> Push(<b>void</b> *data)
+    {
+      <b>if</b> (size &gt;= capacity)         <font color="#003399"><i>// stack is full</i></font>
+        <b>return</b>;                     <font color="#003399"><i>//   do nothing</i></font>
+
+      Item *item = Allocate();<font color="#003399"><i>// allocate new item</i></font>
+
+      item-&gt;data = data;            <font color="#003399"><i>// insert new item at head</i></font>
+      item-&gt;next = head;
+      head = item;
+      size++;
+    }
+
+    <b>void</b> *Pop()
+    {
+      <b>void</b> *p = head-&gt;data; <font color="#003399"><i>// get top item</i></font>
+      Item *temp = head;    <font color="#003399"><i>// update head</i></font>
+      head = head-&gt;next;
+      Free(temp);     <font color="#003399"><i>// deallocate</i></font>
+      <b>return</b> p;
+    }
+
+    <b>bool</b> IsEmpty()
+    {
+      <b>return</b> (head == 0);
+    }
+};</code></pre>
+
+Client using the fourth implementation:
+
+<pre class="sourcecode"><code><b>void</b> main()
+{
+  <b>const</b> <b>int</b> SIZE = 10;
+  Stack4 stack(SIZE);
+
+  <b>char</b> *p = <font color="#9933CC">"ABCDEFG"</font>;
+
+  <b>for</b> (<b>unsigned</b> <b>int</b> i = 0; i &lt; strlen(p); i++)
+    stack.Push(&amp;p[i]); <font color="#9933CC">// push address of data</font>;
+
+  <b>while</b> (!stack.IsEmpty())
+  {
+    <b>char</b> *c = (<b>char</b> *) stack.Pop();
+    cout &lt;&lt; *c; <font color="#9933CC">// dereference data</font>;
+  }
+
+  cout &lt;&lt; endl;
+}
+
+The output:
+<b>GFEDCBA</b>
+</code></pre>
+
+A less trivial example:
+
+<pre class="sourcecode"><code><b>struct</b> TStudent
+{
+  <b>float</b> GPA;
+  <b>int</b> ID;
+  <b>int</b> Year;
+};
+
+<b>void</b> main()
+{
+  <b>const</b> <b>int</b> SIZE = 5;
+  Stack4 stack(SIZE);
+
+  <b>for</b> (<b>int</b> i = 0; i &lt; SIZE; i++)
+  {
+    TStudent *ps = <b>new</b> TStudent;
+    ps-&gt;GPA = GetRandom(100, 400) / 100.0;
+    ps-&gt;ID = GetRandom(1, 1000);
+    ps-&gt;Year = GetRandom(1, 4);
+    cout &lt;&lt; <font color="#9933CC">"Student ID: "</font> &lt;&lt; ps-&gt;ID &lt;&lt; <font color="#9933CC">", Year: "</font> &lt;&lt; ps-&gt;Year &lt;&lt; <font color="#9933CC">", GPA: "</font> &lt;&lt; ps-&gt;GPA &lt;&lt; endl;
+    stack.Push(ps);
+  }
+
+  cout &lt;&lt; endl;
+
+  <b>while</b> (!stack.IsEmpty())
+  {
+    TStudent *ps = (TStudent *) stack.Pop();
+    cout &lt;&lt; <font color="#9933CC">"Student ID: "</font> &lt;&lt; ps-&gt;ID &lt;&lt; <font color="#9933CC">", Year: "</font> &lt;&lt; ps-&gt;Year &lt;&lt; <font color="#9933CC">", GPA: "</font> &lt;&lt; ps-&gt;GPA &lt;&lt; endl;
+  }
+}
+
+The output:<b>
+Student ID: 468, Year: 3, GPA: 1.41
+Student ID: 170, Year: 1, GPA: 1.12
+Student ID: 359, Year: 3, GPA: 1.4
+Student ID: 706, Year: 2, GPA: 1.83
+Student ID: 828, Year: 2, GPA: 2.04
+
+Student ID: 828, Year: 2, GPA: 2.04
+Student ID: 706, Year: 2, GPA: 1.83
+Student ID: 359, Year: 3, GPA: 1.4
+Student ID: 170, Year: 1, GPA: 1.12
+Student ID: 468, Year: 3, GPA: 1.41</b>
+</code></pre>
+
+Considerations with this implementation:
+
+<ul>
+<li>The implementation is simple and will deal with any (pointer) data.
+</li><li>The overhead may be significant, but can be memory efficient if implemented as an array (memory manager).
+</li><li>The memory usage of the stack is independent of the size of the data (always <tt><b>sizeof</b>(<b>void</b> *)</tt>).
+</li><li>This class is not as type-safe as a template class.
+</li><li>The client will always interact in the same way, that is, pushing addresses.
+</li></ul>
+
+</div>
+
+<p>
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><p class="SectionHeader">A Somewhat Useful <i>Stack</i> Example
+</p>
+
+
+<ul>
+<li>Arithmetic expressions usually use infix notation: the operator is between the operands (3 + 4).
+</li><li>Postfix notation has the operators <i>after</i> the operands: (3 4 +).
+This is also called <a href="http://www.hpmuseum.org/rpn.htm">RPN</a> for Reverse Polish Notation.
+Many <a href="http://www.calculator.org/rpn.html">calculators</a> were made this way.
+</li><li>Postfix has the nice property that there is no ambiguity; you don't need parentheses:
+<ul>
+<li>Infix, with parens: 5 * ( ( ( 9 + 8 ) * ( 4 * 6 ) ) + 7) = 2075
+</li><li>Infix, no parens: 5 * 9 + 8 * 4 * 6 + 7 = 244
+</li><li>Postfix: 5 9 8 + 4 6 * * 7 + * = 2075
+</li><li>Infix, with parens: 5 * 9 + ( 8 * 4 ) * ( 6 + 7 ) = 461
+</li><li>Postfix: 5 9 * 8 4 * 6 7 + * + = 461
+</li></ul>
+</li></ul>
+
+A stack is the perfect data structure to implement this paradigm. Suppose we have a stream of tokens: (24 x 17 = 408)
+<p>
+</p><blockquote>
+<big><tt>5 9 8 + 4 6 * * 7 + *</tt></big>
+</blockquote>
+<p>
+and we want to evaluate it. The algorithm is as follows:
+
+</p><ul>
+<li>When we see an operand, we push it on the stack
+</li><li>When we see an operator we:
+<ul>
+<li>pop the top 2 items (operands)
+</li><li>perform the arithmetic:
+<blockquote><pre>operand1 operator operand2
+</pre></blockquote>
+</li><li>push the result of the arithmetic
+</li></ul>
+</li><li>When we have no more tokens, the answer is on the top of the stack (It will be the only item on the stack.)
+</li></ul>
+
+A very simple Evaluate function:
+
+<pre class="sourcecode"><code><font color="#9933CC">// postfix is something like: "598+46**7+*"</font>
+<b>int</b> Evaluate(<b>const</b> <b>char</b> *postfix)
+{
+  Stack1 stack(strlen(postfix));
+  <b>while</b> (*postfix)
+  {
+    <b>char</b> token = *postfix;
+
+    <b>if</b> (token == <font color="#9933CC">'+'</font>)
+      stack.Push(stack.Pop() + stack.Pop());
+    <b>else</b> <b>if</b> (token == <font color="#9933CC">'*'</font>)
+      stack.Push(stack.Pop() * stack.Pop());
+    <b>else</b> <b>if</b> (token &gt;= <font color="#9933CC">'0'</font> &amp;&amp; token &lt;= <font color="#9933CC">'9'</font>)
+      stack.Push(token - <font color="#9933CC">'0'</font>);
+
+    postfix++;
+  }
+  <b>return</b> stack.Pop();
+}</code></pre>
+
+Client code:
+
+<pre class="sourcecode"><code>
+<b>void</b> main()
+{
+  <b>char</b> *postfix = <font color="#9933CC">"598+46**7+*"</font>;
+  cout &lt;&lt; postfix &lt;&lt; <font color="#9933CC">" = "</font> &lt;&lt; Evaluate(postfix) &lt;&lt; endl;
+}
+
+Some examples:<b>
+598+46**7+* = 2075
+34+ = 7
+34+7* = 49
+12*3*4*5*6* = 720</b></code></pre>
+
+
+<p class="technote">
+<b>Exercise</b> Modify the <b>Evaluate</b> function above to support subtraction and division as well. (Note: You'll
+need to pay attention to the order of operands.) Try it with <br><br>
+<tt>"2 * 8 / 4 + 5 * 6 - 8" </tt> which is <tt> "2 8 * 4 / 5 6 * + 8 -" </tt> in postfix.
+</p>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<h3>Converting Infix to Postfix</h3>
+
+Input: An infix expression.<br>
+Output: A postfix expression.
+<p>
+
+Examples from above:
+</p><ul>
+<li>Infix, with parens: 5 * ( ( ( 9 + 8 ) * ( 4 * 6 ) ) + 7) = 2075
+</li><li>Postfix: 5 9 8 + 4 6 * * 7 + * = 2075
+</li><li>Infix, with parens: 5 * 9 + ( 8 * 4 ) * ( 6 + 7 ) = 461
+</li><li>Postfix: 5 9 * 8 4 * 6 7 + * + = 461
+</li><li>Infix: 2 * 5 * 2 * 8 + 4 + 5 + 3 = 172
+</li><li>Postfix: 2 5 2 8 * * * 4 + 5 + 3 + = 172
+</li></ul>
+
+The algorithm is as follows: Scan the input expression from left to right until there are no more symbols. Depending on what the symbol is,
+you need to perform these actions:
+<ol>
+	<li><b>Operand</b> - send to the output
+	</li><li><b>Left parenthesis</b> - push onto the stack
+	</li><li><b> Right parenthesis</b> - operators are popped off the stack and sent to the output until a left parenthesis is found (and then discarded).
+	</li><li><b>Operator</b>
+		<ul>
+		<li>If the stack is empty, push the operator.
+		</li><li>If the top of the stack is a left parenthesis, push the operator onto the stack.
+		</li><li>If the top of the stack is an operator which has <i>the same or lower</i> precendence than the scanned operator,
+			  push the scanned operator.
+		<!--
+	  <li>If the top of the stack is an operator which has <i>higher</i> precedence, pop the stack and send to
+	  	  the output. Continue popping until an operator with higher precedence is encountered and push the scanned operator.
+	  -->
+	  </li><li>If the top of the stack is an operator which has <i>higher</i> precedence, pop the stack and send to
+	  	  the output. Repeat the algorithm with the new top of stack.
+	  </li></ul>
+  </li><li>If the input stream is empty and there are still operators on the stack, pop all of them and add them to the output.
+
+</li></ol>
+<p>
+</p><p>
+Note that the only symbols that exist on the stack are operators and left parentheses. Operands and right parentheses are
+never pushed onto the stack.
+
+</p><p class="technote">
+<b>Exercise</b> - Implement a function that converts an infix expression into a postfix expression. (Hint: You will want
+to use a stack class. Duh.) Use your implementation to convert this infix expression to postfix:
+<tt>(7 + 5) * (3 + 4) - (4 * (9 - 2))</tt>
+</p>
+
+<p>
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><p class="SectionHeader">Stack Implementations: Array vs. Linked-List
+</p>
+
+
+<ul>
+<li>The interface is identical, the implementations are not.
+</li><li>What is the worst case time complexity for:
+<ul>
+<li>A Push operation with an array? A Pop?
+</li><li>A Push operation with a linked-list? A Pop?
+</li></ul>
+</li><li>How does the complexity change if the details of the implementation change (not just the structure)?
+  <ul>
+    <li>Manipulate front of an array.</li>
+    <li>Manipulate back of single-linked list.</li>
+  </ul> 
+</li><li>What about memory requirements?
+  <ul>
+    <li>Full container</li>
+    <li>Overhead</li>
+  </ul>
+</li><li>Scalability? Access times? (Complexity <i>amortization</i>)
+</li><li>Implementation complexity? (Often ignored in abstract analysis)
+</li><li>Hardware architectures? (cache, locality of reference)</li>
+</ul>
+
+<!--
+Consider:
+<ul>
+<li>A client that creates a large stack that is almost always full
+<li>A client that creates a large stack that is constantly varying between full and empty
+<li>A client uses two related stacks, one stack grows while the other shrinks (Have you seen this model?)
+<li>How will a memory manager affect the situations?
+</ul>
+-->
+
+<p>
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><p class="SectionHeader">Queues
+</p>
+
+Similar to stacks, but more general:
+
+<ul>
+<li>We usually mean a <b>FIFO</b> queue (First-In, First-Out).
+</li><li>Add an item to the front and remove an item from the back.
+</li><li>There are other <i>policies</i> for other queues:
+<ul>
+<li>Add to either end, remove from either end
+</li><li>Add to either end, remove random element
+</li><li>Add to either end, remove from anywhere (depending on criteria)
+<ul>
+<li>Priority queues
+</li></ul>
+</li><li>Ignore/replace duplicates (potentially expensive)
+</li></ul>
+</li></ul>
+
+Implementing Queues:
+<ul>
+<li>Arrays can be expensive to remove from the front. <i>O(n)</i>
+<ul>
+<li>Use a circular array. <i>O(1)</i>
+</li></ul>
+</li><li>Linked lists can be expensive to add to end. <i>O(n)</i>
+<ul>
+<li>Use a tail pointer. <i>O(1)</i>
+</li><li>Double-linked list for removing from the end. <i>O(1)</i>
+</li><li>Cost for removing from the end of a single-linked list?
+</li></ul>
+</li><li>Selecting item to remove based on criteria may require some kind of sorting.
+<ul>
+<li>The time to add and remove items may be different.
+</li><li>Sorted vs. unsorted, array vs. linked list affect the time.
+</li></ul>
+</li><li>Implementing a FIFO Queue as a linked-list is straight-forward.
+</li><li>Implementing it using an array (efficiently) is slightly more interesting.
+</li></ul>
+
+<p>
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><p class="SectionHeader">Implementing a FIFO Queue using a circular array
+</p>
+
+
+We will use a circular array of SIZE elements
+<ul>
+<li>We can't assume the array is indexed from 0 to SIZE - 1. (C/C++ <i>assumes</i> this about arrays)
+</li><li>We have to keep track of the start and end of the array (other languages do this all the time).
+</li><li>Need to handle "running off" the end; we'll "wrap" around to "grow" the array.
+</li><li>If <tt>tail == head</tt>, the queue is empty.
+</li><li>If <tt>(tail + 1) % SIZE == head</tt>, the queue is full. (Accounts for wrapping around.)
+</li><li>Number of items in queue is <tt>(tail - head + SIZE) % SIZE</tt>.
+</li><li>We keep one unused slot to distinguish between full and empty.
+</li><li>A circular array gives us <i>O(1)</i> for both adding and removing.
+</li></ul>
+
+The Queue after construction and adding 3 items: (Note that the shaded blocks indicate unused slots in the
+Queue)
+<p>
+
+</p><p>
+<img src="./CS 280 Data Structures - Abstract Data Types_files/Queue-1.gif" border="0">
+</p><p>
+
+Removing one item, adding 3, then removing 4 more:
+</p><p>
+<img src="./CS 280 Data Structures - Abstract Data Types_files/Queue-2.gif" border="0">
+</p><p>
+
+Adding until full, removing until empty:
+</p><p>
+<img src="./CS 280 Data Structures - Abstract Data Types_files/Queue-3.gif" border="0">
+</p><p>
+
+The implementation is left as an exercise for the student.
+
+</p><p class="technote">
+<b>Exercise</b> Using the class interface below, implement the Queue as a circular array.
+</p>
+
+<pre class="sourcecode"><code><b>class</b> Queue
+{
+  <b>public</b>:
+    Queue(<b>int</b> MaxItems);
+    ~Queue();
+    <b>void</b> Add(<b>int</b> Item); <font color="#003399"><i>// Push</i></font>
+    <b>int</b> Remove();   <font color="#003399"><i>// Pop</i></font>
+    <b>bool</b> IsFull() <b>const</b>;
+    <b>bool</b> IsEmpty() <b>const</b>;
+};</code></pre>
+
+
+<p>
+
+
+</p><ul>
+<li>Queues and Stacks can be implemented using arrays or linked lists
+</li><li>The interface is essentially the same as a <i>Stack</i>. (Many implementations use the names
+<i>Push</i> and <i>Pop</i>.)
+</li><li>Depending on <i>how</i> you implement them changes the complexity from <i>O(n)</i> to <i>O(1)</i>
+</li><li>Each have trade-offs (time vs. space)
+</li><li>What about a <i>sorted</i> Stack/Queue?
+<!--
+<li>What about ignoring/replacing duplicate items?
+-->
+</li><li>Which is the <i>best</i> ADT to use? (Hint: What is the <i>best</i> programming language?)
+</li></ul>
+
+<blockquote><pre></pre></blockquote>
+
+<a name="PRIORITY_QUEUE">
+
+<p>
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p></a><p class="SectionHeader"><a name="PRIORITY_QUEUE">Priority Queue Example</a>
+</p>
+
+
+Here's a C++ class for an abstract interface of a PriorityQueue:
+
+<pre class="sourcecode"><code><b>class</b> PriorityQueue
+{
+  <b>private</b>:
+    <font color="#003399"><i>// private data</i></font>
+
+  <b>public</b>:
+    PriorityQueue(<b>int</b> capacity);
+    ~PriorityQueue();
+    <b>void</b> Add(<b>int</b> Item);
+    <b>int</b> Remove();
+    <b>bool</b> IsEmpty() <b>const</b>;
+    <b>bool</b> IsFull() <b>const</b>;
+    <b>void</b> Dump() <b>const</b>;
+};</code></pre>
+
+We could implement this with either a linked list or an array. Only the private data would change.
+
+<blockquote>
+<table border="0" cellpadding="10">
+<tbody><tr><th>Linked list</th><th>&nbsp;</th><th>Array</th></tr>
+<tr valign="top">
+<td>
+<pre><b>struct</b> PQNode
+{
+  PQNode *next;
+  <b>int</b> data;
+};
+
+
+<b>class</b> PQList
+{
+  <b>private</b>:
+    PQNode *list_;
+    <b>int</b> capacity_;
+    <b>int</b> count_;
+  <b>public</b>:
+    <font color="#003399"><i>// public interface (same as the array)</i></font>
+};
+</pre>
+</td>
+<td width="10%">
+</td>
+<td>
+<pre><b>class</b> PQArray
+{
+  <b>private</b>:
+    <b>int</b> *array_;
+    <b>int</b> capacity_;
+    <b>int</b> count_;
+  <b>public</b>:
+    <font color="#003399"><i>// public interface (same as the list)</i></font>
+};
+</pre>
+</td>
+</tr></tbody></table>
+</blockquote>
+<p>
+
+However, the complexity of the algorithms depends on how the list/array is implemented. (Sorted vs. unsorted).
+</p><p>
+
+</p><ul>
+<li>What is the policy chosen for adding and removing elements?
+</li><li>Which of the two implementations has a more efficient Add method? Why?
+</li><li>Which of the two implementations has a more efficient Remove method? Why?
+</li></ul>
+<p>
+
+Here's a sample application using the Priority Queue. (Assume that PQList keeps the list sorted.)
+</p><p>
+
+</p><blockquote><pre><b>int</b> main()
+{
+  PQList pq(10); <font color="#003399"><i>// Sorted linked list implementation</i></font>
+
+  pq.Add(4);  pq.Add(7);  pq.Add(2);
+  pq.Add(5);  pq.Add(8);  pq.Add(1);
+
+  pq.Dump();
+
+  printf(<font color="#9933CC">"Removing: %i\n"</font>, pq.Remove());
+  pq.Dump();
+
+  printf(<font color="#9933CC">"Removing: %i\n"</font>, pq.Remove());
+  pq.Dump();
+
+  printf(<font color="#9933CC">"Removing: %i\n"</font>, pq.Remove());
+  pq.Dump();
+
+  <b>return</b> 0;
+}
+</pre></blockquote>
+
+And the associated output:
+
+<blockquote><pre>8  7  5  4  2  1
+Removing: 8
+7  5  4  2  1
+Removing: 7
+5  4  2  1
+Removing: 5
+4  2  1
+</pre></blockquote>
+
+If we replace this line:
+<blockquote><pre>PQList pq(10); <font color="#003399"><i>// Sorted linked list implementation</i></font>
+</pre></blockquote>
+with this one:
+<blockquote><pre>PQArray pq(10); <font color="#003399"><i>// Array implementation (assume unsorted array)</i></font>
+</pre></blockquote>
+
+still inserting the items in the same order as before:
+<blockquote><pre>pq.Add(4);  pq.Add(7);  pq.Add(2);
+pq.Add(5);  pq.Add(8);  pq.Add(1);
+</pre></blockquote>
+
+we get this:
+
+<blockquote><pre>4  7  2  5  8  1
+Removing: 8
+4  7  2  5  1
+Removing: 7
+4  1  2  5
+Removing: 5
+4  1  2
+</pre></blockquote>
+
+The result is the same, but the implementations (and complexities) are different.
+
+<p class="technote">
+<b>Exercise</b> Using the class interface above, implement two priority queues. One
+using an array and one using a linked list. You can decide whether or not to keep
+it sorted.
+</p>
+
+
+
+
+
+
+
+<blockquote><pre></pre></blockquote>
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<hr>
+
+</body></html>

@@ -1,0 +1,742 @@
+
+<!-- saved from url=(0074)http://azrael.digipen.edu/~mmead/www/Courses/CS170/Differences-CtoCPP.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./Moving from C to C++_files/new.css">
+<title>Moving from C to C++</title>
+</head>
+
+<body>  
+<center><h1>Moving from C to C++</h1></center>
+
+<blockquote><i>
+"The C Programming Language: A new language which combines the flexibility of assembly 
+language with the power of assembly language."</i> -- Murphy's Introduction to C
+</blockquote>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<hr>
+
+Some of the more obvious differences between C and C++:
+<ul>
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS170/Differences-CtoCPP.html#COMMENTS">C vs. C++ comments</a>
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS170/Differences-CtoCPP.html#PROTOTYPES">Function prototypes</a>
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS170/Differences-CtoCPP.html#VOID"><tt><b>void</b></tt> parameter lists</a>
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS170/Differences-CtoCPP.html#COUT">Printing to stdout</a>
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS170/Differences-CtoCPP.html#DECLARATIONS">Variable declarations</a>
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS170/Differences-CtoCPP.html#CHARTYPE">The literal <tt><b>char</b></tt> data type </a>
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS170/Differences-CtoCPP.html#CONST">The <tt><b>const</b></tt> keyword</a>
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS170/Differences-CtoCPP.html#BOOL">The <tt><b>bool</b></tt> type</a>
+<!--<li><a href="#CONDITIONAL">Conditional operator</a>-->
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS170/Differences-CtoCPP.html#NULL">The definition of <tt>NULL</tt></a>
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS170/Differences-CtoCPP.html#TAGS">Structure tags</a>
+</li></ul>
+
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<a name="COMMENTS"></a>
+<p class="SectionHeader">Comments</p>
+
+In C, we only had block comments. In C++, we also have "to end of line" comments. An example will demonstrate:
+
+<blockquote><pre><b>int</b> main(<b>void</b>)
+{
+  <font color="#003399"><i>/* This is a block comment. Ok in C and C++ */</i></font>
+
+  <font color="#003399"><i>/*
+   This is also a block comment. Ok in C and C++
+   */</i></font>
+
+  <font color="#003399"><i>// This is a C++ style comment.</i></font>
+  <font color="#003399"><i>// This type of comment may not work in all C compilers.</i></font>
+}
+</pre></blockquote>
+
+The C++-style comments will include everything from the <tt>//</tt> (which is a single token much like the
+<tt>++</tt> operator) to the end of the line. So, we will still need the orginal <tt>/* ... */</tt> comment
+syntax.
+
+<blockquote><pre><b>int</b> fn1(<b>int</b> a <font color="#003399"><i>/* a should be positive */</i></font>, <b>int</b> b <font color="#003399"><i>/* b can't be 0 */</i></font>);
+</pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+
+
+Strictly speaking, the // comment character is illegal in a C program. However, many C compilers have 
+been extended to accept both types of comments. (Microsoft has been accepting it since version 6.0 of the
+DOS version of C, which is about 1989. Yeah, they started over again at 1.0 with "Visual" C++ and there
+never was a version 3. But I digress...)
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+
+<a name="PROTOTYPES"></a>
+<p class="SectionHeader">
+  Function Prototypes
+</p>
+
+In C, if the compiler encountered a function call before seeing the function declaration or definition,
+it would <i>assume</i> certain things about the function:
+
+<blockquote><pre><b>void</b> fn2(<b>void</b>)
+{
+    <font color="#003399"><i>/* Undeclared function, assumes it takes int,double and returns an int */</i></font>
+  SomeFunction(1, 3.0);
+}
+</pre></blockquote>
+
+In C, the above program will compile fine. Of course, it won't link. In C++, you will
+get an error (not a warning):
+
+<blockquote><pre>error: `SomeFunction' undeclared (first use this function)
+</pre></blockquote>
+
+You <b>must</b> prototype every function in your program:
+
+<blockquote><pre><font color="#003399"><i>// Function prototype required in C++ </i></font>  
+<b>int</b> SomeFunction(<b>int</b>, <b>double</b>);
+  
+<b>void</b> fn2(<b>void</b>)
+{
+    <font color="#003399"><i>// Compiles just fine now</i></font>
+  SomeFunction(1, 3.0); 
+}
+</pre></blockquote>
+
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<a name="VOID"></a>
+<p class="SectionHeader"><tt>void</tt> Parameter Lists</p>
+
+In C, a function is allowed to not specify any parameters in its parameter list:
+<blockquote><pre><b>int</b> foo();
+</pre></blockquote>
+This means that the function can take <i>any number and type</i> of arguments. This was simply because the
+earliest versions of C didn't require the programmer to declare them. (This turned out to be a disaster
+and later versions of C "encouraged" function prototypes so the compiler could check for bad behavior.) 
+If a function did not take any arguments, then the <tt><b>void</b></tt> keyword was used to indicate
+this fact:
+<blockquote><pre><b>int</b> foo(<b>void</b>);
+</pre></blockquote>
+Realize that these two functions are <b>NOT</b> the same in C:
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Accepts any number/type of arguments</th><th>Accepts no arguments</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>int</b> foo();
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>int</b> foo(<b>void</b>);
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+However, in C++, the two functions are the same. The lack of parameters means that the function does
+not accept any arguments. It's a stylistic issue as to whether or not the <tt><b>void</b></tt> keyword
+is used. Also, since all functions in C++ must be prototyped before use, it's much more likely that
+the compiler will detect any misuse.
+
+<blockquote><pre></pre></blockquote>
+
+
+
+<blockquote><pre></pre></blockquote>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p>
+
+<a name="COUT"></a>
+</p><p class="SectionHeader">
+	Printing to <tt>stdout</tt>
+</p>
+
+There are more ways to print in C++.
+<ul>
+<li>The standard way of printing to stdout in C was to use <tt>printf</tt>. 
+</li><li>You can still use <tt>printf</tt> <i>exactly</i> as you did in C.
+</li><li>The "C++ way" of printing to stdout is to use the <i>I/O streams</i>.
+</li></ul>
+
+Typically:
+<ul>
+<li>C uses the <tt>printf</tt> function (You must include <tt>&lt;stdio.h&gt;</tt>)
+</li><li>C++ uses the <tt>std::cout</tt> object for displaying output (You must include <tt>&lt;iostream&gt;</tt>)
+  <ul>
+    <li><tt>std</tt> is a <i>namespace</i> and the <tt>cout</tt> object is in that namespace.
+      (C doesn't have namespaces. We'll talk more about them soon.)</li>
+  </ul>
+</li></ul>
+
+C example:
+
+<blockquote><pre><b>#include</b> &lt;stdio.h&gt;
+
+<b>int</b> main(<b>void</b>)
+{
+  printf(<font color="#9933CC">"C programming "</font>);
+  printf(<font color="#9933CC">"is fun.\n"</font>);
+  
+  <b>return</b> 0;
+}
+</pre></blockquote>
+
+C++ example:
+
+<blockquote><pre><b>#include</b> &lt;iostream&gt; <font color="#003399"><i>// Notice the missing .h in the filename</i></font>
+
+<b>int</b> main(<b>void</b>)
+{
+  std::cout &lt;&lt; <font color="#9933CC">"C++ programming "</font>;
+  std::cout &lt;&lt; <font color="#9933CC">"is fun."</font> &lt;&lt; std::endl;
+  
+  <b>return</b> 0;
+}
+</pre></blockquote>
+
+We will look at <tt>cout</tt> (and the input version, <tt>cin</tt>) in more detail later.
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p>
+
+<a name="DECLARATIONS"></a>
+</p><p class="SectionHeader">Variable Declarations 
+</p>
+
+In C, all variables must be declared at the top of a scope. In C++, this is relaxed to allow you to declare
+new variables closer to their actual use.
+
+<pre class="sourcecode"><code>
+<b>#include</b> &lt;stdio.h&gt;
+<b>#include</b> &lt;math.h&gt;
+
+<b>int</b> main(<b>void</b>)
+{
+  <b>int</b> a;              <font color="#003399"><i>/* declaration                               */</i></font>
+  <b>int</b> b = 3;          <font color="#003399"><i>/* initialization (declaration + assignment) */</i></font>
+  <b>double</b> c = foo(2);  <font color="#003399"><i>/* initialization (declaration + assignment) */</i></font>
+  <b>int</b> x;              <font color="#003399"><i>/* OK, declaration                           */</i></font>
+
+  a = b * 2;          <font color="#003399"><i>/* assignment/multiply (no declaration)      */</i></font>
+
+  <font color="#003399"><i>/* In C, no more declarations allowed in this scope */</i></font>
+
+  c = 3.1415926;      <font color="#003399"><i>/* assignment, no declaration                */</i></font>
+  printf(<font color="#9933CC">"%f\n"</font>, c);  <font color="#003399"><i>/* function call, no declaration             */</i></font>
+
+  <b>int</b> d = 7;     <font color="#003399"><i>/* error in C, OK in C++                          */</i></font>
+  <b>int</b> e;         <font color="#003399"><i>/* error in C, OK in C++                          */</i></font>
+
+  x = 5 * c;     <font color="#003399"><i>/* OK, no declaration                             */</i></font>
+
+  <b>return</b> x;
+}
+
+</code></pre>
+
+This also allows you the convenience of declaring the index of a <tt><b>for</b></tt> loop precisely 
+where you need it. In C, this is the syntax for the <tt><b>for</b></tt> loop:
+
+<blockquote><pre><b>for (</b> &lt;expression1&gt;; &lt;expression2&gt;; &lt;expression3&gt; <b>)</b>
+  &lt;statement&gt; 
+</pre></blockquote>
+
+In C++, there is a slight (but important) difference:
+<blockquote><pre><b>for (</b> &lt;init-statement&gt;; &lt;expression&gt;; &lt;expression&gt; <b>)</b>
+  &lt;statement&gt;
+</pre></blockquote>
+
+This is what allows you to declare the index variable as part of the loop:
+
+<blockquote><pre><b>int</b> a[10];
+
+<font color="#003399"><i>/* i doesn't exist here */</i></font>
+
+<b>for</b> (<b>int</b> i = 0; i &lt; 10; i++)
+  a[i] = i;
+
+<font color="#003399"><i>/* i doesn't exist here */</i></font>
+
+<b>for</b> (<b>int</b> i = 0; i &lt; 10; i++)
+  a[i] = i * i;
+
+<font color="#003399"><i>/* i doesn't exist here */</i></font>
+</pre></blockquote>
+
+Each of the two <i>i</i> variables are different. (Different scopes)
+<p>
+You have to watch out and not do this:
+
+</p><blockquote><pre><b>int</b> a[10];
+
+<b>for</b> (<b>int</b> i = 0; i &lt; 10; i++)
+  a[i] = i;
+
+  <font color="#003399"><i>/* ERROR: i is undefined */</i></font>
+<b>for</b> (i = 0; i &lt; 10; i++)
+  a[i] = i * i;
+</pre></blockquote>
+
+The error message from the GNU C++ compiler:
+
+<blockquote><pre>main.cpp:28: error: name lookup of `i' changed for new ISO `for' scoping
+main.cpp:25: error:   using obsolete binding at `i'
+</pre></blockquote>
+
+Some compilers still accept the above as valid code, but it's not. 
+<p>
+If you want to use the index variable from the <tt><b>for</b></tt> loop outside of the
+loop, you have to declare it outside of the loop:
+
+</p><blockquote><pre><b>int</b> a[10];
+<b>int</b> i;
+
+  <font color="#003399"><i>/* i is in scope */</i></font>
+<b>for</b> (i = 0; i &lt; 10; i++)
+  a[i] = i;
+
+  <font color="#003399"><i>/* i is in scope */</i></font>
+<b>for</b> (i = 0; i &lt; 10; i++)
+  a[i] = i * i;
+
+  <font color="#003399"><i>/* The <b>i</b> on the next line is a new variable that exists only in the loop */</i></font>
+<b>for</b> (<b>int</b> i = 0; i &lt; 5; i++)
+  a[i] = i * i;
+
+  <font color="#003399"><i>/* i (from line 2 above) is in scope with value 10 */</i></font>
+printf(<font color="#9933CC">"The value of i is %i\n"</font>, i);
+</pre></blockquote>
+
+
+
+<blockquote><pre></pre></blockquote>
+
+
+<p>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+
+<a name="CHARTYPE"></a>
+</p><p class="SectionHeader">The literal <tt>char</tt> data type
+</p>
+In C, the type of a literal <tt><b>char</b></tt> is actually <tt><b>int</b></tt>. In C++, the
+type is <tt><b>char</b></tt>:
+
+<p>
+</p><blockquote>
+<b>C</b>
+
+<blockquote><pre>printf(<font color="#9933CC">"sizeof('A') is %lu\n"</font>, <b>sizeof</b>(<font color="#9933CC">'A'</font>));
+</pre></blockquote>
+
+<b>Output:</b>
+<blockquote><pre>sizeof('A') is 4
+</pre></blockquote>
+
+
+<b>C++</b>
+<blockquote><pre>std::cout &lt;&lt; <font color="#9933CC">"sizeof('A') is "</font> &lt;&lt; <b>sizeof</b>(<font color="#9933CC">'A'</font>) &lt;&lt; std::endl;
+</pre></blockquote>
+
+<b>Output:</b>
+<blockquote><pre>sizeof('A') is 1
+</pre></blockquote>
+</blockquote>
+
+This only applies to <i>literal</i> characters, i.e., constants in single-quotes. Constants 
+and variables of type <tt><b>char</b></tt> are actually <tt><b>char</b></tt> in both
+languages:
+
+<blockquote>
+<b>C</b>
+
+<blockquote><pre><b>char</b> c;
+printf(<font color="#9933CC">"sizeof(c) is %lu\n"</font>, <b>sizeof</b>(c));
+</pre></blockquote>
+
+<b>Output:</b>
+<blockquote><pre>sizeof(c) is 1
+</pre></blockquote>
+
+<b>C++</b>
+<blockquote><pre><b>char</b> c;
+std::cout &lt;&lt; <font color="#9933CC">"sizeof(c) is "</font> &lt;&lt; <b>sizeof</b>(c) &lt;&lt; std::endl;
+</pre></blockquote>
+
+<b>Output:</b>
+<blockquote><pre>sizeof(c) is 1
+</pre></blockquote>
+
+</blockquote>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+
+<a name="CONST"></a>
+<p class="SectionHeader">The <tt>const</tt> keyword
+</p>
+
+In C, <b>const</b> is not the same compile-time constant as in C++, which means that you you couldn't use it 
+to specify the size of a static array in C:
+
+<blockquote><pre><b>const</b> <b>int</b> SIZE = 10; <font color="#003399"><i>// constant?</i></font>
+<b>int</b> array[SIZE];     <font color="#003399"><i>// compile error, SIZE is not a constant</i></font>
+</pre></blockquote>
+
+You have to use the <b>#define</b> preprocessor directive:
+
+<blockquote><pre><b>#define</b> SIZE 10   <font color="#003399"><i>// SIZE is an alias for 10</i></font>
+<b>int</b> array[SIZE];  <font color="#003399"><i>// OK, compiler replaces SIZE with 10</i></font>
+</pre></blockquote>
+
+In C++, the first example above works as expected. 
+<p>
+There is another subtle difference between C and C++ with respect to the <tt><b>const</b></tt> keyword. In C++,
+declaring a global variable <tt><b>const</b></tt> gives it internal linkage instead of external linkage. Here's 
+an example:
+
+</p><blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th>file1.c</th><th>file2.c</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>#include</b> &lt;stdio.h&gt;
+
+<b>const</b> <b>int</b> foo = 1;
+<b>void</b> fn(<b>void</b>);
+
+<b>int</b> main(<b>void</b>)
+{
+  fn();
+  printf(<font color="#9933CC">"foo is %i\n"</font>, foo);
+  
+  <b>return</b> 0;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>#include</b> &lt;stdio.h&gt;
+
+<b>const</b> <b>int</b> foo = 2;
+
+<b>void</b> fn(<b>void</b>)
+{
+  printf(<font color="#9933CC">"foo is %i\n"</font>, foo);
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+Compiling the .c files with a C compiler:
+<blockquote><pre>gcc file1.c file2.c
+</pre></blockquote>
+
+<ul>
+<li>Does <tt>file1.c</tt> compile?
+</li><li>Does <tt>file2.c</tt> compile?
+</li><li>Will the files link?
+</li><li>What will be printed?
+</li></ul>
+
+Compiling the .c files with a C++ compiler:
+<blockquote><pre>g++ file1.c file2.c
+</pre></blockquote>
+
+or explicitly:
+
+<blockquote><pre>g++ -x cpp file1.c -x cpp file2.c
+</pre></blockquote>
+
+How would you answer the above questions now?
+
+<p class="technote">
+The real power of this feature is that you can put constants in header files in C++.
+This is something that can't be done in C (due to the <b>ODR</b> rule), which is why we were always using <b><tt>#define</tt></b>
+instead of <tt><b>const</b></tt>.
+</p>
+
+<!--
+For some reason g++ forces cpp, so this works
+g++ file1.c file2.c
+
+This is the same as above. This compiles fine, treating both as cpp files
+g++ -x cpp file1.c -x cpp file2.c
+
+This fails to link, as gcc compiles as C
+gcc  file1.c  file2.c
+
+Can't force gcc to do cpp (fails because of '-x cpp')
+gcc -x cpp  file1.c -x cpp  file2.c
+-->
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+
+<a name="BOOL"></a>
+<p class="SectionHeader">
+The <tt>bool</tt> Type
+</p><p>
+
+</p><ul>
+<li>C doesn't have a boolean type, so we just used integers (0 and non-zero).
+</li><li>C++ has a type <tt><b>bool</b></tt>, which is actually a "newer" addition to C++ (it wasn't in earlier versions).
+</li><li>A lot of code still uses zero and non-zero to represent true and false and will work the same as C.
+</li></ul>
+
+Here is a way we could "add" a boolean type to C:
+
+<pre class="sourcecode"><code><font color="#003399"><i>/* Define our own boolean type and values */</i></font>
+<b>#define</b> BOOL <b>int</b>
+<b>#define</b> FALSE 0
+<b>#define</b> TRUE  1
+
+BOOL BitIsSet(<b>int</b> value, <b>int</b> position)
+{
+  <b>return</b> value &amp; (1 &lt;&lt; position) ? TRUE : FALSE;
+}
+
+<b>void</b> f(<b>void</b>)
+{
+  BOOL b = BitIsSet(7, 2); <font color="#003399"><i>/* b is a BOOL                              */</i></font>
+  <b>int</b> x = BitIsSet(7, 2);  <font color="#003399"><i>/* OK, no type-checking error (BOOL is int) */</i></font>
+  BOOL c = 42;             <font color="#003399"><i>/* OK, no type-checking error (BOOL is int) */</i></font>
+
+    <font color="#003399"><i>/* BOOL is just an int, so the expression evaluates to an integer */</i></font>
+  <b>if</b> (BitIsSet(7, 2))
+    printf(<font color="#9933CC">"Bit 2 of integer 7 is set\n"</font>);
+
+    <font color="#003399"><i>/* Prints: b is 1, c is 42, x is 1 */</i></font>
+  printf(<font color="#9933CC">"b is %i, c is %i, x is %i\n"</font>, b, c, x);
+}
+</code></pre>
+
+
+
+In C++, we have a built-in <tt><b>bool</b></tt> type:
+
+<pre class="sourcecode"><code><b>bool</b> BitIsSet(<b>int</b> value, <b>int</b> position)
+{
+  <b>if</b> (value &amp; (1 &lt;&lt; position))
+    <b>return</b>  <b>true</b>;
+  <b>else</b>
+    <b>return</b> <b>false</b>;
+}
+
+<b>void</b> f(<b>void</b>)
+{
+  <b>bool</b> b = BitIsSet(7, 2); <font color="#003399"><i>// b is a real bool             </i></font>
+  <b>int</b> x = BitIsSet(7, 2);  <font color="#003399"><i>// OK, converting bool to int  </i></font>
+  <b>bool</b> c = 42;             <font color="#003399"><i>// Possible warning: truncating</i></font>
+                           <font color="#003399"><i>//   int to bool (c is <b>true</b>, 1 as <b>int</b>)       </i></font>
+
+    <font color="#003399"><i>// Expression evaluates to a bool</i></font>
+  <b>if</b> (BitIsSet(7, 2))
+    printf(<font color="#9933CC">"Bit 2 of integer 7 is set\n"</font>);
+
+    <font color="#003399"><i>// Prints: b is 1, c is 1, x is 1</i></font>
+  printf(<font color="#9933CC">"b is %i, c is %i, x is %i\n"</font>, b, c, x);
+}
+</code></pre>
+
+There are some obvious issues here:
+<ul>
+<li>In C, you can still set a BOOL to values other than 0 and 1 (true and false).
+</li><li>Assigning the value 42 to a <tt><b>bool</b></tt> in C++, for example, will truncate it.
+</li><li>Using <tt>printf</tt> to display the value of the BOOL shows the problems.
+</li></ul>
+<p></p>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<!--
+<a name="CONDITIONAL"></a>
+<p class="SectionHeader">
+Conditional Operator 
+</p>
+
+In C, the conditional operator can only be an r-value. In C++, it can also be an l-value. Example:
+
+<pre class="sourcecode"><code><b>int</b> main(<b>void</b>)
+{
+  <b>int</b> a = 1, b = 2, c;
+
+    <font color="#003399"><i>// Assign larger value to c (assume a != b)</i></font>
+  c = (a &gt; b) ? a : b;
+  printf(<font color="#9933CC">&quot;a = %i, b = %i, c = %i\n&quot;</font>, a, b, c);
+
+    <font color="#003399"><i>// Assign 0 to the larger value (assume a != b)</i></font>
+    <font color="#003399"><i>// This is OK in C++, error in C</i></font>
+  (a &gt; b) ? a : b = 0;
+  printf(<font color="#9933CC">&quot;a = %i, b = %i\n&quot;</font>, a, b);
+  
+  <b>return</b> 0;
+}
+
+<b>Output in C++:</b>
+a = 1, b = 2, c = 2
+a = 1, b = 0
+</code></pre>
+<p>
+
+Other operators have changed as well. <a href="../../docs/OperatorPrecedence-CPP.html">Operator precedence chart for C++</a>
+-->
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+
+<a name="NULL"></a>
+<p class="SectionHeader">
+	The Definition of <tt>NULL</tt>
+</p>
+
+In C, <tt>NULL</tt> is a <tt><b>void</b></tt> pointer and is defined as:
+
+<blockquote><pre><b>#define</b> NULL ((<b>void</b> *)0)
+</pre></blockquote>
+
+In C++, <tt>NULL</tt> is an integer and is defined as:
+
+<blockquote><pre><b>#define</b> NULL 0
+</pre></blockquote>
+
+These two definitions are not the same (integer vs. void pointer) and, depending on the circumstances,
+may cause compiler warnings or strange behavior.
+<p>
+With most compilers' header files, you'll see something like this (from <i>stdio.h</i>):
+
+</p><pre class="sourcecode"><code><font color="#003399"><i>/* Define NULL pointer value */</i></font>
+
+<b>#ifndef</b> NULL
+<b>#ifdef</b>  __cplusplus
+<b>#define</b> NULL    0
+<b>#else</b>
+<b>#define</b> NULL    ((<b>void</b> *)0)
+<b>#endif</b>
+<b>#endif</b>
+</code></pre>
+
+In practice, this is generally not a problem. 
+<p class="technote">
+The C++11 specification provides a new keyword, <b><tt>nullptr</tt></b>, that can be used to 
+unambiguously refer to the NULL pointer, however it may be represented. We will look at this
+later.
+</p>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<a name="TAGS"></a>
+<p class="SectionHeader">
+	Structure tags
+</p>
+
+Recall the general form of a structure declaration:
+
+<blockquote><pre><b>struct</b> <i>tag</i>
+{ 
+  <i>members</i> 
+}<i>variable-list</i>;
+</pre></blockquote>
+
+In C, when we created an instance of a structure, we were required to use the <tt><b>struct</b></tt> 
+keyword:
+
+Create a structure named <b>TIME</b>, (no space is allocated):
+
+<blockquote><pre><b>struct</b> TIME 
+{
+  <b>int</b> hours;
+  <b>int</b> minutes;
+  <b>int</b> seconds;
+};
+</pre></blockquote>
+
+Create two variables of type <b>struct</b> TIME, (space is allocated):
+
+<blockquote><pre><b>struct</b> TIME t1, t2; <font color="#003399"><i>/* You need the struct keyword in C*/</i></font>
+</pre></blockquote>
+
+We could use the <tt><b>typedef</b></tt> keyword:
+
+<blockquote><pre><b>typedef</b> <b>struct</b>  <font color="#003399"><i>/* use typedef keyword to create a new type */</i></font>
+{
+  <b>int</b> hours;
+  <b>int</b> minutes;
+  <b>int</b> seconds;
+}TIME;            <font color="#003399"><i>/* TIME is a type, not a variable    */</i></font>
+
+TIME t1, t2;      <font color="#003399"><i>/* Don't need the struct keyword now */</i></font>
+</pre></blockquote>
+
+In C++, when you define a structure with the <tt><b>struct</b></tt> keyword, you are creating
+a new type:
+
+<blockquote><pre><b>struct</b> TIME 
+{
+  <b>int</b> hours;
+  <b>int</b> minutes;
+  <b>int</b> seconds;
+};
+</pre></blockquote>
+
+<blockquote><pre>TIME t1, t2;      <font color="#003399"><i>// TIME is a new type, so you don't need the struct keyword</i></font>
+</pre></blockquote>
+
+
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+
+
+
+
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<tt><b></b></tt>
+
+
+<blockquote><pre></pre></blockquote>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<hr>
+
+<blockquote><pre></pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+
+</body></html>

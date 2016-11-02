@@ -1,0 +1,1099 @@
+
+<!-- saved from url=(0065)https://azrael.digipen.edu/~mmead/www/Courses/CS280/Graphs-1.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./Graphs_files/new.css">
+<title>CS 280 - Graphs</title>
+</head>
+
+<body>
+<center><h1>Introduction to Graphs</h1></center>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">
+Graphs
+</p>
+
+<b>Introduction</b>
+<ul>
+<li>One of the most useful data structures. (A very large topic.)
+</li><li>Related to trees in that a tree is a special kind of graph (Trees are much simpler).
+</li><li>Graphs are more general and have a wider range of use. (Generality trades simplicity.)
+</li><li>Represent problems involving interconnected (dependent) objects.
+</li><li>Graph algorithms are more complex. Need to account for cycles; trees have only one path between nodes.
+</li><li>Graphs can have several (connected) components, a tree is always a single entity.
+<ul>
+<li><b>Topological ordering</b> - all nodes "dependent" on X are in list L before X. (Prerequisites in a school.)
+</li><li><b>Shortest path</b> - weighted graphs to represent travel destinations and times
+</li><li><b>Task networks</b> - time it takes to complete a task before starting the next one.
+</li><li><b>Games</b> - forcing moves by looking ahead.
+</li></ul>
+</li></ul>
+
+<b>Terminology</b>
+<ul>
+<li>A graph is essentially a collection of points connected by line segments.
+</li><li>The points are referred to as <i>nodes</i> or <i>vertices</i>; the segments are called <i>edges</i>.
+</li><li>If the edges have a direction (arrowheads in a diagram), the graph is a <i>directed graph</i>
+or <i>digraph</i>.
+</li><li>A graph that has values (<i>weights</i> or <i>costs</i>) assigned to the edges is called a <i>weighted graph</i> (or weighted digraph).
+</li></ul>
+
+<p>
+
+</p><blockquote><pre><table border="0" cellpadding="5"><tbody><tr align="center">
+<th>Graph
+<blockquote><pre><img src="./Graphs_files/Graphs-NonDirected.gif">
+</pre></blockquote>
+</th>
+<th>Directed graph (digraph)
+<blockquote><pre><img src="./Graphs_files/Graphs-Digraph-1.gif">
+</pre></blockquote>
+</th>
+<th>Weighted graph
+<blockquote><pre><img src="./Graphs_files/Graphs-Weighted-1.gif">
+</pre></blockquote>
+</th>
+</tr></tbody></table>
+</pre></blockquote>
+
+<a name="NOTATION">
+<b>Some Notation</b>
+</a>
+<p>
+</p><ul>
+
+<!-- Disabled the italics -->
+
+<li>A graph, <i>G</i>, consists of a set of vertices, <i>V</i>, and edges, <i>E</i> where the edges are constructed
+from pairs of distinct vertices.
+<blockquote><pre><font size="+3"><ii>G = (V, E)</ii></font>
+</pre></blockquote>
+
+</li><li>In an <i>undirected graph</i>, each edge is an <i>unordered pair</i>: (note the curly braces for set notation; there is no order)
+<blockquote><pre><font size="+3"><ii>e = <b>{</b>v<sub>1</sub>, v<sub>2</sub><b>}</b></ii></font>
+</pre></blockquote>
+
+</li><li>In a <i>directed graph</i>, each edge is an <i>ordered pair</i>: (note the parentheses for list notation; order is implied)
+<blockquote><pre><font size="+3"><ii>e = <b>(</b>v<sub>1</sub>, v<sub>2</sub><b>)</b></ii></font>
+</pre></blockquote>
+and <i>v<sub>1</sub></i> is the <i>origin</i> (source) and <i>v<sub>2</sub></i> is the <i>terminus</i> (destination).
+
+</li><li>Two vertices, <i>x</i> and <i>y</i> are said to be <i>adjacent</i> if there is an edge connecting them.
+</li><li>We use the notation <i>sGd</i> to mean that <i>s</i> is adjacent to <i>d</i>. With a digraph, <i>sGd</i>
+implies direction. (<i>xGy</i> is not the same as <i>yGx</i>).
+</li><li>The set of nodes adjacent to <i>s</i> is called the <i>adjacency set of s</i>. This set is fundamental to many graph algorithms.
+</li></ul>
+
+<a name="PATHS">
+<b>Paths and Connectivity</b>
+</a>
+
+<ul>
+<li>A (contiguous) sequence of edges is a <i>path</i>.
+</li><li>If there is a path from x to y, y is <i>reachable</i> from x.
+</li><li>The <i>length</i> of a path is the number of edges on the path. <!--(<i>xGx</i> has length of 1).-->
+</li><li>Two vertices are <i>connected</i> if there is a path from one to the other.
+</li><li>A <i>connected component</i> is a subset, <i>S</i>, of vertices that are all connected.
+</li><li>A single directed graph with two components:
+<p>
+<img src="./Graphs_files/Graphs-TwoComponents-1.gif" border="2">
+</p><p>
+</p></li><li>Digraphs can be <i>strongly</i> connected or <i>weakly</i> connected. (Definitions vary.)
+<ul>
+<li><b>Strongly connected</b> - There is a path from each node to every other node.
+</li><li><b>Weakly connected</b> - There is <b>not</b> a path from each node to every other node. (See node 3 below)
+</li></ul>
+
+
+
+<blockquote><pre><table border="0" cellspacing="10">
+<tbody><tr><th>Strongly connected</th><th>&nbsp;</th><th>Weakly connected</th></tr>
+<tr>
+<td><img src="./Graphs_files/Graphs-StronglyConnected-1.gif"></td>
+<td width="10%"></td>
+<td><img src="./Graphs_files/Graphs-WeaklyConnected-1.gif"></td>
+</tr></tbody></table>
+</pre></blockquote>
+
+</li></ul>
+
+<a name="CYCLES">
+<b>Cycles</b>
+</a>
+<ul>
+<li>A cycle is a path whose source and destination node are the same.
+<!--<li>A self-loop is a cycle (path length of 1)-->
+</li><li>A cycle is <i>simple</i> if all nodes on the path are distinct (with the exception of the first and last).
+A simple cycle must include at least 3 vertices. (Definitions vary.)
+</li><li>Another way of describing a simple cycle: When you travel around the loop in a simple cycle, you must
+visit at least three different vertices and you must visit each vertex only once.
+</li><li>Think of a "Figure 8" as being a non-simple cycle. (The middle vertex is visited twice.)
+</li><li>If a graph has no cycles, it is <i>acyclic</i>. A <i>directed acyclic graph</i> is called a <i>DAG</i>.
+</li></ul>
+
+<a name="DEGREE">
+<b>Degree</b>
+</a>
+<ul>
+<li>For an <i>undirected</i> graph, the degree is the number of edges connecting to a node
+</li><li>For a <i>directed</i> graph:
+<ul>
+<li>in-degree is the number of incoming edges into a node (node is a destination)
+</li><li>out-degree is the number of outgoing edges from a node (node is a source)
+</li></ul>
+</li></ul>
+
+
+<!-- ********************************************************** -->
+<!-- ********************************************************** -->
+<!--
+<hr width=90%>
+<a name="PROPERTIES">
+<b>Some Properties of Digraphs</b>
+</a>
+<p>
+
+For all nodes <i>x</i> in <i>G</i>, <i>xGx</i> is <b>true</b>:
+<table border=1 cellpadding=5><tr align="left"><th>
+Reflexive
+<blockquote><pre>
+<img src="Graphs-Reflexive.gif">
+</pre></blockquote>
+</th></tr></table>
+<br><br>
+-->
+<!--
+For all nodes <i>x</i> in <i>G</i>, <i>xGx</i> is <b>false</b>:
+<table border=1 cellpadding=5><tr align="left"><th>
+Irreflexive
+<blockquote><pre>
+<img src="Graphs-Irreflexive.gif">
+</pre></blockquote>
+</th></tr></table>
+<br><br>
+
+For some nodes <i>x</i> in <i>G</i> (but not all), <i>xGx</i> is <b>true</b>:
+<table border=1 cellpadding=5><tr align="left"><th>
+Neither reflexive nor irreflexive
+<blockquote><pre>
+<img src="Graphs-Neither-Reflexive.gif">
+</pre></blockquote>
+</th></tr></table>
+<br><br>
+-->
+
+<!--
+<a name="SYMMETRIC">
+For all nodes <i>x</i> and <i>y</i> in <i>G</i>, if <i>xGy</i> is <b>true</b>, then <i>yGx</i> is <b>true</b>:
+</a>
+<table border=1 cellpadding=5><tr align="left"><th>
+Symmetric
+<blockquote><pre>
+<img src="Graphs-Symmetric.gif">
+</pre></blockquote>
+</th></tr></table>
+<br><br>
+-->
+
+<!--
+For all nodes <i>x</i> and <i>y</i> in <i>G</i>, if <i>xGy</i> is <b>true</b>, then <i>yGx</i> is <b>false</b>:
+<table border=1 cellpadding=5><tr align="left"><th>
+Antisymmetric
+<blockquote><pre>
+<img src="Graphs-Anitsymmetric.gif">
+</pre></blockquote>
+</th></tr></table>
+<br><br>
+
+For some nodes <i>x</i> and <i>y</i> in <i>G</i> (but not all), <i>xGy</i> and <i>yGx</i> is <b>true</b>:
+<table border=1 cellpadding=5><tr align="left"><th>
+Neither symmetric nor antisymmetric
+<blockquote><pre>
+<img src="Graphs-Neither-Symmetric.gif">
+</pre></blockquote>
+</th></tr></table>
+<br><br>
+-->
+
+<!--
+For nodes <i>x</i>, <i>y</i>, and <i>z</i> in <i>G</i>, if <i>xGy</i> is  <b>true</b> and <i>yGz</i> is  <b>true</b>,
+then <i>xGz</i> is  <b>true</b>:
+<table border=1 cellpadding=5><tr align="left"><th>
+Transitive
+<blockquote><pre>
+<img src="Graphs-Transitive.gif">
+</pre></blockquote>
+</th></tr></table>
+<br><br>
+-->
+
+<!--
+For all nodes <i>x</i>, <i>y</i>, and <i>z</i> in <i>G</i>, if <i>xGy</i> is <b>true</b> and <i>yGz</i>
+is  <b>true</b>, then <i>xGz</i> is <b>false</b>:
+<table border=1 cellpadding=5><tr align="left"><th>
+Not transitive
+<blockquote><pre>
+<img src="Graphs-Not-Transitive.gif">
+</pre></blockquote>
+</th></tr></table>
+<br><br>
+-->
+
+<p class="technote">
+<b>Self-check</b>:<br>
+</p><ol>
+<li>How do directed and undirected graphs differ?
+</li><li>What is a <i>path</i> in a graph? What is a <i>cycle</i> in a graph?
+</li><li>What is a <i>simple cycle</i>?
+</li><li>What is the <i>in-degree</i> and <i>out-degree</i> of a vertex in a directed graph?
+</li></ol>
+<p></p>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">
+Representing Graphs
+</p>
+
+
+Trees vs. Graphs
+<ul>
+<li>A tree is a collection of nodes. Each node can be accessed from the root.
+</li><li>A graph has no "root" node so there is no logical "beginning".
+</li><li>Each node in a graph can be used as a starting point for traversals.
+</li><li>With a tree, we are guaranteed to reach every node by starting from the root.
+</li><li>With a graph, there is no guarantee that we will reach any other nodes from any particular node.
+</li><li>Because of these differences, the data structures representing the structures are quite different.
+</li></ul>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<h2>Adjacency Matrix</h2>
+
+<ul>
+<li>A graph G with M nodes represented by an M x M boolean array (matrix).
+</li><li>For each x and y, G(x,y) = TRUE if xGy, otherwise false.
+
+<blockquote><pre><table border="0" cellspacing="10">
+<tbody><tr><th>A</th><th>&nbsp;</th><th>B</th><th>&nbsp;</th><th>C</th></tr>
+<tr>
+<td><img src="./Graphs_files/Graphs-UndirectedGraph-1.gif"></td>
+<td width="5%"></td>
+<td><img src="./Graphs_files/Graphs-Digraph-2.gif"></td>
+<td width="5%"></td>
+<td><img src="./Graphs_files/Graphs-Weighted-Digraph-1.gif"></td>
+</tr></tbody></table>
+</pre></blockquote>
+
+<table border="0"><tbody><tr><th>Graph A</th><th>&nbsp;</th><th>Graph B</th><th>&nbsp;</th><th>Graph C</th></tr><tr><td>
+<table border="0">
+<tbody><tr><th> </th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th></tr>
+<tr><th>A</th><td width="30" align="center">0</td><td width="30" align="center">1</td><td width="30" align="center">1</td><td width="30" align="center">1</td><td width="30" align="center">0</td><td width="30" align="center">0</td>
+</tr><tr><th>B</th><td width="30" align="center">1</td><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">1</td><td width="30" align="center">0</td>
+</tr><tr><th>C</th><td width="30" align="center">1</td><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">1</td><td width="30" align="center">0</td>
+</tr><tr><th>D</th><td width="30" align="center">1</td><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">0</td>
+</tr><tr><th>E</th><td width="30" align="center">0</td><td width="30" align="center">1</td><td width="30" align="center">1</td><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">1</td>
+</tr><tr><th>F</th><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">1</td><td width="30" align="center">0</td>
+</tr></tbody></table>
+</td>
+<td width="10%">&nbsp;</td>
+<td>
+<table border="0">
+<tbody><tr><th> </th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th></tr>
+<tr><th>A</th><td width="30" align="center">0</td><td width="30" align="center">1</td><td width="30" align="center">1</td><td width="30" align="center">1</td><td width="30" align="center">0</td><td width="30" align="center">0</td>
+</tr><tr><th>B</th><td width="30" align="center">1</td><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">1</td><td width="30" align="center">0</td>
+</tr><tr><th>C</th><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">1</td><td width="30" align="center">0</td>
+</tr><tr><th>D</th><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">0</td>
+</tr><tr><th>E</th><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">1</td><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">1</td>
+</tr><tr><th>F</th><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">0</td>
+</tr></tbody></table>
+</td>
+<td width="10%">&nbsp;</td>
+<td>
+<table border="0">
+<tbody><tr><th> </th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th></tr>
+<tr><th>A</th><td width="30" align="center">0</td><td width="30" align="center">5</td><td width="30" align="center">6</td><td width="30" align="center">4</td><td width="30" align="center">0</td><td width="30" align="center">0</td>
+</tr><tr><th>B</th><td width="30" align="center">3</td><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">4</td><td width="30" align="center">0</td>
+</tr><tr><th>C</th><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">9</td><td width="30" align="center">0</td>
+</tr><tr><th>D</th><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">0</td>
+</tr><tr><th>E</th><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">7</td><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">9</td>
+</tr><tr><th>F</th><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">0</td><td width="30" align="center">0</td>
+</tr></tbody></table>
+</td></tr></tbody></table>
+
+<p>
+<xblockquote>
+In the matrices above, the source node is along the left and the destination node is across the top.
+</xblockquote></p><p>
+Note that for the weighted directed graph above we are using an integer matrix. (Could use other types
+depending on the weights.)
+
+
+</p></li><li>Space required is O(M<sup>2</sup>) as well as algorithms that must access all elements.
+</li><li>A <i>sparse</i> graph has few edges, and a <i>dense</i> graph has many edges.
+<ul>
+<li>Sparse graphs will have many matrix entries of 0.
+</li><li>Dense graphs will have many matrix entries of 1.
+</li></ul>
+</li><li>Determining if two nodes are adjacent is O(1)
+</li><li>The size of the matrix is <b>independent</b> of the number of edges.
+</li><li>An adjacency matrix may be a more desirable representation for dense graphs.
+</li></ul>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<hr width="90%">
+<h2>Adjacency Lists</h2>
+
+<ul>
+<li>A graph G with M nodes represented by an array of M linked lists.
+
+</li><li>For each x and y, if xGy is TRUE, y is on x's list.
+<p>
+
+<table border="0">
+<tbody><tr><th>Unweighted digraph</th><th></th><th>Adjacency list</th></tr>
+<tr>
+<td><img src="./Graphs_files/Graphs-Digraph-2.gif"></td>
+<td width="10%"></td>
+<td><img src="./Graphs_files/Graphs-AdjacencyList-2.gif"></td>
+</tr>
+</tbody></table>
+
+
+
+</p></li><li>Space required is O(M<sup>2</sup>) as well as algorithms that must access all elements.
+</li><li>Density affects the lists:
+<ul>
+<li>Sparse graphs will have shorter lists.
+</li><li>Dense graphs will have longer lists.
+</li></ul>
+</li><li>The order of the nodes in a list may be arbitrary. (A weighted graph may order them by weight)
+</li><li>Determining if two nodes are adjacent is O(M) in the worst case. Could be much less if there
+are few edges.
+</li><li>The number of nodes in the lists is <b>dependent</b> on the number of edges.
+</li><li>An adjacency list may be a more desirable representation for sparse graphs.
+</li></ul>
+
+<p>
+</p><hr width="90%">
+<p>
+
+</p><p class="technote">
+<b>Self-check</b><br>
+</p><ol>
+<li>Draw the adjacency matrix and adjacency list for the following digraph:
+
+<!-- <img src="Graphs-Digraph-3.gif"> -->
+<blockquote><pre><img src="./Graphs_files/Graphs-Digraph-4.gif">
+</pre></blockquote>
+
+
+</li><li>Write C/C++ code to represent the adjacency matrix and list.
+<p>
+</p></li><li>Implement functions that:
+<p>
+</p><ul>
+<!--
+<li>determine if a given graph is <a href="#SYMMETRIC">symmetric</a> (<i>IsSymmetric</i>)
+<blockquote><pre>
+<b>bool</b> IsSymmetric(Graph G, <b>unsigned</b> size);
+</pre></blockquote>
+-->
+<li>give the <a href="https://azrael.digipen.edu/~mmead/www/Courses/CS280/Graphs-1.html#DEGREE">degree</a> of a given node (<i>InDegree</i>)
+<blockquote><pre><b>unsigned</b> InDegree(Graph G, <b>unsigned</b> size, <b>unsigned</b> node);
+</pre></blockquote>
+
+</li><li>determine if two given nodes are <a href="https://azrael.digipen.edu/~mmead/www/Courses/CS280/Graphs-1.html#NOTATION">adjacent</a> (<i>IsAdjacent</i>)
+<blockquote><pre><b>bool</b> IsAdjacent(Graph G, <b>unsigned</b> node1, <b>unsigned</b> node2);
+</pre></blockquote>
+
+</li></ul>
+</li></ol>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">
+Graph Traversals
+</p>
+
+
+Traversing a graph is a form of searching.
+<p>
+</p><ul>
+<li>Unlike tree traversals, there is no "starting" (i.e. root) node in a graph.
+</li><li>Choosing an arbitrary starting node will not guarantee that all nodes are visited.
+</li><li>The search must systematically traverse all of the edges in order to discover all of the vertices.
+</li><li>Although it sounds like a lot of redundant work, it can be accomplished in <i>O(n)</i> time.
+</li></ul>
+
+<p>
+
+An algorithm for traversing a graph (<b>assumes that vertices have a boolean <i>visited</i> field</b>):
+
+</p><blockquote><pre>GraphSearch (<i>G</i> is the graph to search, <i>v</i> is the starting vertex)
+  Put <i>v</i> into container <i>C</i>.
+  While container <i>C</i> is not empty
+    Remove a vertex, <i>x</i>, from container <i>C</i>
+    If <i>x</i> has not been visited
+      Visit <i>x</i>
+      Set x.visited to TRUE
+      For each vertex, <i>w</i>, adjacent to <i>x</i>
+        If <i>w</i> has not been visited
+          Put <i>w</i> into container <i>C</i>
+        End If
+      End For
+    End If
+  End While
+End GraphSearch
+</pre></blockquote>
+
+<p>
+Given this graph, determine the sequence of nodes that are visited from
+different starting nodes.
+</p><p>
+
+</p><blockquote><pre><table border="0"><tbody><tr>
+<td>
+<img src="./Graphs_files/Graphs-Traversal-1.gif">
+</td>
+<td width="20"></td>
+<td>
+Adjacency matrix:
+
+<blockquote><pre>   A  B  C  D  E  F  G  H
+A  0  1  1  1  0  0  0  0
+B  0  0  0  0  1  1  0  0
+C  0  0  0  0  0  0  0  0
+D  0  0  0  0  0  0  1  1
+E  0  0  0  0  0  0  0  0
+F  0  0  0  0  1  0  0  0
+G  1  0  1  0  0  1  0  0
+H  0  0  0  0  0  1  0  0
+</pre></blockquote>
+
+</td>
+</tr></tbody></table>
+</pre></blockquote>
+
+Example 1: Starting at A
+<ul>
+<li>If <i>C</i> is a Stack, one order of traversal is: A, D, H, F, E, G, C, B
+<ul>
+<li>another traversal is: A, B, E, F, C, D, G, H
+</li></ul>
+</li><li>If <i>C</i> is a Queue, one order of traversal is: A, B, C, D, E, F, G, H
+<ul>
+<li>another traversal is: A, D, C, B, H, G, F, E
+</li></ul>
+</li></ul>
+Example 2: Starting at G
+<ul>
+<li>If <i>C</i> is a Stack, one order of traversal is: G, F, E, C, A, D, H, B
+<ul>
+<li>another traversal is: G, A, D, H, F, E, C, B
+</li></ul>
+</li><li>If <i>C</i> is a Queue, one order of traversal is: G, A, C, F, B, D, E, H
+<ul>
+<li>another traversal is: G, F, C, A, E, D, B, H
+</li></ul>
+</li></ul>
+
+<p>
+A weighted graph:
+</p><p>
+
+</p><blockquote><pre><table border="0"><tbody><tr>
+<td>
+<img src="./Graphs_files/Graphs-Traversal-2.gif">
+</td>
+<td width="20"></td>
+<td>
+Adjacency matrix:
+
+<blockquote><pre>   A  B  C  D  E  F  G  H
+A  0  3  9  7  0  0  0  0
+B  0  0  0  0  6  5  0  0
+C  0  0  0  0  0  0  0  0
+D  0  0  0  0  0  0  4  2
+E  0  0  0  0  0  0  0  0
+F  0  0  0  0  8  0  0  0
+G  5  0  1  0  0  4  0  0
+H  0  0  0  0  0  8  0  0
+</pre></blockquote>
+
+</td>
+</tr></tbody></table>
+</pre></blockquote>
+
+Example 3: Starting at A and sorting the adjacency set (maybe with a priority queue):
+<ul>
+<li>Performing a breadth-first traversal, the order is: A, C, D, B, G, H, E, F
+</li><li>Performing a depth-first traversal, the order is: A, C, D, G, F, E, H, B
+</li></ul>
+
+
+Questions:
+<ol>
+<li>Make sure you understand how the sequences above were arrived at.
+</li><li>What is the visited order starting at G? Starting at H?
+</li></ol>
+
+<!--
+Depth first, greatest first, from node G:
+G  A  C  D  H  F  E  B
+
+Breadth first, greatest first, from node G:
+G  A  F  C  D  B  E  H
+
+Starting from H in both cases: H F E
+-->
+
+Notes:
+<ul>
+<li>Depth-first: descendants are visited before siblings.
+</li><li>To traverse depth-first, use a Stack.
+</li><li>Breadth-first: siblings are visited before descendants.
+</li><li>To traverse breadth-first, use a Queue.
+</li><li>For all vertices to be visited from <i>any</i> node, the graph
+must be strongly connected.
+</li><li>For weakly connected graphs, you'd need to exhaustively traverse from every vertex:
+<blockquote><pre>For each vertex, <i>v</i>, in graph, <i>G</i>
+  GraphSearch (<i>G, v</i>)
+End For
+</pre></blockquote>
+</li></ul>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">
+A Simple Implementation
+</p>
+
+
+The graph representation:
+<p>
+
+<table border="0"><tbody><tr>
+<td>
+<pre class="sourcecode"><code><b>const</b> <b>int</b> SIZE = 8;
+<b>typedef</b> <b>bool</b> Graph[SIZE][SIZE];
+
+Graph G = { <font color="#003399"><i>// Adjacency matrix           Adjacency list   </i></font>
+            {0, 1, 1, 1, 0, 0, 0, 0},  <font color="#003399"><i>// A--&gt;B--&gt;C--&gt;D</i></font>
+            {0, 0, 0, 0, 1, 1, 0, 0},  <font color="#003399"><i>// B--&gt;E--&gt;F</i></font>
+            {0, 0, 0, 0, 0, 0, 0, 0},  <font color="#003399"><i>// C</i></font>
+            {0, 0, 0, 0, 0, 0, 1, 1},  <font color="#003399"><i>// D--&gt;G--&gt;H</i></font>
+            {0, 0, 0, 0, 0, 0, 0, 0},  <font color="#003399"><i>// E </i></font>
+            {0, 0, 0, 0, 1, 0, 0, 0},  <font color="#003399"><i>// F--&gt;E</i></font>
+            {1, 0, 1, 0, 0, 1, 0, 0},  <font color="#003399"><i>// G--&gt;A--&gt;C--&gt;F</i></font>
+            {0, 0, 0, 0, 0, 1, 0, 0}   <font color="#003399"><i>// H--&gt;F</i></font>
+          };
+
+<b>struct</b> Vertex
+{
+  <b>char</b> label;      <font color="#003399"><i>// For displaying</i></font>
+  <b>bool</b> visited;    <font color="#003399"><i>// Visited flag</i></font>
+  <b>bool</b> *neighbors; <font color="#003399"><i>// Adjacency "list"</i></font>
+};
+
+Vertex Vertices[SIZE] = {
+                          {<font color="#9933CC">'A'</font>, <b>false</b>, G[0]},
+                          {<font color="#9933CC">'B'</font>, <b>false</b>, G[1]},
+                          {<font color="#9933CC">'C'</font>, <b>false</b>, G[2]},
+                          {<font color="#9933CC">'D'</font>, <b>false</b>, G[3]},
+                          {<font color="#9933CC">'E'</font>, <b>false</b>, G[4]},
+                          {<font color="#9933CC">'F'</font>, <b>false</b>, G[5]},
+                          {<font color="#9933CC">'G'</font>, <b>false</b>, G[6]},
+                          {<font color="#9933CC">'H'</font>, <b>false</b>, G[7]}
+                        };
+
+</code></pre>
+</td>
+<td width="30"></td>
+<td valign="top">
+<img src="./Graphs_files/Graphs-Traversal-1.gif">
+</td>
+</tr></tbody></table>
+</p><p>
+
+<i>Visit</i> operation and search algorithm:
+
+</p><pre class="sourcecode"><code><b>void</b> Visit(Vertex &amp;v)
+{
+  cout &lt;&lt; v.label &lt;&lt; <font color="#9933CC">" "</font>;
+}
+
+<b>void</b> GraphSearchStack1(Vertex *v, Vertex Vertices[])
+{
+  stack&lt;Vertex *&gt; C;
+
+  C.push(v);                           <font color="#003399"><i>// Put v into container C.  </i></font>
+  <b>while</b> (!C.empty())                  <font color="#003399"><i>// While (container C is not empty)</i></font>
+  {
+    Vertex *x = C.top();              <font color="#003399"><i>// Remove a vertex, x, from container C</i></font>
+    C.pop();
+    <b>if</b> (!x-&gt;visited)                  <font color="#003399"><i>// If (x has not been visited)</i></font>
+    {
+      Visit(*x);                      <font color="#003399"><i>// Visit x</i></font>
+      x-&gt;visited = true;              <font color="#003399"><i>// Set x.visited to TRUE</i></font>
+      <b>for</b> (<b>int</b> i = 0; i &lt; SIZE; i++) <font color="#003399"><i>// For each vertex, w, </i></font>
+      {
+        <b>if</b> ((x-&gt;neighbors[i]) &amp;&amp;      <font color="#003399"><i>//  (adjacent to x) and</i></font>
+            (!Vertices[i].visited))   <font color="#003399"><i>//  (has not been visited)</i></font>
+          C.push(&amp;Vertices[i]);       <font color="#003399"><i>// Put w into container C</i></font>
+      }
+    }
+  }
+}
+
+<b>void</b> main()
+{
+  GraphSearchStack1(&amp;Vertices[0], Vertices);
+}
+</code></pre>
+
+Changing the <b>for</b> loop causes the alternative orderings:
+<blockquote><pre><b>for</b> (<b>int</b> i = SIZE - 1; i &gt;= 0; i--)
+</pre></blockquote>
+
+Using a <b>queue</b> instead of a <b>stack</b>:
+
+<pre class="sourcecode"><code><b>void</b> GraphSearchQueue1(Graph G, Vertex *v, Vertex *vertices)
+{
+  <b>int</b> size = <b>sizeof</b>(G[0]);
+  queue&lt;Vertex *&gt; C;        <font color="#003399"><i>// uses a queue</i></font>
+  C.push(v);
+  <b>while</b> (!C.empty())
+  {
+    Vertex *x = C.front();  <font color="#003399"><i>// front() instead of top()</i></font>
+    C.pop();
+    <b>if</b> (!x-&gt;visited)
+    {
+      Visit(*x);
+      x-&gt;visited = true;
+      <b>for</b> (<b>int</b> i = 0; i &lt; size; i++)
+      {
+        <b>if</b> ((x-&gt;neighbors[i]) &amp;&amp;
+            (!vertices[i].visited))
+          C.push(&amp;vertices[i]);
+      }
+    }
+  }
+}</code></pre>
+
+
+<p class="technote">
+<b>Self-check</b>
+</p><ol>
+<li>Implement code to traverse the graph exhaustively.
+</li></ol>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">
+Spanning Trees
+</p>
+
+
+Suppose we have an undirected graph with many edges connecting the vertices. In other words, there are many paths
+from a given vertice to any other vertice. Also suppose that we just want the set of edges that connects all
+of the vertices in the <i>cheapest</i> way.
+<p>
+Given a connected, undirected graph <i>G = (V, E)</i>, a tree that uses the edges, <i>E</i>, from <i>G</i>, and
+contains <b>all</b> of the vertices, <i>V</i>,  is called a <i>spanning tree</i> for <i>G</i>.
+
+</p><ul>
+<li>Named because the tree "spans" the graph.
+</li><li>Since we are dealing with a tree, the set of vertices and edges must be <i>acyclic</i>
+	(i.e. no cycles).
+</li><li>If there are <i>N</i> nodes in the graph, there will be exactly <i>N - 1</i> edges in the tree. (This is one of the definitions of a tree.)
+	The graph will likely have more than <i>N</i> edges.
+</li><li>If the graph is weighted, then there is a cost associated with the spanning tree.
+</li><li>If the cost is minimized, the tree is a <i>minimal spanning tree</i>. More accurately, it
+might be called a <i>minimum-weighted</i> spanning tree. (We are decreasing the cost of the edges in the tree, not the number of edges, which will always be <i>N - 1</i>.)
+</li><li>The trees are also unrooted and unordered, unlike other trees we've been working with.
+</li><li>Used in many situations, especially networking and communications: (<a href="http://en.wikipedia.org/wiki/Spanning_tree_protocol">Spanning Tree Protocol</a>)
+	<ul>
+		<li>May have many routes between computers, but you just want one set that connects everyone in the cheapest way.
+		</li><li>Cheap could mean actual monetary cost or could mean "fastest" (in which case you may want to maximize the cost.)
+	</li></ul>
+</li></ul>
+
+<p>
+There are two well-known algorithms for finding minimum spanning trees from a graph: Prim's algorithm
+and Kruskal's algorithm.
+
+</p><ul>
+<li>Both can be made to run in <i>O(E lg V)</i> time, which is the same as <i>O(N lg N)</i> when the
+graph is sparse (the number of edges is about the same as the number of vertices).
+</li><li>Prim's algorithm can be made to run in time <i>O(E + V lg V)</i>, which is an improvement if
+<i>|V|</i> (the number of vertices) is much smaller than <i>|E|</i> (the number of edges). (The graph is very dense.)
+</li><li>The efficiency of the algorithms depends on the implementation of the "auxiliary" data structures as well as the density of the graphs.
+	<ul>
+	<li><a href="http://en.wikipedia.org/wiki/Prim&#39;s_algorithm#Time_complexity">Prim's performance</a>
+	</li><li><a href="http://en.wikipedia.org/wiki/Kruskal&#39;s_algorithm#Performance">Kruskal's performance</a>
+</li></ul>
+</li><li>If all edges from a node have unique weights, the resulting tree will be unique. (Otherwise, there could be multiple min/max spanning trees.)
+</li><li>Both algorithms are <a href="http://en.wikipedia.org/wiki/Greedy_algorithm"><i>greedy algorithms</i></a>.
+	<ul>
+		<li>Successful: Making change (coins).</li>
+		<li>Unsuccessful: <a href="https://upload.wikimedia.org/wikipedia/commons/8/8c/Greedy-search-path-example.gif">Largest-sum</a>
+			from <a href="https://en.wikipedia.org/wiki/Greedy_algorithm">here</a>.</li>
+	</ul>
+</li></ul>
+
+<p>
+<b>Examples:</b>
+
+</p><p>
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr>
+<th>Original graph</th><th>Embedded tree</th><th>Tree</th>
+</tr>
+<tr>
+<td>
+<blockquote><pre><img src="./Graphs_files/Graphs-MinimalSpanning-0.gif">
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><img src="./Graphs_files/Graphs-MinimalSpanning-1.gif">
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><img src="./Graphs_files/Graphs-MinimalSpanning-2.gif">
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</p><p>
+
+<b>Prim's algorithm using a tree:</b>
+</p><ol>
+<li>Choose any vertex in the graph
+</li><li>Add it to an empty tree
+</li><li>Until all nodes are in the tree
+<ul>
+<li>Choose the edge of least cost that emanates from a node in the tree thus far
+</li><li>Add that edge and vertex to the tree
+</li></ul>
+</li></ol>
+
+Examples:
+<p>
+Starting at node <b>A</b>, the nodes will be added to the tree in this order:
+</p><blockquote>
+<b>A B G H F D C E</b>
+</blockquote>
+
+Starting at node <b>H</b>, the nodes will be added to the tree in this order:
+<blockquote>
+<b>H F D C E B A G</b>
+</blockquote>
+
+<p>
+<a href="http://www-b2.is.tokushima-u.ac.jp/~ikeda/suuri/dijkstra/PrimApp.shtml?demo7">Prim's algorithm</a>
+</p><p>
+<!--
+-->
+
+</p><p class="technote">
+The implementation is left as an exercise for the student.
+</p>
+
+
+<hr width="90%">
+<p>
+
+<b>Kruskal's algorithm using a forest:</b>
+
+<table border="0" cellpadding="5">
+<tbody><tr valign="top">
+<td>
+<ol>
+<li>Construct a forest from the <i>N</i> nodes in the graph
+</li><li>Put the (sorted) edges in a queue
+</li><li>Until there are <i>N - 1</i> edges in the forest (a single tree)
+<ul>
+<li>Extract the "cheapest" edge from the queue
+</li><li>If it will form a cycle, discard it
+</li><li>Otherwise, add to the forest (always joins two trees)
+</li></ul>
+</li></ol>
+</td>
+<td width="30"></td>
+<td>
+<img src="./Graphs_files/Graphs-MinimalSpanning-1.gif">
+</td>
+<td>
+<blockquote>
+Priority queue
+<pre>Edge  Weight
+----  ------
+ C-D     3
+ H-F     4
+ H-D     5
+ D-E     6
+ A-B    10
+ A-G    12
+ B-H    14
+ G-F    15
+ F-E    17
+ A-F    18
+ B-C    22
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</p><p>
+
+The edges will be added in this order:
+</p><blockquote><pre><b>C-D  H-F  H-D  D-E  A-B  A-G  B-H</b>
+</pre></blockquote>
+
+Changing a few weights: <tt>  A-B(10 to 13), G-F(15 to 7) , D-E(6 to 20)</tt>
+
+<table border="0" cellpadding="5" cellspacing="5">
+<tbody><tr><th>New graph</th><th>Priority queue</th><th width="20"></th><th>Graph with cycle</th><th>Embedded tree</th></tr>
+<tr valign="top">
+<td>
+<img src="./Graphs_files/Graphs-Kruskal-2.png">
+</td>
+<td>
+<pre>Edge  Weight
+----  ------
+ C-D     3
+ H-F     4
+ H-D     5
+ G-F     7
+ A-G    12
+ A-B    13
+ <font color="red"><b>B-H    14</b></font>
+ F-E    17
+ A-F    18
+ D-E    20
+ B-C    22
+</pre>
+</td>
+<td></td>
+<td>
+<img src="./Graphs_files/Graphs-Kruskal-5.png">
+</td>
+<td>
+<img src="./Graphs_files/Graphs-Kruskal-3.png">
+</td>
+</tr></tbody></table>
+<p>
+
+</p><p>
+
+The embedded tree:
+
+</p><blockquote>
+<table border="0" cellspacing="20" cellpadding="0">
+<tbody><tr><th>Tree alone</th><th></th><th>Another view</th><th></th><th>Another view</th></tr>
+<tr>
+<td>
+<img src="./Graphs_files/Graphs-Kruskal-4.png">
+</td>
+<td width="20"></td>
+<td>
+<img src="./Graphs_files/Graphs-Kruskal-6.png">
+</td>
+<td width="20"></td>
+<td>
+<img src="./Graphs_files/Graphs-Kruskal-7.png">
+</td>
+</tr>
+</tbody></table>
+</blockquote>
+<p>
+
+
+There is something that could make the implementation (as described above) of Kruskal's algorithm inefficient.
+(<a href="http://en.wikipedia.org/wiki/Disjoint-set_data_structure">Union-Find</a> algorithms).
+<!--
+Finding cycles. An efficient way, O(n), to detect cycles is to keep track of which
+nodes are in which component. (The forest is comprised of components). Just query
+each component to see if the to-be-added node is in it. If both nodes (for the new edge)
+are in the same component, there is a cycle. In the diagram, we'd find that B and H
+are in the same component, so there is a cycle.
+
+Each new edge will merge two components into one, so all nodes are now in the same component.
+
+There are others known collectively as union-find algorithms. The textbook discusses this on
+page 11.
+-->
+
+</p><p>
+<a href="http://www-b2.is.tokushima-u.ac.jp/~ikeda/suuri/kruskal/KruskalApp.shtml?demo5">Kruskal's algorithm</a>
+<!--
+-->
+
+
+
+</p><p class="technote">
+The implementation is left as an exercise for the student.
+</p>
+
+More <a href="http://en.wikipedia.org/wiki/Spanning_tree">Spanning tree info</a>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">
+A Shortest Path Algorithm
+</p>
+
+
+Example graph and adjacency matrix:
+<p>
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Graph</th><th>Adjacency matrix</th><th></th><th>Paths</th></tr>
+<tr>
+
+<td>
+<blockquote><pre><img src="./Graphs_files/Graphs-ShortestPath-0.gif">
+</pre></blockquote>
+</td>
+<td>
+
+<p>
+<table border="0">
+<tbody><tr><th> </th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th></tr>
+<tr><th>1</th><td width="30" align="center">0</td><td width="30" align="center">3</td><td width="30" align="center">&#8734;</td><td width="30" align="center">&#8734;</td><td width="30" align="center">&#8734;</td><td width="30" align="center">5</td></tr>
+<tr><th>2</th><td width="30" align="center">&#8734;</td><td width="30" align="center">0</td><td width="30" align="center">7</td><td width="30" align="center">&#8734;</td><td width="30" align="center">&#8734;</td><td width="30" align="center">10</td></tr>
+<tr><th>3</th><td width="30" align="center">&#8734;</td><td width="30" align="center">&#8734;</td><td width="30" align="center">0</td><td width="30" align="center">5</td><td width="30" align="center">1</td><td width="30" align="center">&#8734;</td></tr>
+<tr><th>4</th><td width="30" align="center">&#8734;</td><td width="30" align="center">&#8734;</td><td width="30" align="center">&#8734;</td><td width="30" align="center">0</td><td width="30" align="center">6</td><td width="30" align="center">&#8734;</td></tr>
+<tr><th>5</th><td width="30" align="center">&#8734;</td><td width="30" align="center">&#8734;</td><td width="30" align="center">&#8734;</td><td width="30" align="center">&#8734;</td><td width="30" align="center">0</td><td width="30" align="center">7</td></tr>
+<tr><th>6</th><td width="30" align="center">&#8734;</td><td width="30" align="center">&#8734;</td><td width="30" align="center">8</td><td width="30" align="center">2</td><td width="30" align="center">&#8734;</td><td width="30" align="center">0</td></tr>
+</tbody></table>
+</p></td>
+
+<td width="30"></td>
+
+<td>
+<pre>   Nodes      Cost
+------------------
+1 2 3 4 5      21
+1 2 3 5        <span style="padding: 0pt;background-color: black;border-style:solid;border-color: black;border-width:0px"><font color="white">11</font></span>
+1 2 6 3 5      22
+1 2 6 3 4 5    32
+1 2 6 4 5      21
+1 6 3 5        14
+1 6 3 4 5      24
+1 6 4 5        13
+</pre>
+</td>
+
+
+</tr>
+</tbody></table>
+
+<br>
+
+There are many paths from <b>1</b> to <b>5</b>. How do we find the <i>shortest</i>?
+
+</p><p>
+</p><blockquote><pre><img src="./Graphs_files/Graphs-ShortestPath-1.gif">
+</pre></blockquote>
+
+
+<p>
+</p><hr width="90%">
+<p>
+
+
+<b>Dijkstra's Algorithm</b>
+</p><p>
+
+Given a <i>source</i> node, we can find the shortest distance to every other node
+in a graph.
+
+</p><blockquote>
+<table border="0" cellspacing="5" cellpadding="15">
+<tbody><tr><th>Undirected Weighted Graph</th><th>Paths and Costs From <i>A</i></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><img src="./Graphs_files/Graphs-Dijkstra-Demo-1.png">
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>To    Path          Cost
+------------------------
+A      A              0
+B      A-B           13
+C      A-B-D-C       30
+D      A-B-D         25
+E      A-B-D-C-E     34
+F      A-F           11
+
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+
+Pseudocode for Dijkstra's algorithm:
+
+<blockquote><pre>Choose a node to be the <i>source</i> or starting point.
+Initialize source to 0 cost and mark as evaluated.
+Initialize all nodes to infinite cost from the source.
+
+For each node, <i>y</i>, adjacent to <i>source</i>
+  1. <i>Relax</i> the node. That is, set <i>y</i>'s cost to the cost of all edges from <i>source</i> to <i>y</i>.
+  2. Place <i>y</i> into a priority queue based on its total cost. (Lower is better)
+  3. Add source node as predecessor of <i>y</i>.
+End For
+
+While there are nodes in the graph that haven't been evaluated
+  Remove a node, <i>x</i>, from the PQ (lowest total cost)
+  If the node has already been evaluated
+    Discard the node
+    Go to top of while 
+  Else
+    Mark <i>x</i> as evaluated.
+    For each neighbor, <i>y</i>, of <i>x</i>
+      Relax <i>y</i>
+      If new cost to reach <i>y</i> is less
+        Update list of nodes (path) to <i>y</i> from source.
+        Place <i>y</i> in the PQ.
+      End If
+    End For
+  End If
+End While
+</pre></blockquote>
+
+Notes:
+<ul>
+<li>Dijkstra's algorithm only works for positive weights.
+</li><li>Runtime complexity is <i>O(m log n)</i> where <i>m</i> is the number of edges
+and <i>n</i> is the number of nodes.
+</li><li>The algorithm is also a <i>dynamic algorithm</i>, meaning we keep the previous results for use with future calculations. (Think
+	about the Fibonacci algorithm and the naive recursive implementation which didn't use dynamic programming.)
+</li><li>When the graph has the maximum number of edges, complexity is <i>O(n<sup>2</sup>)</i>.
+(The maximum number of edges is <i>m = n<sup>2</sup></i>).
+</li><li>To find the shortest path for <i>all</i> nodes, simply run the algorithm once
+for each node.
+</li><li>Other related algorithms are Floyd's algorithm (all-pairs shortest-paths using
+an adjacency matrix) and Warshall's algorithm (simply determines if a path exists using
+an adjacency matrix). This also works with negative weights.
+</li></ul>
+
+<p>
+<img src="./Graphs_files/dijkstra.gif">
+</p><p>
+<a href="http://www-b2.is.tokushima-u.ac.jp/~ikeda/suuri/dijkstra/DijkstraApp.shtml?demo10">Dijkstra's algorithm</a><br>
+
+<!--<a href="http://ciips.ee.uwa.edu.au/~morris/Year2/PLDS210/dijkstra.html">Another one</a>-->
+</p><p>
+
+
+<!-- ********************************************************** -->
+<!-- ********************************************************** -->
+</p><hr width="90%">
+
+<blockquote><pre></pre></blockquote>
+
+</body></html>

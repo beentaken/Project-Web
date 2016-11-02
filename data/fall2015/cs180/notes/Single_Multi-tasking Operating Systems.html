@@ -1,0 +1,1817 @@
+
+<!-- saved from url=(0076)http://azrael.digipen.edu/~mmead/www/Courses/CS180/Single-Multi-task-OS.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./Single_Multi-tasking Operating Systems_files/new.css">
+<title>Single/Multi-tasking Operating Systems</title>
+
+<style type="text/css">
+
+</style> 
+
+</head>
+
+<body>  
+
+<center><h1>
+Single-tasking vs. Multi-tasking Operating Systems
+</h1></center>
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<p class="sectionheader">
+Single-tasking Operating Systems
+</p>
+
+<span id="wpurl"><a class="wplabel">DOS</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/DOS">DOS</a> was one of the most popular single-tasking (single-user) operating systems. Some of its "features":
+
+<ul>
+  <li>Single user system</li>
+  <li>One process at a time will run</li>
+  <li>No concept of "multiple users", no "administrator" or "root" account</li>
+  <li>The user can use any and all resources on the computer</li>
+  <li>No protection between the OS and user programs</li>
+  <li>Files have no "ownership"</li>
+  <li>Could "fake" multi-processing with <span id="wpurl"><a class="wplabel">TSR</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Terminate_and_Stay_Resident">TSR</a> (<b>T</b>erminate and <b>S</b>tay <b>R</b>esident) programs. (These were really cool!)</li>
+  <li>The OS had two portions, the resident portion and the transient portion</li>
+  <li>Misbehaved processes can "lock-up" the entire system</li>
+  <li>ALWAYS save your work before compiling/running a program!</li>
+</ul>
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Before process</th><th></th><th>After process</th></tr>
+<tr valign="top">
+<td>
+<img src="./Single_Multi-tasking Operating Systems_files/MSDOS-before-2.png">
+</td>
+<td width="50"></td>
+<td>
+<img src="./Single_Multi-tasking Operating Systems_files/MSDOS-after-2.png">
+</td>
+</tr></tbody></table>
+</blockquote>
+
+
+Other notes:
+
+<ul>
+	<li>In MS-DOS, the interfaces and levels of functionality are not well separated.</li>
+	<li>For example, application programs are able to access the basic I/O routines to write directly to the display and disk drives.</li>
+	<li>Such freedom leaves MS-DOS vulnerable to malicious programs, causing the entire system to crash when the user program fails.</li>
+<li>MS-DOS was also limited by the hardware since the <span id="wpurl"><a class="wplabel">Intel 8088</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Intel_8088">Intel 8088</a> CPU for which it was written 
+		doesn't provide dual mode (supervisor and user).</li>
+	<li>MS-DOS layer structure figure.</li>
+	<p>
+	<img border="0" src="./Single_Multi-tasking Operating Systems_files/MSDOS-structure.png">
+	</p><p>
+	
+	
+</p></ul>
+
+<p class="sectionheader">
+Multi-tasking Operating Systems
+</p>
+
+<b><span id="wpurl"><a class="wplabel">UNIX</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Unix">UNIX</a> Example</b>
+<ul>
+	<li>UNIX consists of two separable parts:</li>
+	<ul>
+		<li>The kernel</li>
+		<li>The system programs</li>
+	</ul>
+</ul>
+
+	<p></p><blockquote>
+	
+<table border="0">
+	<tbody><tr><td><img src="./Single_Multi-tasking Operating Systems_files/OS-layout-2.png"></td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne ©2009&nbsp;&nbsp;</span></td></tr>
+</tbody></table>
+
+</blockquote>
+	<br>
+	<p>
+
+
+Details
+</p><ul>
+	<li>The kernel provides the following functions through the system calls:</li>
+	<ul>
+		<li>File system management</li>
+		<li>CPU scheduling</li>
+		<li>Memory management</li>
+		<li>Many other operating system functions.</li>
+		<!--
+		<li>In all, there are a lot of functionalities combined in one layer.</li>
+		<li>In addition, the kernel is further separated into a series of interfaces and devices.</li>
+	-->
+	</ul>
+	<li>Layers or <span id="wpurl"><a class="wplabel">Rings</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Protection_ring">Rings</a></li>
+	<ul>
+		<li>The major difficulty with the layered approach involves the appropriate definition of the various layers.</li>
+		<li>Careful planning is necessary since a layer can use only those layers that are at a lower level.</li>
+		<!--
+		<li>For example:</li>
+		<ul>
+			<li>Normally the disk device driver would be above the CPU scheduler, since the driver may need to wait for I/O and the CPU can be rescheduled during this time.</li>
+			<li>However, if virtual memory is implemented, information needs to be swapped from the disk to the memory according to the CPU scheduler, which requires the disk driver to be below the CPU scheduler.</li>
+		</ul>
+			<li>Layered implementation tends to be less efficient than other types.</li>
+			<li>Another example:</li>
+			<ul>
+				<li>A user program executes an I/O operation,</li>
+				<li>It executes a system call that is trapped to the I/O layer,</li>
+				<blockquote>
+				<li>which then calls the memory management layer,</li>
+				<li>which then calls the CPU scheduling layer,</li>
+				<li>which is then passed to the hardware.</li>
+			</blockquote>
+		-->
+				<li>In addition at each layer:</li>
+				<ul>
+					<li>The parameters may be modified, and</li>
+					<li>Data may need to be passed.</li>
+					<li>Consequently, each layer adds an overhead to the system call,</li>
+					<li>Which results in a longer execution time.</li>
+			</ul>
+		</ul>
+	</ul>
+	
+	<p>
+</p><blockquote>
+<table border="0">
+	<tbody><tr><td><img border="0" src="./Single_Multi-tasking Operating Systems_files/OS-RingLayers.png"></td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne ©2009&nbsp;&nbsp;</span></td></tr>
+</tbody></table>
+</blockquote>
+
+
+
+			
+<b><span id="wpurl"><a class="wplabel">Microkernels</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Microkernel">Microkernels</a></b>
+<ul>
+	<li>Moves as much as possible from the kernel into "user" space.</li>
+	<li>Generally less than 10,000 lines of code for the kernel.</li>
+	<ul>
+		<li>Monolithic kernels can be tens of millions of lines of code.</li>
+	</ul>
+	<li><span id="wpurl"><a class="wplabel">Interprocess communication </a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Inter-process_communication">Interprocess communication</a> takes place between user modules using <span id="wpurl"><a class="wplabel">message passing</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Message_passing">message passing</a>.</li>
+		<p>
+</p><blockquote>
+		<img border="2" src="./Single_Multi-tasking Operating Systems_files/POSIX-structure.png">
+</blockquote>
+		<p>
+
+	</p><li>Benefits:</li>
+	<ul>
+		<li>Easier to extend a microkernel.</li>
+		<li>New services are added to user space.</li>
+		<li>Consequently, the kernel does not need to be modified.</li>
+		<li>Easier to port the operating system to new architectures.</li>
+		<li>Since the kernel is smaller, fewer modifications need to be performed.</li>
+		<li>More reliable (less code is running in kernel mode)</li>
+		<li>Most services are running as user processes.</li>
+		<li>When a service fails, the rest of the operating system remains untouched.</li>
+		<li>More secure (again, less code is running in kernel mode)</li>
+	</ul>
+	<li>Main drawback: performance</li>
+		<!--
+		<li>Many of the contemporary operating systems have used the microkernel approach.</li>
+		<li><span id=wpurl><a class=wplabel>Digital UNIX</a></span><a class=wplink href="http://en.wikipedia.org/wiki/Digital_UNIX">Digital UNIX</a> provides a UNIX interface to the user, but it is implemented with a <span id=wpurl><a class=wplabel>Mach</a></span><a class=wplink href="http://en.wikipedia.org/wiki/Mach_kernel">Mach</a> kernel.</li>
+		<li>The Mach operating system maps UNIX system calls into messages to the appropriate user level services.</li>
+	-->
+		<li>The <span id="wpurl"><a class="wplabel">MacOS X</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/MacOSX">MacOS X</a> system is also based 
+			<span id="wpurl"><a class="wplabel">Darwin</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Darwin_(operating_system)">Darwin</a> and
+			<span id="wpurl"><a class="wplabel">XNU</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/XNU">XNU</a> 
+			(also <span id="wpurl"><a class="wplabel">BSD</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Berkeley_Software_Distribution">BSD</a> 
+			and <span id="wpurl"><a class="wplabel">Mach</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Mach_(kernel)">Mach</a> )
+			
+			which is a hybrid monolithic/microkernel achitecture. A very simple diagram is shown below:</li>
+
+	<p>
+<table border="0">
+	<tbody><tr><td><img border="0" src="./Single_Multi-tasking Operating Systems_files/MacOSX-layout-1.png"></td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne ©2009&nbsp;&nbsp;</span></td></tr>
+</tbody></table>
+
+	</p><p>
+			
+			
+		</p><li><span id="wpurl"><a class="wplabel">Windows NT</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Windows_NT">Windows NT</a> uses a hybrid architecture:</li>
+		<ul>
+			<li>Layered structure, and</li>
+			<li>Microkernel approach.</li>
+		</ul>
+		<li>Windows NT is designed to run various types of applications for platforms like:</li>
+		<ul>
+			<li><span id="wpurl"><a class="wplabel">OS/2</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/OS/2">OS/2</a></li>
+			<li><span id="wpurl"><a class="wplabel">POSIX</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/POSIX">POSIX</a></li>
+			<li><span id="wpurl"><a class="wplabel">Win32</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Win32">Win32</a></li>
+		</ul>
+		<li>Windows NT provides a server that runs in user space for each application type.</li>
+		<li>The kernel coordinates the message passing between client applications and application servers.</li>
+		<li>A very brief diagram of the Windows NT operating system:
+		<p>
+		<img border="2" src="./Single_Multi-tasking Operating Systems_files/WindowsNT-structure.png">
+		</p><p>
+		</p></li><li>More detailed look:</li>
+		<p>
+		<img border="2" src="./Single_Multi-tasking Operating Systems_files/500px-Windows_2000_architecture.svg.png"><br>
+		<font size="1">http://en.wikipedia.org/wiki/File:Windows_2000_architecture.svg</font>
+		</p><p>
+		
+
+	</p></ul>
+<br>
+
+<li>By the way, <span id="wpurl"><a class="wplabel">Windows NT</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Windows_NT">Windows NT</a> 
+is the basis for all NT operating systems (2000, Vista, 7, 8, 10, etc.) Previous versions of Windows (Windows 3.0, Windows 95, 98) were different (internally).
+And, yes, Windows NT really did start at version 3.1!
+
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="10">
+<tbody><tr><th>Marketing Name</th><th>Internal Name</th><th>Date Released</th><th>Build No.</th></tr>
+
+<tr align="center"><td>Windows NT 3.1</td>        <td>NT 3.1</td> <td>July 1993</td>     <td>528</td></tr>
+<tr align="center"><td>Windows NT 3.5</td>        <td>NT 3.5</td> <td>September 1994</td><td>807</td></tr>
+<tr align="center"><td>Windows NT 3.51</td>       <td>NT 3.51</td><td>May 1995</td>      <td>1057</td></tr>
+<tr align="center"><td>Windows NT 4</td>          <td>NT 4.0</td> <td>July 1996</td>     <td>1381</td></tr>
+<tr align="center"><td>Windows 2000</td>          <td>NT 5.0</td> <td>December 1999</td> <td>2195</td></tr>
+<tr align="center"><td>Windows XP</td>            <td>NT 5.1</td> <td>August 2001</td>   <td>2600</td></tr>
+<tr align="center"><td>Windows Server 2003</td>   <td>NT 5.2</td> <td>March 2003</td>    <td>3790</td></tr>
+<tr align="center"><td>Windows Vista</td>         <td>NT 6.0</td> <td>January 2007</td>  <td>6000</td></tr>
+<tr align="center"><td>Windows Server 2008</td>   <td>NT 6.0</td> <td>March 2008</td>    <td>6001</td></tr>
+<tr align="center"><td>Windows 7</td>             <td>NT 6.1</td> <td>October 2009</td>  <td>7600</td></tr>
+<tr align="center"><td>Windows Server 2008 R2</td><td>NT 6.1</td> <td>October 2009</td>  <td>7600</td></tr>
+<tr align="center"><td>Windows 8</td>             <td>NT 6.2</td> <td>October 2012</td>  <td>9200</td></tr>
+<tr align="center"><td>Windows Server 2012</td>   <td>NT 6.2</td> <td>September 2012</td><td>9200</td></tr>
+<tr align="center"><td>Windows 8.1</td>             <td>NT 6.3</td> <td>October 2013</td>  <td>9600</td></tr>
+<tr align="center"><td>Windows Server 2012 R2</td>   <td>NT 6.3</td> <td>October 2013</td><td>9600</td></tr>
+<tr align="center"><td>Windows 10</td>   <td>NT 10.0</td> <td>July 29, 2015</td><td>10240</td></tr>
+<tr align="center"><td>Windows Server 2016</td>   <td>NT 10.0</td> <td>TBD</td><td>TBD</td></tr>
+</tbody></table>
+</blockquote>
+
+
+
+<p>
+
+<b>Users, groups, and file privileges</b>
+</p><ul>
+  <li>Each user of the computer has a <i>username</i> and <i>password.</i></li>
+  <li>There is one special user, the <i>super user</i>.</li>
+    <ul>
+      <li>In <span id="wpurl"><a class="wplabel">UNIX</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Unix">UNIX</a>, this is usually named <i><span id="wpurl"><a class="wplabel">root</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Root_(Unix)">root</a></i></li>
+      <li>In <span id="wpurl"><a class="wplabel">Windows NT</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Windows_NT">Windows NT</a>, this is usually <i><span id="wpurl"><a class="wplabel">Administrator</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Windows_administrator#Windows_NT">Administrator</a></i></li>
+    </ul>
+  <li>Each user is assigned their own separate disk space.</li>
+  <li>By default, one user cannot access the data of another user.</li>
+  <li>On UNIX-style systems, a user may belong to one or more <i>groups</i></li>
+  <ul>
+    <li>Allows sharing of data among members of the same group</li>
+    <li>Prevents access to data by users that are not group members</li>
+  </ul>
+  <li>On UNIX systems, every file and every directory (folder) has different privilege levels for <i><b>u</b>ser</i>, <i><b>g</b>roup</i>, and <i><b>o</b></i>ther. 
+    (Somtimes referred to as <i>owner</i>, <i>group</i>, and <i>world</i>.)</li>
+    
+  <li><span id="wpurl"><a class="wplabel">File privileges</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/File_system_permissions">File privileges</a> control whether or not a user has access to a file or directory and what type of access:</li>
+  <ul>
+    <li>read access</li>
+    <li>write access</li>
+    <li>execute access</li>
+    <li>any combination of these</li>
+    <li>On UNIX-based systems, these privileges are set by the <span id="wpurl"><a class="wplabel">chmod</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Chmod">chmod</a> command. (<a href="http://catcode.com/teachmod/">chmod tutorial</a>) </li>
+    <li>UNIX example:</li><p>
+
+<table border="1" cellspacing="0" cellpading="10">
+<tbody><tr bgcolor="black"><td bgcolor="black"><font color="white">
+<pre>  drwxrwx--- 2 jason users 4096 2011-01-14 21:57 <font color="#0066FF">mydir</font>
+  -rw-r----- 2 jason users  844 2011-04-02 02:45 myfile  
+  -rwxr-x--- 2 jason users 9198 2008-03-04 09:18 myprogram  
+  -rw-r--r-- 1 jason jason  684 2010-03-22 11:17 noshare1  
+  -rw------- 1 jason users   92 2011-01-30 07:36 noshare2  
+  drwxr-xr-x 2 root  users 4096 2008-10-04 20:30 <font color="#0066FF">share</font>
+</pre></font>
+</td></tr></tbody></table>
+
+  </p></ul>
+
+  
+  <li>privilege info: [user] [group] [other] </li>
+    <ul>
+      <li><tt>d</tt> = directory</li>
+      <li><tt>l</tt> = symbolic link (lowercase 'L')</li>
+      <li><tt>r</tt> = readable</li>
+      <li><tt>w</tt> = writable</li>
+      <li><tt>x</tt> = executable</li>
+    </ul>
+  <li>general form (basic):</li>
+  <ul>
+  	<pre><b>chmod</b> [ugoa][+-=][rwx]</pre>
+  </ul>
+  <!--
+  <li>general form (copying):</li>
+  <ul>
+  	<pre><b>chmod</b> [ugoa][+-=][u|g|o]</pre>
+  </ul>
+-->
+</ul> 
+  
+<b>Modes of Operation</b>
+<ul>
+  <li>OS operates in two modes</li>
+  <ul>
+    <li><span id="wpurl"><a class="wplabel">Privileged mode</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Kernel_mode#Supervisor_mode">Privileged mode</a>(a.k.a, kernel, protected, or supervisor mode)</li>
+    <ul>
+      <li>Used by the OS for system tasks, such as I/O</li>
+      <li>Interrupts are handled in privileged mode. (An interrupt is an asynchronous notification that something needs attention.)</li>
+    </ul>
+    <li><span id="wpurl"><a class="wplabel">User mode</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/User_mode">User mode</a></li>
+    <ul>
+      <li>User tasks are executed in this mode</li>
+      <li>User cannot cannot switch to privileged mode</li>
+      <li>User must request system (privileged) tasks be performed</li>
+    </ul>
+  </ul>
+  <li>Only OS can switch between modes</li>
+  <li>Mode is hardware (CPU) based</li>
+</ul>
+
+<b>Memory protection</b>
+<ul>
+  <li>Protection is needed to prevent a user task from modifying the OS.</li>
+  <li>OS assigns each user task a segment of memory.</li>
+  <li>In user mode, a task can only access the assigned memory.</li>
+  <li>Access checking is done in hardware.</li>
+  <li>If a user task attempts to access memory outside the assigned segment, a <i><span id="wpurl"><a class="wplabel">segmentation fault</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Segmentation_fault">segmentation fault</a></i> (a segfault, for short) is generated.</li>
+  <li>Protection experiment #1: (<tt>fault1.c</tt>)</li>
+
+
+<blockquote><pre></pre></blockquote>
+<pre class="sourcecode"><code><font color="990099">#include &lt;stdio.h&gt;  /* printf      */</font>
+<font color="990099">#include &lt;stdlib.h&gt; /* rand, srand */</font>
+<font color="990099">#include &lt;time.h&gt;   /* time        */</font>
+
+<b>int</b> main(<b>void</b>) 
+{
+  srand(time(0));
+  <b>while</b> (1) 
+  {
+    <b>int</b> x = 0;
+    x = *(&amp;x + rand());
+    printf(<font color="#9933CC">"%i\n"</font>, x);
+  }
+  <b>return</b> 0;
+} 
+</code></pre>
+
+<li>Build and execute:</li>
+<blockquote><pre>$ gcc -ansi -pedantic -Wall -Wextra -g fault1.c 
+$ ./a.out
+Segmentation fault
+</pre></blockquote>
+
+<li>Run under <b>valgrind</b> (requires <tt>-g</tt> during compile to get source line number)</li>
+<blockquote><pre>$ valgrind -q --tool=memcheck ./a.out
+
+==27396== Invalid read of size 4
+==27396==    at 0x4005FA: main (fault1.c:11)                                                                         
+==27396==  Address 0x9fc5a981c is not stack'd, malloc'd or (recently) free'd
+==27396== 
+==27396== 
+==27396== Process terminating with default action of signal 11 (SIGSEGV)
+==27396==  Access not within mapped region at address 0x9FC5A981C
+==27396==    at 0x4005FA: main (fault1.c:11)
+==27396==  If you believe this happened as a result of a stack
+==27396==  overflow in your program's main thread (unlikely but
+==27396==  possible), you can try to increase the size of the
+==27396==  main thread stack using the --main-stacksize= flag.
+==27396==  The main thread stack size used in this run was 8388608.
+Segmentation fault
+</pre></blockquote>
+
+
+<li>Protection experiment #2: (<tt>fault2.c</tt>)</li>
+
+<pre class="sourcecode"><code><font color="990099">#include &lt;stdio.h&gt;  /* printf */</font>
+
+<b>int</b> main(<b>void</b>) 
+{
+  <b>int</b> count = 1;
+  <b>while</b> (1) 
+  {
+    <b>char</b> x = 0;
+    x = *(&amp;x + count);
+    printf(<font color="#9933CC">"%i, %p\n"</font>, count, &amp;x + count);
+    count++;
+  }
+  <b>return</b> 0;
+}
+</code></pre>
+
+<blockquote><pre>$ gcc -ansi -pedantic -Wall -Wextra -g fault2.c 
+$ ./a.out
+[ thousands of lines deleted ]
+6250, 0x7fffea6a6ff9
+6251, 0x7fffea6a6ffa
+6252, 0x7fffea6a6ffb
+6253, 0x7fffea6a6ffc
+6254, 0x7fffea6a6ffd
+6255, 0x7fffea6a6ffe
+6256, 0x7fffea6a6fff
+Segmentation fault
+</pre></blockquote>
+</ul>
+
+
+<b><span id="wpurl"><a class="wplabel">Time Sharing</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Time-sharing">Time Sharing</a></b>
+<ul>
+	<li>To allow multiple tasks to run at once, each task is given a <span id="wpurl"><a class="wplabel">time slice</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Time_slice#Time_slice">time slice</a>: the task is executed for that period of time, after which the next task is executed</li>
+	<li>OS uses a hardware timer for the time slices.</li>
+	<ul>
+	  <li>OS sets the time interval and starts the timer.</li>
+	  <li>OS starts/resumes execution of user task.</li>
+	  <li>The timer generates an interrupt when time expires.</li>
+	  <li>OS regains control.</li>
+	</ul>
+	<li>Time sharing experiment: (<tt>timeshare.c</tt>)</li>
+<blockquote><pre><b>int</b> main(<b>void</b>)
+{
+  <b>while</b> (1)
+    ;
+
+  <b>return</b> 0;
+}
+</pre></blockquote>
+	
+	<li>On a single-task OS, this will lock up the computer.</li>
+	<li>On a multi-task (preemptive) OS, this will not lock up the computer, although the task will have to be terminated manually.</li>
+	<li>Use <span id="wpurl"><a class="wplabel">top</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Top_(software)">top</a>/<span id="wpurl"><a class="wplabel">htop</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Htop">htop</a> or <span id="wpurl"><a class="wplabel">Windows Task Manager</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Windows_Task_Manager">Windows Task Manager</a> to see the process using lots of CPU time</li>
+	<ul>
+		<li><a href="http://technet.microsoft.com/en-us/sysinternals">Sysinternals</a> has all the utilities to explore a Windows system.</li>
+	</ul>
+	<li>Multi-core CPUs handle these "problems" very easily.</li>
+	<ul>
+		<li>Use <tt>top/htop</tt> to see the processes change cores (processor affinity) while running.</li>
+	</ul>
+	
+</ul>
+<a name="MULTIPLE_TASKS">
+<b>Multiple tasks and memory</b>
+</a>
+<ul>
+	<li>Each task is allocated a segment of memory</li>
+	<ul>
+		<li><span id="wpurl"><a class="wplabel">Code segment</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Text_segment">Code segment</a> (also called the Text segment)</li>
+		<li><span id="wpurl"><a class="wplabel">Data segment</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Data_segment">Data segment</a> (including <span id="wpurl"><a class="wplabel">BSS</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/.bss">BSS</a> and Heap)</li>
+		<li>Stack segment</li>
+	</ul>
+	<li>Each task is allocated <i>virtual</i> I/O resources</li>
+	<ul>
+		<li>OS must manage the I/O resources, which are shared by all tasks</li>
+	</ul>
+	<li>Memory segment experiment: (<tt>segment.c</tt>)</li>
+	
+<blockquote><pre><font color="990099">#include &lt;stdio.h&gt; /* printf */</font>
+
+<b>int</b> g_initialized1 = 10; <font color="990099">/* DATA segment */</font>
+<b>int</b> g_initialized2 = 12; <font color="990099">/* DATA segment */</font>
+<b>int</b> g_initialized3 = 14; <font color="990099">/* DATA segment */</font>
+
+<b>int</b> g_uninitialized1;    <font color="990099">/* BSS segment  */</font>
+<b>int</b> g_uninitialized2;    <font color="990099">/* BSS segment  */</font>
+<b>int</b> g_uninitialized3;    <font color="990099">/* BSS segment  */</font>
+
+<b>int</b> main(<b>void</b>) <font color="990099">/* CODE segment  */</font>
+{
+  <b>int</b> local_variable = 5;             <font color="990099">/* STACK segment */</font>
+  <b>static</b> <b>int</b> local_uninit_static;    <font color="990099">/* BSS segment   */</font>
+  <b>static</b> <b>int</b> local_init_static = 10; <font color="990099">/* DATA  segment */</font>
+  
+  printf(<font color="#9933CC">" Initialized1 global data is in the DATA segment = %p\n"</font>, &amp;g_initialized1);
+  printf(<font color="#9933CC">" Initialized2 global data is in the DATA segment = %p\n"</font>, &amp;g_initialized2);
+  printf(<font color="#9933CC">" Initialized3 global data is in the DATA segment = %p\n"</font>, &amp;g_initialized3);
+  printf(<font color="#9933CC">"Uninitialized1 global data is in the BSS segment = %p\n"</font>, &amp;g_uninitialized1);
+  printf(<font color="#9933CC">"Uninitialized2 global data is in the BSS segment = %p\n"</font>, &amp;g_uninitialized2);
+  printf(<font color="#9933CC">"Uninitialized3 global data is in the BSS segment = %p\n"</font>, &amp;g_uninitialized3);
+  printf(<font color="#9933CC">"            Code for main is in the CODE segment = %p\n"</font>, &amp;main);
+  printf(<font color="#9933CC">"          Code for printf is in the CODE segment = %p\n"</font>, &amp;printf);
+  printf(<font color="#9933CC">"           Code for scanf is in the CODE segment = %p\n"</font>, &amp;scanf);
+  printf(<font color="#9933CC">"   Local non-static data is in the STACK segment = %p\n"</font>, &amp;local_variable);
+  printf(<font color="#9933CC">"  Local uninit static data is in the BSS segment = %p\n"</font>, &amp;local_uninit_static);
+  printf(<font color="#9933CC">"   Local init static data is in the DATA segment = %p\n"</font>, &amp;local_init_static);
+
+  <b>return</b> 0;
+}
+</pre></blockquote>
+
+<p>
+Output:
+</p><p>
+
+</p><blockquote>
+gcc on Windows (32-bit)
+<table border="1" cellspacing="0" cellpadding="10"><tbody><tr><td><pre><font color="#000000"> Initialized1 global data is in the DATA segment = 0x40200c</font>
+<font color="#000000"> Initialized2 global data is in the DATA segment = 0x402010</font>
+<font color="#000000"> Initialized3 global data is in the DATA segment = 0x402014</font>
+<font color="#0000FF">Uninitialized1 global data is in the BSS segment = 0x404070</font>
+<font color="#0000FF">Uninitialized2 global data is in the BSS segment = 0x404050</font>
+<font color="#0000FF">Uninitialized3 global data is in the BSS segment = 0x404060</font>
+<font color="#FF0000">            Code for main is in the CODE segment = 0x401100</font>
+<font color="#FF0000">          Code for printf is in the CODE segment = 0x40128c</font>
+<font color="#FF0000">           Code for scanf is in the CODE segment = 0x40129c</font>
+<font color="#00FF00">   Local non-static data is in the STACK segment = 0x22ccb0</font>
+<font color="#0000FF">  Local uninit static data is in the BSS segment = 0x404030</font>
+<font color="#000000">   Local init static data is in the DATA segment = 0x402018</font>
+</pre></td></tr></tbody></table>
+<p>
+	
+bcc32 (32-bit)
+<table border="1" cellspacing="0" cellpadding="10"><tbody><tr><td><pre><font color="#000000"> Initialized1 global data is in the DATA segment = 0040F0C8</font>
+<font color="#000000"> Initialized2 global data is in the DATA segment = 0040F0CC</font>
+<font color="#000000"> Initialized3 global data is in the DATA segment = 0040F0D0</font>
+<font color="#0000FF">Uninitialized1 global data is in the BSS segment = 00412434</font>
+<font color="#0000FF">Uninitialized2 global data is in the BSS segment = 00412438</font>
+<font color="#0000FF">Uninitialized3 global data is in the BSS segment = 0041243C</font>
+<font color="#FF0000">            Code for main is in the CODE segment = 004011EC</font>
+<font color="#FF0000">          Code for printf is in the CODE segment = 0040508C</font>
+<font color="#FF0000">           Code for scanf is in the CODE segment = 004050B0</font>
+<font color="#00FF00">   Local non-static data is in the STACK segment = 0012FF88</font>
+<font color="#0000FF">  Local uninit static data is in the BSS segment = 00412430</font>
+<font color="#000000">   Local init static data is in the DATA segment = 0040F0D4</font>
+</pre></td></tr></tbody></table>
+</p><p>
+
+cl 9.0 (32-bit)
+<table border="1" cellspacing="0" cellpadding="10"><tbody><tr><td><pre><font color="#000000"> Initialized1 global data is in the DATA segment = 0040D000</font>
+<font color="#000000"> Initialized2 global data is in the DATA segment = 0040D004</font>
+<font color="#000000"> Initialized3 global data is in the DATA segment = 0040D008</font>
+<font color="#0000FF">Uninitialized1 global data is in the BSS segment = 0040EDA0</font>
+<font color="#0000FF">Uninitialized2 global data is in the BSS segment = 0040ED9C</font>
+<font color="#0000FF">Uninitialized3 global data is in the BSS segment = 0040ED98</font>
+<font color="#FF0000">            Code for main is in the CODE segment = 00401000</font>
+<font color="#FF0000">          Code for printf is in the CODE segment = 00401187</font>
+<font color="#FF0000">           Code for scanf is in the CODE segment = 0040116E</font>
+<font color="#00FF00">   Local non-static data is in the STACK segment = 0012FF6C</font>
+<font color="#0000FF">  Local uninit static data is in the BSS segment = 0040E320</font>
+<font color="#000000">   Local init static data is in the DATA segment = 0040D00C</font>
+</pre></td></tr></tbody></table>
+</p><p>
+
+cl 10.0 (64-bit)
+<table border="1" cellspacing="0" cellpadding="10"><tbody><tr><td><pre><font color="#000000"> Initialized1 global data is in the DATA segment = 000000013F45E000</font>
+<font color="#000000"> Initialized2 global data is in the DATA segment = 000000013F45E004</font>
+<font color="#000000"> Initialized3 global data is in the DATA segment = 000000013F45E008</font>
+<font color="#0000FF">Uninitialized1 global data is in the BSS segment = 000000013F460698</font>
+<font color="#0000FF">Uninitialized2 global data is in the BSS segment = 000000013F460694</font>
+<font color="#0000FF">Uninitialized3 global data is in the BSS segment = 000000013F460690</font>
+<font color="#FF0000">            Code for main is in the CODE segment = 000000013F451000</font>
+<font color="#FF0000">          Code for printf is in the CODE segment = 000000013F4511BC</font>
+<font color="#FF0000">           Code for scanf is in the CODE segment = 000000013F451188</font>
+<font color="#00FF00">   Local non-static data is in the STACK segment = 000000000016FCC0</font>
+<font color="#0000FF">         Local static data is in the BSS segment = 000000013F45F660</font>
+<font color="#000000">        Local static data is in the DATA segment = 000000013F45E00C</font>
+</pre></td></tr></tbody></table>
+</p><p>
+
+gcc on Linux 64-bit (4.4.3)
+<table border="1" cellspacing="0" cellpadding="10"><tbody><tr><td><pre><font color="#000000"> Initialized1 global data is in the DATA segment = 0x601028</font>
+<font color="#000000"> Initialized2 global data is in the DATA segment = 0x60102c</font>
+<font color="#000000"> Initialized3 global data is in the DATA segment = 0x601030</font>
+<font color="#0000FF">Uninitialized1 global data is in the BSS segment = 0x601050</font>
+<font color="#0000FF">Uninitialized2 global data is in the BSS segment = 0x60104c</font>
+<font color="#0000FF">Uninitialized3 global data is in the BSS segment = 0x601054</font>
+<font color="#FF0000">            Code for main is in the CODE segment = 0x400594</font>
+<font color="#FF0000">          Code for printf is in the CODE segment = 0x400480</font>
+<font color="#FF0000">           Code for scanf is in the CODE segment = 0x4004a0</font>
+<font color="#00FF00">   Local non-static data is in the STACK segment = 0x7fffe7c96b3c</font>
+<font color="#0000FF">  Local uninit static data is in the BSS segment = 0x601048</font>
+<font color="#000000">   Local init static data is in the DATA segment = 0x601034</font>
+</pre></td></tr></tbody></table>
+</p><p>
+
+gcc on Linux 32-bit (3.3)
+<table border="1" cellspacing="0" cellpadding="10"><tbody><tr><td><pre><font color="#000000"> Initialized1 global data is in the DATA segment = 0x8049804</font>
+<font color="#000000"> Initialized2 global data is in the DATA segment = 0x8049808</font>
+<font color="#000000"> Initialized3 global data is in the DATA segment = 0x804980c</font>
+<font color="#0000FF">Uninitialized1 global data is in the BSS segment = 0x8049920</font>
+<font color="#0000FF">Uninitialized2 global data is in the BSS segment = 0x804991c</font>
+<font color="#0000FF">Uninitialized3 global data is in the BSS segment = 0x8049918</font>
+<font color="#FF0000">            Code for main is in the CODE segment = 0x8048380</font>
+<font color="#FF0000">          Code for printf is in the CODE segment = 0x804829c</font>
+<font color="#FF0000">           Code for scanf is in the CODE segment = 0x804827c</font>
+<font color="#00FF00">   Local non-static data is in the STACK segment = 0xbffff1e4</font>
+<font color="#0000FF">  Local uninit static data is in the BSS segment = 0x8049914</font>
+<font color="#000000">   Local init static data is in the DATA segment = 0x8049810</font>
+</pre></td></tr></tbody></table>
+</p><p>
+
+</p></blockquote>
+
+
+
+
+	
+	
+</ul>
+
+<b>System Services</b>
+<ul>
+	<li>Run in the background (in UNIX terminology, they are called <span id="wpurl"><a class="wplabel">daemons</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Daemon_(computing)">daemons</a>)</li>
+	<li>OS runs its own user mode tasks to provide and maintain services, for example:</li>
+	<ul>
+		<li>Manage print queue</li>
+		<li>Network management</li>
+		<li>Automatic detecting and mounting of removable disks</li>
+		<li><span id="wpurl"><a class="wplabel">Web server</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Web_server">Web server</a></li>
+		<li><span id="wpurl"><a class="wplabel">Firewall</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Firewall_(computing)">Firewall</a></li>
+	</ul>
+</ul>
+
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<p class="sectionheader">
+Operating System API
+</p>
+
+<b>Overview</b>
+<ul>
+	<li>The interface between the operating system and the user programs is defined by a set of <span id="wpurl"><a class="wplabel">system calls</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/System_call">system calls</a> provided by the operating system.</li>
+	<li>System calls vary from one operating system to another.</li>
+	<li>However, most operating systems follow the same concept.</li>
+	<li>The actual mechanics of issuing a system call are highly machine dependent.</li>
+	<li>Many are written in assembly code.</li>
+	<li>Usually, a library is provided to make it possible to make system calls from programming languages other than the assembly language.</li>
+	<li>For example, system calls could be made from C, C++, Pascal, Perl, Python, etc.</li>
+	<li>Windows, through its <span id="wpurl"><a class="wplabel">Win32 API</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Win32_api">Win32 API</a>, allows system calls from all the compilers written for Microsoft Windows.</li>
+	<li>Linux wraps many of its system calls in <span id="wpurl"><a class="wplabel">glibc</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Glibc">glibc</a>, the <a href="http://www.gnu.org/s/hello/manual/libc/index.html">GNU C Library</a>.
+		(<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/linux_system_call_quick_reference.pdf">Quick reference</a>)</li>
+	
+	<li>System functions give the user access to the OS and hardware:</li>
+<blockquote>
+	
+<table border="0">
+	<tbody><tr><td><img src="./Single_Multi-tasking Operating Systems_files/OS-layout-1.png"></td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne ©2009&nbsp;&nbsp;</span></td></tr>
+</tbody></table>
+	
+
+</blockquote>
+	
+</ul>
+
+<b>Executing a System Call</b>
+<ul>
+	<li>A single-CPU computer can execute only one instruction at a time.</li>
+	<li>User programs run in user mode.</li>
+	<li>When a process needs a system service (open a file, read the keyboard, allocate memory, etc.)</li>
+	<ul>
+		<li>A system call instruction (called a trap) is executed (via an interrupt) in order to transfer control (context switch) to the operating system in kernel mode (supervisor mode).</li>
+		<li>The OS inspects the parameters and figures out exactly what the calling process wants.</li>
+		<li>The system call is carried out and returns the control to the instruction following the system call. (Just like any "normal" function call.)</li>
+	</ul>
+	<li>A system call is very much like any function call with the difference that system calls enter the kernel and the "normal" function calls do not.</li>
+	<li>Programs making a system call should check the result returned by the system call in order to see if an error occurred.</li>
+</ul>
+
+
+
+<b>POSIX (Portable Operating System Interface Standard) System Calls</b>
+<ul>
+<li>To make it possible to write programs that could run on any UNIX system, the <span id="wpurl"><a class="wplabel">IEEE</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/IEEE">IEEE</a> (Institute of Electrical and Electronics Engineers) developed a standard for UNIX called <span id="wpurl"><a class="wplabel">POSIX</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/POSIX">POSIX</a>.</li>
+	<li>Most versions of UNIX support POSIX.</li>
+	<li>Mac OS X is <span id="wpurl"><a class="wplabel">POSIX-certified</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/POSIX#POSIX-certified">POSIX-certified</a>.</li>
+	<li><span id="wpurl"><a class="wplabel">Mostly_POSIX-compliant</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/POSIX#Mostly_POSIX-compliant">Mostly_POSIX-compliant</a>:
+		<ul>
+			<li>Most Linux distributions</li>
+			<li>iOS</li>
+			<li>Android</li>
+			<li>Cygwin is largely POSIX-compliant</li>
+		</ul>
+	</li><li>POSIX defines a set of operating-system services. Programs that adhere to the POSIX standard can be easily ported from one system to another.</li>
+	<!--<li>Other operating systems also support the POSIX interface. (Linux, MacOS X, and Windows have varying degrees of compliance.)</li>-->
+	<!--<li>In this section we will examine some of the most used library procedures that make the POSIX system calls</li>-->
+	<li>POSIX has many functions/procedures (services) and these functions/procedures determine most of what the operating system has to do.</li>
+	<!--<li>The mapping of POSIX procedure calls onto system calls is not one-to-one.</li>-->
+	<li>Most of the POSIX procedures invoke system calls, with one procedure mapping directly onto one system call.</li>
+	<li>If a procedure can be executed without invoking a system call (in user mode), the procedure will be executed in user space for performance reasons.</li>
+	<li>When several procedures have minor variations between each other, one system call handles more than one library call.</li>
+	<li>Example:</li>
+	<p>
+		<img src="./Single_Multi-tasking Operating Systems_files/SystemCall-3.png">
+	</p><p>
+	</p><ul>
+		<li>The call looks something like this: 
+		<blockquote><pre>ssize_t read(int fd, void *buf, size_t nbyte); /* prototype */
+read(fd, buffer, nbytes);                      /* call      */</pre></blockquote>
+		</li><li>The user program pushed the parameters onto the stack. (steps 1, 2, 3)</li>
+		<li>Then the call to the library procedure (still user code) is executed. (step 4)</li>
+		<li>The number of the system call is written into a place where the operating system expects it. (step 5)</li>
+		<li>A trap instruction is executed in order to switch from user mode to kernel mode and the execution starts within a fixed address in the kernel. (step 6)</li>
+		<li>The system call number is examined and the system call handler is dispatched. (step 7)</li>
+		<li>The system call handler runs. (step 8)</li>
+		<li>When the system call handler has completed its work, control may be returned to the user-space library procedure, at the instruction following the trap instruction. (step 9)</li>
+		<li>If the system call is waiting for input from the user, the caller might be blocked, and the operating system will switch to another process.</li>
+		<li>The procedure call returns to the user program, (step 10)</li>
+		<li>Finally, the user program cleans up the stack. (step 11)</li>
+    <li>Every system call maps to a unique integer in the system. <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/unistd.h.html">unistd.h</a>, <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/syscall.h.html">syscall.h</a>
+  </li></ul>
+</ul>
+
+<b>Some Example System Calls</b>
+<p>
+Process management:
+</p><blockquote>
+<table border="1" cellspacing="0" cellpadding="5">
+<tbody><tr><th>Call</th><th>Description</th></tr>
+<tr valign="top">
+<td>
+<tt>pid = fork();</tt>
+</td>
+<td>
+Create a child process identical to the parent.
+</td></tr>
+<tr valign="top">
+<td>
+<tt>pid = waitpid(pid, &amp;statloc, options);</tt>
+</td>
+<td>
+Wait for a child to terminate.
+</td></tr>
+<tr valign="top">
+<td>
+<tt>s = execve(name, argv, environp);</tt>
+</td>
+<td>
+Replace a process with another process.
+</td></tr>
+<tr valign="top">
+<td>
+<tt>s = kill(pid, signal);</tt>
+</td>
+<td>
+Send a signal to a process. 	
+</td>
+</tr>
+<tr valign="top">
+<td>
+<tt>exit(status);</tt>
+</td>
+<td>
+Terminate a process and return status.
+</td></tr>
+</tbody></table>
+</blockquote>
+
+File management:
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="5">
+<tbody><tr><th>Call</th><th>Description</th></tr>
+<tr valign="top">
+<td>
+<tt>fd = open(file, mode);</tt>
+</td>
+<td>
+Opens a file for reading/writing/both, etc.
+</td>
+</tr>
+<tr valign="top">
+<td>
+<tt>s = close(fd);</tt>
+</td>
+<td>
+Closes a file.	
+</td>
+</tr>
+<tr valign="top">
+<td>
+<tt>n = read(fd, buffer, nbytes);</tt>
+</td>
+<td>
+Read bytes from a file into memory.	
+</td>
+</tr>
+<tr valign="top">
+<td>
+<tt>n = write(fd, buffer, nbytes);</tt>
+</td>
+<td>
+Write bytes from memory to a file.	
+</td>
+</tr>
+</tbody></table>
+</blockquote>
+
+Directory management:
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="5">
+<tbody><tr><th>Call</th><th>Description</th></tr>
+<tr valign="top">
+<td>
+<tt>s = mkdir(name, mode);</tt>
+</td>
+<td>
+Create a new directory.	
+</td>
+</tr>
+<tr valign="top">
+<td>
+<tt>s = rmdir(name);</tt>
+</td>
+<td>
+Removes a directory.	
+</td>
+</tr>
+<tr valign="top">
+<td>
+<tt>s = chdir(name);</tt>
+</td>
+<td>
+Change to another directory.	
+</td>
+</tr>
+<tr valign="top">
+<td>
+<tt>s = unlink(name);</tt>
+</td>
+<td>
+Delete an existing file.
+</td>
+</tr>
+</tbody></table>
+</blockquote>
+
+Miscellaneous:
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="5">
+<tbody><tr><th>Call</th><th>Description</th></tr>
+<tr valign="top">
+<td>
+<tt>id = getuid();</tt>
+</td>
+<td>
+Get the id of the current user.	
+</td>
+</tr>
+<!--
+<tr valign="top">
+<td>
+<tt>tm = time(0);</tt>
+</td>
+<td>
+Get current system time.	
+</td>
+</tr>
+-->
+</tbody></table>
+</blockquote>
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<p class="sectionheader">
+The strace Program
+</p>
+
+It is possible to "spy" on programs and see exactly what kinds of system calls are being made. This is trivial to
+do under Unix-based systems (such as Linux or Mac OS X). 
+<p>
+This program (<tt>ptime.c</tt>) simply retrieves the current system time, formats it appropriately, and then prints it out on the screen.
+
+</p><pre class="sourcecode"><code>
+<b>#include</b> &lt;stdio.h&gt; <font color="#003399"><i>/* printf                    */</i></font>
+<b>#include</b> &lt;time.h&gt;  <font color="#003399"><i>/* time, strftime, localtime */</i></font>
+
+<b>int</b> main(<b>void</b>)
+{
+  <b>struct</b> tm *pt;
+  <b>char</b> buf[256];
+  time_t now;
+ 
+    <font color="#003399"><i>/* Get the current system time */</i></font>
+  now = <a href="http://linux.die.net/man/2/time">time</a>(NULL);
+ 
+    <font color="#003399"><i>/* Format and print, Weekday, Month Day, Year HH:MM:SS AM/PM Timezone */</i></font>
+    <font color="#003399"><i>/*    example:  Tuesday, May 24, 2011 5:23:36 PM PST                  */</i></font>
+  pt = <a href="http://linux.die.net/man/3/localtime">localtime</a>(&amp;now);
+  <a href="http://linux.die.net/man/3/strftime">strftime</a>(buf, <b>sizeof</b>(buf), <font color="#9933CC">"%A, %B %d, %Y %I:%M:%S %p %Z"</font>, pt);
+  printf(<font color="#9933CC">"%s\n"</font>, buf);
+ 
+  <b>return</b> 0;  
+}
+</code></pre>
+
+The exact format is compiler/library dependent. Here is what it looks like from three different compilers:
+<p>
+GNU gcc:
+</p><blockquote><pre>Tuesday, May 24, 2011 06:01:15 PM PST
+</pre></blockquote>
+
+Microsoft:
+<blockquote><pre>Tuesday, May 24, 2011 06:01:25 PM Pacific Standard Time
+</pre></blockquote>
+
+Borland:
+<blockquote><pre>Tuesday, May 24, 2011 06:01:35 PM
+</pre></blockquote>
+
+Let's spy on the program and see what's going on behind-the-scenes. Assuming that the name of the executable is <b><tt>ptime</tt></b>, 
+we run <tt><b>strace</b></tt> on the program like this (under Linux):
+<p>
+
+</p><blockquote><pre><b>strace</b> ./ptime &gt; /dev/null
+</pre></blockquote>
+
+and this is the output we see:
+
+<blockquote>
+<table border="1" cellpadding="10" cellspacing="0">
+<tbody><tr><td>
+<pre><a href="http://linux.die.net/man/3/exec">execve</a>("./ptime", ["./ptime"], [/* 58 vars */]) = 0
+<a href="http://linux.die.net/man/2/brk">brk</a>(0)                                  = 0x8051000
+<a href="http://linux.die.net/man/2/access">access</a>("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+<a href="http://linux.die.net/man/2/mmap">mmap2</a>(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb785d000
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+open("/etc/ld.so.cache", O_RDONLY)      = 3
+<a href="http://linux.die.net/man/2/fstat">fstat64</a>(3, {st_mode=S_IFREG|0644, st_size=94651, ...}) = 0
+mmap2(NULL, 94651, PROT_READ, MAP_PRIVATE, 3, 0) = 0xb7845000
+close(3)                                = 0
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+open("/lib/tls/i686/cmov/libc.so.6", O_RDONLY) = 3
+read(3, "\177ELF\1\1\1\0\0\0\0\0\0\0\0\0\3\0\3\0\1\0\0\0000m\1\0004\0\0\0"..., 512) = 512
+fstat64(3, {st_mode=S_IFREG|0755, st_size=1405508, ...}) = 0
+mmap2(NULL, 1415592, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x194000
+<a href="http://linux.die.net/man/2/mprotect">mprotect</a>(0x2e7000, 4096, PROT_NONE)     = 0
+mmap2(0x2e8000, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x153) = 0x2e8000
+mmap2(0x2eb000, 10664, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x2eb000
+close(3)                                = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb7844000
+<a href="http://linux.die.net/man/2/set_thread_area">set_thread_area</a>({entry_number:-1 -&gt; 6, base_addr:0xb78446c0, limit:1048575, seg_32bit:1, contents:0, read_exec_only:0, limit_in_pages:1, seg_not_present:0, useable:1}) = 0
+mprotect(0x2e8000, 8192, PROT_READ)     = 0
+mprotect(0x8049000, 4096, PROT_READ)    = 0
+mprotect(0x192000, 4096, PROT_READ)     = 0
+<a href="http://linux.die.net/man/2/munmap">munmap</a>(0xb7845000, 94651)               = 0
+brk(0)                                  = 0x8051000
+brk(0x8072000)                          = 0x8072000
+open("/etc/localtime", O_RDONLY)        = 3
+fstat64(3, {st_mode=S_IFREG|0644, st_size=2819, ...}) = 0
+fstat64(3, {st_mode=S_IFREG|0644, st_size=2819, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb785c000
+read(3, "TZif2\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\4\0\0\0\4\0\0\0\0"..., 4096) = 2819
+<a href="http://linux.die.net/man/2/_llseek">_llseek</a>(3, -24, [2795], SEEK_CUR)       = 0
+read(3, "\nPST8PDT,M3.2.0,M11.1.0\n", 4096) = 24
+close(3)                                = 0
+munmap(0xb785c000, 4096)                = 0
+fstat64(1, {st_mode=S_IFCHR|0666, st_rdev=makedev(1, 3), ...}) = 0
+<a href="http://linux.die.net/man/2/ioctl">ioctl</a>(1, SNDCTL_TMR_TIMEBASE or TCGETS, 0xbf8804b0) = -1 ENOTTY (Inappropriate ioctl for device)
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb785c000
+write(1, "Tuesday, May 29, 2012 03:08:13 P"..., 38) = 38
+exit_group(0)                           = ?
+</pre>
+</td></tr></tbody></table>
+</blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+Some other useful options:
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="5">
+<tbody><tr><th>Option</th><th>Meaning</th></tr>
+
+<tr valign="top">
+<td align="center"><tt>-c</tt></td>
+<td>Only display summary information.</td>
+</tr>
+
+<tr valign="top">
+<td align="center"><tt>-i</tt></td>
+<td>Displays instruction pointer with each call.</td>
+</tr>
+
+<tr valign="top">
+<td align="center"><tt>-r</tt></td>
+<td>Displays relative timestamp (microseconds).</td>
+</tr>
+
+<tr valign="top">
+<td align="center"><tt>-t</tt></td>
+<td>Show time of day of each call.</td>
+</tr>
+
+<tr valign="top">
+<td align="center"><tt>-tt</tt></td>
+<td>Show time of day with microseconds for each call.</td>
+</tr>
+
+<tr valign="top">
+<td align="center"><tt>-v</tt></td>
+<td>Verbose. Show all parameters to system calls.</td>
+</tr>
+
+<tr valign="top">
+<td align="center"><tt>-x</tt></td>
+<td>Show non-ASCII in hex.</td>
+</tr>
+
+<tr valign="top">
+<td align="center"><tt>-y</tt></td>
+<td>Include filename with file descriptor.</td>
+</tr>
+
+<tr valign="top">
+<td align="center"><tt>-a column</tt></td>
+<td>Align return values on a specific <tt>column</tt>.</td>
+</tr>
+
+<tr valign="top">
+<td align="center"><tt>-e trace=set</tt></td>
+<td>Only show calls in <tt>set</tt> (.e.g <tt>trace=open,close</tt>).</td>
+</tr>
+</tbody></table>
+</blockquote>
+
+See the man page for <tt><b>strace</b></tt> for all of the options and details.
+<p>
+
+A glimpse at the relations ship between <tt>FILE *</tt> and file handles:
+</p><p>
+
+The FILE structure from GNU's compiler (version 4.4.3):
+
+</p><blockquote><pre><b>struct</b> _IO_FILE {
+  <b>int</b> _flags;    <font color="#003399"><i>/* High-order word is _IO_MAGIC; rest is flags. */</i></font>
+
+  <font color="#003399"><i>/* The following pointers correspond to the C++ streambuf protocol. */</i></font>
+  <font color="#003399"><i>/* Note:  Tk uses the _IO_read_ptr and _IO_read_end fields directly. */</i></font>
+  <b>char</b>* _IO_read_ptr;   <font color="#003399"><i>/* Current read pointer */</i></font>
+  <b>char</b>* _IO_read_end;   <font color="#003399"><i>/* End of get area. */</i></font>
+  <b>char</b>* _IO_read_base;  <font color="#003399"><i>/* Start of putback+get area. */</i></font>
+  <b>char</b>* _IO_write_base; <font color="#003399"><i>/* Start of put area. */</i></font>
+  <b>char</b>* _IO_write_ptr;  <font color="#003399"><i>/* Current put pointer. */</i></font>
+  <b>char</b>* _IO_write_end;  <font color="#003399"><i>/* End of put area. */</i></font>
+  <b>char</b>* _IO_buf_base;   <font color="#003399"><i>/* Start of reserve area. */</i></font>
+  <b>char</b>* _IO_buf_end;    <font color="#003399"><i>/* End of reserve area. */</i></font>
+
+  <b>struct</b> _IO_marker *_markers;
+
+  <b>struct</b> _IO_FILE *_chain;
+
+  <font color="blue"><b>int</b> _fileno;</font>
+  <b>int</b> _flags2;
+
+  <font color="#003399"><i>/* other fields removed */</i></font>
+};
+<b>typedef</b> <b>struct</b> _IO_FILE FILE;
+</pre></blockquote>
+
+The FILE structure from Microsoft's compiler (version 9.0):
+
+<blockquote><pre><b>struct</b> _iobuf {
+        <b>char</b> *_ptr;
+        <b>int</b>   _cnt;
+        <b>char</b> *_base;
+        <b>int</b>   _flag;
+        <font color="blue"><b>int</b>   _file;</font>
+        <b>int</b>   _charbuf;
+        <b>int</b>   _bufsiz;
+        <b>char</b> *_tmpfname;
+        };
+<b>typedef</b> <b>struct</b> _iobuf FILE;
+</pre></blockquote>
+
+Also from Microsoft's header file:
+
+<blockquote><pre><b>#define</b> stdin  (&amp;__iob_func()[0])
+<b>#define</b> stdout (&amp;__iob_func()[1])
+<b>#define</b> stderr (&amp;__iob_func()[2])
+</pre></blockquote>
+
+Incidentally, there is also a program called <b><tt>ltrace</tt></b> which traces library calls (user mode). Run it the same way:
+
+<blockquote><pre><b>ltrace</b> -n 2 ./ptime &gt; /dev/null
+</pre></blockquote>
+
+and this is the output we see: (Use <tt>-n X</tt> to indent calls, where <tt>X</tt> is the column to 
+align at. The <tt>-S</tt> option shows system calls as well.)
+
+<blockquote>
+<table border="1" cellpadding="10" cellspacing="0">
+<tbody><tr><td>
+<pre>__libc_start_main(0x80484c4, 1, 0xbfd944c4, 0x8048550, 0x80485c0 <unfinished ...="">
+  time(NULL)                                                                                            = 1338329347
+  localtime(0xbfd94314)                                                                                 = 0x006fc720
+  strftime("Tuesday, May 29, 2012 03:09:07 P"..., 256, "%A, %B %d, %Y %I:%M:%S %p %Z", 0x006fc720)      = 37
+  puts("Tuesday, May 29, 2012 03:09:07 P"...)                                                           = 38
++++ exited (status 0) +++
+</unfinished></pre>
+</td></tr></tbody></table>
+</blockquote>
+
+That's strange, where is the call to <tt><b>printf</b></tt>?
+<p>
+<!--
+The compiler substituted puts as an optimization. If there
+were format specifiers, it would have called printf.
+-->
+
+This is a simple program (<tt>copy-read.c</tt>) that makes an exact copy of a file. It works like the <b><tt>copy</tt></b> command in Windows or the <b><tt>cp</tt></b> command
+	in Linux. This program makes system calls to <a href="http://linux.die.net/man/2/open">open</a>, <a href="http://linux.die.net/man/2/read">read</a>, 
+	<a href="http://linux.die.net/man/2/write">write</a>, and <a href="http://linux.die.net/man/2/close">close </a>the files.
+
+</p><pre class="sourcecode"><code><b>#include</b> &lt;stdio.h&gt;  <font color="#003399"><i>/* printf, perror                       */</i></font>
+<b>#include</b> &lt;fcntl.h&gt;  <font color="#003399"><i>/* O_RDONLY, O_WRONLY, O_CREAT, O_TRUNC */</i></font>
+<b>#include</b> &lt;unistd.h&gt; <font color="#003399"><i>/* open, close, read, write             */</i></font>
+
+<b>#define</b> BUFSIZE 64
+
+<b>int</b> main(<b>int</b> argc, <b>char</b> **argv)
+{
+  <b>if</b> (argc &lt; 3)
+  {
+    printf(<font color="#9933CC">"usage: copy {source} {destination}\n"</font>);
+    <b>return</b> -1;
+  }
+  <b>else</b>
+  {
+    <b>char</b> *source = argv[1];
+    <b>char</b> *destination = argv[2];
+    <b>int</b> infile, outfile;
+    
+      <font color="#003399"><i>/* open source file */</i></font>
+    infile = <font color="blue"><b>open</b></font>(source, O_RDONLY);
+    <b>if</b> (infile == -1)
+    {
+      printf(<font color="#9933CC">"Can't open %s for read\n"</font>, source);
+      <b>return</b> -2;
+    } 
+    
+      <font color="#003399"><i>/* open destination file */</i></font>
+    outfile = <font color="blue"><b>open</b></font>(destination, O_WRONLY | O_CREAT | O_TRUNC);
+    <b>if</b> (outfile == -1)
+    {
+      printf(<font color="#9933CC">"Can't open %s for write\n"</font>, destination);
+      perror(destination);
+      <font color="blue"><b>close</b></font>(infile);
+      <b>return</b> -3;
+    }
+    
+      <font color="#003399"><i>/* copy BUFSIZE bytes from source to destination */</i></font>
+    <b>while</b> (1)
+    {
+      <b>unsigned</b> <b>char</b> bytes[BUFSIZE];
+      <b>int</b> count = <font color="blue"><b>read</b></font>(infile, bytes, BUFSIZE);
+      <b>if</b> (count &gt; 0)
+        <font color="blue"><b>write</b></font>(outfile, bytes, count);
+      <b>else</b>
+      {
+        <b>if</b> (count == -1)
+          perror(destination);
+        <b>break</b>;
+      }
+    }
+    <font color="blue"><b>close</b></font>(infile);
+    <font color="blue"><b>close</b></font>(outfile);
+    
+    <b>return</b> 0;
+  }
+}
+</code></pre>
+
+The larger the buffer, the more efficient the program is. These are the times (using the <tt>time</tt> command) when 
+copying a 140 MB file. The buffer size ranged from 1 byte to 1 MB.
+
+<blockquote>
+<table border="1" cellpadding="10" cellspacing="0">
+<tbody><tr><th>1</th><th>2</th><th>4</th><th>8</th><th>16</th><th>32</th><th>64</th></tr>
+<tr><td><pre>real  3m2.412s
+user  0m7.690s
+sys  2m54.640s
+</pre></td>
+<td><pre>real  1m30.840s
+user   0m3.660s
+sys   1m27.150s
+</pre></td>
+<td><pre>real  0m48.064s
+user   0m2.050s
+sys   0m45.970s
+</pre></td>
+<td><pre>real  0m22.997s
+user   0m1.100s
+sys   0m21.860s
+</pre></td>
+<td><pre>real  0m11.541s
+user   0m0.630s
+sys   0m10.920s
+</pre></td>
+<td><pre>real  0m5.995s
+user  0m0.190s
+sys   0m5.800s
+</pre></td>
+<td><pre>real  0m2.998s
+user  0m0.150s
+sys   0m2.830s
+</pre></td>
+</tr></tbody></table>
+
+<p>
+	
+<table border="1" cellpadding="10" cellspacing="0">
+<tbody><tr><th>128</th><th>256</th><th>512</th><th>1024</th><th>64K</th><th>1M</th></tr>
+<tr><td><pre>real  0m1.596s
+user  0m0.090s
+sys   0m1.500s
+</pre></td>
+<td><pre>real  0m0.935s
+user  0m0.010s
+sys   0m0.910s
+</pre></td>
+<td><pre>real  0m0.533s
+user  0m0.010s
+sys   0m0.520s
+</pre></td>
+<td><pre>real  0m0.375s
+user  0m0.000s
+sys   0m0.370s
+</pre></td>
+<td><pre>real  0m0.212s
+user  0m0.000s
+sys   0m0.210s
+</pre></td>
+<td><pre>real 0m0.202s
+user 0m0.000s
+sys  0m0.200s
+</pre></td>
+</tr></tbody></table>
+</p><p>
+</p></blockquote>
+
+Here's the same program (<tt>copy-fread.c</tt>) using the C library functions <a href="http://linux.die.net/man/3/fopen">fopen</a>, 
+<a href="http://linux.die.net/man/3/fread">fread</a>, <a href="http://linux.die.net/man/3/fwrite">fwrite</a>, 
+and <a href="http://linux.die.net/man/3/fclose">fclose</a>. These library functions call the system functions.
+
+<pre class="sourcecode"><code><b>#include</b> &lt;stdio.h&gt; <font color="#003399"><i>/* printf, fopen, fread, fwrite, fclose */</i></font>
+
+<b>#define</b> BUFSIZE 1
+
+<b>int</b> main(<b>int</b> argc, <b>char</b> **argv)
+{
+  <b>if</b> (argc &lt; 3)
+  {
+    printf(<font color="#9933CC">"usage: copy {source} {destination}\n"</font>);
+    <b>return</b> -1;
+  }
+  <b>else</b>
+  {
+    <b>char</b> *source = argv[1];
+    <b>char</b> *destination = argv[2];
+    FILE *infile, *outfile;
+    
+      <font color="#003399"><i>/* open source file */</i></font>
+    infile = <font color="blue"><b>fopen</b></font>(source, <font color="#9933CC">"rb"</font>);
+    <b>if</b> (!infile)
+    {
+      printf(<font color="#9933CC">"Can't open %s for read\n"</font>, source);
+      <b>return</b> -2;
+    } 
+    
+      <font color="#003399"><i>/* open destination file */</i></font>
+    outfile = <font color="blue"><b>fopen</b></font>(destination, <font color="#9933CC">"wb"</font>);
+    <b>if</b> (!outfile)
+    {
+      printf(<font color="#9933CC">"Can't open %s for write\n"</font>, destination);
+      <font color="blue"><b>fclose</b></font>(infile);
+      <b>return</b> -3;
+    }
+    
+      <font color="#003399"><i>/* copy BUFSIZE bytes at a time from source to destination */</i></font>
+    <b>while</b> (!feof(infile))
+    {
+      <b>unsigned</b> <b>char</b> byte[BUFSIZE];
+      <b>int</b> count = <font color="blue"><b>fread</b></font>(byte, <b>sizeof</b>(<b>unsigned</b> <b>char</b>), BUFSIZE, infile);
+      <b>if</b> (count)
+        <font color="blue"><b>fwrite</b></font>(byte, <b>sizeof</b>(<b>unsigned</b> <b>char</b>), count, outfile);
+      <b>else</b>
+        <b>break</b>;
+    }
+    
+    <font color="blue"><b>fclose</b></font>(infile);
+    <font color="blue"><b>fclose</b></font>(outfile);
+  }
+}
+
+</code></pre>
+
+Looking at the times, there is obviously something very different between the two methods.
+<p>
+<b>Library calls (fopen, fread, etc.)</b>
+</p><blockquote>
+<table border="1" cellpadding="10" cellspacing="0">
+<tbody><tr><th>1</th><th>2</th><th>4</th><th>8</th><th>16</th><th>32</th><th>64</th><th>128</th><th>256</th><th>512</th><th>1024</th><th>512K</th></tr>
+<tr><td><pre>real  0m6.930s
+user  0m6.480s
+sys   0m0.400s
+</pre></td>
+<td><pre>real  0m3.658s&nbsp;
+user  0m3.280s
+sys   0m0.280s
+</pre></td>
+<td><pre>real  0m2.086s&nbsp;
+user  0m1.660s
+sys   0m0.410s
+</pre></td>
+<td><pre>real  0m1.374s&nbsp;
+user  0m1.010s
+sys   0m0.360s
+</pre></td>
+<td><pre>real  0m0.735s&nbsp;
+user  0m0.450s
+sys   0m0.280s
+</pre></td>
+<td><pre>real  0m0.568s
+user  0m0.300s
+sys   0m0.270s
+</pre></td>
+<td><pre>real  0m0.445s
+user  0m0.110s
+sys   0m0.330s
+</pre></td>
+<td><pre>real  0m0.383s
+user  0m0.110s
+sys   0m0.270s
+</pre></td>
+<td><pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</pre></td>
+<td><pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</pre></td><td><pre>real  0m0.348s
+user  0m0.050s
+sys   0m0.290s
+</pre></td>
+<td><pre>real  0m0.205s
+user  0m0.000s
+sys   0m0.200s
+</pre></td>
+</tr></tbody></table>
+<p>
+</p></blockquote>
+
+<b>System calls (open, read, etc.)</b>
+<blockquote>
+<table border="1" cellpadding="10" cellspacing="0">
+<tbody><tr><th>1</th><th>2</th><th>4</th><th>8</th><th>16</th><th>32</th><th>64</th><th>128</th><th>256</th><th>512</th><th>1024</th><th>64K</th><th>1M</th></tr>
+<tr><td><pre>real  3m2.412s
+user  0m7.690s
+sys  2m54.640s
+</pre></td>
+<td><pre>real  1m30.840s
+user   0m3.660s
+sys   1m27.150s
+</pre></td>
+<td><pre>real  0m48.064s
+user   0m2.050s
+sys   0m45.970s
+</pre></td>
+<td><pre>real  0m22.997s
+user   0m1.100s
+sys   0m21.860s
+</pre></td>
+<td><pre>real  0m11.541s
+user   0m0.630s
+sys   0m10.920s
+</pre></td>
+<td><pre>real  0m5.995s
+user  0m0.190s
+sys   0m5.800s
+</pre></td>
+<td><pre>real  0m2.998s
+user  0m0.150s
+sys   0m2.830s
+</pre></td>
+<td><pre>real  0m1.596s
+user  0m0.090s
+sys   0m1.500s
+</pre></td>
+<td><pre>real  0m0.935s
+user  0m0.010s
+sys   0m0.910s
+</pre></td>
+<td><pre>real  0m0.533s
+user  0m0.010s
+sys   0m0.520s
+</pre></td>
+<td><pre>real  0m0.375s
+user  0m0.000s
+sys   0m0.370s
+</pre></td>
+<td><pre>real  0m0.212s
+user  0m0.000s
+sys   0m0.210s
+</pre></td>
+<td><pre>real 0m0.202s
+user 0m0.000s
+sys  0m0.200s
+</pre></td>
+</tr></tbody></table>
+<p>
+</p></blockquote>
+
+Other traces:
+<ul>
+	<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/trace-fread-1-dumpit.txt">trace-fread-1-dumpit.txt</a></li>
+	<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/trace-fread-8192-dumpit.txt">trace-fread-8192-dumpit.txt</a></li>
+	<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/trace-fread-16K-dumpit.txt">trace-fread-16K-dumpit.txt</a></li>
+	<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/trace-fread-32K-dumpit.txt">trace-fread-32K-dumpit.txt</a></li>
+<p>
+	</p><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/trace-read-1024-dumpit.txt">trace-read-1024-dumpit.txt</a></li>
+	<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/trace-read-16K-dumpit.txt">trace-read-16K-dumpit.txt</a></li>
+	<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/trace-read-64K-dumpit.txt">trace-read-64K-dumpit.txt</a></li>
+	<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/trace-read-512K-pdf.txt">trace-read-512K-pdf.txt</a></li>
+<p>
+	</p><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/trace-cp-pdf.txt">trace-cp-pdf.txt</a></li>
+</ul>
+
+The dumpit.exe program is 16,617 bytes (<tt>2 * <b>8,192</b> + 233 = 16,384 + 233</tt>) and the PDF is 950,639 bytes (<tt>29 * <b>32,768</b> + 367 = 950,272 + 367</tt>).
+<p>
+Try it with other programs:
+</p><blockquote><pre>strace ls
+strace ls -l
+strace cp
+</pre></blockquote>
+
+More information on this program and another one like it:
+<ul>
+	<li><a href="http://linux.die.net/man/1/strace">strace</a> - Trace system calls and signals (e.g. open, time)</li>
+	<li><a href="http://linux.die.net/man/1/ltrace">ltrace</a> - A library call tracer (e.g. puts, fopen)</li>
+	<!--<li><a href="http://linux.die.net/man/1/latrace">latrace</a></li>-->
+</ul>
+
+<b>Comparing system calls using C code to assembly.</b> You can really see the system calls
+when using assembler. These programs simply read from standard in and write to standard out.
+<p>
+C code: (<tt>rw.c</tt>)
+</p><pre class="sourcecode"><code><font color="990099">#include &lt;stdio.h&gt; /* read, write */</font>
+
+<font color="990099">#define BUFSIZE 1</font>
+
+<b>int</b> main(<b>void</b>)
+{
+    <font color="#003399"><i>/* copy BUFSIZE bytes at a time from stdin to stdout */</i></font>
+  <b>while</b> (1)
+  {
+    <b>unsigned</b> <b>char</b> bytes[BUFSIZE];
+    <b>int</b> count = <font color="blue">read</font>(0, bytes, BUFSIZE);
+    <b>if</b> (count &gt; 0)
+      <font color="blue">write</font>(1, bytes, count);
+    <b>else</b>
+    {
+      <b>if</b> (count == -1)
+        perror(<font color="#9933CC">"Read failed"</font>);
+      <b>break</b>;
+    }
+  }
+  <b>return</b> 0;
+}
+</code></pre>
+
+Assembly: (<tt>readwrite.asm</tt>)
+<pre class="sourcecode"><code>
+;       readwrite &lt; textfile
+;
+;  Build using these commands:
+;       nasm -f elf64 -g -F dwarf readwrite.asm
+;       ld -o readwrite readwrite.o
+;
+SECTION .bss    
+  BUFSIZE equ 64          ; how many bytes to read each time
+  Buffer: resb BUFSIZE    ; buffer to read into
+
+SECTION .data                   
+SECTION .text                   
+global  _start                  
+        
+; Read from stdin
+;  eax - SYS_read (3)
+;  ebx - file descriptor (0 - stdin)
+;  ecx - buffer to write into
+;  edx - number of bytes to read
+_start: mov eax,3       ; <font color="blue">SYS_read</font>
+        mov ebx,0       ; stdin is 0
+        mov ecx,Buffer  ; address of Buffer
+        mov edx,BUFSIZE ; number of bytes to read
+        int 80h         ; make system call (traps to kernel)
+        mov esi,eax     ; eax contains actual number of bytes read (save for later)
+        cmp eax,0       ; if eax is 0 then the end of file was reached
+        je Exit         ;     and we will exit the program
+
+; Write to stdout
+;  eax - SYS_write (4)
+;  ebx - file descriptor (1 - stdout)
+;  ecx - buffer to read from
+;  edx - number of bytes to write
+        mov eax,4       ; <font color="blue">SYS_write</font>
+        mov ebx,1       ; stdout is 1
+        mov ecx,Buffer  ; address of Buffer
+        mov edx,esi     ; how many bytes to write (how many were read)
+        int 80h         ; make system call (traps to kernel)
+        jmp _start      ; read more bytes
+
+; Exit the program
+Exit:
+        mov eax,1       ; <font color="blue">SYS_exit</font>
+        mov ebx,0       ; return value (to OS)
+        int 80H         ; make system call
+</code></pre>
+
+The relevant system calls:
+<blockquote><pre><b>#define</b> __NR_exit    1
+<b>#define</b> __NR_read    3
+<b>#define</b> __NR_write   4
+
+<b>#define</b> SYS_exit     __NR_exit
+<b>#define</b> SYS_read     __NR_read
+<b>#define</b> SYS_write    __NR_write
+</pre></blockquote>
+
+The system calls are defined in <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/unistd.h.html">unistd.h</a> and <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/syscall.h.html">syscall.h</a>
+
+<p>
+</p><hr width="90%">
+<p>
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<b>The Win32 API</b>
+</p><ul>
+	<li>Programmers can use the <span id="wpurl"><a class="wplabel">Win32 API</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Win32_api">Win32 API</a> (Application Program Interface) to get operating system services.</li>
+	<li>The interface is decoupled from the system calls, allowing Microsoft to change the actual system call without breaking programs.</li>
+	<li>The number of functions in the WIN32 API is extremely large. (thousands, <a href="http://msdn.microsoft.com/en-us/library/aa383749(v=vs.85).aspx">reference</a>)</li>
+	<li>Most of the procedure calls are executed in user space.</li>
+	<!--
+	<li>However, with Windows it's difficult to know whether a call is executed in kernel mode or in user mode.</li>
+	<li>Actually, a system call in one version could be executed in user space in another version.</li>
+-->
+	<li>In addition, the UNIX GUI system runs mostly in user mode, except for few system calls like writing a pixel onto the screen.</li>
+	<li>In contrast, the Win32 API has a huge number of calls for managing the GUI where most of the calls are executed in kernel mode.</li>
+	<li>The following table lists some of the Win32 API corresponding to the POSIX calls.</li>
+
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="5">
+<tbody><tr><th>UNIX/POSIX</th><th>Windows</th><th>Description</th></tr>
+<tr valign="top">
+<td>
+fork
+</td>
+<td>
+<a href="http://msdn.microsoft.com/en-us/library/ms682425(v=vs.85).aspx">CreateProcess</a> 
+</td>
+<td>
+Creates a new process.
+</td>
+</tr>
+
+
+<tr valign="top">
+<td>
+waitpid
+</td>
+<td>
+<a href="http://msdn.microsoft.com/en-us/library/ms687032(v=vs.85).aspx">WaitForSingleObject</a> 
+</td>
+<td>
+Waits for a process to exit.
+</td>
+</tr>
+<tr valign="top">
+<td>
+execve
+</td>
+<td>
+(none)
+</td>
+<td>
+CreateProcess = fork + execve
+</td>
+</tr>
+<tr valign="top">
+<td>
+exit
+</td>
+<td>
+<a href="http://msdn.microsoft.com/en-us/library/ms682658(v=vs.85).aspx">ExitProcess</a> 
+</td>
+<td>
+Terminate execution.
+</td>
+</tr>
+<tr valign="top">
+<td>
+open
+</td>
+<td>
+<a href="http://msdn.microsoft.com/en-us/library/aa363858(v=vs.85).aspx">CreateFile</a> 
+</td>
+<td>
+Create a new file or open an existing one.
+</td>
+</tr>
+<tr valign="top">
+<td>
+close
+</td>
+<td>
+<a href="http://msdn.microsoft.com/en-us/library/ms724211(v=vs.85).aspx">CloseHandle</a> 
+</td>
+<td>
+Closes a file
+</td>
+</tr>
+<tr valign="top">
+<td>
+read
+</td>
+<td>
+<a href="http://msdn.microsoft.com/en-us/library/aa365467(v=vs.85).aspx">ReadFile</a> 
+</td>
+<td>
+Read data from a file.
+</td>
+</tr>
+<tr valign="top">
+<td>
+write
+</td>
+<td>
+<a href="http://msdn.microsoft.com/en-us/library/aa365747(v=vs.85).aspx">WriteFile</a> 
+</td>
+<td>
+Write data to a file.
+</td>
+</tr>
+<tr valign="top">
+<td>
+lseek
+</td>
+<td>
+<a href="http://msdn.microsoft.com/en-us/library/aa365541(v=vs.85).aspx">SetFilePointer</a> 
+</td>
+<td>
+Moves the file pointer.
+</td>
+</tr>
+<tr valign="top">
+<td>
+stat
+</td>
+<td>
+<a href="http://msdn.microsoft.com/en-us/library/aa364944(v=vs.85).aspx">GetFileAttributes</a> 
+</td>
+<td>
+Get attributes from a file.
+</td>
+</tr>
+<tr valign="top">
+<td>
+mkdir
+</td>
+<td>
+<a href="http://msdn.microsoft.com/en-us/library/aa363855(v=vs.85).aspx">CreateDirectory</a> 
+</td>
+<td>
+Creates a new directory.
+</td>
+</tr>
+<tr valign="top">
+<td>
+rmdir
+</td>
+<td>
+<a href="http://msdn.microsoft.com/en-us/library/aa365488(v=vs.85).aspx">RemoveDirectory</a> 
+</td>
+<td>
+Removes a directory.
+</td>
+</tr>
+<tr valign="top">
+<td>
+unlink
+</td>
+<td>
+<a href="http://msdn.microsoft.com/en-us/library/aa363915(v=vs.85).aspx">DeleteFile</a> 
+</td>
+<td>
+Deletes an existing file.
+</td>
+</tr>
+<tr valign="top">
+<td>
+chdir
+</td>
+<td>
+<a href="http://msdn.microsoft.com/en-us/library/aa365530(v=vs.85).aspx">SetCurrentDirectory</a> 
+</td>
+<td>
+Change the current working directory.
+</td>
+</tr>
+<tr valign="top">
+<td>
+time
+</td>
+<td>
+<a href="http://msdn.microsoft.com/en-us/library/ms724338(v=vs.85).aspx">GetLocalTime</a> 
+</td>
+<td>
+Get the current system time.
+</td>
+</tr>
+</tbody></table>
+</blockquote>
+
+	
+</ul>
+	
+
+
+
+
+
+<blockquote><pre></pre></blockquote>
+  
+  
+<blockquote><pre></pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<tt><b></b></tt>
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<!--
+	<span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne &copy;2009</span>
+	
+<table border=0>
+	<tr><td></td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne &copy;2009&nbsp;&nbsp;</span></td></tr>
+</table>
+
+
+<blockquote>
+<table border=0 cellspacing=0 cellpadding=2>
+	<tr><td><img src="ComputerComponents-1.png"></td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne &copy;2009&nbsp;&nbsp;</span></td></tr>
+</table>
+</blockquote>
+
+	
+-->
+
+
+</li></body></html>

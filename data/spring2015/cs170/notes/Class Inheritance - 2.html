@@ -1,0 +1,2145 @@
+
+<!-- saved from url=(0069)http://azrael.digipen.edu/~mmead/www/Courses/CS170/Inheritance-2.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./Class Inheritance - 2_files/new.css">
+<title>Class Inheritance - 2</title>
+
+<style>
+	
+.hidden { 
+position: absolute; 
+top: -9999px; 
+}
+</style>
+
+</head>
+
+<body>  
+<center><h1>Class Inheritance 2</h1></center>
+
+<p>
+<i>"C++: an octopus made by nailing extra legs onto a dog."</i> - Steve Taylor
+</p><p>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><p class="SectionHeader">Virtual Methods and Polymorphism</p>
+
+<a name="EMPLOYEE_CLASS1">
+The specification (<b>Employee.h</b>) for an Employee class:
+</a>
+
+<pre class="sourcecode"><code><b>#ifndef</b> EMPLOYEE_H
+<b>#define</b> EMPLOYEE_H
+
+<b>#include</b> &lt;string&gt;
+
+<b>class</b> Employee           
+{
+  <b>public</b>:             
+    Employee(<b>const</b> std::string&amp; first, <b>const</b> std::string&amp; last, <b>float</b> sal, <b>int</b> yrs);
+    <b>void</b> setName(<b>const</b> std::string&amp; first, <b>const</b> std::string&amp; last);
+    <b>void</b> setSalary(<b>float</b> newSalary);
+    <b>void</b> setYears(<b>int</b> numYears);
+    <b>void</b> Display() <b>const</b>;
+
+  <b>private</b>:               
+    std::string firstName_;  
+    std::string lastName_;   
+    <b>float</b> salary_;    
+    <b>int</b> years_;       
+};
+<b>#endif</b></code></pre>
+
+
+
+<a name="MANAGER_CLASS1">
+The <i>specification</i> (<b>Manager.h</b>) for the <tt>Manager</tt> class:
+</a>
+
+
+<pre class="sourcecode"><code><b>#ifndef</b> MANAGER_H
+<b>#define</b> MANAGER_H
+<b>#include</b> <font color="#9933CC">"Employee.h"</font>
+
+<b>class</b> Manager : <b>public</b> Employee
+{
+  <b>public</b>:
+    Manager(<b>const</b> std::string&amp; first, <b>const</b> std::string&amp; last, <b>float</b> sal, <b>int</b> yrs, <b>int</b> dept, <b>int</b> emps);
+    <b>void</b> setDeptNumber(<b>int</b> dept);
+    <b>void</b> setNumEmployees(<b>int</b> emps);
+    <b>void</b> Display() <b>const</b>;
+    
+  <b>private</b>:
+    <b>int</b> deptNumber_;    <font color="#003399"><i>// department managed</i></font>
+    <b>int</b> numEmployees_;  <font color="#003399"><i>// employees in department</i></font>
+};
+<b>#endif</b></code></pre>
+
+
+
+Does the following code compile as is? If not, make the necessary changes so it will compile then trace the execution of the program. 
+What is the output? Why?
+<p>
+
+<table border="0">
+<tbody><tr valign="top">
+<td>
+<pre class="sourcecode"><code><b>#include</b> <font color="#9933CC">"Employee.h"</font>
+<b>#include</b> <font color="#9933CC">"Manager.h"</font>
+<b>#include</b> &lt;iostream&gt;
+
+<b>void</b> func1(<b>const</b> Employee&amp; emp)
+{
+  emp.Display();
+  std::cout &lt;&lt; std::endl;
+}
+
+<b>void</b> func2(<b>const</b> Manager&amp; mgr)
+{
+  mgr.Display();
+  std::cout &lt;&lt; std::endl;
+}
+
+<b>int</b> main()
+{
+  Employee emp1(<font color="#9933CC">"John"</font>, <font color="#9933CC">"Doe"</font>, 30000, 2);
+  Manager mgr1(<font color="#9933CC">"Mary"</font>, <font color="#9933CC">"Smith"</font>, 50000, 10, 5, 8); 
+
+  func1(emp1);  <font color="#003399"><i>// pass an Employee object</i></font>
+  func2(mgr1);  <font color="#003399"><i>// pass a Manager object</i></font>
+
+  func1(mgr1);  <font color="#003399"><i>// pass a Manager object</i></font>
+  func2(emp1);  <font color="#003399"><i>// pass an Employee object</i></font>
+  <b>return</b> 0;
+}
+</code></pre>
+</td>
+<td width="30"></td>
+<td>
+<b>Output:</b>
+<pre>  Name: Doe, John
+Salary: $30000.00
+ Years: 2
+
+  Name: Smith, Mary
+Salary: $50000.00
+ Years: 10
+  Dept: 5
+  Emps: 8
+
+  Name: Smith, Mary
+Salary: $50000.00
+ Years: 10
+</pre>
+</td>
+</tr></tbody></table>
+
+The following code won't compile. Remove the offending line(s) and then trace the execution of the program. What is the output? Why?
+</p><p>
+
+<table><tbody><tr valign="top"><td>
+<pre class="sourcecode"><code><b>#include</b> <font color="#9933CC">"Employee.h"</font>
+<b>#include</b> <font color="#9933CC">"Manager.h"</font>
+<b>#include</b> &lt;iostream&gt;
+
+<b>int</b> main()
+{
+  Employee emp1(<font color="#9933CC">"John"</font>, <font color="#9933CC">"Doe"</font>, 30000, 2);
+  Manager mgr1(<font color="#9933CC">"Mary"</font>, <font color="#9933CC">"Smith"</font>, 50000, 10, 5, 8); 
+
+  Employee* empPtr1 = &amp;emp1;
+  Manager* mgrPtr1 = &amp;mgr1;
+
+  empPtr1-&gt;Display();
+  std::cout &lt;&lt; std::endl;
+
+  mgrPtr1-&gt;Display();
+  std::cout &lt;&lt; std::endl;
+
+  empPtr1 = &amp;mgr1;
+  empPtr1-&gt;setYears(11);
+  empPtr1-&gt;setNumEmployees(12);
+  empPtr1-&gt;Display();
+  std::cout &lt;&lt; std::endl;
+  <b>return</b> 0;
+}</code></pre>
+</td>
+<td>
+
+<b>Output:</b> <!--after fixing the code:-->
+
+<blockquote><pre>  Name: Doe, John
+Salary: $30000.00
+ Years: 2
+
+  Name: Smith, Mary
+Salary: $50000.00
+ Years: 10
+  Dept: 5
+  Emps: 8
+
+  Name: Smith, Mary
+Salary: $50000.00
+ Years: 11
+</pre></blockquote>
+
+
+
+</td>
+
+</tr></tbody></table>
+
+</p><div class="hidden"> 
+ 
+What is the result of adding the following to <b>main</b>: (Compile? Run?)
+<p>
+<!--
+Fine because empPtr1 is really pointing to a manager
+-->
+
+</p><blockquote><pre><b>static_cast</b>&lt;Manager *&gt;(empPtr1)-&gt;setNumEmployees(12); <font color="#003399"><i>// ???</i></font>
+<b>static_cast</b>&lt;Manager *&gt;(empPtr1)-&gt;Display();           <font color="#003399"><i>// ???</i></font>
+</pre></blockquote>
+
+
+How about this code: (Compile? Run?)
+<p>
+<!--
+Prints garbage for the 2 manager fields
+-->
+
+</p><blockquote><pre><b>static_cast</b>&lt;Manager *&gt;(&amp;emp1)-&gt;Display(); <font color="#003399"><i>// ???</i></font>
+</pre></blockquote>
+
+How about this code: (Compile? Run?)
+<p>
+<!--
+Crashes because writing into illegal area. Actually, crashes when main returns.
+GUN doesn't crash, but MS and Borland do.
+-->
+
+</p><blockquote><pre><b>static_cast</b>&lt;Manager *&gt;(&amp;emp1)-&gt;setNumEmployees(10); <font color="#003399"><i>// ???</i></font>
+</pre></blockquote>
+
+</div>
+
+
+<p>
+</p><hr width="90%">
+<p>
+
+This program creates an array of pointers to Employee objects. It displays each object using a for loop. Make sure you understand what the program is trying to do.
+</p><p>
+
+<table><tbody><tr valign="bottom"><td>
+
+<pre class="sourcecode"><code><b>#include</b> <font color="#9933CC">"Employee.h"</font>
+<b>#include</b> <font color="#9933CC">"Manager.h"</font>
+<b>#include</b> &lt;iostream&gt;
+
+<b>int</b> main()
+{
+    <font color="#003399"><i>// Create the personnel</i></font>
+  Employee emp1(<font color="#9933CC">"John"</font>, <font color="#9933CC">"Doe"</font>, 30000, 2);
+  Employee emp2(<font color="#9933CC">"Nigel"</font>, <font color="#9933CC">"Tufnel"</font>, 35000, 4);
+  Manager mgr1(<font color="#9933CC">"Mary"</font>, <font color="#9933CC">"Smith"</font>, 50000, 10, 5, 8); 
+  Manager mgr2(<font color="#9933CC">"Derek"</font>, <font color="#9933CC">"Smalls"</font>, 60000, 13, 6, 5); 
+
+    <font color="#003399"><i>// Create an array to hold pointers to the 4 objects</i></font>
+  Employee* personnel[4];
+
+    <font color="#003399"><i>// Assign a pointer for each object</i></font>
+  personnel[0] = &amp;emp1;
+  personnel[1] = &amp;emp2;
+  personnel[2] = &amp;mgr1;  <font color="#003399"><i>// a Manager is an Employee</i></font>
+  personnel[3] = &amp;mgr2;  <font color="#003399"><i>// a Manager is an Employee</i></font>
+
+    <font color="#003399"><i>// Loop through and display each object</i></font>
+  <b>for</b> (<b>int</b> i = 0; i &lt; 4; i++)
+  {
+    personnel[i]-&gt;Display();
+    std::cout &lt;&lt; std::endl;
+  }
+  <b>return</b> 0;
+}</code></pre>
+
+</td>
+<td width="30"></td>
+<td>
+
+<b>Output:</b>
+<pre>  Name: Doe, John
+Salary: $30000.00
+ Years: 2
+
+  Name: Tufnel, Nigel
+Salary: $35000.00
+ Years: 4
+
+  Name: Smith, Mary
+Salary: $50000.00
+ Years: 10
+
+  Name: Smalls, Derek
+Salary: $60000.00
+ Years: 13
+</pre>
+</td></tr></tbody></table>
+
+
+</p><p>
+
+What we really wanted was to have each object display all of its data. The Employee objects displayed all of their data, but the Manager objects 
+only displayed the data that they have in common with an Employee. We really wanted this to display:
+</p><p>
+
+<table><tbody><tr valign="top"><td>
+<blockquote><pre>  Name: Doe, John
+Salary: $30000.00
+ Years: 2
+
+
+
+  Name: Tufnel, Nigel
+Salary: $35000.00
+ Years: 4
+</pre></blockquote>
+</td>
+<td width="0"></td>
+<td>
+<blockquote><pre>  Name: Smith, Mary
+Salary: $50000.00
+ Years: 10
+  Dept: 5
+  Emps: 8
+
+  Name: Smalls, Derek
+Salary: $60000.00
+ Years: 13
+  Dept: 6
+  Emps: 5
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+Because the <tt>personnel[]</tt> array is an array of pointers to Employee objects, when the compiler sees the statement:
+</p><blockquote><pre>   personnel[i]-&gt;Display();
+</pre></blockquote>
+
+<ul>
+<li>The compiler generates code to call the Display() method of the Employee class, regardless of what type of object is being pointed at in position 
+<tt>i</tt> of the <tt>personnel[]</tt> array. (Static type vs. dynamic type)
+</li><li>This is the "normal" or default behavior of the C++ compiler.
+</li><li>This type of code generation is called <i>static binding</i> or <i>early binding</i> because
+it is done at compile time.
+</li><li>We need a way to tell the compiler <i>not</i> to generate the function call at compile time, 
+but wait until run-time to do so. 
+</li><li>Delaying the decision until runtime is called <i>dynamic binding</i> or <i>late binding</i>
+because the decision is made at the last possible moment.
+</li></ul>
+
+<p>
+This should bring up these points:
+
+</p><ul>
+<li>Heterogenous arrays in C++?
+</li><li>How do we tell the compiler to use dynamic binding?
+</li><li>Why isn't dynamic binding the default?
+</li><li>What makes it work?
+</li></ul>
+
+The How is pretty simple:
+<ul>
+<li>The mechanism in C++ is <i>virtual functions</i>. 
+</li><li>In order for our example to work, we need to make the Display() method
+in the <tt>Employee</tt> class a virtual function. 
+</li><li>To do so, we merely add the <b><tt>virtual</tt></b> keyword to the function declaration in 
+the specification (header) file:
+<blockquote><pre><b>virtual</b> <b>void</b> Display() <b>const</b>;
+</pre></blockquote>
+
+</li><li>That's all there is to it! Now, if you run the previous example, you will get the correct output.
+</li></ul> 
+
+Why isn't dynamic binding the default? There's a couple of reasons:
+<ul>
+<li>Efficiency. Virtual methods require more memory and processor time. (The overhead is very slight and almost never poses a problem in actual use.)
+</li><li>You might not want to redefine it in a derived class.
+</li></ul>
+
+So, in a nutshell, what is a virtual method? 
+<i>A virtual method allows a derived class to replace the implementation 
+that was provided by the base class.</i>
+
+<p>
+
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><p class="SectionHeader">A Closer Look at Static Binding vs. Dynamic Binding (Polymorphism)</p>
+
+On the surface, the concept of virtual methods seems strange, complex, or even magical. In fact, its all three. To understand dynamic binding 
+of methods (virtual methods) you must first understand static binding.
+
+<ul>
+<li>In C++ code, all method names (e.g. Employee::Display) are actually pointers that contain the address of the area of memory that 
+contains the executable code for the method.
+</li><li>Statically bound methods are methods which point to the correct area of memory at compile time (link time, actually), meaning that they are initialized with the 
+address of the method at compile (link) time and <i>always</i> contain the same address.
+</li><li>Until now, all methods that we have been dealing with have been statically bound.
+</li><li>Dynamically bound methods (virtual methods) are not initialized with the address of the method at compile time.
+</li><li>At runtime, when a virtual method is called, the code "looks up" the address of the virtual method and calls that address.
+</li><li>A method is statically bound by default.
+</li><li>You must explicitly mark a method as <b>virtual</b> for it to be dynamically bound.
+</li></ul>
+
+Notes about virtual methods:
+<ul>
+<li>In order for the virtual mechanism to work properly, the base class must specify which methods are virtual.
+</li><li>You can't simply add the <b>virtual</b> keyword to a method in the derived class and expect to be able to call the 
+corresponding method in the base class.
+</li><li>The virtual mechanism only works with pointers because calls to class methods via non-pointers are always statically bound.
+(Objects can't change, pointers can):
+<blockquote><pre>  Manager mgr(<font color="#9933CC">"Mary"</font>, <font color="#9933CC">"Smith"</font>, 50000, 10, 5, 8); 
+  Employee *pm = &amp;mgr;<font color="#003399"><i> // OK, a Manager is an Employee</i></font>
+  
+  mgr.Display();<font color="#003399"><i> // Always calls Manager::Display() regardless of virtual keyword</i></font>
+  pm-&gt;Display();<font color="#003399"><i> // Depends whether or not Display() is virtual in the base class</i></font>
+</pre></blockquote>
+
+</li><li>Converting a derived class reference or pointer to a base class reference or pointer is called <i>upcasting</i> and is allowed by
+the compiler automatically. (implicit conversion) (Think of casting <i>up</i> the hierarchy.)
+<blockquote>
+	This is simply because a derived class <i><b>is-a-kind-of</b></i> base class.
+</blockquote>
+</li><li>Converting a base class reference or pointer to a derived class reference or pointer is called <i>downcasting</i> and can
+only be done with an explicit cast. (Think of casting <i>down</i> the hierarchy.) It may not be safe to do so.
+<blockquote>
+	This is because a base class <i><b>is-NOT-a-kind-of</b></i> derived class.
+</blockquote>
+</li><li><i>Upcasting</i> is always safe. <i>Downcasting</i> is unsafe and can easily lead to program crashes at runtime.
+
+
+</li><li>Simple rule of thumb: If you intend to redefine a method in a derived class, make the method virtual in the base class.
+If you don't want to redefine it, don't make it virtual.
+</li></ul>
+
+Additional notes:
+<p>
+
+</p><ul>
+<li>If it's not obvious, only member functions can be virtual.
+</li><li>The <tt><b>virtual</b></tt> keyword must only appear in the class declaration.
+
+<br><b>Correct:</b>
+<blockquote><pre><b>virtual</b> <b>void</b> Display() <b>const</b>;
+</pre></blockquote>
+
+<b>Incorrect:</b>
+<blockquote><pre><b>virtual</b> <b>void</b> Employee::Display() <b>const</b>
+{
+  <font color="#003399"><i>// Code to print the object goes here</i></font>
+}
+</pre></blockquote>
+
+</li><li>You only have to specify the <tt><b>virtual</b></tt> keyword in the base class. 
+In our example, the <i>Manager::Display</i> does not have to be tagged as <tt><b>virtual</b></tt>,
+although it is. 
+<blockquote>
+<p class="technote">
+Although the <tt><b>virtual</b></tt> keyword is not required in the derived classes, 
+it's a good idea to include it as a way to document the code.
+</p>
+</blockquote>
+
+</li><li>Once a function is marked as <tt><b>virtual</b></tt>, it will always be <tt><b>virtual</b></tt> 
+in all derived classes. There is no way to "undo" this in a descendant class. <font color="red">(Changed in C++11 with the <b>final</b> identifier)</font>
+
+</li><li>The virtual mechanism is apparent when a pointer to a base class is pointing at an
+object of a derived class:
+<blockquote><pre>  Employee emp(<font color="#9933CC">"John"</font>, <font color="#9933CC">"Doe"</font>, 30000, 2);
+  Manager mgr(<font color="#9933CC">"Mary"</font>, <font color="#9933CC">"Smith"</font>, 50000, 10, 5, 8); 
+
+  Employee* empPtr = &amp;emp; <font color="#003399"><i>// Nothing fancy here</i></font>
+  Manager* mgrPtr = &amp;mgr;  <font color="#003399"><i>// Nothing fancy here</i></font>
+
+  emp.Display();     <font color="#003399"><i>// Employee::Display()</i></font>
+  empPtr-&gt;Display(); <font color="#003399"><i>// Employee::Display()</i></font>
+  mgr.Display();     <font color="#003399"><i>// Manager::Display()</i></font>
+  mgrPtr-&gt;Display(); <font color="#003399"><i>// Manager::Display()</i></font>
+
+    <font color="#003399"><i>// Polymorphism is realized now</i></font>
+  empPtr = &amp;mgr;     <font color="#003399"><i>// Safe and legal (Manager is an Employee)</i></font>
+  empPtr-&gt;Display(); <font color="#003399"><i>// Depends on "virtualness" of Display()</i></font>
+                     <font color="#003399"><i>//   if Display() is virtual, Manager::Display()</i></font>
+                     <font color="#003399"><i>//   if Display() is non-virtual, Employee::Display()</i></font>
+</pre></blockquote>
+
+</li><li>This concept of having base class pointers point to objects of the derived class is what <b><i>polymorphism</i></b> is all about.
+
+</li></ul>
+
+
+
+<a name="VMT">
+A <i>very oversimplified</i> example:
+</a>
+
+<br>
+<blockquote>
+<img src="./Class Inheritance - 2_files/VirtualMethodAddresses.gif" border="0">
+</blockquote>
+
+
+Without virtual methods: (i.e. Employee::Display() is <b>NOT</b> marked as <b>virtual</b>)
+
+<pre class="sourcecode"><code><b>int</b> main()
+{
+    <font color="#003399"><i>// Create an Employee and a Manager</i></font>
+  Employee emp(<font color="#9933CC">"John"</font>, <font color="#9933CC">"Doe"</font>, 30000, 2);
+  Manager mgr(<font color="#9933CC">"Mary"</font>, <font color="#9933CC">"Smith"</font>, 50000, 10, 5, 8); 
+
+    <font color="#003399"><i>// Display them</i></font>
+  emp.Display();<font color="#003399"><i> // Compiler/linker generated JUMP to address 2316</i></font>
+  mgr.Display();<font color="#003399"><i> // Compiler/linker generated JUMP to address 1300</i></font>
+  
+  Employee *pe = &amp;emp;<font color="#003399"><i> // OK</i></font>
+  Employee *pm = &amp;mgr;<font color="#003399"><i> // OK, a Manager is an Employee</i></font>
+  
+    <font color="#003399"><i>// Display them</i></font>
+  pe-&gt;Display();<font color="#003399"><i> // Compiler/linker generated JUMP to address 2316</i></font>
+  pm-&gt;Display();<font color="#003399"><i> // Compiler/linker generated JUMP to address 2316 (pm is an Employee pointer)</i></font>
+  <b>return</b> 0;
+}
+</code></pre>
+
+With virtual methods: (i.e. Employee::Display() is marked as <b>virtual</b>)
+
+<pre class="sourcecode"><code><b>int</b> main()
+{
+    <font color="#003399"><i>// Create an Employee and a Manager</i></font>
+  Employee emp(<font color="#9933CC">"John"</font>, <font color="#9933CC">"Doe"</font>, 30000, 2);
+  Manager mgr(<font color="#9933CC">"Mary"</font>, <font color="#9933CC">"Smith"</font>, 50000, 10, 5, 8); 
+
+    <font color="#003399"><i>// Display them</i></font>
+  emp.Display();<font color="#003399"><i> // Compiler/linker generated JUMP to address 2316</i></font>
+  mgr.Display();<font color="#003399"><i> // Compiler/linker generated JUMP to address 1300</i></font>
+  
+  Employee *pe = &amp;emp;<font color="#003399"><i> // OK</i></font>
+  Employee *pm = &amp;mgr;<font color="#003399"><i> // OK, a Manager is an Employee</i></font>
+  
+    <font color="#003399"><i>// Display them</i></font>
+  pe-&gt;Display();<font color="#003399"><i> // Compiler generated code to perform lookup at runtime.</i></font>
+                <font color="#003399"><i> //   Finds Display() at address 2316</i></font>
+  pm-&gt;Display();<font color="#003399"><i> // Compiler generated code to perform lookup at runtime.</i></font>
+                <font color="#003399"><i> // Finds Display() at address 1300</i></font>
+  <b>return</b> 0;
+}</code></pre>
+
+
+<div class="hidden">
+	
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<hr>
+
+ <h2>Virtual Method Tables</h2>
+ 
+<ul>
+<li>Each <i>class</i> (not <i>object</i>) that contains virtual methods has an associated <i>Virtual Method Table</i> or VMT.
+</li><li>This table contains pointers to the virtual methods of the class.
+</li><li>A VMT is basically a mechanism that allows a method's address to be located (looked up) at runtime.
+</li><li>The VMT is generated at compile time and doesn't change.
+</li><li>It takes more time to call a virtual method than a non-virtual method because of the lookup time. (The added time is slight
+and almost never poses a problem.)
+</li></ul>
+
+Given these 3 classes:
+<p>
+
+<table border="1"><tbody><tr valign="top">
+<td>
+<pre><b>class</b> Foo1
+{
+  <b>public</b>:
+    Foo1(<b>int</b> x) : x_(x) {};    
+    <b>void</b> Show() { 
+      std::cout &lt;&lt; x_; 
+    };
+    <b>void</b> DoThis() {};
+    <b>void</b> DoThat() {};
+
+  <b>private</b>:
+    <b>int</b> x_;
+};
+</pre>
+</td>
+<td>
+<pre><b>class</b> Foo2
+{
+  <b>public</b>:
+    Foo2(<b>int</b> x) : x_(x) {};    
+    <b>virtual</b> <b>void</b> Show() { 
+      std::cout &lt;&lt; x_; 
+    };
+    <b>void</b> DoThis() {};
+    <b>void</b> DoThat() {};
+
+  <b>private</b>:
+    <b>int</b> x_;
+};
+</pre>
+</td>
+
+<td>
+<pre><b>class</b> Foo3
+{
+  <b>public</b>:
+    Foo3(<b>int</b> x) : x_(x) {};    
+    <b>virtual</b> <b>void</b> Show() { 
+      std::cout &lt;&lt; x_; 
+    };
+    <b>virtual</b> <b>void</b> DoThis() {};
+    <b>virtual</b> <b>void</b> DoThat() {};
+
+  <b>private</b>:
+    <b>int</b> x_;
+};
+</pre>
+</td></tr></tbody></table>
+
+</p><p>
+
+What is <tt><b>sizeof</b>(Foo1)</tt>, <tt><b>sizeof</b>(Foo2)</tt>, <tt><b>sizeof</b>(Foo3)</tt>?
+</p><p>
+Using virtual functions:
+</p><ul>
+<li>Each class has a VMT (size determined by number of virtual functions)
+</li><li>Each object has an extra hidden pointer to the VMT.
+</li><li>Calling the function requires a lookup (essentially, a pointer dereference).
+</li></ul>
+
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS170/VirtualMethodDetails.html">Virtual Method Details</a>
+
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+
+</div>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Virtual Function Tips</p>
+
+Virtual Method Tables
+<ul>
+<li>Each class that contains virtual methods has a <i>Virtual Method Table</i> or VMT.
+</li><li>A VMT is basically a mechanism that allows a method's address to be located (looked up) at runtime.
+</li><li>The VMT is generated at compile and doesn't change.
+</li><li>It takes more time to call a virtual method than a non-virtual method because of the lookup time. (The added time is slight
+and almost never poses a problem.)
+</li></ul>
+
+Special Functions
+
+<ul>
+<li><b>Constructors</b> Can't be virtual since derived classes don't inherit them from the base class.
+  <font color="red">(Now in C++11 with <b>inheriting constructors</b>)</font>
+</li><li><b>Destructors</b> Any class intended for use as a base class should have a virtual destructor. I 
+would read <i>should</i> as <i>must</i>.
+
+<blockquote><pre>Manager *mgr = <b>new</b> Manager(<font color="#9933CC">"Mary"</font>, <font color="#9933CC">"Smith"</font>, 50000, 10, 5, 8); 
+Employee *pe = mgr;
+  ...
+delete pe;<font color="#9933CC"> // what gets called? ~Employee() or ~Manager()</font>
+          <font color="#9933CC"> // pe-&gt;~Employee() or pe-&gt;~Manager()</font>
+</pre></blockquote>
+
+Using the <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS170/Inheritance-2.html#VMT">diagram</a> above, without virtual:
+
+<blockquote><pre>delete pe;<font color="#9933CC"> // Compiler generated JUMP to address 2100</font>
+</pre></blockquote>
+
+However, with virtual destructor:
+
+<blockquote><pre>delete pe;<font color="#9933CC"> // Compiler generated code to lookup function at 1100</font> <!-- (slot 1 in VMT)-->
+</pre></blockquote>
+
+<ul>
+<li>This becomes an issue if the derived class dynamically allocates memory (<b>new</b>) or
+has some other resource that needs to be released (e.g. open file handle)
+</li><li>Failing to make the base class destructor virtual will prevent the derived class'
+resources to be released. The base class sub-object will get destroyed, but not the
+derived portion. Resource leak.
+</li><li>Even if the base class doesn't need a destructor (default is adequate) you need to define
+one to make it virtual (remember: static is default):
+
+<blockquote><pre><b>virtual</b> ~Base() {};
+</pre></blockquote>
+
+</li><li>The compiler automatically calls the destructors for the base objects.
+
+</li></ul>
+
+<p>
+
+</p></li><li><b>Friends</b> They aren't class members so they can't be virtual.
+
+</li></ul>
+
+<div class="hidden">
+	
+<p>
+</p><hr width="90%">
+<p>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><p class="SectionHeader">Hiding Base Class Methods</p>
+
+<p>
+If you redefine a base class method with a method that has a different function signature, the base class method is hidden.
+
+</p><ul>
+<li>Normally, when you create two methods with the same name but different signatures, you are <i>overloading</i> the method.
+</li><li>You can't overload methods across classes.
+</li><li>Creating a derived method with the same name and a different signature creates a new (and unrelated) method.
+</li><li>You can't invoke the base class methods on derived objects (regardless of whether or not the method in the
+base class is marked as <b>virtual</b>) once they are hidden.
+</li><li>This is sometimes desirable, in that you do not want a derived class to access a base class method.
+</li><li>Note that these methods are <i>hidden</i>, not removed, so there are other ways to access them.
+</li></ul>
+
+<p>
+
+The base class:
+</p><p>
+
+</p><blockquote><pre><b>class</b> Employee           
+{
+  <b>public</b>:                
+    <b>virtual</b> <b>void</b> Display() <b>const</b>;
+
+    <font color="#003399"><i>// Other stuff ...</i></font>
+};
+</pre></blockquote>
+
+The derived class: (<i>Manager::Display()</i> hides <i>Employee::Display()</i>)
+<p>
+
+</p><blockquote><pre><b>class</b> Manager : <b>public</b> Employee
+{
+  <b>public</b>:
+    <b>virtual</b> <b>void</b> Display(std::ostream &amp;output) <b>const</b>;
+
+    <font color="#003399"><i>// Other stuff ...</i></font>
+};
+</pre></blockquote>
+
+Some client code:
+<p>
+
+
+</p><blockquote><pre>Employee emp(<font color="#9933CC">"John"</font>, <font color="#9933CC">"Doe"</font>, 30000, 2);
+Manager mgr(<font color="#9933CC">"Mary"</font>, <font color="#9933CC">"Smith"</font>, 50000, 10, 5, 8); 
+
+Employee* empPtr = &amp;emp; <font color="#003399"><i>// Nothing fancy here</i></font>
+Manager* mgrPtr = &amp;mgr;  <font color="#003399"><i>// Nothing fancy here</i></font>
+
+emp.Display();     <font color="#003399"><i>// Employee::Display()</i></font>
+empPtr-&gt;Display(); <font color="#003399"><i>// Employee::Display()</i></font>
+mgr.Display();     <font color="#003399"><i>// error: function does not take 0 parameters</i></font>
+mgrPtr-&gt;Display(); <font color="#003399"><i>// error: function does not take 0 parameters</i></font>
+  
+mgr.Display(std::cout);     <font color="#003399"><i>// Manager::Display(std::iostream &amp;)</i></font>
+mgrPtr-&gt;Display(std::cout); <font color="#003399"><i>// Manager::Display(std::iostream &amp;)</i></font>
+
+empPtr = &amp;mgr;              <font color="#003399"><i>// Safe and legal (Manager is an Employee)</i></font>
+empPtr-&gt;Display();          <font color="#003399"><i>// Employee::Display()</i></font>
+empPtr-&gt;Display(std::cout); <font color="#003399"><i>// error: function does not take 1 parameters</i></font>
+</pre></blockquote>
+
+If the base class has overloaded functions, the derived class must redefine <i>all</i> of them. This 
+is not strictly related to virtual functions.
+
+<p>
+</p><hr width="60%">
+<p>
+<b>Example #1</b> - Inherit all methods:
+</p><p>
+
+</p><blockquote><pre><b>class</b> Foo
+{
+  <b>public</b>:
+    <b>virtual</b> <b>void</b> f() <b>const</b> {};
+    <b>virtual</b> <b>void</b> f(<b>int</b>) <b>const</b> {};
+    <b>virtual</b> <b>void</b> f(<b>double</b>) <b>const</b> {};
+};
+</pre></blockquote>
+
+<i>Bar</i> inherits all functions from <i>Foo</i>:
+<p>
+
+</p><blockquote><pre><b>class</b> Bar : <b>public</b> Foo
+{
+  <b>public</b>:
+   <font color="#003399"><i>// Stuff ...</i></font>
+};
+</pre></blockquote>
+
+Client code:
+<p>
+
+</p><blockquote><pre>Bar b;
+
+b.f();     <font color="#003399"><i>// Ok</i></font>
+b.f(1);    <font color="#003399"><i>// Ok</i></font>
+b.f(3.14); <font color="#003399"><i>// Ok</i></font>
+</pre></blockquote>
+
+Class <i>Bar</i> inherits all methods from Foo.
+
+<p>
+</p><hr width="60%">
+<p>
+<b>Example #2</b> - Add a new method (with a different signature) to the derived class:
+</p><p>
+
+</p><blockquote><pre><b>class</b> Bar : <b>public</b> Foo
+{
+  <b>public</b>:
+    <b>virtual</b> <b>void</b> f(<b>const char</b> *) <b>const</b> {};
+};
+</pre></blockquote>
+
+Client code:
+<p>
+
+</p><blockquote><pre>Bar b;
+Foo *pf = &amp;b;
+
+b.f(<font color="#9933CC">"hi"</font>);   <font color="#003399"><i>// Ok</i></font>
+b.f();       <font color="#003399"><i>// error: function does not take 0 parameter</i></font>
+b.f(1);      <font color="#003399"><i>// error: cannot convert parameter 1 from 'const int' to 'const char *'</i></font>
+b.f(3.14);   <font color="#003399"><i>// error: cannot convert parameter 1 from 'const double' to 'const char *'</i></font>
+pf-&gt;f(10);   <font color="#003399"><i>// Ok, Foo::f(int)</i></font>
+pf-&gt;f(3.14); <font color="#003399"><i>// Ok, Foo::f(double)</i></font>
+pf-&gt;f(<font color="#9933CC">"hi"</font>); <font color="#003399"><i>// error: cannot convert parameter 1 from 'const char [3]' to 'const double'</i></font>
+
+</pre></blockquote>
+
+Notes:
+<p>
+
+</p><ul>
+<li><i>Bar</i>'s function, <i>f</i>, is a new, unrelated function because it doesn't <i>exactly</i> match any function in <i>Foo</i>.
+</li><li>The new function <i>f</i> <i>hides</i> the base class versions (all of them).
+</li><li>The new <i>f</i> does not <i>overload</i> the base class versions. (Can't overload across classes.)
+</li></ul>
+
+<p>
+</p><hr width="60%">
+<p>
+<b>Example #3</b> - Redefine a method in the derived class:
+</p><p>
+
+</p><blockquote><pre><b>class</b> Bar : <b>public</b> Foo
+{
+  <b>public</b>:
+    <b>virtual</b> <b>void</b> f() <b>const</b> {}; <font color="#003399"><i>// Matches function in Foo exactly</i></font>
+};
+</pre></blockquote>
+
+Client code:
+<p>
+
+</p><blockquote><pre>Bar b;
+Foo *pf = &amp;b;
+
+b.f(<font color="#9933CC">"hi"</font>); <font color="#003399"><i>// error: function does not take 1 parameter</i></font>
+b.f();     <font color="#003399"><i>// Ok, Bar::f(void)</i></font>
+b.f(1);    <font color="#003399"><i>// error: function does not take 1 parameter</i></font>
+b.f(3.14); <font color="#003399"><i>// error: function does not take 1 parameter</i></font>
+pf-&gt;f(10); <font color="#003399"><i>// Ok, Foo::f(int)</i></font>
+pf-&gt;f();   <font color="#003399"><i>// Ok, Bar::f(void)</i></font></pre></blockquote>
+
+Notes:
+<p>
+
+</p><ul>
+<li><i>Bar</i>'s function, <i>f</i>, redefines a base class function in <i>Foo</i>.
+</li><li>In addition to overriding the base class function that matches the signature,
+it hides the other overloaded functions.
+</li><li>If the base class has overloaded functions and you redefine one of them, you need to
+redefine all of them:
+</li></ul>
+<p>
+
+</p><blockquote><pre><b>class</b> Bar : <b>public</b> Foo
+{
+  <b>public</b>:
+    <b>virtual</b> <b>void</b> f() <b>const</b> {};
+    <b>virtual</b> <b>void</b> f(<b>int</b>) <b>const</b> {};
+    <b>virtual</b> <b>void</b> f(<b>double</b>) <b>const</b> {};
+    <b>virtual</b> <b>void</b> f(<b>const</b> <b>char</b> *) <b>const</b> {};
+};
+</pre></blockquote>
+
+<li>If you simply need to implement the derived method in order to forward the call to the
+base class, you can use a <b>using</b> directive:
+
+<blockquote><pre><b>class</b> Bar : <b>public</b> Foo
+{
+  <b>public</b>:
+      <font color="#003399"><i>// Different behavior</i></font>
+    <b>virtual</b> <b>void</b> f() <b>const</b> {};
+    
+      <font color="#003399"><i>// Bring all of Foo's overloaded f functions into scope</i></font>
+    <b>using</b> Foo::f;
+};
+</pre></blockquote>
+
+</li><li>Note that you can <i>promote</i> the visibility of base class members in this way (e.g. protected to public). 
+You can't promote a private member, since derived classes can't access them.
+
+<p>
+</p><hr width="60%">
+<p>
+<a name="COVARIANT_RETURN">
+<b>Example #4</b> - Return type is considered with inherited virtual functions:
+</a>
+</p><p>
+
+</p><blockquote><pre><b>class</b> Foo
+{
+  <b>public</b>:
+    <b>virtual</b> Foo* f() <b>const</b>;
+};
+
+<b>class</b> Bar : <b>public</b> Foo
+{
+  <b>public</b>:
+      <font color="#003399"><i>// error: conflicting return type specified for `virtual void Bar::f()`</i></font>
+    <b>virtual</b> <b>void</b> f() <b>const</b>; 
+};
+</pre></blockquote>
+
+Notes:
+<p>
+
+</p><ul>
+<li>Because we aren't overloading, the return types must match. (Not just the parameters.)
+</li><li>This is unique to virtual functions. Non-virtual functions don't have this requirement.
+</li><li>Compiler needs to generate code for a return value at compile time.
+</li><li>The only exception is a reference or pointer to a <i>covariant</i> type:
+
+<blockquote><pre>      <font color="#003399"><i>// Ok, Bar <b>is a</b> Foo</i></font>
+    <b>virtual</b> Bar* Bar::f() <b>const</b>; 
+</pre></blockquote>
+
+</li><li>A covariant return type is a class type that derives from the class type returned
+from the base class' virtual function.
+</li><li>Covariance is allowed because of the <i>is-a</i> relationship with base classes and derived classes. 
+(A derived object is a base object.)
+
+</li><li>Microsoft's 7.1 compiler gives this error message for the above error in certain situations:
+<blockquote><pre>'Bar::f': overriding virtual function return type differs and is not covariant from 'Foo::f'
+</pre></blockquote>
+
+<a href="http://support.microsoft.com/default.aspx?scid=kb;en-us;839998">Details</a>
+
+</li></ul>
+
+
+<p>
+</p><hr width="60%">
+<p>
+<a name="USING_DIRECTIVES">
+<b>Example #5</b> - Using a using
+</a>
+</p><p>
+
+
+</p><blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p>
+</p><hr>
+
+<!--
+<div class="hidden"><div class="hidden"><div class="hidden"><div class="hidden">
+-->
+
+<h2>Constructors and Assignment</h2>
+
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS170/Inheritance-2.html#EMPLOYEE_CLASS1">Employee class</a> &nbsp;
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS170/Inheritance-2.html#MANAGER_CLASS1">Manager class</a>
+<p>
+
+What are the results of the following statements? (Compile-time and run-time)
+
+</p><blockquote><pre>Employee e1(<font color="#9933CC">"Nigel"</font>, <font color="#9933CC">"Tufnel"</font>, 50000, 2);
+Manager m1(<font color="#9933CC">"Ian"</font>, <font color="#9933CC">"Faith"</font>, 80000, 5, 7, 25);
+
+Employee e2(e1);  <font color="#003399"><i>// 1. Ok?</i></font>
+Manager m2(m1);   <font color="#003399"><i>// 2. Ok?</i></font>
+
+Employee e3 = e1; <font color="#003399"><i>// 3. Ok?</i></font>
+Manager m3 = m1;  <font color="#003399"><i>// 4. Ok?</i></font>
+
+Employee e4(m1);  <font color="#003399"><i>// 5. Ok?</i></font>
+Manager m4(e1);   <font color="#003399"><i>// 6. Ok?</i></font>
+
+e1 = e2; <font color="#003399"><i>//  7. Ok?</i></font>
+m1 = m2; <font color="#003399"><i>//  8. Ok? </i></font>
+e1 = m1; <font color="#003399"><i>//  9. Ok?</i></font>
+m1 = e2; <font color="#003399"><i>// 10. Ok?</i></font>
+</pre></blockquote>
+
+Neither the <i>Employee</i> class nor the Manager class has a user-defined copy
+constructor. The signature for the default compiler-generated copy constructors look like 
+this:
+
+<blockquote><pre>Employee::Employee(<b>const</b> Employee&amp;);
+Manager::Manager(<b>const</b> Manager&amp;);
+</pre></blockquote>
+
+The compiler has generated the implicit copy constructors and assignment operators. Are they
+adequate for all cases?
+
+<ul>
+<li>Items #1 and #2 above match these signatures. 
+</li><li>What about #3 and #4? <!-- Fine, uses copy constructor -->
+</li><li>Items #5 and #6?
+<ul>
+<li>For #5, a <i>Manager</i> is an <i>Employee</i>. 
+</li><li>Only the <i>Employee</i> portion of <i><b>m1</b></i> will be copied to <i><b>e4</b></i>.
+</li><li>For #6, an <i>Employee</i> is not a <i>Manager</i>. Compiler errors along these lines:
+<blockquote><pre>cannot convert parameter 1 from 'class Employee' to 'const class Manager &amp;'
+no matching function for call to `Manager::Manager(Employee&amp;)'
+</pre></blockquote>
+</li><li><i>If</i> we desire this functionality, 
+we need a way to convert a <i>Manager</i> to an <i>Employee</i>. (Conversion constructor)
+
+<blockquote><pre>Manager::Manager(<b>const</b> Employee &amp;emp) : Employee(emp)
+{
+  setNumEmployees(0);
+  setDeptNumber(0);
+}
+</pre></blockquote>
+
+</li><li>Remember that derived classes don't inherit constructors. (This includes the copy constructor.)
+<p>
+</p></li></ul>
+
+</li><li>For #7-#10, we need assignment operators. The implicit ones work fine for #7, #8, and #9:
+
+<blockquote><pre>Employee &amp; Employee::<b>operator</b>=(<b>const</b> Employee &amp;);
+Manager &amp; Manager::<b>operator</b>=(<b>const</b> Manager &amp;);
+</pre></blockquote>
+
+</li><li>#10 is a problem, and we have a few choices. 
+
+<ol>
+<li>Create a user-defined assignment operator to handle an <i>Employee</i>:
+
+<blockquote><pre>Manager &amp; Manager::<b>operator</b>=(<b>const</b> Employee &amp;emp)
+{
+  <b>if</b> (<b>this</b> != &amp;emp)
+    Employee::<b>operator</b>=(emp);
+  <b>return</b> *<b>this</b>;
+}
+</pre></blockquote>
+
+This is what the default compiler-generated version might look like:
+<p>
+
+</p><blockquote><pre>Manager &amp; Manager::<b>operator</b>=(<b>const</b> Manager &amp;mgr)
+{
+  <b>if</b> (<b>this</b> != &amp;mgr)
+  {
+    Employee::<b>operator</b>=(mgr);           <font color="#003399"><i>// base class responsibility</i></font>
+    setDeptNumber(mgr.deptNumber_);     <font color="#003399"><i>// derived class responsibility</i></font>
+    setNumEmployees(mgr.numEmployees_); <font color="#003399"><i>// derived class responsibility</i></font>
+  }
+  <b>return</b> *<b>this</b>;
+}
+</pre></blockquote>
+
+</li><li>Create a conversion constructor like we did to handle #6. This is alluded to in this
+error message:
+
+<blockquote><pre>no operator defined which takes a right-hand operand of 
+type 'class Employee' (or there is no acceptable conversion)
+</pre></blockquote>
+
+</li><li>Don't allow the assignment. Depending on your application, it may just be
+a bad idea to do these "partial" assignments. Document it as such.
+<p>
+
+</p></li></ol>
+
+</li><li>Like constructors, derived classes do not inherit assignment operators. (The signatures don't match.)
+
+</li></ul>
+
+<!--
+<div class="hidden"><div class="hidden"><div class="hidden"><div class="hidden">
+-->
+
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p>
+</p><hr width="90%">
+<h2>Object Addresses</h2>
+
+Before understanding inheritance (somewhat), this function below seems to make little
+sense. Why?
+<p>
+
+</p><blockquote><pre><b>void</b> Compare(<b>const</b> Manager &amp;mgr, <b>const</b> Employee &amp;emp)
+{
+  <b>if</b> (&amp;mgr == &amp;emp)
+    std::cout &lt;&lt; <font color="#9933CC">"Same object\n"</font>;
+  <b>else</b>
+    std::cout &lt;&lt; <font color="#9933CC">"Different objects\n"</font>;
+}
+</pre></blockquote>
+
+Which statements fail to compile? What is the output of the valid statements?
+
+<blockquote><pre>Employee e1(<font color="#9933CC">"Nigel"</font>, <font color="#9933CC">"Tufnel"</font>, 50000, 2);
+Manager m1(<font color="#9933CC">"Ian"</font>, <font color="#9933CC">"Faith"</font>, 80000, 5, 7, 25);
+Employee e2(m1);
+
+Compare(m1, e1); <font color="#003399"><i>// 1. ???</i></font>
+Compare(m1, e2); <font color="#003399"><i>// 2. ???</i></font>
+Compare(e1, m1); <font color="#003399"><i>// 3. ???</i></font>
+Compare(m1, m1); <font color="#003399"><i>// 4. ???</i></font>
+</pre></blockquote>
+
+<!--
+Different
+Different
+No compile
+Same
+-->
+
+What about these:
+
+<blockquote><pre>Compare(m1, *<b>static_cast</b>&lt;Employee *&gt;(&amp;m1));
+
+  <font color="#003399"><i>// Assume Supervisor derives from Manager</i></font>
+Supervisor s1(<font color="#9933CC">"Derek"</font>, <font color="#9933CC">"Smalls"</font>, 100000, 12, 9, 50);
+Compare(s1, *<b>static_cast</b>&lt;Manager *&gt;(&amp;s1));
+</pre></blockquote>
+
+
+
+The following functions compile without any problems. 
+(Assume we've added a non-virtual public method called <i>getDeptNumber</i>
+to the <i>Manager</i> class.)
+<p>
+
+</p><blockquote><pre><b>void</b> PrintDeptNumByRef(Employee &amp;emp)
+{
+  cout &lt;&lt; <b>static_cast</b>&lt;Manager *&gt;(&amp;emp)-&gt;getDeptNumber() &lt;&lt; endl;
+}
+
+<b>void</b> PrintDeptNumByVal(Employee emp)
+{
+  cout &lt;&lt; <b>static_cast</b>&lt;Manager *&gt;(&amp;emp)-&gt;getDeptNumber() &lt;&lt; endl;
+}
+</pre></blockquote>
+
+How does the compiler react to the statements below? What happens at runtime?
+<p>
+
+</p><blockquote><pre>Employee e1(<font color="#9933CC">"Nigel"</font>, <font color="#9933CC">"Tufnel"</font>, 50000, 2);
+Manager m1(<font color="#9933CC">"Ian"</font>, <font color="#9933CC">"Faith"</font>, 80000, 5, 7, 25);
+
+PrintDeptNumByRef(e1); <font color="#003399"><i>// 1. ???</i></font>
+PrintDeptNumByRef(m1); <font color="#003399"><i>// 2. ???</i></font>
+PrintDeptNumByVal(e1); <font color="#003399"><i>// 3. ???</i></font>
+PrintDeptNumByVal(m1); <font color="#003399"><i>// 4. ???</i></font>
+</pre></blockquote>
+
+
+<b>Output:</b>
+<blockquote><pre>1245120
+7
+2012780960
+2012780960
+</pre></blockquote>
+
+What happens if <i>Manager::getDeptNumber</i> is a <b>virtual</b> function? 
+(Hint: The program crashes. Why?)
+<p>
+
+<!--
+If it's virtual, then the address of the function is looked up
+in slot 3 of the VMT and jumps there. Unfortunately, for Emp objects,
+this is an invalid index and it executes garbage
+
+GNU
+1627430403
+7
+0
+0
+
+Borland
+1245112
+7
+0
+0
+-->
+
+</p><p>
+Look at these function prototypes:
+</p><p>
+</p><blockquote><pre><b>void</b> PassByRef(<b>const</b> Employee &amp;emp);
+<b>void</b> PassByVal(Employee emp);
+</pre></blockquote>
+
+As far as the user is concerned, the parameter is simply passed like so:
+
+<blockquote><pre>PassByRef(m1);  <font color="#003399"><i>// Pass a Manger by reference</i></font>
+PassByVal(m1);  <font color="#003399"><i>// Pass a Manager by value</i></font>
+</pre></blockquote>
+
+However, the difference is significant and the problem is <i>object slicing</i>.
+<p>
+
+</p></li></div>
+
+
+
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Base Classes</p>
+
+We know that all squares are rectangles, but all rectangles are not squares. Sounds like a perfect
+example of an "is-a" relationship (read: inheritance). 
+<p>
+So, we sketch out the interface to our base class <i>Rectangle</i>:
+
+</p><pre class="sourcecode"><code><b>class</b> Rectangle
+{
+  <b>private</b>:
+    <b>double</b> center_x_; <font color="#003399"><i>// x-coordinate of center point</i></font>
+    <b>double</b> center_y_; <font color="#003399"><i>// y-coordinate of center point</i></font>
+    <b>double</b> length_;   <font color="#003399"><i>// "long" sides</i></font>
+    <b>double</b> width_;    <font color="#003399"><i>// "short" sides</i></font>
+
+  <b>public</b>:
+      <font color="#003399"><i>// Constructor (default)</i></font>
+    Rectangle(<b>double</b> x = 0, <b>double</b> y = 0, <b>double</b> length = 0, <b>double</b> width = 0);
+
+      <font color="#003399"><i>// Rectangle-specific get/set methods</i></font>
+    <b>double</b> getLength() <b>const</b>;
+    <b>double</b> getWidth() <b>const</b>;
+    <b>void</b> setLength(<b>double</b>);
+    <b>void</b> setWidth(<b>double</b>);
+    <b>double</b> getCenterX() <b>const</b>;
+    <b>double</b> getCenterY() <b>const</b>;
+    <b>void</b> SetCenter(<b>double</b> x, <b>double</b> y);
+
+      <font color="#003399"><i>// Need to be redefined in derived classes</i></font>
+    <b>virtual</b> <b>double</b> Area() <b>const</b>;
+    <b>virtual</b> <b>void</b> Draw() <b>const</b>;
+    <b>virtual</b> <b>void</b> Scale(<b>double</b> scale_x, <b>double</b> scale_y);
+};
+</code></pre>
+
+Once we've got that scoped out, we can work on the <i>Square</i> class:
+
+<pre class="sourcecode"><code><b>class</b> Square : <b>public</b> Rectangle
+{
+  <b>private</b>:
+    <b>double</b> side_;  <font color="#003399"><i>// length of a side</i></font>
+
+  <b>public</b>:
+      <font color="#003399"><i>// Constructor</i></font>
+    Square(<b>double</b> x, <b>double</b> y, <b>double</b> side);
+
+      <font color="#003399"><i>// Square-specific Get methods</i></font>
+    <b>double</b> GetSide() <b>const</b>;
+    <b>void</b> SetSide(<b>double</b> side);
+
+      <font color="#003399"><i>// Methods from Rectangle that we need to specialize</i></font>
+    <b>virtual</b> <b>double</b> Area() <b>const</b>;
+    <b>virtual</b> <b>void</b> Draw() <b>const</b>;
+    <b>virtual</b> <b>void</b> Scale(<b>double</b> scale);
+};
+</code></pre>
+
+But, something's not right. 
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS170/FullSquareClass.html">This</a> is what the <i>Square</i> class sort of looks like now (artist's rendering).
+
+There are several problems:
+<ul>
+<li>Length <i>and</i> width
+</li><li>Redundant members
+</li><li>Square::Scale hides Rectangle::Scale (no polymorphism)
+</li></ul>
+
+Even though in the "real world" this relationship seems straight-forward, we need to re-think
+the design. It would be simpler to just create the <i>Square</i> class "from scratch":
+<p>
+
+</p><pre class="sourcecode"><code><b>class</b> Square
+{
+  <b>private</b>:
+    <b>double</b> center_x_; <font color="#003399"><i>// x-coordinate of center point</i></font>
+    <b>double</b> center_y_; <font color="#003399"><i>// y-coordinate of center point</i></font>
+    <b>double</b> side_;     <font color="#003399"><i>// length of a side</i></font>
+
+  <b>public</b>:
+      <font color="#003399"><i>// Constructor</i></font>
+    Square(<b>double</b> x, <b>double</b> y, <b>double</b> side);
+
+    <b>double</b> getCenterX() <b>const</b>;
+    <b>double</b> getCenterY() <b>const</b>;
+    <b>void</b> SetCenter(<b>double</b> x, <b>double</b> y);
+    <b>double</b> GetSide() <b>const</b>;
+    <b>void</b> SetSide(<b>double</b> side);
+
+    <b>double</b> Area() <b>const</b>;
+    <b>void</b> Draw() <b>const</b>;
+    <b>void</b> Scale(<b>double</b> scale);
+};
+</code></pre>
+
+We've traded one set of "problems" for another. 
+<ul>
+<li>This time, we've got a lot of duplicated functionality. 
+</li><li>We should factor out the commonality into its own class.
+</li><li>We can actually simplify the design by adding a third class.
+</li></ul>
+
+<pre class="sourcecode"><code><b>class</b> Figure
+{
+  <b>private</b>:
+    <b>double</b> center_x_; <font color="#003399"><i>// x-coordinate of center point</i></font>
+    <b>double</b> center_y_; <font color="#003399"><i>// y-coordinate of center point</i></font>
+
+  <b>public</b>:
+      <font color="#003399"><i>// Constructor</i></font>
+    Figure(<b>double</b> x = 0, <b>double</b> y = 0);
+
+      <font color="#003399"><i>// get/set</i></font>
+    <b>double</b> getCenterX() <b>const</b>;
+    <b>double</b> getCenterY() <b>const</b>;
+    <b>void</b> SetCenter(<b>double</b> x, <b>double</b> y);
+
+      <font color="#003399"><i>// Virtual methods common to both</i></font>
+    <b>virtual</b> <b>double</b> Area() <b>const</b>;
+    <b>virtual</b> <b>void</b> Draw() <b>const</b>;
+};
+</code></pre>
+
+
+<blockquote><pre></pre></blockquote>
+
+<i>Rectangle</i> and <i>Square</i> are now derived from <i>Figure</i>:
+<p>
+
+<table><tbody><tr valign="top"><td>
+<pre class="sourcecode"><code><b>#include</b> <font color="#9933CC">"Figure.h"</font>
+
+<b>class</b> Rectangle : <b>public</b> Figure
+{
+  <b>private</b>:
+    <b>double</b> length_; <font color="#003399"><i>// "long" sides</i></font>
+    <b>double</b> width_;  <font color="#003399"><i>// "short" sides</i></font>
+
+  <b>public</b>:
+      <font color="#003399"><i>// Constructor (default)</i></font>
+    Rectangle(<b>double</b> x = 0, 
+              <b>double</b> y = 0, 
+              <b>double</b> length = 0, 
+              <b>double</b> width = 0);
+
+      <font color="#003399"><i>// Rectangle-specific get/set methods</i></font>
+    <b>double</b> getLength() <b>const</b>;
+    <b>double</b> getWidth() <b>const</b>;
+    <b>void</b> setLength();
+    <b>void</b> setWidth();
+    <b>void</b> Scale(<b>double</b> scale_x, <b>double</b> scale_y);
+
+      <font color="#003399"><i>// Methods from Figure that</i></font>
+      <font color="#003399"><i>// we need to specialize</i></font>
+    <b>virtual</b> <b>double</b> Area() <b>const</b>;
+    <b>virtual</b> <b>void</b> Draw() <b>const</b>;
+};
+</code></pre>
+
+</td>
+<td width="0"></td>
+<td>
+
+<pre class="sourcecode"><code><b>#include</b> <font color="#9933CC">"Figure.h"</font>
+
+<b>class</b> Square : <b>public</b> Figure
+{
+  <b>private</b>:
+    <b>double</b> side_; <font color="#003399"><i>// length of a side</i></font>
+
+
+  <b>public</b>:
+      <font color="#003399"><i>// Constructor (default)</i></font>
+    Square(<b>double</b> x = 0, 
+           <b>double</b> y = 0, 
+           <b>double</b> side = 0);
+
+
+      <font color="#003399"><i>// Square-specific get/set methods</i></font>
+    <b>double</b> GetSide() <b>const</b>;
+    <b>void</b> SetSide(<b>double</b> side);
+    <b>void</b> Scale(<b>double</b> scale);
+
+
+
+      <font color="#003399"><i>// Methods from Figure that</i></font>
+      <font color="#003399"><i>// we need to specialize</i></font>
+    <b>virtual</b> <b>double</b> Area() <b>const</b>;
+    <b>virtual</b> <b>void</b> Draw() <b>const</b>;
+};
+</code></pre>
+</td></tr></tbody></table>
+
+</p><p>
+
+<table><tbody><tr valign="top"><td>
+Sample client code:
+<blockquote><pre>Rectangle r(4, 5, 10, 3);
+Square s(2, 3, 6);
+Figure *figs[2] = {&amp;r, &amp;s};
+
+<b>for</b> (<b>int</b> i = 0; i &lt; 2; i++)
+{
+  figs[i]-&gt;Draw();
+  cout &lt;&lt; <font color="#9933CC">"Area: "</font> &lt;&lt; figs[i]-&gt;Area() &lt;&lt; endl;
+}
+</pre></blockquote>
+</td>
+<td>
+Output:
+<blockquote><pre>Drawing the rectangle: 10x3
+Area: 30
+Drawing the square: 6
+Area: 36
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+
+Here are the simplistic <tt>Draw</tt> methods:
+</p><p>
+
+</p><blockquote><pre><b>void</b> Rectangle::Draw() <b>const</b>
+{
+  cout &lt;&lt; <font color="#9933CC">"Drawing the rectangle: "</font> &lt;&lt; length_ &lt;&lt; <font color="#9933CC">"x"</font> &lt;&lt; width_ &lt;&lt; endl;
+}
+
+<b>void</b> Square::Draw() <b>const</b>
+{
+  cout &lt;&lt; <font color="#9933CC">"Drawing the square: "</font> &lt;&lt; side_ &lt;&lt; endl;
+}
+</pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+Notes:
+
+<ul>
+<li>A class hierarchy goes from the more general to the more specific.
+</li><li>Derived classes are more specific than their base classes.
+</li><li>The more "derived" a class is, the more concrete it is (represents a specific type)
+</li><li>Some base classes are so general that they do not (and cannot) represent anything specific enough.
+</li><li>Base classes that cannot represent any object should not be instantiated.
+</li><li>We call an "overly general" base class an <i>abstract base class</i>.
+</li></ul>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Abstract Base Classes</p>
+
+<p>
+If I said: "Everyone take out a pencil and draw a figure centered at (0, 0) on an X-Y grid.", what would we see?
+</p><p>
+
+
+An (incomplete) example:
+
+</p><ul>
+<li><b>Figure</b> - a generic figure with properties shared by all figures: a <b>center</b> and <b>Draw()</b> and <b>Area()</b> methods
+</li><li><b>Circle</b> - A specific kind of Figure, has an additional unique attribute, <b>radius</b>
+</li><li><b>Square</b> - A specific kind of Figure, has an additional unique attribute, <b>length</b> of a side
+</li></ul>
+
+Base class <i>Figure</i>:
+<p>
+
+</p><blockquote><pre><b>class</b> Figure
+{
+  <b>private</b>:
+    <b>double</b> center_x_; <font color="#003399"><i>// x-coord center</i></font>
+    <b>double</b> center_y_; <font color="#003399"><i>// y-coord center</i></font>
+
+  <b>public</b>:
+    Figure(<b>double</b> x = 0, <b>double</b> y = 0);
+    <b>virtual</b> <b>void</b> Draw() <b>const</b>;
+    <b>virtual</b> <b>double</b> Area() <b>const</b>;
+};
+</pre></blockquote>
+
+Derived classes <i>Circle</i> and <i>Square</i>:
+<p>
+
+<table border="0"><tbody><tr valign="top"><td>
+<blockquote><pre><b>class</b> Circle : <b>public</b> Figure
+{
+  <b>private</b>:
+    <b>double</b> radius_; 
+
+  <b>public</b>:
+    Circle(<b>double</b> x = 0, <b>double</b> y = 0, 
+           <b>double</b> radius = 0);
+    <b>virtual</b> <b>double</b> Area() <b>const</b>;
+    <b>virtual</b> <b>void</b> Draw() <b>const</b>;
+};
+</pre></blockquote>
+</td>
+<td>
+<pre><b>class</b> Square : <b>public</b> Figure
+{
+  <b>private</b>:
+    <b>double</b> side_; <font color="#003399"><i>// length of a side</i></font>
+
+  <b>public</b>:
+    Square(<b>double</b> x = 0, <b>double</b> y = 0, 
+           <b>double</b> side = 0);
+    <b>virtual</b> <b>double</b> Area() <b>const</b>;
+    <b>virtual</b> <b>void</b> Draw() <b>const</b>;
+};
+</pre>
+</td></tr></tbody></table>
+
+Sample client code:
+</p><p>
+
+</p><pre class="sourcecode"><code><b>int</b> main()
+{
+  Circle circle(0, 0, 5); <font color="#003399"><i>// Circle at (0,0) with radius=5</i></font>
+  Square square(0, 0, 8); <font color="#003399"><i>// Square at (0,0) with side=8</i></font>
+  Figure figure(3, 9);    <font color="#003399"><i>// Figure at (3, 9)</i></font>
+
+  circle.Draw(); <font color="#003399"><i>// draws the Circle</i></font>
+  square.Draw(); <font color="#003399"><i>// draws the Square</i></font>
+  figure.Draw(); <font color="#003399"><i>// ???</i></font>
+  <b>return</b> 0;
+}
+</code></pre>
+
+The implementation of the <i>Figure</i> class:
+<p>
+
+</p><pre class="sourcecode"><code><b>#include</b> <font color="#9933CC">"Figure.h"</font>
+
+Figure::Figure(<b>double</b> x, <b>double</b> y)
+{
+  center_x_ = x;
+  center_y_ = y;
+}
+
+<b>double</b> Figure::Area() <b>const</b>
+{
+  <font color="#003399"><i>// What's the area of a Figure?</i></font>
+}
+
+<b>void</b> Figure::Draw() <b>const</b>
+{
+  <font color="#003399"><i>// How do you draw a Figure?</i></font>
+}
+</code></pre>
+
+There's obviously a problem with implementing some methods of the <i>Figure</i>:
+<p>
+
+</p><ul>
+<li>It makes no sense to ever instantiate a Figure object.
+</li><li>We want to prevent the user from creating one.
+</li><li>We need to make the base class <i>abstract</i>; you can't instantiate an object of an abstract class
+</li><li>C++ uses a quirky syntax to mark a class as <i>abstract</i>
+<blockquote><pre><b>virtual</b> <b>void</b> Draw() <b>const</b> = 0;
+<b>virtual</b> <b>double</b> Area() <b>const</b> = 0;
+</pre></blockquote>
+</li><li>Yes, setting the <i>method</i> declaration to 0 makes the <i>class</i> abstract. Funky? 
+Yes, but that's the way it is so we must deal with it.
+</li><li>This syntax makes the <i>Draw</i> and <i>Area</i> methods <i>pure</i> virtual methods.
+</li></ul>
+
+Notes on abstract classes:
+<ul>
+<li>At least one virtual method in a class must be <i>pure virtual</i> in order for the class to be abstract.
+</li><li>Once a class is abstract, you can not instantiate any objects of that class.
+</li><li>If a base class has a pure virtual method and you derive a class from it:
+<ul>
+<li>You must override the pure virtual method or else the derived class itself becomes abstract (this may be desirable)
+</li><li>If the base class has multiple pure virtual methods, the derived class must override all of them, else the derived class becomes abstract
+</li><li>Pure virtual methods can be implemented and invoked by the other methods of the class or derived classes (if the methods are visible).
+</li></ul>
+</li><li>In our example, we must redefine both the <i>Draw</i> method and the <i>Area</i> method
+in the derived classes in order to instantiate them.
+</li></ul>
+
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<i>Figure</i> is now an abstract base class
+<p>
+
+</p><blockquote><pre><b>class</b> Figure
+{
+  <b>private</b>:
+    <b>double</b> center_x_; <font color="#003399"><i>// x-coord center</i></font>
+    <b>double</b> center_y_; <font color="#003399"><i>// y-coord center</i></font>
+
+  <b>public</b>:
+    Figure(<b>double</b> x = 0, <b>double</b> y = 0);
+    <b>virtual</b> <b>void</b> Draw() <b>const</b> = 0;   <font color="#003399"><i>// pure virtual</i></font>
+    <b>virtual</b> <b>double</b> Area() <b>const</b> = 0; <font color="#003399"><i>// pure virtual</i></font>
+};
+</pre></blockquote>
+
+
+Client code:
+
+<blockquote><pre><b>int</b> main()
+{
+  Circle circle(0, 0, 5); <font color="#003399"><i>// Circle at (0,0) with radius=5</i></font>
+  Square square(0, 0, 8); <font color="#003399"><i>// Square at (0,0) with side=8</i></font>
+  Figure figure(3, 9);    <font color="#003399"><i>// Compile error</i></font>
+  ...
+}
+</pre></blockquote>
+
+Error message from the GNU C++ compiler:
+<p>
+
+</p><blockquote><pre>cannot declare variable `figure' to be of type `Figure' because 
+the following virtual functions are abstract:
+  virtual double Figure::Area() const
+  virtual void Figure::Draw() const
+</pre></blockquote>
+
+<div class="hidden">
+	
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p>
+</p><hr>
+<h2>Virtual Constructors</h2>
+
+C++ does not have virtual constructors but you can simulate them when you need them by
+using <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS170/Inheritance-2.html#COVARIANT_RETURN">covariant return types</a>.
+<p>
+How would you support the client code below so that it compiles and runs correctly?
+Essentially, you need to code the functions: <i>CopyArray</i>, <i>DisplayEmps</i>, and
+<i>ReleaseEmps</i>.
+
+</p><pre class="sourcecode"><code><b>int</b> main()
+{
+  <b>const</b> <b>int</b> size = 4;
+  Employee *emps[size]; <font color="#003399"><i>// Employee default constructor?</i></font>
+
+  emps[0] = <b>new</b> Employee(<font color="#9933CC">"Nigel"</font>, <font color="#9933CC">"Tufnel"</font>, 50000, 2);
+  emps[1] = <b>new</b> Employee(<font color="#9933CC">"Derek"</font>, <font color="#9933CC">"Smalls"</font>, 40000, 5);
+  emps[2] = <b>new</b> Manager(<font color="#9933CC">"Ian"</font>, <font color="#9933CC">"Faith"</font>, 80000, 5, 7, 25);
+  emps[3] = <b>new</b> Manager(<font color="#9933CC">"Bobbi"</font>, <font color="#9933CC">"Fleckman"</font>, 70000, 7, 9, 20);
+
+    <font color="#003399"><i>// Make a copy of the array and return a pointer to it</i></font>
+  Employee **dups = CopyArray(emps, size);
+
+    <font color="#003399"><i>// Display array elements</i></font>
+  std::cout &lt;&lt; <font color="#9933CC">"***** Original array *****\n"</font>;
+  DisplayEmps(emps, size);
+  std::cout &lt;&lt; <font color="#9933CC">"***** Copy of array *****\n"</font>;
+  DisplayEmps(dups, size);
+
+    <font color="#003399"><i>// Delete array elements</i></font>
+  std::cout &lt;&lt; <font color="#9933CC">"***** Releasing original *****\n"</font>;
+  ReleaseEmps(emps, size);
+  std::cout &lt;&lt; <font color="#9933CC">"***** Releasing copy *****\n"</font>;
+  ReleaseEmps(dups, size);
+
+    <font color="#003399"><i>// Delete array</i></font>
+  <b>delete</b> dups;
+
+  <b>return</b> 0;
+}
+</code></pre>
+
+<i>DisplayEmps</i>, and <i>ReleaseEmps</i> are trivial. What is required of the
+<i>Employee</i> class for these to work properly?
+<p>
+<!-- virtual Display and destructors -->
+
+</p><blockquote><pre><font color="#003399"><i>// Displays each Employee in the array</i></font>
+<b>void</b> DisplayEmps(Employee *emps[], <b>int</b> size)
+{
+  <b>for</b> (<b>int</b> i = 0; i &lt; size; i++)
+    emps[i]-&gt;Display(); 
+}
+
+<font color="#003399"><i>// Deletes each Employee in the array</i></font>
+<b>void</b> ReleaseEmps(Employee *emps[], <b>int</b> size)
+{
+  <b>for</b> (<b>int</b> i = 0; i &lt; size; i++)
+    <b>delete</b> emps[i];  <font color="#003399"><i>// What function is called here?</i></font>
+}
+</pre></blockquote>
+
+The more challenging function is <i>CopyArray</i> which would start something like this:
+
+<blockquote><pre>Employee **CopyArray(Employee *emps[], <b>int</b> size)
+{
+    <font color="#003399"><i>// Create array to hold new pointers</i></font>
+  Employee **copy = <b>new</b> Employee *[size];
+
+    <font color="#003399"><i>// Copy from 'emps' array to 'copy' array</i></font>
+  <b>for</b> (<b>int</b> i = 0; i &lt; size; i++)
+  {
+    <font color="#003399"><i>// Copy the ith element into the new array</i></font>
+    <font color="#003399"><i>// How is this implemented?</i></font>
+  }
+
+  <b>return</b> copy;
+}
+</pre></blockquote>
+
+Right now, we have two potential constructs to make a <i>copy</i>: (think copy constructor)
+
+<blockquote><pre>copy[i] = <b>new</b> Employee(*emps[i]);<font color="#003399"><i>// Will this compile/work?</i></font>
+</pre></blockquote>
+or
+<blockquote><pre>copy[i] = <b>new</b> Manager(*emps[i]);<font color="#003399"><i>// Will this compile/work?</i></font>
+</pre></blockquote>
+
+<!--
+First one compiles fine but only copies Emp portion
+Second one won't compile until we add a ctor Manager(const Employee&), then 
+we get garbage for Manager fields when it's only an Employee.
+-->
+
+<ul>
+<li>Can we use either one? 
+</li><li>Will they both work the same?
+</li><li>What mechanism are we in need of?
+</li></ul>
+<p>
+
+<!--
+No, No, virtual ctor 
+-->
+
+Using the copy constructor from <i>Employee</i>: (implicitly generated)
+</p><p>
+
+<table><tbody><tr valign="top"><td>
+<pre>***** Original array *****
+  Name: Tufnel, Nigel
+Salary: $50000.00
+ Years: 2
+  Name: Smalls, Derek
+Salary: $40000.00
+ Years: 5
+  Name: Faith, Ian
+Salary: $80000.00
+ Years: 5
+  Dept: 7
+  Emps: 25
+  Name: Fleckman, Bobbi
+Salary: $70000.00
+ Years: 7
+  Dept: 9
+  Emps: 20
+</pre></td>
+<td width="10%"></td>
+<td>
+<pre>***** Copy of array *****
+  Name: Tufnel, Nigel
+Salary: $50000.00
+ Years: 2
+  Name: Smalls, Derek
+Salary: $40000.00
+ Years: 5
+  Name: Faith, Ian
+Salary: $80000.00
+ Years: 5
+  Name: Fleckman, Bobbi
+Salary: $70000.00
+ Years: 7
+</pre></td>
+</tr></tbody></table>
+
+Using the copy constructor from <i>Manager</i>: (user-defined)
+</p><p>
+
+<table><tbody><tr valign="top"><td>
+<pre>***** Original array *****
+  Name: Tufnel, Nigel
+Salary: $50000.00
+ Years: 2
+  Name: Smalls, Derek
+Salary: $40000.00
+ Years: 5
+  Name: Faith, Ian
+Salary: $80000.00
+ Years: 5
+  Dept: 7
+  Emps: 25
+  Name: Fleckman, Bobbi
+Salary: $70000.00
+ Years: 7
+  Dept: 9
+  Emps: 20
+</pre></td>
+<td width="10%"></td>
+<td>
+<pre>***** Copy of array *****
+  Name: Tufnel, Nigel
+Salary: $50000.00
+ Years: 2
+  Dept: 0
+  Emps: 0
+  Name: Smalls, Derek
+Salary: $40000.00
+ Years: 5
+  Dept: 0
+  Emps: 0
+  Name: Faith, Ian
+Salary: $80000.00
+ Years: 5
+  Dept: 0
+  Emps: 0
+  Name: Fleckman, Bobbi
+Salary: $70000.00
+ Years: 7
+  Dept: 0
+  Emps: 0
+</pre></td>
+</tr></tbody></table>
+
+Now, we're really no better off. We could force the correct <i>Manager</i> constructor:
+</p><p>
+</p><blockquote><pre>copy[i] = <b>new</b> Manager(*<b>static_cast</b>&lt;Manager *&gt;(emps[i]));
+</pre></blockquote>
+
+But that gives us this:
+
+<blockquote><pre>***** Copy of array *****
+  Name: Tufnel, Nigel
+Salary: $50000.00
+ Years: 2
+  Dept: -33686019
+  Emps: -572662307
+  Name: Smalls, Derek
+Salary: $40000.00
+ Years: 5
+  Dept: -33686019
+  Emps: -572662307
+  Name: Faith, Ian
+Salary: $80000.00
+ Years: 5
+  Dept: 7
+  Emps: 25
+  Name: Fleckman, Bobbi
+Salary: $70000.00
+ Years: 7
+  Dept: 9
+  Emps: 20
+</pre></blockquote>
+
+One solution would be to construct something like this:
+
+<blockquote><pre><b>for</b> (<b>int</b> i = 0; i &lt; size; i++)
+{
+  <b>if</b> (<font color="#003399"><i>/* emps[i] is an Employee */</i></font>)
+    copy[i] = <b>new</b> Employee(*emps[i]);
+  <b>else</b> <b>if</b> (<font color="#003399"><i>/* emps[i] is a Manager */</i></font>)
+    copy[i] = <b>new</b> Manager(*emps[i]);
+  <b>else</b> <b>if</b> (<font color="#003399"><i>/* emps[i] is some other class */</i></font>)
+    copy[i] = <b>new</b> &lt;some_other_class&gt;(*emps[i]);
+  <b>else</b> <b>if</b> (<font color="#003399"><i>/* ... */</i></font>)
+    copy[i] = <b>new</b> ...
+}
+</pre></blockquote>
+
+<ul>
+<li>But this doesn't scale and is generally a bad idea. (The point of polymorphism is that
+you shouldn't need to know what type is being pointed to.)
+</li><li>Now you see why we would like a <i>virtual constructor</i>, which C++ doesn't have. 
+</li><li>So, we create a method to act like a constructor and make it <b>virtual</b>. 
+</li><li>The client will call that method instead of using the <b>new</b> operator:
+</li></ul>
+<p>
+Client:
+
+</p><blockquote><pre>  <font color="#003399"><i>// clone is a virtual method that returns a new copy of itself</i></font>
+<b>for</b> (<b>int</b> i = 0; i &lt; size; i++)
+  copy[i] = emps[i]-&gt;clone(); 
+</pre></blockquote>
+
+Employee:
+
+<blockquote><pre><b>virtual</b> Employee *clone() <b>const</b>; <font color="#003399"><i>// declaration</i></font>
+
+Employee * Employee::clone() <b>const</b>
+{
+  <b>return</b> <b>new</b> Employee(*<b>this</b>);
+}
+</pre></blockquote>
+
+Manager:
+
+<blockquote><pre><b>virtual</b> Manager *clone() <b>const</b>; <font color="#003399"><i>// declaration</i></font>
+
+Manager * Manager::clone() <b>const</b>
+{
+  <b>return</b> <b>new</b> Manager(*<b>this</b>);
+}
+</pre></blockquote>
+
+Now, all works as it should:
+<p>
+<table><tbody><tr valign="top"><td>
+<pre>***** Original array *****
+  Name: Tufnel, Nigel
+Salary: $50000.00
+ Years: 2
+  Name: Smalls, Derek
+Salary: $40000.00
+ Years: 5
+  Name: Faith, Ian
+Salary: $80000.00
+ Years: 5
+  Dept: 7
+  Emps: 25
+  Name: Fleckman, Bobbi
+Salary: $70000.00
+ Years: 7
+  Dept: 9
+  Emps: 20
+</pre></td>
+<td width="10%"></td>
+<td>
+<pre>***** Copy of array *****
+  Name: Tufnel, Nigel
+Salary: $50000.00
+ Years: 2
+  Name: Smalls, Derek
+Salary: $40000.00
+ Years: 5
+  Name: Faith, Ian
+Salary: $80000.00
+ Years: 5
+  Dept: 7
+  Emps: 25
+  Name: Fleckman, Bobbi
+Salary: $70000.00
+ Years: 7
+  Dept: 9
+  Emps: 20
+</pre></td>
+</tr></tbody></table>
+
+</p><ul>
+<li>The <i>clone</i> method can be called anything you want.
+</li><li>The function must be virtual (or else there's no polymorphism).
+</li><li>Sometimes you just need to create a new object rather than copy. You could implement
+a virtual <i>create</i> method something like this:
+
+<blockquote><pre>Employee * Employee::create() <b>const</b>
+{
+  <b>return</b> <b>new</b> Employee();
+}
+
+Manager * Manager::create() <b>const</b>
+{
+  <b>return</b> <b>new</b> Manager();
+}
+</pre></blockquote>
+
+</li><li>Of course, the <i>create</i> method would need either a default constructor
+or set the constructor parameters (none are provided by the client).
+</li></ul>
+
+As a final example, if we emit a string in the destructor for each class, we'd get different results depending
+on whether or not the destructor in the base class was virtual:
+<p>
+
+</p><blockquote><pre><font color="#003399"><i>// Deletes each Employee in the array</i></font>
+<b>void</b> ReleaseEmps(Employee *emps[], <b>int</b> size)
+{
+  <b>for</b> (<b>int</b> i = 0; i &lt; size; i++)
+    <b>delete</b> emps[i];  <font color="#003399"><i>// What function is called here?</i></font>
+}
+</pre></blockquote>
+
+Output:
+
+<p>
+<table><tbody><tr valign="top"><td>
+<pre>
+</pre></td>
+<td width="10%"></td>
+<td>
+<b>virtual</b>
+<pre>***** Releasing original *****
+Employee dtor: Tufnel
+Employee dtor: Smalls
+Manager  dtor: Faith
+Employee dtor: Faith
+Manager  dtor: Fleckman
+Employee dtor: Fleckman
+***** Releasing copy *****
+Employee dtor: Tufnel
+Employee dtor: Smalls
+Manager  dtor: Faith
+Employee dtor: Faith
+Manager  dtor: Fleckman
+Employee dtor: Fleckman
+</pre></td>
+<td width="10%"></td>
+<td>
+<b>non-virtual</b>
+<pre>***** Releasing original *****
+Employee dtor: Tufnel
+Employee dtor: Smalls
+Employee dtor: Faith
+Employee dtor: Fleckman
+***** Releasing copy *****
+Employee dtor: Tufnel
+Employee dtor: Smalls
+Employee dtor: Faith
+Employee dtor: Fleckman
+</pre></td></tr></tbody></table>
+
+
+</p><blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<hr>
+<h2>Default Arguments in Virtual Functions</h2>
+
+Given this hierarchy:
+<p>
+
+</p><blockquote><pre><b>class</b> Foo
+{
+  <b>public</b>:
+    <b>virtual</b> <b>void</b> f(<b>int</b> value = 10) 
+    { 
+      cout &lt;&lt; <font color="#9933CC">"Foo: "</font> &lt;&lt; value &lt;&lt; endl; 
+    };
+};
+
+<b>class</b> Bar : <b>public</b> Foo
+{
+  <b>public</b>:
+    <b>virtual</b> <b>void</b> f(<b>int</b> value = 20)
+    {
+      cout &lt;&lt; <font color="#9933CC">"Bar: "</font> &lt;&lt; value &lt;&lt; endl; 
+    };
+};
+</pre></blockquote>
+
+Why does this code work as shown?
+<p>
+
+</p><blockquote><pre>Bar *pb = <b>new</b> Bar;
+Foo *pf = pb;
+
+pf-&gt;f(); <font color="#003399"><i>// Bar::f(10)</i></font>
+pb-&gt;f(); <font color="#003399"><i>// Bar::f(20)</i></font>
+</pre></blockquote>
+
+<ul>
+<li>The correct methods are called through polymorphism (determined at runtime).
+</li><li>The wrong parameter is applied in the second case (or so it appears).
+</li><li>Simply put, the default arguments are determined at compile time based on the
+type of the pointer.
+</li></ul>
+
+</div>
+
+
+
+
+<blockquote><pre></pre></blockquote>
+
+
+
+
+<table><tbody><tr valign="top"><td>
+</td>
+<td width="30"></td>
+<td>
+</td></tr></tbody></table>
+
+
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+
+<table><tbody><tr valign="top"><td>
+</td>
+<td width="30"></td>
+<td>
+</td></tr></tbody></table>
+
+
+<table><tbody><tr valign="top"><td>
+</td>
+<td width="30"></td>
+<td>
+</td></tr></tbody></table>
+
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+</body></html>

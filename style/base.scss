@@ -1,0 +1,342 @@
+
+@mixin columns($num) {
+   columns: $num;
+  -webkit-columns: $num;
+  -moz-columns: $num;
+}
+
+/***** START COLORS *****/
+.red {color:red;}
+
+.blue {color:blue;}
+
+.green {color:green;}
+
+.black {color:black;}
+
+.white {color:white;}
+/***** END COLORS *****/
+
+/***** START Links *****/
+a:link.link_dec {
+  color: $Link_Color;
+}
+a:active.link_dec {
+  color: $Link_Active_Color; 
+}
+a:hover.link_dec {
+  color: $Link_Hover_Color;
+}
+a:visited.link_dec {
+  color: $Link_Visited_Color;
+}
+
+a:link.link_nodec {
+  color: $Link_Color;             
+  text-decoration: none;
+}
+a:active.link_nodec {
+  color: $Link_Active_Color;          
+  text-decoration: none;
+}
+a:hover.link_nodec {
+  color: $Link_Hover_Color;            
+  text-decoration: none;
+}
+a:visited.link_nodec {
+  color: $Link_Visited_Color;             
+  text-decoration: none;
+}
+/***** END Links *****/
+
+/***** START Main *****/
+.base {
+  text-align: left;
+  font-family: verdana;
+  font-size: 115%;
+  width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  list-style-type: none;
+  color: $Plain_Text_Color;
+}
+
+img.Logo {
+  margin-left: 10px;
+  width: 200px;
+  height: 20%; 
+  position: fixed; 
+  top: 0px; 
+}
+
+div.page {
+  margin-left: 210px;
+  padding:15px 16px;
+  height:1000px;
+  color: $Plain_Text_Color;
+}
+
+.body {@extend .base;}
+
+ul.single_col li:before,
+ul.double_col li:before,
+ul.triple_col li:before {
+  content: "\2699  ";
+}
+
+ul.single_col {
+  @extend .base;
+  @include columns(1);
+}
+
+ul.double_col {
+  @extend .base;
+  @include columns(2);
+}
+
+ul.triple_col {
+  @extend .base;
+  @include columns(3);
+}
+
+
+
+span.Primary {
+  color: $Span_Primary_Color;
+}
+/***** END Main *****/
+
+/***** START tnav/snav *****/
+#active_btn {
+  display: block;
+  color: $Active_Btn_Text_Color;
+  text-decoration: none;
+  background-color: $Active_Btn_Background_Color;
+  padding: 8px 0 8px 16px;
+}
+
+#active_dd {
+  background-color: $Active_Dropdown_Background_Color;
+  color: $Active_Dropdown_Text_Color;
+}
+
+/** tnav **/
+.tnav {
+  margin-top: -10px;
+  margin-left: 210px;
+  text-align: center;
+  position: fixed;
+  height: 34px;
+  width: 90%;
+  background-color: $Tnav_Background_Color;
+  list-style-type: none;
+  z-index: 2;
+  padding: 0;
+}
+
+.tnav-btn {
+  color: $Tnav_Btn_Text_Color;
+  font-family: bold;
+  position: relative;
+  display: block;
+  float: left;
+  padding: 8px 8px 8px 8px;
+}
+
+.tnav-dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: $Tnav_Dropdown_Background_Color;
+  margin-top: 8px;
+  margin-left: -8px;
+  width: 200px;
+}
+
+.tnav-dropdown-content a {
+  color: $Tnav_Dropdown_Text_Color;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+  padding: 12px 16px;
+}
+
+.tnav-btn:hover .tnav-dropdown-content {
+  display: block;
+}
+
+.tnav-btn:hover {
+  background-color: $Tnav_Btn_Hover_Background_Color;
+  color: $Tnav_Btn_Hover_Text_Color;
+}
+
+.tnav-dropdown-content a:hover {
+  background-color: $Tnav_Dropdown_Hover_Background_Color;
+  Color: $Tnav_Dropdown_Hover_Text_Color;
+}
+/**********/
+
+/** snav **/
+.snav {
+  list-style-type: none;
+  width: 200px;
+  background-color: $Snav_Background_Color;
+  position: fixed;
+  height: 80%;
+  bottom: 0;
+  margin: 0 0 0 10px;
+  padding: 0;
+}
+
+.dropdown_head {
+  display: block;
+  text-align: left;
+  text-decoration: none;
+  padding: 8px 0 8px 16px;
+  color: $Snav_Btn_Text_Color;
+}
+
+.dropdown_content {
+  /*
+  margin-left: 200px;
+  margin-top: -34.5px;
+  */
+  display: none;
+  position: relative;
+  background-color: $Snav_Dropdown_Background_Color;
+  width: 200px;
+}
+
+.dropdown_content a {
+  color: $Snav_Dropdown_Text_Color;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+  padding: 12px 16px;
+}
+
+.snav_btn:hover .dropdown_head {
+  background-color: $Snav_Btn_Hover_Background_Color;
+  color: $Snav_Btn_Hover_Text_Color;
+}
+
+.snav_btn:hover .dropdown_content {
+  display: block;
+}
+
+.dropdown_content a:hover {
+  background-color: $Snav_Dropdown_Hover_Background_Color;
+  color: $Snav_Dropdown_Hover_Text_Color;
+}
+
+#active_ddhead{
+  background-color: $Active_Dropdown_Head_Background_Color;
+  color: $Active_Dropdown_Head_Text_Color;
+}
+/**********/
+/***** END tnav/snav *****/
+
+/***** START Code/Terminal Samples *****/
+.sample_base {
+  font-family: Courier, monospace;
+  white-space: pre;
+  margin-right: 20px;
+  margin-left: 20px;
+  border-style: outset;
+  border-width: medium;
+  padding: 5px 20px;
+}
+
+pre.SourceCode {
+  @extend .sample_base;
+  background-color: #ffffe0;
+  color: #000;
+  border-color: silver;
+}
+
+pre.Terminal {
+  @extend .sample_base;
+  background-color: #000;
+  color: white;
+  border-color: grey;
+}
+/***** END Code/Terminal Samples *****/
+
+#Note_Select {
+  position: absolute;
+  top: 150px;
+  left: 230px;
+  height: 100%;
+}
+
+/***** START Non-centered-Columns *****/
+ul.single_col li:before,
+ul.double_col li:before,
+ul.triple_col li:before {
+  content: "\2699  ";
+}
+
+.nc_col_base {
+  text-align: left;
+  font-family: verdana;
+  font-size: 115%;
+  width: 800px;
+  list-style-type: none;
+}
+
+ul.nc_single_col {
+  @extend .nc_col_base;
+  @include columns(1);
+}
+
+ul.nc_double_col {
+  @extend .nc_col_base;
+  @include columns(2);
+}
+
+ul.nc_triple_col {
+  @extend .nc_col_base;
+  @include columns(3);
+}
+/***** END Non-centered-Columns *****/
+
+/***** START Special Headings *****/
+.name {
+  font-size: 260%;
+  text-align: center;
+}
+
+.contact_bar {
+  font-size: 100%;
+  text-align: center;
+}
+
+.heading {
+  font-size: 150%;
+  font-weight: bold;
+}
+
+.heading_c {
+  font-size: 150%;
+  font-weight: bold;
+  text-align: center;
+}
+
+.section_heading {
+  font-family: verdana;
+  border-bottom: 2px solid $Section_Heading_Underline_Color;
+  font-size: 130%;
+  width :800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.section_heading_c {
+  font-family: verdana;
+  width :800px;
+  margin-left: auto;
+  margin-right: auto;
+  border-bottom: 2px solid $Section_Heading_Underline_Color;
+  font-size: 130%;
+}
+
+/***** END Special Headings *****/

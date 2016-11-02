@@ -1,0 +1,46 @@
+﻿Build started 4/5/2015 2:50:48 PM.
+     1>Project "C:\Users\Tardis\Desktop\cs230_Damien.Baca_Project4_Part2\Project 4 - Cage.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _WINDOWS /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TC /analyze- /errorReport:prompt GameStateMgr.c GameState_Play.c LineSegment2D.c main.c Math2D.c Matrix2D.c Vector2D.c
+         GameStateMgr.c
+         GameState_Play.c
+     1>GameState_Play.c(188): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>GameState_Play.c(205): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>GameState_Play.c(229): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>GameState_Play.c(248): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>GameState_Play.c(270): warning C4244: 'initializing' : conversion from 'f64' to 'float', possible loss of data
+     1>GameState_Play.c(409): warning C4101: 'strBuffer' : unreferenced local variable
+     1>GameState_Play.c(472): warning C4018: '<' : signed/unsigned mismatch
+         LineSegment2D.c
+         main.c
+         Math2D.c
+     1>Math2D.c(300): warning C4101: 'ReflecVector' : unreferenced local variable
+     1>Math2D.c(302): warning C4101: 'Vector' : unreferenced local variable
+     1>Math2D.c(347): warning C4101: 'Vector' : unreferenced local variable
+     1>Math2D.c(418): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>Math2D.c(419): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>Math2D.c(540): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>Math2D.c(541): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+         Matrix2D.c
+     1>Matrix2D.c(140): warning C4244: 'function' : conversion from 'double' to 'float', possible loss of data
+     1>Matrix2D.c(141): warning C4244: 'function' : conversion from 'double' to 'float', possible loss of data
+     1>Matrix2D.c(143): warning C4244: 'function' : conversion from 'double' to 'float', possible loss of data
+     1>Matrix2D.c(144): warning C4244: 'function' : conversion from 'double' to 'float', possible loss of data
+         Vector2D.c
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Tardis\Desktop\cs230_Damien.Baca_Project4_Part2\Release\Project 4 - Cage.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Tardis\Desktop\cs230_Damien.Baca_Project4_Part2\Release\Project 4 - Cage.pdb" /SUBSYSTEM:WINDOWS /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Tardis\Desktop\cs230_Damien.Baca_Project4_Part2\Release\Project 4 - Cage.lib" /MACHINE:X86 /SAFESEH Release\GameStateMgr.obj
+         Release\GameState_Play.obj
+         Release\LineSegment2D.obj
+         Release\main.obj
+         Release\Math2D.obj
+         Release\Matrix2D.obj
+         Release\Vector2D.obj
+         Generating code
+     1>c:\users\tardis\desktop\cs230_damien.baca_project4_part2\main.c(95): warning C4715: 'WinMain' : not all control paths return a value
+         Finished generating code
+         Project 4 - Cage.vcxproj -> C:\Users\Tardis\Desktop\cs230_Damien.Baca_Project4_Part2\Release\Project 4 - Cage.exe
+     1>Done Building Project "C:\Users\Tardis\Desktop\cs230_Damien.Baca_Project4_Part2\Project 4 - Cage.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:01.16

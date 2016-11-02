@@ -1,0 +1,29 @@
+Damien_Paige_Baca
+
+(*) 'Inverse.cpp' compilation and code quality
+  -- Please put your name, the assignment information, and the class information
+     at the top of every file that you submit.
+(4/5)
+
+(*) 'Inverse tests'
+  -- InverseTest:
+     okay
+  -- InverseOtherTest:
+     passed test
+(5/5)
+
+(*) 'Camera.cpp' compilation and code quality
+  -- Please put your name, the assignment information, and the class information
+     at the top of every file that you submit.
+(4/5)
+
+(*) 'Camera' class test
+  -- failed non-default constructor test
+  -- failed move right test
+  -- failed move up test
+  -- failed rotate test
+  -- failed zoom test
+(2/5)
+
+TOTAL: 15/20
+PERCENTAGE: 75%

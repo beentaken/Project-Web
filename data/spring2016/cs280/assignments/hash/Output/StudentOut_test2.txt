@@ -1,0 +1,102 @@
+
+==================== Test2 ====================
+
+Creating table:
+Hash function: Universal Hash
+Initial size: 11
+Max load factor: 3
+Growth factor: 2
+    Key = 101001
+HashKey = 10
+    Key = 102001
+HashKey = 3
+    Key = 103001
+HashKey = 7
+    Key = 104001
+HashKey = 0
+    Key = 105001
+HashKey = 4
+    Key = 106001
+HashKey = 8
+    Key = 107001
+HashKey = 1
+    Key = 108001
+HashKey = 5
+    Key = 109001
+HashKey = 9
+    Key = 110001
+HashKey = 4
+    Key = 111001
+HashKey = 8
+    Key = 112001
+HashKey = 1
+    Key = 113001
+HashKey = 5
+    Key = 114001
+HashKey = 9
+    Key = 115001
+HashKey = 2
+    Key = 116001
+HashKey = 6
+    Key = 117001
+HashKey = 10
+    Key = 118001
+HashKey = 3
+    Key = 119001
+HashKey = 7
+    Key = 120001
+HashKey = 2
+    Key = 121001
+HashKey = 6
+    Key = 122001
+HashKey = 10
+    Key = 123001
+HashKey = 3
+    Key = 124001
+HashKey = 7
+    Key = 125001
+HashKey = 0
+    Key = 126001
+HashKey = 4
+    Key = 127001
+HashKey = 8
+    Key = 128001
+HashKey = 1
+    Key = 129001
+HashKey = 5
+    Key = 130001
+HashKey = 0
+    Key = 131001
+HashKey = 4
+Slot:   0 --> 130001 --> 125001 --> 104001 
+Slot:   1 --> 128001 --> 112001 --> 107001 
+Slot:   2 --> 120001 --> 115001 
+Slot:   3 --> 123001 --> 118001 --> 102001 
+Slot:   4 --> 131001 --> 126001 --> 110001 --> 105001 
+Slot:   5 --> 129001 --> 113001 --> 108001 
+Slot:   6 --> 121001 --> 116001 
+Slot:   7 --> 124001 --> 119001 --> 103001 
+Slot:   8 --> 127001 --> 111001 --> 106001 
+Slot:   9 --> 114001 --> 109001 
+Slot:  10 --> 122001 --> 117001 --> 101001 
+Number of probes: 0
+Number of expansions: 0
+Items: 31, TableSize: 11
+Load factor: 2.82
+
+Slot:   0 
+Slot:   1 --> 128001 --> 112001 --> 107001 
+Slot:   2 --> 120001 --> 115001 
+Slot:   3 --> 123001 --> 118001 
+Slot:   4 --> 131001 --> 126001 --> 105001 
+Slot:   5 --> 129001 --> 113001 --> 108001 
+Slot:   6 --> 121001 --> 116001 
+Slot:   7 --> 124001 --> 119001 --> 103001 
+Slot:   8 --> 127001 --> 111001 --> 106001 
+Slot:   9 --> 114001 
+Slot:  10 --> 122001 --> 117001 
+Number of probes: 0
+Number of expansions: 0
+Items: 31, TableSize: 11
+Load factor: 2.82
+

@@ -1,0 +1,762 @@
+
+<!-- saved from url=(0066)http://azrael.digipen.edu/~mmead/www/Courses/CS180/OSOverview.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./OS_Architecture Overview_files/new.css">
+<title>OS/Architecture Overview</title>
+
+<style type="text/css">
+</style> 
+
+</head>
+
+<body>  
+<center><h1>Overview of Operating Systems and Computer Architecture</h1></center>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Introduction</p>
+
+<xfont size="+3">
+
+What is an Operating System (OS) and what does it do?
+
+<ul>
+<li>It is a computer program that acts as an intermediary between a user of a computer and the computer hardware.</li>
+<li>It provides services to the user and the programs the user is running. For example:</li>
+<ul>
+	<li>Loads and executes other programs</li>
+	<li>Opens, reads, writes, closes files</li>
+	<li>Opens, reads, writes, closes network connections</li>
+	<li>Controls keyboard and mouse</li>
+	<li>Provides security and protection for programs</li>
+	<li>Much more...</li>
+</ul>
+<li>Schedules tasks
+	<ul>
+		<li>Multiple users</li>
+		<li>Multiple processes</li>
+	</ul>
+</li><li>Manages resources among multiple users/processes such as</li>
+<ul>
+
+<!--
+a	
+<span id=wpurl><a class=wplabel>Page link</a></span><a class=wplink href="page.html">Page link</a>
+a
+<br>
+===================================
+<br>
+b	
+<div style="z-index: 1; position: absolute;"> 
+    <a style="visibility: hidden;">Page link</a> 
+</div> 
+<a href="page.html">Page link</a> 
+b
+-->
+	<li><span id="wpurl"><a class="wplabel">CPU</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Central_processing_unit">CPU</a> (Central Processing Unit)</li>
+	<li><span id="wpurl"><a class="wplabel">Memory</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Computer_memory">Memory</a></li>
+	<li><span id="wpurl"><a class="wplabel">Disks</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Disk_storage">Disks</a></li>
+	<li><span id="wpurl"><a class="wplabel">Network </a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Network_interface_controller">Network</a> card (NIC, Network Interface Card)</li>
+	<li><span id="wpurl"><a class="wplabel">Video </a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Computer_monitor">Video</a> display
+	</li><li>Any I/O device...</li>
+</ul>
+<li>Users can inteface with the OS through a command line (shell, keyboard) or GUI interface (windowing, mouse).</li>
+
+<li>Many definitions of an operating system</li>
+	<ul>
+		<li><span id="wpurl"><a class="wplabel">Kernel </a></span>
+			<a class="wplink" href="http://en.wikipedia.org/wiki/Kernel_(computing)">Kernel</a> 
+			- The core of the operating system. The single lowest level program that manages all hardware and other resources. This includes all hardware drivers.</li>
+		<li>The kernel and many (always running) services. Provides user/program access to network, disk, display, mouse, ...</li>
+    <li>Kernel, services, and MANY application programs: word processors, web browsers, games, ... </li>
+	</ul>
+
+<blockquote>
+<table border="0" cellspacing="0" cellpadding="2">
+	<tbody><tr><td><img src="./OS_Architecture Overview_files/ComputerComponents-1.png"></td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne ©2009&nbsp;&nbsp;</span></td></tr>
+</tbody></table>
+</blockquote>
+
+
+<li>There may be multiple CPU's, but we'll deal mostly with only single-cpu machines (although, the CPU
+	will likely have multiple cores).</li>
+<li>Modern PC's often have more than one <span id="wpurl"><a class="wplabel">bus </a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Bus_(computing)">bus</a> for greater throughput.</li>
+<li>Internal bus (local bus, legacy <span id="wpurl"><a class="wplabel">Northbrige</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Northbridge_(computing)">Northbridge</a>,
+	<a href="https://en.wikipedia.org/wiki/File:Chipset_schematic.svg">diagram</a>)</li>
+	<ul>
+		<li>CPU and memory (<span id="wpurl"><a class="wplabel">front-side bus</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Front-side_bus">front-side bus</a>)</li>
+		<li>CPU and cache (<span id="wpurl"><a class="wplabel">back-side bus</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Back-side_bus">back-side bus</a>)</li>
+		<li><a href="https://en.wikipedia.org/wiki/File:Dual_Core_Generic.svg">Diagram</a> of the relationship between the FSB, BSB, CPU, and cache.</li>
+	</ul>
+	<li>External bus (legacy <span id="wpurl"><a class="wplabel">Southbrige</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Southbridge_(computing)">Southbridge</a>)</li>
+<ul>
+	<li> <span id="wpurl"><a class="wplabel">USB</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Universal_Serial_Bus">USB</a> (Universal Serial Bus) 
+		<ul>
+			<li><span id="wpurl"><a class="wplabel">1.0</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Universal_Serial_Bus#USB_1.0">1.0</a> (Full-Speed, 12 Mb/s)</li>
+		<li><span id="wpurl"><a class="wplabel">2.0</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Universal_Serial_Bus#USB_2.0">2.0</a> (High-Speed, 480 Mb/s)</li>
+		<li><span id="wpurl"><a class="wplabel">3.0</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Universal_Serial_Bus#USB_3.0">3.0</a> (SuperSpeed, 5 Gb/s)</li>
+		<li><span id="wpurl"><a class="wplabel">3.1</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Universal_Serial_Bus#USB_3.1">3.1</a> (SuperSpeed+, 10 Gb/s)</li>
+	</ul>
+		</li><li><span id="wpurl"><a class="wplabel">Thunderbolt</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Thunderbolt_(interface)">Thunderbolt</a>
+			(<span id="wpurl"><a class="wplabel">PCIe</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/PCI_Express">PCIe</a> and 
+			<span id="wpurl"><a class="wplabel">DisplayPort</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/DisplayPort">DisplayPort</a> among others)</li>
+
+	<li> <span id="wpurl"><a class="wplabel">PATA</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Parallel_ATA">PATA</a> (Parallel AT Attachment, AT=Advanced Technology, a.k.a. IDE)</li>
+	<li> <span id="wpurl"><a class="wplabel">SATA</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Serial_ATA">SATA</a> (Serial ATA)</li>
+	<li> <span id="wpurl"><a class="wplabel">SCSI</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/SCSI">SCSI</a> (Small Computer System Interface)
+</li></ul>
+
+
+<blockquote>
+<table border="0" cellspacing="0" cellpadding="2">
+	<tbody><tr><td>
+		<img src="./OS_Architecture Overview_files/ComputerComponents-2.png">  
+	</td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne ©2009&nbsp;&nbsp;</span></td></tr>
+</tbody></table>
+</blockquote>
+
+</ul>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Some Background on Memory, Storage, and Computer Architecture</p>
+Memory and Storage
+<ul>
+<li>Storage Hierarchy</li>
+<ul>
+	<li>At the top is the faster, most expensive, most volatile, and least amount in the computer.</li>
+	<li>At the bottom is the slowest, cheapest, least volatile, and the largest amount in the computer.</li>
+	<li>Today, we call an electronic disk an <span id="wpurl"><a class="wplabel">SSD </a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Ssd">SSD</a> (Solid State Drive).</li>
+<blockquote>
+<table border="0" cellspacing="0" cellpadding="2">
+	<tbody><tr><td>
+		<img src="./OS_Architecture Overview_files/StorageHierarchy.png">	
+	</td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne ©2009&nbsp;&nbsp;</span></td></tr>
+</tbody></table>
+</blockquote>
+
+	<li>For price comparisons:</li>
+	<ul>
+		<li>9-10-2015</li>
+		<ul>
+			<li>Main memory is about $6.00 per GB</li>
+			<li>SSD storage is about $.36 per GB</li>
+			<li>Hard disk storage is about $0.04 per GB</li>
+		</ul>
+		<li>5-12-2015</li>
+		<ul>
+			<li>Main memory is about $7.00 per GB</li>
+			<li>SSD storage is about $.40 per GB</li>
+			<li>Hard disk storage is about $0.04 per GB</li>
+		</ul>
+		<li>1-13-2015</li>
+		<ul>
+			<li>Main memory is about $9.00 per GB</li>
+			<li>SSD storage is about $.40 per GB</li>
+			<li>Hard disk storage is about $0.04 per GB</li>
+		</ul>
+		<li>9-10-2014</li>
+		<ul>
+			<li>Main memory is about $10.00 per GB</li>
+			<li>SSD storage is about $.40 per GB</li>
+			<li>Hard disk storage is about $0.045 per GB</li>
+		</ul>
+		<li>5-12-2014</li>
+		<ul>
+			<li>Main memory is about $10.00 per GB</li>
+			<li>SSD storage is about $.50 per GB</li>
+			<li>Hard disk storage is about $0.045 per GB</li>
+		</ul>
+		<li>4-3-2014</li>
+		<ul>
+			<li>Main memory is about $10.00 per GB</li>
+			<li>SSD storage is about $.50 per GB</li>
+			<li>Hard disk storage is about $0.045 per GB</li>
+		</ul>
+		<li>11-12-2013</li>
+		<ul>
+			<li>Main memory is about $10.00 per GB</li>
+			<li>SSD storage is about $.73 per GB</li>
+			<li>Hard disk storage is about $0.05 per GB</li>
+		</ul>
+		<li>9-10-2013</li>
+		<ul>
+			<li>Main memory is about $9.25 per GB</li>
+			<li>SSD storage is about $.75 per GB</li>
+			<li>Hard disk storage is about $0.05 per GB</li>
+		</ul>
+		<li>4-2-2013</li>
+		<ul>
+			<li>Main memory is about $6.25 per GB</li>
+			<li>SSD storage is about $.55 per GB</li>
+			<li>Hard disk storage is about $0.055 per GB</li>
+		</ul>
+		<li>1-17-2013</li>
+		<ul>
+			<li>Main memory is about $4.50 per GB</li>
+			<li>SSD storage is about $.78 per GB</li>
+			<li>Hard disk storage is about $0.06 per GB</li>
+		</ul>
+		<li>9-12-2012</li>
+		<ul>
+			<li>Main memory is about $5.00 per GB</li>
+			<li>SSD storage is about $1.00 per GB</li>
+			<li>Hard disk storage is about $0.05 per GB</li>
+		</ul>
+		<li>5-10-2012</li>
+		<ul>
+			<li>Main memory is about $4.25 per GB</li>
+			<li>SSD storage is about $0.67 per GB</li>
+			<li>Hard disk storage is about $0.05 per GB</li>
+		</ul>
+		<li>In 1990 I bought a 200 MB hard drive for $1,000. That's $5000 per GB!</li>
+	</ul>
+	<li><a href="http://www.dramexchange.com/">Market prices</a> for DRAM.</li>
+</ul>
+
+
+<br>
+
+<blockquote>
+<table border="0" cellspacing="0" cellpadding="2">
+<tbody><tr><th>Some Numbers Regarding Memory</th></tr>
+	<tr><td>
+		<img src="./OS_Architecture Overview_files/StorageLevels-1.png">	
+	</td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne ©2009&nbsp;&nbsp;</span></td></tr>
+</tbody></table>
+</blockquote>
+
+<br>
+
+<li>CPU cores and cache</li>
+<li><a href="http://www.newegg.com/Product/ProductList.aspx?Submit=ENE&N=100007671%2050001157&IsNodeId=1&name=Intel">Intel examples</a>:</li>
+<ul>
+	<li><a href="http://www.newegg.com/Product/Product.aspx?Item=N82E16819115077">Intel Core i3-2120</a></li>
+	<li><a href="http://www.newegg.com/Product/Product.aspx?Item=N82E16819115072">Intel Core i5-2500K</a></li>
+	<li><a href="http://www.newegg.com/Product/Product.aspx?Item=N82E16819115095">Intel Core i7-2700K</a></li>
+</ul>
+<li><a href="http://www.newegg.com/Product/ProductList.aspx?Submit=ENE&N=100007671%2050001028&IsNodeId=1&name=AMD">AMD examples</a>:</li>
+<ul>
+	<li><a href="http://www.newegg.com/Product/Product.aspx?Item=N82E16819103887">AMD Phenom II X2 560</a></li>
+	<li><a href="http://www.newegg.com/Product/Product.aspx?Item=N82E16819113007">AMD Phenom II X4 955</a></li>
+	<li><a href="http://www.newegg.com/Product/Product.aspx?Item=N82E16819106012">AMD Phenom II X6 1045T</a></li>
+</ul>	
+
+<blockquote>
+<table border="0" cellspacing="0" cellpadding="2">
+<tbody><tr><th>Reading an integer from disk</th></tr>
+	<tr><td>
+		<img src="./OS_Architecture Overview_files/MemoryChain-1.png">	
+	</td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne ©2009&nbsp;&nbsp;</span></td></tr>
+</tbody></table>
+</blockquote>
+
+
+<li>System Architecture</li>
+<ul>
+	<li>single CPU</li>
+  
+	<li>multiple CPU</li>
+	<li>single CPU, multiple core</li>
+	<li>multiple CPU, multiple Core</li>
+	<li>multiple cores (vs. CPUs) yields faster communication, less power consumption</li>
+	<ul>
+  		<li>faster throughput, scales more cheaply<!--, more robust (failover)--></li>
+  	</ul>
+</ul>
+
+
+<blockquote>
+<table border="0" cellspacing="0" cellpadding="2">
+<tbody><tr><th>Multiprocessor (single cores)</th></tr>
+	<tr><td>
+		<img src="./OS_Architecture Overview_files/Multiprocessor-1.png">	
+	</td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne ©2009&nbsp;&nbsp;</span></td></tr>
+</tbody></table>
+</blockquote>
+
+<br>
+
+<blockquote>
+<table border="0" cellspacing="0" cellpadding="2">
+<tbody><tr><th>Single processor (2 cores)</th></tr>
+	<tr><td>
+		<img src="./OS_Architecture Overview_files/DualCore.png">	
+	</td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne ©2009&nbsp;&nbsp;</span></td></tr>
+</tbody></table>
+</blockquote>
+
+<ul>
+	<li><span id="wpurl"><a class="wplabel">asymmetric </a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Asymmetric_multiprocessing">asymmetric</a> multiprocessing AMP (master/slave),
+		<a href="https://en.wikipedia.org/wiki/File:Asmp_2.gif">diagram</a>, cheaper, less complicated to build</li>
+	<li><span id="wpurl"><a class="wplabel">symmetric</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Symmetric_multiprocessing">symmetric</a>  multiprocessing, SMP (peers),
+		<a href="https://en.wikipedia.org/wiki/File:SMP_-_Symmetric_Multiprocessor_System.svg">diagram</a>, more expensive, complicated (all CPUs had full functionality)</li>
+  <li><span id="wpurl"><a class="wplabel">clustering</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Cluster_(computing)">clustering</a> 
+  	using a <span id="wpurl"><a class="wplabel">SAN</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Storage_area_network">SAN</a> (Storage Area Network)</li>
+  	<ul>
+  		<li>Used in <span id="wpurl"><a class="wplabel">distributed computing</a></span><a class="wplink" href="https://en.wikipedia.org/wiki/Distributed_computing">distributed computing</a>.</li>
+  	</ul>
+
+  			
+
+</ul>
+<br>
+
+<blockquote>
+<table border="0" cellspacing="0" cellpadding="2">
+<tbody><tr><th>A Linux Cluster</th></tr>
+	<tr><td>
+		<!--<img src="http://upload.wikimedia.org/wikipedia/commons/c/c5/MEGWARE.CLIC.jpg">	-->
+		<img src="./OS_Architecture Overview_files/LinuxCluster.jpg">
+	</td></tr>
+	<tr><td align="right"><span class="attrib">http://en.wikipedia.org/wiki/File:MEGWARE.CLIC.jpg&nbsp;&nbsp;</span></td></tr>
+</tbody></table>
+</blockquote>
+
+<ul>
+	<li>See also <span id="wpurl"><a class="wplabel">blade servers</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Blade_server">blade servers</a>.
+
+	
+	</li>
+</ul>
+
+<blockquote>
+<table border="0" cellspacing="0" cellpadding="2">
+<tbody><tr><th>Blade Servers</th></tr>
+	<tr><td>
+		<!--<img src="http://upload.wikimedia.org/wikipedia/commons/c/c5/MEGWARE.CLIC.jpg">	-->
+		<img src="./OS_Architecture Overview_files/BladeServer.jpg">
+	</td></tr>
+	<tr><!--<td align="right"><span class="attrib">http://en.wikipedia.org/wiki/File:MEGWARE.CLIC.jpg&nbsp;&nbsp;</span>--></tr>
+</tbody></table>
+</blockquote>
+
+
+<li>Other architecture details</li>
+<ul>
+	<li>Two dominant architectures</li>
+	<ul>
+		<li><span id="wpurl"><a class="wplabel">vonNeumann</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Von_Neumann_architecture">vonNeumann</a> architecture (a.k.a Princeton architecture, single bus for data/instructions, leads to vonNeumann bottleneck), 
+			<a href="https://en.wikipedia.org/wiki/File:Von_Neumann_Architecture.svg">diagram</a></li>
+		<li><span id="wpurl"><a class="wplabel">Harvard</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Harvard_architecture">Harvard</a> architecture (separate storage and bus for data/instructions),
+			<a href="https://en.wikipedia.org/wiki/File:Harvard_architecture.svg">diagram</a></li>
+		<ul>
+			<li><span id="wpurl"><a class="wplabel">Modified Harvard Architecture</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Modified_Harvard_architecture">Modified Harvard Architecture</a>: shared main memory, separate data and instruction caches</li>
+		</ul>
+		<p>
+		</p><li><span id="wpurl"><a class="wplabel">Fetch-Decode-Execute</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Instruction_cycle">Fetch-Decode-Execute</a> loop</li>
+	  <li><span id="wpurl"><a class="wplabel">opcodes</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Opcode">opcodes</a> and operands from the <span id="wpurl"><a class="wplabel">instruction set</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Instruction_set">instruction set</a> (simple or complex instructions) </li>
+	  <ul>
+	  	<!-- opcode, destination, source, value -->
+	  	<li> <span id="wpurl"><a class="wplabel">Example</a></span><a class="wplink" href="http://upload.wikimedia.org/wikipedia/commons/2/2a/Mips32_addi.svg">Example</a> (MIPS32 Add Immediate instruction) </li>
+	</ul>
+	<li><span id="wpurl"><a class="wplabel">Superscalar</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Superscalar">Superscalar</a> 
+		(ILP, e.g. vector arithmetic, 4 ALUs, 2 FPUs, multipliers, shifters),</li>
+		<ul>
+			<li>Intrinsic parallelism (dependencies)</li>
+			<li>Dispatch complexity/overhead</li>
+			<li>Branches</li>
+		</ul>
+		<!-- Not likely to go very deep as the complexity of 
+		detecting dependencies is far too complex with many levels
+		deep.
+	-->
+
+		<!-- ILP Instruction Level Parallelism -->
+		<li><span id="wpurl"><a class="wplabel">pipelining</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Instruction_pipeline">pipelining</a> (break-up instructions, different circuitry),</li>
+		<li><span id="wpurl"><a class="wplabel">out-of-order execution</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Out-of-order_execution">out-of-order execution</a> (Memory speed vs. CPU speed, operand availability), </li>
+		<li><span id="wpurl"><a class="wplabel">branch prediction</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Branch_predictor">branch prediction</a> (loop prediction is very good) </li>
+		<li><span id="wpurl"><a class="wplabel">speculative execution</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Speculative_execution">speculative exectuion</a> (need extra resources, ability to revert)
+
+		CPU stalls</li>
+	<li>Interrupts - interrupt vector table, <span id="wpurl"><a class="wplabel">interrupt descriptor table</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Interrupt_Descriptor_Table">interrupt descriptor table</a> </li>
+	<li><span id="wpurl"><a class="wplabel">Device drivers</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Device_driver">Device drivers</a> - software that controls hardware</li>
+		<ul>
+			<li>Slow devices, e.g. keyboard (many interrupts)</li>
+			<li>Fast devices, e.g. disk drive (few interrupts, uses Direct Memory Access, <span id="wpurl"><a class="wplabel">DMA</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Direct_memory_access">DMA</a>) </li>
+			<ul>
+				<li>DMA modes: Burst, Cycle-stealing, Transparent</li>
+			</ul>
+			<!--
+			Burst - transfers a block, CPU must wait (Block Transfer Mode)
+			Cycle-stealing - transfer a byte, CPU works, DMA requests, transfer byte, CPU works, etc.
+			Transparent - DMA transfers while CPU doesn't need bus.
+		-->
+		</ul>
+	</ul>
+</ul>
+<li><a href="http://azrael.digipen.edu/~mmead/www/docs/IntroToIntelArch-TheBasics.pdf">Overview of Intel's architecture</a> It introduces the Atom, Core 2 Duo, and Core i7 processors.</li>
+<p>
+
+</p><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/computer-specs.html">Various computer specs</a> for testing in this class.</li>
+
+</ul>
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Modern Operating Systems</p>
+
+<ul>
+	
+<li>Multitasking Operating Systems</li>
+<ul>
+<li><span id="wpurl"><a class="wplabel">time-sharing</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Time-sharing">time-sharing</a> (multitasking, vs. batch-mode)</li>
+<li>job <span id="wpurl"><a class="wplabel">scheduling</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Job_scheduler">scheduling</a></li>
+<li><span id="wpurl"><a class="wplabel">time slicing</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Time_slice_multiplexing">time slicing</a></li>
+<li>uses a timer to <span id="wpurl"><a class="wplabel">interrupt</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Interrupt">interrupt</a> (vs. polling)</li> 
+<li><span id="wpurl"><a class="wplabel">virtual memory</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Virtual_memory">virtual memory</a></li>
+<li><span id="wpurl"><a class="wplabel">cooperative</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Cooperative_multitasking#Cooperative_multitasking.2Ftime-sharing">cooperative</a> 
+	vs. <span id="wpurl"><a class="wplabel">preemptive</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Cooperative_multitasking#Preemptive_multitasking.2Ftime-sharing">preemptive</a></li>
+</ul>
+
+<blockquote>
+<table border="0" cellspacing="0" cellpadding="2">
+<tbody><tr><th></th></tr>
+	<tr><td>
+		<img src="./OS_Architecture Overview_files/Jobs-1.png">	
+	</td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne ©2009&nbsp;&nbsp;</span></td></tr>
+</tbody></table>
+</blockquote>
+
+<br>
+
+<li>Dual-Mode Operation</li>
+	<ul>
+    <li>Uses a mode bit - supported by the CPU
+		</li><li><span id="wpurl"><a class="wplabel">User mode</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/User_mode">User mode</a> - Applications</li>
+		<li><span id="wpurl"><a class="wplabel">Kernel mode</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Kernel_mode#Supervisor_mode">Kernel mode</a> (privileged mode, privileged instructions), provides protection for processes and other entities</li>
+	</ul>
+	
+
+<blockquote>
+<table border="0" cellspacing="0" cellpadding="0">
+<tbody><tr><th></th></tr>
+	<tr><td>
+		<img src="./OS_Architecture Overview_files/SystemCall-1.png">	
+	</td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne ©2009&nbsp;&nbsp;</span></td></tr>
+</tbody></table>
+</blockquote>
+
+
+
+
+
+<li><span id="wpurl"><a class="wplabel">Process Management</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Process_management_(computing)">Process Management</a></li>
+	<ul>
+    <li>a <span id="wpurl"><a class="wplabel">program</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Computer_program">program</a> vs. a <span id="wpurl"><a class="wplabel">process</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Process_(computing)">process</a>
+		</li><li><span id="wpurl"><a class="wplabel">threads</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Thread_(computer_science)">threads</a>, light-weight processes</li>
+		<li>OS creates, deletes, schedules, pauses, resumes processes (threads)</li>
+    <li>OS provides <span id="wpurl"><a class="wplabel">synchronization </a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Synchronization_(computer_science)">synchronization</a> 
+    	and <span id="wpurl"><a class="wplabel">communication</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Inter-process_communication">communication</a> between processes</li>
+	</ul>
+
+<p>
+
+</p><li><span id="wpurl"><a class="wplabel">Memory Management</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Memory_management">Memory Management</a></li>
+	<ul>
+    <li>How does the OS arrange multiple programs in memory at once?
+		</li><li>How about MANY programs? How about MANY LARGE programs?</li>
+		<li>How about when the total size of all programs adds up to more than the amount of memory on the computer?</li>
+    <li>The answer is VIRTUAL memory.</li>
+	</ul>
+
+<p>
+
+</p><li>File Management</li>
+	<ul>
+    <li>How to keep track of:
+    <ul>
+		<li>Huge number of files</li>
+		<li>Of any size (several bytes to several giga-bytes)</li>
+    <li>Allow for many to be open simultaneously, both reading and writing</li>
+    <li>Do it efficiently in terms of time and space</li>
+    </ul>
+	</li></ul>
+
+<p>
+
+</p><li>Computing Environments</li>
+	<ul>
+    <li>Traditional (one person, one computer, maybe connected or disconnected)
+		</li><li><span id="wpurl"><a class="wplabel">Client-Server</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Client-server">Client-Server</a> (file, computing, web)</li>
+		<li><span id="wpurl"><a class="wplabel">Peer-to-Peer</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Peer-to-peer">Peer-to-Peer</a>, P2P (client and server, centralized, non-centralized)</li>
+    <li>Web-based, now called <span id="wpurl"><a class="wplabel">Cloud</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Cloud_computing">Cloud</a>-based (load balancing)</li>
+    <li>PCs no longer the dominant device on the networks (phones, tablets, other smaller devices)</li>
+	</ul>
+
+<blockquote>
+<table border="0" cellspacing="0" cellpadding="0">
+<tbody><tr><th>Client-Server Computing</th></tr>
+	<tr><td>
+		<img src="./OS_Architecture Overview_files/ClientServer-1.png">	
+	</td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne ©2009&nbsp;&nbsp;</span></td></tr>
+</tbody></table>
+</blockquote>
+	
+
+</ul>
+
+<p class="SectionHeader">A Brief Look at the Evolution of Computers and Operating Systems</p>
+
+<li><b>First generation, circa 1945-1955</b></li>
+	<ul>
+	<li>Computers were very large and slow.</li>
+	<li>Built using vacuum tubes, quite unreliable.</li>
+	<li>The same group of people had to design, build, program,	operate, and maintain the machine.</li>
+  <li>The computer was programmed in machine language (ones and zeros) by using hardwires to specify the instructions.</li>
+	<li>Programming languages and operating systems did not exist.</li>
+	<li>These "computers" were used for straightforward numerical calculations.</li>
+</ul>
+
+
+<p>
+</p><li><b>Second generation, circa 1955-1965</b></li>
+	<ul>
+	<li><span id="wpurl"><a class="wplabel">Transistors</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Transistor">Transistors</a> were introduced, computers became more reliable</li>
+	<li>There was a clear separation between the designer, builder, programmer, and operator.</li>
+	<li>This machine was called a <span id="wpurl"><a class="wplabel">mainframe</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Mainframe_computer">mainframe</a>.</li>
+	<li>They were used for scientific and engineering calculations.</li>
+	<li>The computer usage time was not optimal</li>
+	<li>Time was wasted while the operators walked around in the "machine room".</li>
+	<li>Why? These are the tasks needed to run a program:</li>
+	<ul>
+	<li>Write the program on paper</li>
+	<li>Punch the program on cards</li>
+	<li>Bring the cards to the input room</li>
+	<li>Hand the cards to an operator who feeds the cards to the computer</li>
+	<li>Once the output is ready</li>
+	<li>The operator takes the printer output to the output room, and finally</li>
+	<li>The programmer would collect the output from the output room</li>
+</ul>
+
+
+<p>
+	</p><li>Batch systems were introduced to:</li>
+	<ul>
+	<li>Reduce setup time by batching similar jobs</li>
+	<li>Automatic job sequencing</li>
+	<li>Automatically transfers control from one job to another.</li>
+	<li>First rudimentary operating system.</li>
+	<li>Convert multiple jobs from card format onto a magnetic tape, and then rewind the tape.</li>
+	<li>Get the tape to the machine room and then mount the tape on a tape drive.</li>
+	<li>Load the operating system tape onto the system tape reader. The job of the operating system was to automatically read the next job once the previous job was completed and the output was recorded onto an output tape.</li>
+	<li>Once all the batch jobs are completed, the output tape is removed.</li>
+	<li>The output is printed.</li>
+	<li>The diagram below shows this process:</li>
+	<p>
+<xblockquote>
+<table border="0" cellspacing="0" cellpadding="3">
+	<tbody><tr><td>
+		<img src="./OS_Architecture Overview_files/CardReader-1.png">
+	</td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne ©2009&nbsp;&nbsp;</span></td></tr>
+</tbody></table>
+</xblockquote>
+	
+	</p></ul>
+
+<p>
+</p><li><b>Third generation, circa 1960s-1980</b></li>
+	<ul>
+	<li>IBM introduced a new system called the 360 series. (The <span id="wpurl"><a class="wplabel">IBM System/360</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/IBM_System/360">IBM System/360</a> was an architecture, not a machine.)</li>
+	<li>The S/360 was still a <span id="wpurl"><a class="wplabel">mainframe</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Mainframe_computer">mainframe</a> computer.</li>
+	<li>It was the first major computer to use small-scale integrated circuits.</li>
+	<li>This idea of family compatible computers was adopted by all other major manufacturers.</li>
+<li><span id="wpurl"><a class="wplabel">Minicomputers</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Minicomputer">Minicomputers</a> were built. (DEC PDP-1, PDP-8)
+	</li><li><span id="wpurl"><a class="wplabel">Multiprogramming</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Multiprogramming">Multiprogramming</a></li>
+	<ul>
+		<li>Multiprogramming was introduced to solve the problem of CPU idling time or waiting time, which was significant.
+	</li><li>The memory was partitioned into several pieces with a different job in each partition.</li>
+	<li>The CPU could be used by another program in memory while it was waiting for an I/O to complete.</li>
+	<li>A multiprogramming system with four jobs in memory:</li>
+	<p>
+<xblockquote>
+<table border="0" cellspacing="0" cellpadding="3">
+	<tbody><tr><td>
+		<img src="./OS_Architecture Overview_files/Jobs-2.png">
+	</td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne ©2009&nbsp;&nbsp;</span></td></tr>
+</tbody></table>
+</xblockquote>
+		
+  </p><p>
+	</p><li>For multiprogramming, an operating system needed:</li>
+	<ul>
+	<li>Memory management where the system must allocate the memory to several jobs.</li>
+	<li><span id="wpurl"><a class="wplabel">CPU scheduling</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Scheduling_(computing)">CPU scheduling</a> where the system must choose among several jobs ready to run.</li>
+	<li>Allocation of devices.</li>
+</ul>
+</ul>
+<li><span id="wpurl"><a class="wplabel">Timesharing</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Time-sharing">Timesharing</a></li>
+<ul>
+<li>Multiprogramming solved the CPU idle time problem, however</li>
+<li>Programmers wanted to be able to use the computer at the same time.</li>
+<li>The time-sharing system shares the CPU with the  jobs that want service.</li>
+<li>The CPU is multiplexed among several jobs that are kept in memory and on disk (the CPU is allocated to a job only if the job is in memory).</li>
+<li>The jobs are swapped in and out of memory to the disk.</li>
+</ul>
+
+</ul>
+
+<p>
+</p><li><b>Fourth generation 1980-present</b></li>
+	<ul>
+	<li><span id="wpurl"><a class="wplabel">VLSI </a></span><a class="wplink" href="http://en.wikipedia.org/wiki/VLSI">VLSI</a> - Very Large Scale Integration</li>
+	<li>With VLSI technology, chips containing thousands (now tens of millions) of transistors on a square centimeter of silicon could be built.
+		(<span id="wpurl"><a class="wplabel">Transistor count</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Transistor_count">Transistor count</a>)
+		</li>
+	<li>This technology gave rise to the idea of personal computers (microcomputers)</li>
+	<li><span id="wpurl"><a class="wplabel">Microcomputers</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Microcomputer">Microcomputers</a></li>
+	<ul>
+	<li>The price drop of the microprocessor made it possible for single individuals to have their own personal computer.</li>
+	<li>Personal computers are computer systems dedicated to a single user.</li>
+	<li>Features:</li>
+	<ul>
+	<li>I/O devices such as keyboards, mouse devices, display screens, and small printers.</li>
+	<li>User convenience and responsiveness.</li>
+	<li>Individuals are often the sole users of a computer and do not need advanced CPU utilization or protection features.</li>
+	<li>Can adopt technology developed for larger operating systems.</li>
+	<li>May run several different types of operating systems (Windows, MacOS, UNIX, Linux)</li>
+</ul>
+</ul>
+	<li>Microcomputer Operating Systems</li>
+	<ul>
+	<li><span id="wpurl"><a class="wplabel">CP/M</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/CP/M">CP/M</a></li>
+	<ul>
+	<li>In 1974, Intel came up with the first general-purpose 8-bit CPU, the <span id="wpurl"><a class="wplabel">8080</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/8080">8080</a>.</li>
+	<li>A disk-based operating system called CP/M (Control program for Microcomputers) was used for the 8080.</li>
+	<li>In 1977 CP/M was rewritten in order to be suitable for running other CPUs such as the <span id="wpurl"><a class="wplabel">Z80</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Zilog_Z80">Z80</a>.</li>
+</ul>
+	<li><span id="wpurl"><a class="wplabel">DOS</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/DOS">DOS</a></li>
+	<ul>
+	<li>In the early 1980s, IBM designed the IBM PC. (Using the 8088 chip)</li>
+	<li>Initially, the DOS (Disk Operating System) was used as the OS and it was called <span id="wpurl"><a class="wplabel">PC-DOS</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/IBM_PC_DOS">PC-DOS</a></li>
+	<li>Later, a revised version of DOS called <span id="wpurl"><a class="wplabel">MS-DOS</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/MS-DOS">MS-DOS</a> (MicroSoft Disk Operating system) was used as the OS</li>
+</ul>
+	<li>Graphical User Interface (<span id="wpurl"><a class="wplabel">GUI</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/GUI">GUI</a>, pronounced goo'-ee)</li>
+	<ul>
+	<li>Early microcomputer operating systems were command line based.</li>
+	<li>The user had to type in the commands as text.</li>
+	<li>The GUI introduced the concept of Windows, Icons, Menus and Pointer (<span id="wpurl"><a class="wplabel">WIMP</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/WIMP_(computing)">WIMP</a>).</li>
+	<li>GUI was user friendly, intended for "normal" users who knew nothing about computers, and had no intention to learn about computers.</li>
+	<li>Apple's first GUI was the <span id="wpurl"><a class="wplabel">Lisa</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Apple_Lisa">Lisa</a> computer. The <span id="wpurl"><a class="wplabel">Macintosh</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Macintosh">Macintosh</a> was also built with a GUI.</li>
+</ul>
+	<li><span id="wpurl"><a class="wplabel">Windows</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Microsoft_Windows">Windows</a></li>
+	<ul>
+	<li>Microsoft decided to build a successor for MS-DOS</li>
+	<li>They produced a GUI based system called Windows, which originally ran on top of MS-DOS.</li>
+	<li>Initially, Windows was just a graphical environment on top of MS-DOS. It wasn't an operating system.</li>
+	<li>Eventually, Windows became a 16-bit operating system that didn't require MS-DOS to run.</li>
+	<li>Windows is now a 32-bit and a 64-bit OS</li>
+</ul>
+	<li><span id="wpurl"><a class="wplabel">Linux</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Linux">Linux</a></li>
+	<ul>
+	<li>Linux began life circa 1991 and was a 32-bit OS, requiring an Intel <span id="wpurl"><a class="wplabel">80386</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/80386">80386</a> processor</li>
+	<li>Linux is hard to define because it runs on practically any kind of device (very small hand-helds to PCs to <span id="wpurl"><a class="wplabel">supercomputers</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Supercomputer">supercomputers</a>).</li>
+	<li>Linux has both a <span id="wpurl"><a class="wplabel">CLI</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Command-line_interface">CLI</a> (Command Line Interface) and a full-blown GUI, making it suitable for experts and novices alike.</li>
+	<li>It is also available as 64-bit for PCs</li>
+</ul>
+
+
+</ul>
+</ul>
+</ul>
+
+<b>Links:</b>
+<ul>
+	<li><a href="http://www.anandtech.com/show/9582/intel-skylake-mobile-desktop-launch-architecture-analysis">
+		Intel Skylake Roadmap September 2015</a> Very detailed discussion about Intel's latest CPU
+		architcture.</li>
+</ul>
+
+
+<br>
+
+<p>
+</p><hr width="100%">
+<p>
+
+
+
+
+</p><blockquote><pre></pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<tt><b></b></tt>
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<blockquote>
+<blockquote>
+</blockquote><table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th></tr>
+<tr valign="top">
+
+</tr></tbody></table><table border="0" cellspacing="0" cellpadding="0">
+<tbody><tr><th></th></tr>
+<tr valign="top">
+<td>
+
+</td></tr></tbody></table>
+</blockquote>
+	
+
+
+
+
+
+<blockquote><pre></pre></blockquote>
+
+<!--
+
+<blockquote>
+<table border=0 cellspacing=0 cellpadding=2>
+<tr><th></th></tr>
+	<tr><td>
+		<img src="">	
+	</td></tr>
+	<tr><td align="right"><span class="attrib">Operating System Concepts - 8th Edition Silberschatz, Galvin, Gagne &copy;2009&nbsp;&nbsp;</span></td></tr>
+</table>
+</blockquote>
+
+-->
+</xfont></body></html>

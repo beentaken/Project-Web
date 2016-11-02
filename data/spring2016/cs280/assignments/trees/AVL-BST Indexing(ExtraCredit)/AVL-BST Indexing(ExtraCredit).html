@@ -1,0 +1,134 @@
+
+<!-- saved from url=(0092)http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project4/avlbst-indexing.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./AVL-BST Indexing(ExtraCredit)_files/new.css">
+<title>AVL-BST Indexing</title>
+
+<style>
+body {
+   background : #ffffff; 
+   margin-left : 50;
+   margin-right : 20;
+   background : url("../../../../../images/notebook.jpg");
+   }
+</style>
+
+</head>
+
+<body>  
+<center>
+<h1>Indexing Into A Tree (The <i>select</i> operation)</h1>
+</center>
+<p>
+
+
+<!--********************************************************************-->
+<!--********************************************************************-->
+<!--********************************************************************-->
+</p><p class="SectionHeader">Pseudocode for indexing</p>
+
+<ul>
+<li>Since the subscript operator (<tt><b>operator[]</b></tt>) is not recursive, you'll
+  need a helper function to do the recursion:
+<blockquote><pre>some_helper(node, index);
+</pre></blockquote>
+
+where <tt>node</tt> is the node (initially the root) and index is the position in the
+tree.
+<p>
+  Suppose we're looking for
+the <i>i'th</i> node and we're at some node (the root initially).
+ Assume that <i>L</i> is the number of nodes in the left subtree.</p></li>
+<ul>
+  <li>If <tt>node</tt> is NULL, return NULL. (Base case)</li>
+  <li>If the left subtree has <b>more</b> than <i>i</i> nodes (<i>L &gt; i</i>), then it's in the left subtree.</li>
+  <ul>
+    <li>Recursively call the method with the left node and the index.</li>
+  </ul>
+  <li>If the left subtree has <b>less</b> than <i>i</i> nodes (<i>L &lt; i</i>), then it's in the right subtree.</li>
+  <ul>
+    <li>Recursively call the method with the right node and <i>i - L - 1.</i></li>
+  </ul>
+  <li>Else the left subtree has exactly <i>i</i> nodes so it's in the current node.</li>
+</ul>
+<p>
+Looking at the example below, the values represent: Key[count]. Key is the value in the node and count is
+the number of nodes in the (sub)tree. 
+(The keys were inserted in this order: 5 2 8 0 3 6 9 1 4 7 so you'll notice that the 
+key is the index in the tree.)
+<!--
+Because I inserted Keys from 0 to 9, the Key <i>is</i> the index as well. 
+This makes following the example below easy.
+On non-sequential data (random, strings, etc.) this will not necessarily be the case.
+-->
+
+</p><blockquote><pre>                          5[10]     
+
+           2[5]                          8[4]      
+      
+ 0[2]           3[2]           6[2]           9[1]      
+
+      1[1]           4[1]           7[1]      
+</pre></blockquote>
+
+Here's a graphical view. The <font color="blue">blue</font> numbers above the nodes represent the count
+of numbers in that subtree. The <font color="red">red</font> numbers below them are the balance factors.
+(You are not implementing the balance factors.)
+<blockquote>
+<img src="./AVL-BST Indexing(ExtraCredit)_files/avlbst-indexing-example2.png">
+</blockquote>
+
+Suppose we're looking for <i>tree[3]</i> (<i>L</i> is the number of nodes in the left subtree, <i>i</i> is the index):
+<ul>
+  <li>Starting at the root:</li>
+  <li><i>L &gt; i</i> so it's in the left subtree. (Recurse left with node <tt>2[5]</tt> and <i>i</i>, which is 3)</li>
+  <li>Now, <i>L &lt; i</i>, so it's in the right subtree. (Recurse right with node <tt>3[2]</tt> and <i>i - L - 1</i>, which is 0)</li>
+  <li>Now, <i>L == i</i> (there is no left node, so L is 0), so the value is in the current node, <tt>3[2]</tt>.</li>
+  <li>Return the node.</li>
+</ul>
+
+<p>
+Suppose we're looking for <i>tree[8]</i> (<i>L</i> is the number of nodes in the left subtree, <i>i</i> is the index):
+</p><ul>
+  <li>Starting at the root:</li>
+  <li><i>L &lt; i</i> so it's in the right subtree. (Recurse right with node <tt>8[4]</tt> and <i>i - L - 1</i>, which is 2)</li>
+  <li>Now, <i>L == i</i>, so it's in the current node, <tt>8[4]</tt>.</li>
+  <li>Return the node.</li>
+</ul>
+<p>
+Suppose we're looking for <i>tree[7]</i> (<i>L</i> is the number of nodes in the left subtree, <i>i</i> is the index):
+</p><ul>
+  <li>Starting at the root:</li>
+  <li><i>L &lt; i</i> so it's in the right subtree. (Recurse right with node <tt>8[4]</tt> and <i>i - L - 1</i>, which is 1.)</li>
+  <li>Now, <i>L &gt; i</i>, so it's in the left subtree. (Recurse left with node <tt>6[2]</tt> and <i>i</i>, which is 1.)</li>
+  <li>Now, <i>L &lt; i</i>, so it's in the right subtree. (Recurse right with node <tt>7[1]</tt> and <i>i - L - 1</i>, which is 0)</li>
+  <li>Now, <i>L == i</i>, so the value is in the current node, <tt>7[1]</tt>.</li>
+  <li>Return the node.</li>
+</ul>
+<p>
+Try a couple more on your own to convince yourself that this works.
+</p><p>
+Notice that you don't necessarily have to do any checking of the subscript. For example, if I ask
+for <i>tree[12]</i> (non-existent), it will eventually recurse on an empty child (NULL).
+Be sure to return NULL from the method, indicating that nothing was found. This is the
+non-recursive case (base case) in the algorithm. Of course, as an optimization, you
+could just check the value of the index and if it's out of range, just return NULL. 
+We aren't throwing any exceptions for an out-of-bounds index.
+</p><p>
+Finally, realize that this doesn't have to be recursive as you are only walking
+down the tree.
+</p></ul>
+
+
+<br>
+<br>
+<br>
+
+
+
+
+
+
+<blockquote><pre></pre></blockquote>
+
+</body></html>

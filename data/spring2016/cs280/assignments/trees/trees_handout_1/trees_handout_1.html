@@ -1,0 +1,365 @@
+
+<!-- saved from url=(0082)http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project4/index.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./trees_handout_1_files/new.css">
+<title>CS 280 - Programming Assignment #4</title>
+
+<style>S
+body {
+   background : #ffffff; 
+   margin-left : 50;
+   margin-right : 20;
+   background : url("../../../../../images/notebook.jpg");
+   }
+</style>
+
+</head>
+
+<body>  
+<center>
+<h1>CS 280 - Programming Assignment #4</h1>
+Due Monday, March 7, 2016 at 11:59 pm<br>
+</center>
+<p>
+
+</p><p class="SectionHeader">Information</p>
+
+<p>
+	
+</p><ul>
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project4/cs280-programming-assignment-bst-avl-tree.pdf">Handout</a> 
+</li><li>BST interface: <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project4/BSTree.h.html">HTML</a> <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project4/BSTree.h">Text</a>
+</li><li>AVL tree interface: <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project4/AVLTree.h.html">HTML</a> <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project4/AVLTree.h">Text</a>
+</li><li>Random number generator
+<ul>
+  <li>Interface: <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project4/PRNG.h.html">HTML</a> <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project4/PRNG.h">Text</a>  
+  </li><li>Implementation: <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project4/PRNG.cpp.html">HTML</a> <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project4/PRNG.cpp">Text</a>  
+</li></ul>
+ 
+</li><li>Sample driver program: <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project4/driver-sample.cpp.html">HTML</a> <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project4/driver-sample.cpp">Text</a>  
+<ul>
+<li>Output from the driver program. 
+  <ul>
+    <li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project4/output-all.txt">Output</a>&nbsp;&nbsp;Without counts</li>
+    <li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project4/output-all-counts.txt">Output</a>&nbsp;&nbsp; With counts and indexing</li>
+  </ul>
+  	<p>
+</p></li></ul>
+  	
+	
+</li><li>Sample command lines (for the templated version):
+<blockquote><pre><b>g++</b> -o gnu driver-sample.cpp ObjectAllocator.cpp PRNG.cpp -O -Wextra -Wall -std=c++11 -pedantic -Wconversion 
+<b>clang++</b> -o clan driver-sample.cpp ObjectAllocator.cpp PRNG.cpp -O -Wextra -Wall -std=c++11 -pedantic -Wconversion 
+<b>cl</b> -Fems.exe driver-sample.cpp ObjectAllocator.cpp PRNG.cpp /EHa /W4 /WX /MTd /D_CRT_SECURE_NO_DEPRECATE
+</pre></blockquote>
+
+If you can't get Clang to link on Windows, just compile the files:
+<blockquote><pre><b>clang++</b> -c driver-sample.cpp ObjectAllocator.cpp PRNG.cpp -O -Wextra -Wall -std=c++11 -pedantic -Wconversion 
+</pre></blockquote>
+
+</li><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project4/cs280-FAQ-bst-avl-trees.html">FAQ</a> for this assignment.</li>
+<p>
+</p><li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project4/dummy_oa.zip">Dummy OA</a> Dummy ObjectAllocator to use for this assignment.</li>
+<p>
+
+</p><li>Sample non-templated driver: <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project4/driver-sample-ints.cpp">driver-sample-ints.cpp</a>  
+<ul>
+<li>Output from the int driver: 
+  <ul>
+    <li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project4/output-int-all.txt">Output</a>&nbsp;&nbsp; Without counts</li>
+    <li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project4/output-int-all-counts.txt">Output</a>&nbsp;&nbsp; With counts and indexing</li>
+  </ul>
+</li></ul>
+<p>
+</p></li><li>Sample command lines (for the non-templated version):
+<blockquote><pre><b>g++</b> -o gnu driver-sample.cpp BSTree.cpp AVLTree.cpp ObjectAllocator.cpp PRNG.cpp -O -Wextra -Wall -std=c++11 -pedantic -Wconversion 
+<b>clang++</b> -o clan driver-sample.cpp BSTree.cpp AVLTree.cpp ObjectAllocator.cpp PRNG.cpp -O -Wextra -Wall -std=c++11 -pedantic -Wconversion 
+<b>cl</b> -Fems.exe driver-sample.cpp BSTree.cpp AVLTree.cpp ObjectAllocator.cpp PRNG.cpp /EHa /W4 /WX /MTd /D_CRT_SECURE_NO_DEPRECATE
+</pre></blockquote>
+
+<!--
+<li>Driver and output to help debug the stress tests:
+  <ul>
+<li>Another driver is here: <a href="driver-sample2.cpp">driver-sample2.cpp</a></li>
+<li>Output: <a href="out-stresses.zip">out-stresses.zip</a></li>
+</ul>
+
+<p>
+The driver above has one additional test case (test #22) that prints out the tree after every insertion
+and deletion. This obviously generates a lot of output and doing 10,000 is very difficult to diff with.
+However, I suspect if you have a bug in your code, it can be found with maybe 25 or 30 items in the
+tree. The output is in a zip file and has output for 20, 25, 30, 50, and 100 nodes. You have to just
+run the test by itself so you get the same random values.
+-->
+</li><li>Don't forget to add the <a href="http://drmemory.org/docs/page_prep.html">proper options</a> when using Microsoft's compiler to build for 
+  Dr. Memory testing.</li>
+  <p>
+
+</p><li>Some information on indexing (extra credit) can be found <a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project4/avlbst-indexing.html">here</a>.
+ <p>
+</p></li><li>Pseudocode (from the handout)
+  <ol>
+    <li>Implement a non-templated (using integers) BSTree class and run some tests on it to make 
+      sure it works. This should only take a short amount of time since I've provided all of the 
+      code for this on the web pages.
+</li><li>Derive a non-templated AVLTree from BSTree and run some tests on it.
+  <ul type="a">
+    <li>Implement the inefficient balancing algorithm from the pseudocode I demonstrated in class. 
+      <b>Copy and paste the pseudocode into your code and use that to guide your implementation</b>.</li>
+    <li>Optionally, implement the indexing operation. You have to write the code to store the size 
+      of each subtree (count) in the nodes as this is the only code for the BST that wasn't 
+      given to you.</li>
+  </ul>
+</li><li>Convert the classes into templatized classes and run your same tests on it. 
+  (You'll need to modify your driver)</li>
+<li>Try your completed code with the sample templated driver that I provided.</li>
+
+
+</ol></li></ul>
+<!--********************************************************************-->
+<!--********************************************************************-->
+<!--********************************************************************-->
+<p class="SectionHeader">An Example SpellChecker</p>
+<ul>
+
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project4/driver-spell.cpp.html">Spell check</a> stress testing. It's a simple
+  demonstration of an efficient spellchecker. This is obviously far superior to
+  the way we did it in CS120 and CS170.
+  <p>
+
+  The program will
+  accept 3 command line arguments:
+</p><blockquote><pre>driver-spell [test_number] [dictionary] [show_tree]
+</pre></blockquote>
+Example:
+<blockquote><pre>driver-spell 2 allwords.txt 0
+</pre></blockquote>
+This will run the second test with the dictionary <b>allwords.txt</b> and turn off
+the displaying of the tree. You can download a few sample dictionaries
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project4/dictionaries.zip">here</a>. Here's an example running this:
+
+<blockquote><pre>driver-spell 2 lexicon.txt 1
+</pre></blockquote>
+
+Output:
+
+<blockquote><pre>====================== TestSpellCheck1 ======================
+type: AVLTree, height: 3, nodes: 12
+                                    MANGO     
+
+                GRAPE                         PINEAPPLE 
+
+      BANANA              LEMON          ORANGE    STRAWBERRY
+
+ APPLE     CHERRY    KIWI      LIME                     WATERMELON
+
+Value LIME found with 4 compares
+Value ORANGE found with 3 compares
+Value WATERMELON found with 4 compares
+Value FRUIT NOT found with 5 compares
+</pre></blockquote>
+
+The same thing running test 1 (BSTree instead of AVLTree):
+
+<blockquote><pre>====================== TestSpellCheck1 ======================
+type: BSTree, height: 11, nodes: 12
+     APPLE     
+
+          BANANA    
+
+               CHERRY    
+
+                    GRAPE     
+
+                         KIWI      
+
+                              LEMON     
+
+                                   LIME      
+
+                                        MANGO     
+
+                                             ORANGE    
+
+                                                  PINEAPPLE 
+
+                                                       STRAWBERRY
+
+                                                            WATERMELON
+
+Value LIME found with 7 compares
+Value ORANGE found with 9 compares
+Value WATERMELON found with 12 compares
+Value FRUIT NOT found with 5 compares
+</pre></blockquote>
+
+
+<p class="technote"><b>Disclaimer</b>:
+Please understand that the code to "draw" the
+text trees in the output is very simple and crude. Trying to display long strings
+or many strings will cause the program to crash. I'm not going to try and support
+printing hundreds or thousands (or more) of strings on the screen. It just won't work!
+But, for smaller dictionaries, it will try to print them in a readable fashion so
+you can see and debug your programs. Also, since I'm not really trying to create a
+working spellchecker, I'm forcing everything into UPPERCASE to keep it simple.
+</p>
+
+</li>
+<p>
+</p></ul>
+
+<!--********************************************************************-->
+<!--********************************************************************-->
+<!--********************************************************************-->
+<p class="SectionHeader">Other Techniques</p>
+
+<ol>
+<li>The public interface will not be able to do the recursion. You'll need to do things like this with a private method:
+
+<blockquote><pre><b>template</b> &lt;<b>typename</b> T&gt;
+<b>void</b> BSTree&lt;T&gt;::insert(<b>const</b> T&amp; value) <b>throw</b>(BSTException)
+{
+    <font color="#003399"><i>// Call a private recursive method</i></font>
+  insert_item(root_, value);
+}
+</pre></blockquote>
+
+</li><li>Using the stack-based method demonstrated in class, you'd have something like this:
+	
+<blockquote><pre><b>template</b> &lt;<b>typename</b> T&gt;
+<b>void</b> AVLTree&lt;T&gt;::insert(<b>const</b> T&amp; value) <b>throw</b>(BSTException)
+{
+    <font color="#003399"><i>// Create a stack to use with the private recursive method</i></font>
+  std::stack&lt;<b>typename</b> BSTree&lt;T&gt;::BinTree *&gt; nodes;
+  insert_item(<b>this</b>-&gt;get_root(), value, nodes);
+}
+</pre></blockquote>
+
+Notice the <tt><b>typename</b></tt> keyword and the <i>non-redundant</i> (read: required) use of <tt><b>this</b></tt> above. You 
+could do this as well:
+
+<blockquote><pre>  insert_item(BSTree&lt;T&gt;::get_root(), value, nodes);
+</pre></blockquote>
+
+<!--See <a href="http://www.redhat.com/docs/manuals/enterprise/RHEL-4-Manual/gcc/c---misunderstandings.html#NAME-LOOKUP">-->
+See <a href="http://docs.redhat.com/docs/en-US/Red_Hat_Enterprise_Linux/4/html/Using_the_GNU_Compiler_Collection/c---misunderstandings.html#NAME-LOOKUP">
+Name lookup, templates, and accessing members of base classes</a> for a refresher on this.
+<p>
+	
+
+</p></li><li>Here's how you deal with the exception if there is no more memory available. 
+Since you're using the ObjectAllocator, you won't be calling <tt><b>new</b></tt> for any nodes.
+(You won't be calling <tt><b>delete</b></tt> either.) However, you will be using 
+<a href="https://isocpp.org/wiki/faq/dtors#placement-new">placement new</a>
+to construct the data. Below is an example code snippet of how you would allocate and construct
+a <tt>BinTreeNode</tt> pointed to by <tt>node</tt>:
+  <!--
+  <font color="#003399"><i>// Placement <b>new</b> won't work with the overloading of <b>new</b> for leak checking using Microsoft's API.</i></font>
+  <font color="#003399"><i>// It will actually detect the leak, but it won't give you filename and line number.</i></font>
+-->
+<blockquote><pre><b>try</b> 
+{
+  Node *mem = <b>reinterpret_cast</b>&lt;BinTreeNode *&gt;(objAllocator_-&gt;Allocate()); <font color="#003399"><i>// Allocate memory for the object.</i></font>
+  node = <b>new</b> (mem) BinTreeNode(value); <font color="#003399"><i>// Construct the object in the memory.</i></font>
+}
+<b>catch</b> (<b>const</b> OAException &amp;e)
+{
+  <b>throw</b>(BSTException(BSTException::E_NO_MEMORY, e.what()));
+}
+</pre></blockquote>
+
+</li><li>Don't forget to call the destructor explicity on the node
+when you remove it from the list. Since the class is templated, you don't know
+if any of the data needs to be destroyed via its destructor. For example:
+
+<blockquote><pre>some_node-&gt;~BinTreeNode();      <font color="#003399"><i>// Call the object's destructor.</i></font>
+objAllocator_-&gt;Free(some_node); <font color="#003399"><i>// Free the object's memory.</i></font>
+</pre></blockquote>
+
+
+<!--
+<li>You'll need to implement this function as appropriate:
+
+<blockquote><pre>
+<b>template</b> &lt;<b>typename</b> T&gt;
+<b>bool</b> AVLTree&lt;T&gt;::ImplementedBalanceFactor(<b>void</b>) <b>const</b>
+{
+    <font color="#003399"><i>// Change to true if you used the efficient method and want extra credit</i></font>
+  <b>return</b> <b>false</b>;
+}
+</pre></blockquote>
+
+<li>Additional information on 
+	<a href="../../../../CS280/avl-2.0.1/AVL-Trees.html">AVL trees</a> 
+	and <a href="../../../../CS280/avl-2.0.1/Step-3-in-AVL-Insertion.html">balance factors</a>
+  for those wishing to do the extra credit.
+-->
+
+</li></ol>
+ 
+  
+<p class="SectionHeader">GUI Driver</p>
+
+
+<!--
+<a href="BSTAVLGUI.zip">Files</a> to build the GUI driver. You just need to add your source files and
+run the <b>build.bat</b> batch file. You must have Borland's Turbo C++ installed. 
+There is a <b>readme.txt</b> included with additional info.
+<p>
+-->
+	
+No installation necessary. Just copy to your hard drive and run it. It's a work in progress, so it may
+not seem intuitive yet. You can just type in some letters in the box or click on a button (letter) to add it to the tree. 
+If the letter exists, clicking on a button will remove it. If you want to 
+rotate about the node, select the Rotate checkbox. It's still pretty old. 
+One of these days I'll update it (like the one for Red-Black trees.)
+<p>
+
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project4/BSTAVLTrees.exe">Download</a> <b>New and Improved!</b> with counts and balance factors.
+The node count is in <font color="blue">BLUE</font>, above the node, and the balance factor is in 
+<font color="red">RED</font>, below the node. 
+The balance factor only works with AVL trees, not BSTs. 
+</p><p>
+<!--
+You can link to the GUI framework with <a href="BSTAVLGUI.zip">these files</a>. There is a batch
+file and readme file in the .zip. Basically, just add your source files (AVLTree.[ch] and BSTree.[ch])
+-->
+
+</p><blockquote>
+<p>
+<img src="./trees_handout_1_files/BSTAVLTrees-3.png">
+</p><p>
+
+</p><p>
+<img src="./trees_handout_1_files/BSTAVLTrees-4.png">
+</p><p>
+<img src="./trees_handout_1_files/BSTAVLTrees-5.png">
+</p><p>
+</p></blockquote>
+
+<br><br>
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/2016/winter/cs280/project4/BSTAVLTrees-original.exe">Download</a> The Original<sup>™</sup> 
+(without counts and balance factors, in case those scare you!)
+<p>
+</p><blockquote>
+<img src="./trees_handout_1_files/BSTAVLTrees-1.png">
+<p>
+
+</p><p>
+<img src="./trees_handout_1_files/BSTAVLTrees-2.png">
+</p><p>
+</p></blockquote>
+
+
+<br>
+<br>
+<br>
+
+
+
+
+
+
+<blockquote><pre></pre></blockquote>
+
+</body></html>

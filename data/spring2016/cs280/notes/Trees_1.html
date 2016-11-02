@@ -1,0 +1,1923 @@
+
+<!-- saved from url=(0062)https://azrael.digipen.edu/~mmead/www/Courses/CS280/Trees.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./Trees_2_files/new.css">
+<title>CS 280 - Trees-1</title>
+</head>
+
+<body>
+<center><h1>Trees (Part 1)</h1></center>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Introduction to Trees
+</p>
+
+
+<ul>
+  <li>Trees are one of the fundamental data structures in computer science.
+  </li><li>Trees are a specific type of <i>graph</i>, but much simpler.
+  </li><li>They are constructed so as to retrieve information rapidly.
+  </li><li>Typical search times for trees are <i>O(lg N)</i> (Think of the ability to do binary search on a linked list.)
+<p>
+<img src="./Trees_2_files/GrowthFunctions.gif">
+</p><p>
+</p></li></ul>
+
+<!-- ********************************************************** -->
+<!-- ********************************************************** -->
+<hr width="90%">
+
+A generic tree:
+
+<blockquote>
+<img src="./Trees_2_files/TerminologyTree.gif">
+</blockquote>
+
+<h2>Terminology</h2>
+<table border="0" cellspacing="0" cellpadding="0">
+<tbody><tr valign="bottom">
+<td>
+<ul>
+  <li>Trees consist of <i>vertices</i> and <i>edges</i>.
+  </li><li>Vertex - An object that carries associated information [1, 2, 3]
+  <ul>
+    <li>node
+    <!--
+    <li>internal node
+    <li>non-terminal node
+    <li>non-terminal
+    -->
+  </li></ul>
+  </li><li>Edge - A connection between two vertices. A <i>link</i> from one node to another. [a, b, c]
+  </li><li>Child/Parent - If either the right or left link of <b>A</b> is a link to <b>B</b>, then <b>B</b>
+      is a <i>child</i> of <b>A</b> and <b>A</b> is a <i>parent</i> of <b>B</b>.
+      <ul>
+      <li>4, 5, and 6 are children of 2; 2 is the parent of 4, 5, and 6
+      </li></ul>
+  </li><li>Sibling - Nodes that have the same parent. [2, 3] have the same parent.
+  </li><li>A node that has no parent is called the <i>root</i> of a tree [1]. There is only one root in any given tree.
+  </li><li>Path - A list of vertices [1-2-4]
+
+  </li><li>Leaf - A node with no children [4, 7]
+  <ul>
+    <li>external node
+    </li><li>terminal node
+    </li><li>terminal
+  </li></ul>
+
+  </li><li>Non-leaf - A node with at least one child [1, 2, 5]
+  <ul>
+    <li>internal node
+    </li><li>non-terminal node
+    </li><li>non-terminal
+  </li></ul>
+
+
+
+  </li><li>Depth (or height) - the length of the longest path from the root to a leaf. [1, 2, 5, 7 = 3]
+  <ul>
+    <li>The number of edges in the path is the length. (Or, number of nodes - 1)
+    </li><li>A tree consisting of 1 node (the root), has a height of 0.
+  </li></ul>
+  </li><li>Subtree - Any given node, with all of its descendants (children). [5, 7, 8] is a subtree, 5 is the root.
+  <p>
+  </p></li><li>Trees can be ordered or unordered
+  <ul>
+    <li>Ordered trees specify the order of the children (examples: parse tree, binary search tree)
+    </li><li>Unordered trees place no criteria on the ordering of the children (example: file system directories)
+  </li></ul>
+
+  <p>
+  </p></li><li>M-ary tree - A tree which must have a specific number of children in a specific order.
+  <ul>
+    <li>Binary tree - An M-ary tree where
+    <ul>
+      <li>all internal nodes have one or two children
+      </li><li>all external nodes (leaves) have no children
+      </li><li>the two children are sorted and are called the <i>left child</i> and <i>right child</i>
+    </li></ul>
+    </li><li>B-tree - An M-ary tree where
+    <ul>
+      <li>all internal nodes have between N and N/2 children (where N is generally several hundred)
+      </li><li>the children are sorted according to some sort order or key
+    </li></ul>
+  </li></ul>
+</li></ul>
+
+</td>
+<td>
+<blockquote>
+<img src="./Trees_2_files/TerminologyTree.gif">
+</blockquote>
+
+</td>
+</tr></tbody></table>
+<p>
+
+</p><h2>Basic Properties</h2>
+<ul>
+<li>A node has at most one edge leading to it.
+<ul>
+<li>Each node has <i>exactly</i> one parent, except the root which has no parent.
+</li></ul>
+<p>
+
+</p></li><li>There is at most one path from one node to any other node.
+<ul>
+<li>If there are multiple paths, it's a graph not a tree.
+</li></ul>
+<p>
+
+</p></li><li>There is <i>exactly</i> one path from the root to any leaf.
+</li></ul>
+
+<h2>Other Properties</h2>
+<p>
+
+</p><ul>
+<li>The <b>level</b> of a given node in a tree is defined recursively as:
+
+<ul>
+<pre>0                   if node is a root
+<i>level</i>(parent) + 1   if node is a child of parent
+</pre>
+</ul>
+</li></ul>
+
+Two interpretations of <b>height</b> (or <b>depth</b>):
+<p>
+</p><blockquote>
+1. The <b>height</b> of a tree is the length of the longest path from the
+root to a leaf.
+<br>
+2. The <b>height</b> is the maximum of the levels of the tree's nodes.
+<p>
+</p></blockquote>
+
+These are all trees.
+
+
+<blockquote>
+<img src="./Trees_2_files/GenericTrees.gif">
+<p>
+</p></blockquote>
+
+This is not a tree. (Y has 2 parents)
+
+<blockquote>
+<img src="./Trees_2_files/NonTree-1.gif">
+<p>
+</p></blockquote>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Binary Trees
+</p>
+
+A <b>binary tree</b> is a collection of nodes such that:
+<ul>
+<li>There are two distinct types of nodes: <i>internal</i> and <i>external</i>
+</li><li>An internal node contains <i>exactly</i> two links, <i>left</i> and <i>right</i>
+</li><li>The two links are <i>disjoint</i> binary trees (they have no nodes in common)
+</li><li>One or both links can be NULL (an empty tree)
+</li></ul>
+<ul>
+
+<li>A binary tree with <i>N</i> internal nodes has <i>N + 1</i> external nodes (some may be empty/NULL)
+<p>
+</p></li><li>A binary tree with <i>N</i> internal nodes has <i>2N</i> links
+<p>
+
+Representing binary trees with diagrams: sometimes an empty box is used to indicate an empty child
+(empty subtree). The squares are external nodes (leaves) and the circles are internal nodes.
+These diagrams are referred to as extended binary trees:
+
+<table cellpadding="10">
+<tbody><tr><th>A binary tree</th><th>An extended binary tree</th></tr>
+<tr><td>
+<img src="./Trees_2_files/BinaryTree-1.gif">
+</td>
+<td>
+<img src="./Trees_2_files/ExtendedBinaryTree-1.gif">
+</td>
+</tr></tbody></table>
+
+<br>
+
+
+</p></li><li>
+<p class="technote">
+A <i>balanced</i> binary tree (<i>height-balanced</i>) is a tree where for <i><b>each node</b></i> the depth of the left and right
+subtrees differ by no more than 1.</p>
+
+<table cellpadding="10">
+<tbody><tr><th>A balanced binary tree</th><th>An unbalanced binary tree</th></tr>
+<tr><td>
+<img src="./Trees_2_files/BalancedBinaryTree-2.gif">
+</td>
+<td>
+<img src="./Trees_2_files/UnBalancedBinaryTree-2.gif">
+</td>
+</tr></tbody></table>
+
+
+<table cellpadding="10">
+<tbody><tr><th>A degenerate binary tree</th><th>A balanced binary tree (it's also a <i>complete</i> binary tree)</th></tr>
+<tr><td>
+<img src="./Trees_2_files/DegenerateBinaryTree.gif">
+</td>
+<td>
+<img src="./Trees_2_files/BalancedBinaryTree.gif">
+</td>
+</tr></tbody></table>
+
+<br>
+
+
+<br><br>
+
+<p class="technote">
+A <i>complete</i> binary tree is similar to a balanced binary tree except that all of the leaves must be
+placed as far to the left as possible. (The leaves must be "filled-in" from left to right, one level at
+a time.)
+</p>
+
+<table cellpadding="10">
+<tbody><tr><th>A complete binary tree</th><th>An incomplete binary tree</th><th>An incomplete binary tree</th></tr>
+<tr><td>
+<img src="./Trees_2_files/CompleteBinaryTree-1.gif">
+</td>
+<td>
+<img src="./Trees_2_files/IncompleteBinaryTree-1.gif">
+</td>
+<td>
+<img src="./Trees_2_files/IncompleteBinaryTree-2.gif">
+</td>
+</tr></tbody></table>
+
+<br>
+
+
+
+Realize that the two links in a binary tree are not quite the same as the two links in a doubly linked list:
+<ul>
+<li>Trees have a <i>left</i> and <i>right</i> link.
+</li><li>Lists have a <i>previous</i> and <i>next</i> link.
+</li><li>Both imply ordering, but a different kind of ordering.
+</li><li>Implementation wise, the nodes can be <i>structurally equivalent</i>.
+</li></ul>
+</li></ul>
+
+<blockquote>
+<table border="0" cellpadding="20"><tbody><tr>
+<td>
+<pre><b>struct</b> ListNode
+{
+  ListNode *next;
+  ListNode *prev;
+  Data *data;
+};
+</pre>
+</td>
+
+<td>
+<pre><b>struct</b> TreeNode
+{
+  TreeNode *left;
+  TreeNode *right;
+  Data *data;
+};
+</pre>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+
+<blockquote>
+Tree:
+<p>
+<img src="./Trees_2_files/TreeNodes.gif">
+</p></blockquote>
+
+<br><br>
+
+<blockquote>
+Linked list:
+<p>
+<img src="./Trees_2_files/ListNodes.gif">
+</p></blockquote>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Traversing Binary Trees
+</p>
+
+Because trees are a recursive data structure, recursive algorithms are quite appropriate. In some cases,
+iterative (non-recursive) algorithms can be significantly more complicated.
+<p>
+<table border="0" cellspacing="5" cellpadding="5">
+  <tbody><tr><th>Recursive algorithm</th><th></th><th>Recursive algorithm with base case</th></tr>
+  <tr valign="top">
+    <td>
+<ul>
+<li><i>Preorder</i> traversal
+<ol>
+<li><b>Visit the node</b>
+</li><li>Traverse (pre-order) the left subtree
+</li><li>Traverse (pre-order) the right subtree
+</li></ol>
+</li><li><i>Inorder</i> traversal
+<ol>
+<li>Traverse (in-order) the left subtree
+</li><li><b>Visit the node</b>
+</li><li>Traverse (in-order) the right subtree
+</li></ol>
+</li><li><i>Postorder</i> traversal
+<ol>
+<li>Traverse (post-order) the left subtree
+</li><li>Traverse (post-order) the right subtree
+</li><li><b>Visit the node</b>
+</li></ol>
+</li></ul>
+</td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+  <td>
+<ul>
+<li><i>Preorder</i> traversal
+  <br>
+  <font color="blue">If node is not empty</font>
+<ol>
+<li><b>Visit the node</b>
+</li><li>Traverse (pre-order) the left subtree
+</li><li>Traverse (pre-order) the right subtree
+</li></ol>
+</li><li><i>Inorder</i> traversal
+  <br>
+  <font color="blue">If node is not empty</font>
+<ol>
+<li>Traverse (in-order) the left subtree
+</li><li><b>Visit the node</b>
+</li><li>Traverse (in-order) the right subtree
+</li></ol>
+</li><li><i>Postorder</i> traversal
+  <br>
+  <font color="blue">If node is not empty</font>
+<ol>
+<li>Traverse (post-order) the left subtree
+</li><li>Traverse (post-order) the right subtree
+</li><li><b>Visit the node</b>
+</li></ol>
+</li></ul>
+</td></tr>
+
+
+</tbody></table>
+
+</p><p>
+
+Given these binary trees:
+
+</p><blockquote>
+<img src="./Trees_2_files/Traversal-1.gif">
+</blockquote>
+
+assume that <i>visiting</i> a node means printing the letter of the node. The result of the traversing
+the first tree is <b>A</b> in all 3 cases.
+<p>
+For the second tree, we have:
+</p><ul>
+<li>Preorder traversal: <b>ABC</b> (<b>visit</b>, traverse left, traverse right)
+</li><li>Inorder traversal: <b>BAC</b> (traverse left, <b>visit</b>, traverse right)
+</li><li>Postorder traversal: <b>BCA</b> (traverse left, traverse right, <b>visit</b>)
+</li></ul>
+
+A larger example:
+
+<!--
+<blockquote>
+<img src="Traversal-2.gif">
+<br><p class="fineprint">Modula-2</p>
+</blockquote>
+-->
+
+<table border="0">
+  <tbody><tr><td><img src="./Trees_2_files/Traversal-2.gif"></td></tr>
+  <tr><td align="right"><span class="attrib">Modula-2 ©2008&nbsp;&nbsp;</span></td></tr>
+</tbody></table>
+
+<p>
+
+Assuming that <i>visiting</i> a node means printing the letter of the node, what is the output for
+</p><ul>
+<li>a preorder traversal?
+</li><li>an inorder traversal?
+</li><li>a postorder traversal?
+</li></ul>
+
+<!--
+GDBACEFKHJIML
+ABCDEFGHIJKLM
+ACBFEDIJHLMKG
+-->
+
+<br><br>
+
+An example of an expression tree: (order is important)
+
+<blockquote>
+<img src="./Trees_2_files/ExpressionTree.gif">
+<p>
+</p></blockquote>
+
+What kind of traversal would we use to evaluate the expression tree?
+
+<a name="TreeDefinitions">
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Implementing Tree Algorithms
+</p>
+</a>
+
+Assume we have these definitions:
+
+<blockquote><pre><b>struct</b> Node
+{
+  Node *left;
+  Node *right;
+  <b>int</b> data;
+};
+
+Node *MakeNode(<b>int</b> Data)
+{
+  Node *node = <b>new</b> Node;
+  node-&gt;data = Data;
+  node-&gt;left = 0;
+  node-&gt;right = 0;
+  <b>return</b> node;
+}
+
+<b>void</b> FreeNode(Node *node)
+{
+  <b>delete</b> node;
+}
+
+<b>typedef</b> Node* Tree;
+
+</pre></blockquote>
+
+We can construct <i>random</i> binary trees by providing a height for the final tree. Assume that the data
+items are the letters <b>A, B, C, D</b>, etc. added in that order.
+
+<p>
+<a href="https://azrael.digipen.edu/~mmead/www/Courses/CS280/SLLNode.cpp.html">Linked list examples</a>
+</p><p>
+
+</p><blockquote><pre><b>int</b> Count = 0;
+
+Tree BuildRandBinTreePre(<b>int</b> height)
+{
+  <b>if</b> (height == -1)
+    <b>return</b> 0;
+
+  Node *node = MakeNode(<font color="#9933CC">'A'</font> + Count++);          <font color="#003399"><i>// build the node</i></font>
+  node-&gt;left = BuildRandBinTreePre(height - 1);  <font color="#003399"><i>// build the left tree</i></font>
+  node-&gt;right = BuildRandBinTreePre(height - 1); <font color="#003399"><i>// build the right tree</i></font>
+  <b>return</b> node;
+}
+
+<b>void</b> main()
+{
+  Tree t = BuildRandBinTreePre(1);
+}
+</pre></blockquote>
+
+This results in a tree that looks like this:
+
+<blockquote><pre>  A
+ / \
+B   C
+</pre></blockquote>
+
+which <i>order</i> has this tree been built? Why? How would we construct these trees:
+
+<blockquote><pre>  B       C
+ / \     / \
+A   C   A   B
+</pre></blockquote>
+
+
+
+<blockquote><pre>Tree BuildRandBinTreeIn(<b>int</b> height)
+{
+  <b>if</b> (height == -1)
+    <b>return</b> 0;
+
+  Node *node = <b>new</b> Node;
+  node-&gt;left = BuildRandBinTreeIn(height - 1);  <font color="#003399"><i>// build left subtree</i></font>
+  node-&gt;data = 'A' + Count++;                   <font color="#003399"><i>// build node</i></font>
+  node-&gt;right = BuildRandBinTreeIn(height - 1); <font color="#003399"><i>// build right subtree</i></font>
+  <b>return</b> node;
+}
+
+Tree BuildRandBinTreePost(<b>int</b> height)
+{
+  <b>if</b> (height == -1)
+    <b>return</b> 0;
+
+  Node *node = <b>new</b> Node;
+  node-&gt;left = BuildRandBinTreePost(height - 1);  <font color="#003399"><i>// build left subtree</i></font>
+  node-&gt;right = BuildRandBinTreePost(height - 1); <font color="#003399"><i>// build right subtree</i></font>
+  node-&gt;data = 'A' + Count++;                     <font color="#003399"><i>// build node</i></font>
+  <b>return</b> node;
+}
+</pre></blockquote>
+
+<p class="technote">
+<b>Self-check:</b> Suppose you used these functions to create a tree with height of 2. This would require 7 nodes and use
+the letters: <b>ABCDEFG</b>. What would the trees look like using: BuildRandBinTreePre?
+BuildRandBinTreeIn? BuildRandBinTreePost?
+
+<!--
+<ul>
+<li>BuildRandBinTreePre?
+<li>BuildRandBinTreeIn?
+<li>BuildRandBinTreePost?
+</ul>
+-->
+</p>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">More Tree Algorithms
+</p>
+
+<p>
+State the recursive algorithms for finding:
+</p><ul>
+<li>the number of nodes in a tree
+</li><li>the height of a tree
+</li></ul>
+<p>
+
+Definitions and sample implementations:
+
+</p><ul>
+<li>Finding the number of nodes in a tree.
+<blockquote><pre>0                         if the tree is empty
+1 +                       if tree is not empty
+nodes in left subtree +
+nodes in right subtree
+</pre></blockquote>
+
+<blockquote><pre><b>int</b> NodeCount(Tree tree)
+{
+  <b>if</b> (tree == 0)
+    <b>return</b> 0;
+  <b>else</b>
+    <b>return</b> 1 + NodeCount(tree-&gt;left) + NodeCount(tree-&gt;right);
+}
+</pre></blockquote>
+
+
+</li><li>Finding the height of a tree.
+
+<blockquote><pre>-1                            if the tree is empty (Definition from our book)
+ 1 + height of left subtree   if height of left subtree &gt; height of right subtree
+ 1 + height of right subtree  otherwise
+</pre></blockquote>
+
+Implementation #1: (naive, from the definition)
+<p>
+
+</p><blockquote><pre><b>int</b> Height(Tree tree)
+{
+  <b>if</b> (tree == 0)
+    <b>return</b> -1;
+
+  <b>if</b> (Height(tree-&gt;left) &gt; Height(tree-&gt;right))
+    <b>return</b> Height(tree-&gt;left) + 1;
+  <b>else</b>
+    <b>return</b> Height(tree-&gt;right) + 1;
+}
+</pre></blockquote>
+
+Implementation #2:
+<p>
+
+</p><blockquote><pre><b>int</b> Height(Tree tree)
+{
+  <b>if</b> (tree == 0)
+    <b>return</b> -1;
+
+  <b>int</b> lh = Height(tree-&gt;left);
+  <b>int</b> rh = Height(tree-&gt;right);
+
+  <b>if</b> (lh &gt; rh)
+    <b>return</b> lh + 1;
+  <b>else</b>
+    <b>return</b> rh + 1;
+}
+</pre></blockquote>
+
+Implementation #3:
+<p>
+
+</p><blockquote><pre><b>int</b> Height(Tree tree)
+{
+  <b>if</b> (tree == 0)
+    <b>return</b> -1;
+  <b>else</b>
+    <b>return</b> (1 + Max(Height(tree-&gt;left), Height(tree-&gt;right)));
+}
+</pre></blockquote>
+
+
+</li></ul>
+
+<!-- ********************************************************** -->
+<!-- ********************************************************** -->
+<hr width="90%">
+<p>
+
+
+Assume that "visting" a node simply means printing out the value of the data element:
+
+</p><blockquote><pre><b>void</b> VisitNode(Tree tree)
+{
+  cout &lt;&lt; tree-&gt;data &lt;&lt; endl;
+}
+</pre></blockquote>
+
+We can implement three traversal algorithms:
+
+<pre class="sourcecode"><code><b>void</b> TraversePreOrder(Tree tree)
+{
+  <b>if</b> (tree == 0)
+    <b>return</b>;
+  <b>else</b>
+  {
+    VisitNode(tree);
+    TraversePreOrder(tree-&gt;left);
+    TraversePreOrder(tree-&gt;right);
+  }
+}
+
+<b>void</b> TraverseInOrder(Tree tree)
+{
+  <b>if</b> (tree == 0)
+    <b>return</b>;
+  <b>else</b>
+  {
+    TraverseInOrder(tree-&gt;left);
+    VisitNode(tree);
+    TraverseInOrder(tree-&gt;right);
+  }
+}
+
+<b>void</b> TraversePostOrder(Tree tree)
+{
+  <b>if</b> (tree == 0)
+    <b>return</b>;
+  <b>else</b>
+  {
+    TraversePostOrder(tree-&gt;left);
+    TraversePostOrder(tree-&gt;right);
+    VisitNode(tree);
+  }
+}</code></pre>
+
+
+Using the implementations above, what is the complexity for each of these traversal orders? In other words, how many nodes are accessed?
+(How many <i>times</i> is each node accessed?)
+
+<ul>
+<li>Preorder
+</li><li>Inorder
+</li><li>Postorder
+</li></ul>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Level-Order Traversal
+</p>
+
+
+Traversing all nodes on level 0, from left to right, then all nodes on level 1 (left to right), then
+nodes on level 2 (left to right), etc. is <i>level-order</i> traversal.
+<p>
+So, a level-order traversal of this tree:
+
+<!--
+<blockquote>
+<img src="Traversal-2.gif">
+<br><p class="fineprint">Modula-2</p>
+</blockquote>
+-->
+
+<table border="0">
+  <tbody><tr><td><img src="./Trees_2_files/Traversal-2.gif"></td></tr>
+  <tr><td align="right"><span class="attrib">Modula-2 ©2008&nbsp;&nbsp;</span></td></tr>
+</tbody></table>
+</p><p>
+
+will result in the nodes being visited in this order:
+
+</p><blockquote><pre>G D K B E H M A C F J L I
+</pre></blockquote>
+
+<p>
+Traversing in level-order really isn't any more complicated by definition:
+</p><p>
+The recursive definition:
+</p><blockquote><pre>If the level being visited is:   0    Visit the node
+
+If the level being visited is: &gt; 0    Traverse the left subtree
+                                      Traverse the right subtree
+</pre></blockquote>
+
+Sample code: Note the use of a <i>helper</i> recursive function.
+<p>
+
+</p><pre class="sourcecode"><code> 1. <b>void</b> TraverseLevelOrder(Tree tree)
+ 2. {
+ 3.  <b>int</b> height = Height(tree);
+ 4.  <b>for</b> (<b>int</b> i = 0; i &lt;= height; i++)
+ 5.    TraverseLevelOrder2(tree, i);
+ 6. }
+
+ 7. <b>void</b> TraverseLevelOrder2(Tree tree, <b>int</b> level)
+ 8. {
+ 9.   <b>if</b> (level == 0)
+10.     VisitNode(tree);
+11.   <b>else</b>
+12.   {
+13.     TraverseLevelOrder2(tree-&gt;left, level - 1);
+14.     TraverseLevelOrder2(tree-&gt;right, level - 1);
+15.   }
+16. }</code></pre>
+
+<!--
+<pre class="sourcecode"><code> 1. <b>void</b> TraverseLevelOrder(Tree tree)
+ 2. {
+ 3.  <b>int</b> height = Height(tree);
+ 4.  <b>for</b> (<b>int</b> i = 0; i &lt;= height; i++)
+ 5.    TraverseLevelOrder2(tree, i);
+ 6. }
+
+ 7. <b>void</b> TraverseLevelOrder2(Tree tree, <b>int</b> level)
+ 8. {
+ 9.   <b>if</b> (level < 0 || tree == 0)
+10.     <b>return</b>;
+11.   <b>else</b> <b>if</b> (level == 0)
+12.     VisitNode(tree);
+13.   <b>else</b>
+14.   {
+15.     TraverseLevelOrder2(tree-&gt;left, level - 1);
+16.     TraverseLevelOrder2(tree-&gt;right, level - 1);
+17.   }
+18. }</code></pre>
+-->
+
+Using the implementations above, what is the complexity for level-order traversal? In other words, how many nodes are accessed?
+(How many <i>times</i> is each node accessed?)
+
+<p>
+Details of the <i>TraverseLevelOrder2</i> function above:
+</p><p>
+
+</p><blockquote><pre>  Level    Nodes at level N   Nodes in tree    Node Accesses
+------------------------------------------------------------
+    0             1                 1                  1
+    1             2                 3                  4
+    2             4                 7                 11
+    3             8                15                 26
+    4            16                31                 57
+    5            32                63                120
+    6            64               127                247
+    7           128               255                502
+    8           256               511               1013
+    9           512              1023               2036
+   10          1024              2047               4083
+   11          2048              4095               8178
+   12          4096              8191              16369
+   13          8192             16383              32752
+   14         16384             32767              65519
+   15         32768             65535             131054
+   16         65536            131071             262125
+   17        131072            262143             524268
+   18        262144            524287            1048555
+   19        524288           1048575            2097130
+</pre></blockquote>
+
+
+<p class="technote">
+<b>Self Check:</b> Modify the algorithm above so it prints the nodes in reverse level-order: <b>I L J F C A M H E B K D</b>
+</p>
+
+<!--
+  <b>if</b> (tree == 0)
+    <b>return</b>;
+  <b>else</b>
+  {
+    <b>if</b> (level == 0)
+      VisitNode(tree);
+    <b>else</b>
+    {
+      TraverseLevelOrder2(tree-&gt;left, level - 1);
+      TraverseLevelOrder2(tree-&gt;right, level - 1);
+    }
+  }-->
+
+<h2>Level-order traversal using a queue</h2>
+
+<table border="0"><tbody><tr>
+<th align="left">Pseudocode</th>
+</tr>
+<tr>
+<td valign="top">
+<blockquote><pre>
+If the tree isn't empty
+  Push the node onto the Queue
+  While the Queue isn't empty
+    Pop a node from the Queue
+    Visit the node
+    If the node's left child is not NULL
+      Push the left child onto the Queue
+    If the node's right child is not NULL
+      Push the right child onto the Queue
+  End While
+End If
+</pre></blockquote>
+</td>
+<td width="40"></td>
+<td>
+<img src="./Trees_2_files/Traversal-2.gif">
+<!--<p class="fineprint">Modula-2</p>-->
+
+</td>
+</tr></tbody></table>
+<p>
+
+What is the complexity for this level-order traversal?
+</p><p>
+
+
+</p><p class="technote">
+<b>Self Check:</b> Implement a function similar to <i>TraverseLevelOrder</i> that uses a queue as an auxiliary
+data structure. The function won't be recursive. (What happens if you replace the queue
+with a stack?)
+</p>
+
+<blockquote><pre></pre></blockquote>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Binary Search Trees
+</p>
+
+
+<b>Definition</b><br>
+<blockquote>
+<i>A binary search tree (BST) is a binary tree in which the values in the left subtree of a node are all
+less than the value in the node, and the values in the right subtree of a node are all greater
+than the value of the node. The subtrees of a binary search tree must themselves be binary
+search trees.
+</i>
+</blockquote>
+
+Note that under this definition, a BST never contains duplicate nodes.
+<p>
+Some operations for BSTs:
+
+</p><ul>
+<li>InsertItem
+</li><li>DeleteItem
+</li><li>ItemExists
+</li><li>Traverse (Pre, In, Post)
+</li><li>Count
+</li><li>Height
+</li></ul>
+
+Notes:
+
+<ul>
+<li>Count and Height (Depth) are straight-forward as above.
+</li><li>The Traverse routines are also as above.
+</li><li>ItemExists and InsertItem are also trivial:
+</li></ul>
+
+<!--Using the <a href="#TreeDefinitions">defintions</a> above.-->
+Using the same definitions from above:
+
+<p>
+<table border="0">
+<tbody><tr valign="top">
+<td>
+<blockquote><pre><b>struct</b> Node
+{
+  Node *left;
+  Node *right;
+  <b>int</b> data;
+};
+</pre></blockquote>
+</td>
+
+<td>
+<blockquote><pre>Node *MakeNode(<b>int</b> Data)
+{
+  Node *node = <b>new</b> Node;
+  node-&gt;data = Data;
+  node-&gt;left = 0;
+  node-&gt;right = 0;
+  <b>return</b> node;
+}
+</pre></blockquote>
+</td>
+
+<td>
+<blockquote><pre><b>void</b> FreeNode(Node *node)
+{
+  <b>delete</b> node;
+}
+
+<b>typedef</b> Node* Tree;
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</p><p>
+
+</p><p>
+
+As always
+</p><ul>
+<li>State the recursive algorithm (in English) for finding an item in a BST.
+</li><li>State the recursive algorithm (in English) for inserting an item into a BST.
+</li><li>Call these two functions ItemExists and InsertItem.
+</li><li>What are the parameters to these functions?
+</li></ul>
+<p>
+
+Sample code for finding an item in a BST:
+</p><p>
+
+<table>
+<tbody><tr valign="top">
+<td>
+<blockquote><pre><b>bool</b> ItemExists(Tree tree, <b>int</b> Data)
+{
+  <b>if</b> (tree == 0)
+    <b>return</b> <b>false</b>;
+  <b>else</b> <b>if</b> (Data == tree-&gt;data)
+    <b>return true</b>;
+  <b>else</b> <b>if</b> (Data &lt; tree-&gt;data)
+    <b>return</b> ItemExists(tree-&gt;left, Data);
+  <b>else</b>
+    <b>return</b> ItemExists(tree-&gt;right, Data);
+}
+</pre></blockquote>
+</td>
+<td width="20"></td>
+<td>
+<!--
+<blockquote><pre>
+<b>bool</b> ItemExists_it(Tree tree, <b>int</b> Data)
+{
+  <b>while</b> (tree)
+  {
+    <b>if</b> (Data == tree-&gt;data)
+      <b>return</b> true;
+    <b>else</b> <b>if</b> (Data &lt; tree-&gt;data)
+      tree = tree-&gt;left;
+    <b>else</b>
+      tree = tree-&gt;right;
+  }
+  <b>return</b> <b>false</b>;
+}
+</pre></blockquote>
+-->
+</td>
+</tr></tbody></table>
+
+</p><p>
+Sample code for inserting an item into a BST:
+</p><p>
+
+</p><p>
+</p><blockquote><pre><b>void</b> InsertItem(Tree &amp;tree, <b>int</b> Data)
+{
+  <b>if</b> (tree == 0)
+    tree = MakeNode(Data);
+  <b>else</b> <b>if</b> (Data &lt; tree-&gt;data)
+    InsertItem(tree-&gt;left, Data);
+  <b>else</b> <b>if</b> (Data &gt; tree-&gt;data)
+    InsertItem(tree-&gt;right, Data);
+  <b>else</b>
+    cout &lt;&lt; <font color="#9933CC">"Error, duplicate item"</font> &lt;&lt; endl;
+}
+</pre></blockquote>
+
+
+1. Create a tree using these values (in this order): <b>12, 22, 8, 19, 10, 9, 20, 4, 2, 6</b>
+<p>
+What is the height of the resulting tree? What can you say about the tree? (Is it balanced? Is it complete?)
+</p><p>
+
+2. Suppose we have the same data but in a different order: <b>2, 4, 6, 10, 8, 22, 12, 9, 19, 20</b>
+</p><p>
+What is the height of the resulting tree? What can you say about the tree? (Is it balanced? Is it complete?)
+
+</p><p>
+<a href="https://azrael.digipen.edu/~mmead/www/Courses/CS280/Insertions-1.html">Diagrams</a> of the results.
+</p><p>
+
+</p><h2>Search Times</h2>
+
+<ul>
+<li>What is the worst case time complexity for searching a BST? Best?
+</li><li>What causes the best/worst cases?
+</li><li>BST algorithms are highly dependent on the input data.
+</li><li>One solution is to balance the tree.
+</li><li>Balancing BSTs can be expensive and the algorithms are more complex than what we've seen so far.
+  <ul>
+    <li>Balancing a tree is somewhat analagous to sorting a linked-list.</li>
+  </ul>
+</li><li>One type of balanced tree is AVL (Two Russian Mathematicians, Adel'son-Vel'skii and Landis). More on this later.
+</li></ul>
+
+
+<a name="DeletingNode">
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Deleting A Node
+</p>
+</a>
+
+
+The caveat of deleting a node is that, after deletion, the tree must still be a BST. Using this tree
+as an example:
+
+<!--
+<blockquote>
+<img src="Traversal-2.gif">
+<br><p class="fineprint">Modula-2</p>
+</blockquote>
+-->
+
+<table border="0">
+  <tbody><tr><td><img src="./Trees_2_files/Traversal-2.gif"></td></tr>
+  <tr><td align="right"><span class="attrib">Modula-2 ©2008&nbsp;&nbsp;</span></td></tr>
+</tbody></table>
+
+There are four cases to consider:
+<ol>
+
+<li>The node to be deleted is a leaf. (Nodes: <b>A C F I L</b>)
+<blockquote>
+This is trivial. Set the parent's pointer to this node to NULL.
+</blockquote>
+
+</li><li>The node to be deleted has an empty left child but non-empty right child. (Nodes: <b>E H</b>)
+<blockquote>
+Replace the deleted node with its right child. Note that this case can be combined with
+Case #1 by "promoting" the right child. This works even if the right child is NULL.
+</blockquote>
+
+</li><li>The node to be deleted has an empty right child but non-empty left child. (Nodes: <b>J M</b>)
+<blockquote>
+Similar to #2. Promote the left child.
+</blockquote>
+
+</li><li>The node to be deleted has both children non-empty. (Nodes: <b>B D G K</b>)
+<p>
+</p><ul>
+<li>Replace the data in the deleted node with its predecessor under inorder traversal.
+</li><li>Delete the node that held the predecessor.
+</li><li>The predecessor will be the <i>rightmost node in the left subtree of the deleted node.</i>
+</li><li>In the diagram, this is <b>A</b> if <b>B</b> is deleted, <b>C</b> if <b>D</b>
+is deleted, <b>F</b> if <b>G</b> is deleted, and <b>J</b> if <b>K</b> is deleted.
+</li></ul>
+
+</li></ol>
+
+<!--
+<blockquote>
+<img src="Traversal-2.gif">
+<br><p class="fineprint">Modula-2</p>
+</blockquote>
+-->
+
+<table border="0">
+  <tbody><tr><td><img src="./Trees_2_files/Traversal-2.gif"></td></tr>
+  <tr><td align="right"><span class="attrib">Modula-2 ©2008&nbsp;&nbsp;</span></td></tr>
+</tbody></table>
+
+
+Notes about Case #4
+<ul>
+<li>We are replacing the data in the node, <i>not</i> the node itself.
+</li><li>Because the predecessor comes from the left subtree:
+<ul>
+<li>it must be less than everything in the right subtree
+</li><li>it is an <i>inorder</i> predecessor so it must be greater than everything else in the left subtree
+</li></ul>
+</li><li>The recursive deletion of the predecessor's node will eventually find one of the simpler cases.
+</li></ul>
+
+To implement the DeleteItem function, we use a helper function called FindPredecessor, which simply
+finds the inorder predecessor for a given node.
+
+<p>
+
+<!--<a href="#DeletingNode">Diagram</a>-->
+
+<table border="0" cellspacing="5">
+<tbody><tr>
+<td>
+<pre class="sourcecode"><code><b>void</b> DeleteItem(Tree &amp;tree, <b>int</b> Data)
+{
+  <b>if</b> (tree == 0)
+    <b>return</b>;
+  <b>else</b> <b>if</b> (Data &lt; tree-&gt;data)
+    DeleteItem(tree-&gt;left, Data);
+  <b>else</b> <b>if</b> (Data &gt; tree-&gt;data)
+    DeleteItem(tree-&gt;right, Data);
+  <b>else</b> <font color="#003399"><i>// (Data == tree-&gt;data)</i></font>
+  {
+    <b>if</b> (tree-&gt;left == 0)
+    {
+      Tree temp = tree;
+      tree = tree-&gt;right;
+      FreeNode(temp);
+    }
+    <b>else</b> <b>if</b> (tree-&gt;right == 0)
+    {
+      Tree temp = tree;
+      tree = tree-&gt;left;
+      FreeNode(temp);
+    }
+    <b>else</b>
+    {
+      Tree pred = 0;
+      FindPredecessor(tree, pred);
+      tree-&gt;data = pred-&gt;data;
+      DeleteItem(tree-&gt;left, tree-&gt;data);
+    }
+  }
+}
+
+<b>void</b> FindPredecessor(Tree tree, Tree &amp;predecessor)
+{
+  predecessor = tree-&gt;left;
+  <b>while</b> (predecessor-&gt;right != 0)
+    predecessor = predecessor-&gt;right;
+}</code></pre>
+</td>
+<td>
+<!--
+<img src="Traversal-2.gif">
+-->
+<table border="0">
+  <tbody><tr><td><img src="./Trees_2_files/Traversal-2.gif"></td></tr>
+  <tr><td align="right"><span class="attrib">Modula-2 ©2008&nbsp;&nbsp;</span></td></tr>
+</tbody></table>
+
+</td>
+</tr></tbody></table>
+
+<!--<a href="#DeletingNode">Diagram</a>-->
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><p class="SectionHeader">Rotating Nodes
+</p>
+
+<ul>
+<li>Rotation is a fundamental technique that is performed on BSTs.
+</li><li>There are two types of rotations: left and right.
+</li><li>Rotating a node is the same as promoting one of the node's children.</li>
+<ul>
+  <li>Rotate left means promote the right child.</li>
+  <li>Rotate right means promte the left child.</li>
+  <li>You can't rotate if the necessary child is missing (NULL), which means
+    you can't promote an empty child.</li>
+</ul>
+<li>So, promoting a node is the same as rotating around the node's parent. (There is no direction, promotion is unambiguous.)
+</li><li>You can rotate about any node that has the necessary child.
+</li></ul>
+<blockquote><center>
+<p class="technote">
+Note an important property of rotation: after the rotation, the sort order is preserved. 
+  This is important, because the resulting tree must still be a BST.
+</p>
+</center></blockquote>
+
+<p>
+Rotate <b>right</b> about the root, <b>S</b>. (Same as promoting the <b>left</b> child, <b>M</b>)
+</p><p>
+
+<img src="./Trees_2_files/RotateRight-1.gif">
+</p><p>
+
+Rotate left twice about the root. (Far right diagram) First rotate about <b>1</b>, 
+then rotate about <b>3</b>.
+(Same as promoting <b>3</b> and then promoting <b>6</b>)
+</p><p>
+<img src="./Trees_2_files/RotateLeft-1.gif">
+</p><p>
+
+</p><p>
+Using the <a href="https://azrael.digipen.edu/~mmead/www/Courses/CS280/Trees.html#TreeDefinitions">defintions</a> above. <b>Note the parameter to each function
+is a <i>reference to a pointer</i>.</b>
+</p><p>
+
+</p><blockquote>
+<table cellpadding="5" border="0">
+<tbody><tr><th>Rotating a tree right</th><th>Rotating a tree left</th></tr>
+<tr><td>
+<pre><b>void</b> RotateRight(Tree &amp;tree)
+{
+  Tree temp = tree;
+  tree = tree-&gt;left;
+  temp-&gt;left = tree-&gt;right;      &nbsp;
+  tree-&gt;right = temp;
+}
+</pre>
+</td>
+
+<td>
+<pre><b>void</b> RotateLeft(Tree &amp;tree)
+{
+  Tree temp = tree;
+  tree = tree-&gt;right;
+  temp-&gt;right = tree-&gt;left;
+  tree-&gt;left = temp;
+}
+</pre>
+</td></tr>
+</tbody></table>
+</blockquote>
+
+Follow the four lines of code in this example. We are rotating right about <b>S</b>
+(promoting <b>M</b>).
+
+<blockquote><pre>1. temp = Tree;              // temp ===&gt; S
+2. tree = temp-&gt;left;        // tree ===&gt; M
+3. temp-&gt;left = tree-&gt;right; // temp-&gt;left ===&gt; P
+4. tree-&gt;right = temp;       // tree-&gt;right ===&gt; S
+</pre></blockquote>
+
+<br><br>
+
+
+<blockquote><pre><img src="./Trees_2_files/Rotate-12.png">
+</pre></blockquote>
+
+<blockquote><pre><img src="./Trees_2_files/Rotate-34.png">
+</pre></blockquote>
+
+Adjusting the diagram:
+
+<blockquote><pre><img src="./Trees_2_files/Rotate-Final.gif">
+</pre></blockquote>
+<p>
+</p><blockquote>
+<p class="technote">
+You can easily see why we passed a reference (or pointer) to the root of the tree. If you just pass
+the pointer itself (by value), after the rotation <tt>tree</tt> still points at node <tt>S</tt>,
+which is wrong. Keep this in mind when you are implementing the tree functions.
+</p>
+</blockquote>
+
+
+Note that these four trees below all contain the same data.
+
+<p>
+<table border="0" cellspacing="15" cellpadding="15">
+<tbody><tr><th>One</th><th>Two</th><th>Three</th><th>Four</th></tr>
+<tr valign="top">
+<td>
+<img src="./Trees_2_files/Rotate-1.png">
+</td>
+<td>
+<img src="./Trees_2_files/Rotate-2.png">
+</td>
+<td>
+<img src="./Trees_2_files/Rotate-3.png">
+</td>
+<td>
+<img src="./Trees_2_files/Rotate-4.png">
+</td>
+</tr></tbody></table>
+</p><p>
+
+Can you explain why there are four different representations for the same data?
+</p><p>
+
+<a href="https://azrael.digipen.edu/~mmead/www/Courses/CS280/BSTAVLTrees.exe">BST/AVL program</a> showing balance factors and node counts.
+</p><p>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><p class="SectionHeader">Splay Trees
+</p>
+
+Invented by D.D. Sleator and R.E. Tarjan in 1985.
+
+<ul>
+<li>Most of the time, we don't make any assumptions about the data.
+</li><li>Usually assume equal distribution of data and random values.
+</li><li>Non-random data can lead to worst-case situations (building a BST from already-sorted data).
+</li><li>Non-uniform distribution of data can also lead to worst-case situations.
+</li><li>If we know how the data is distributed, we can choose better data structures.
+</li></ul>
+
+A splay tree uses this knowledge to an advantage.
+
+<ul>
+<li>A splay tree is a binary search tree.
+</li><li>Newly inserted items are propagated (promoted) to the root.
+</li><li>This propagation occurs when writing (inserting) and reading (accessing) an item.
+</li><li>We call this propagation of a node <i>splaying</i>.
+</li></ul>
+
+The idea behind splay trees is that <i>frequently</i> accessed data is always near the top.
+
+<ul>
+<li>Splay trees are not guaranteed to be balanced
+</li><li>Worst-case is not guaranteed to be "good"
+</li><li>Average time may be excellent (this may be more important than worst case)
+</li><li>Algorithms for splaying a node are simple (only require rotation)
+</li><li>The algorithm is a variation of the more general BST root insertion
+</li></ul>
+
+Splaying algorithm
+<ul>
+<li>We want to splay a node two levels at a time.
+</li><li>This means we want to promote the node to the position of its grandparent (parent's parent)
+</li><li>The algorithm depends on the node's orientation to its grandparent (1 of 4 orientations)
+<ol>
+<blockquote><pre><img src="./Trees_2_files/Splay-1.gif">
+</pre></blockquote>
+<li>left-left, promote the parent, promote the node
+</li><li>left-right, promote the node, promote the node (node is promoted twice)
+</li><li>right-right, promote the parent, promote the node
+</li><li>right-left,  promote the node, promote the node (node is promoted twice)
+</li></ol>
+</li></ul>
+
+Promoting a node simply means rotating about the node's parent (which we've done). Promoting a node doesn't require
+you to specify left or right. The direction is implied.
+
+<ul>
+<li>If node is a right-child, rotate parent LEFT
+</li><li>If node is a left-child, rotate parent RIGHT
+</li></ul>
+
+<blockquote>
+Left-Left orientation (zig-zig)
+<p>
+</p><blockquote>
+<img src="./Trees_2_files/Splay-rotate-1.png">
+</blockquote>
+</blockquote>
+<p>
+
+</p><blockquote>
+Left-Right orientation (zig-zag)
+<p>
+</p><blockquote>
+<img src="./Trees_2_files/Splay-rotate-2.png">
+</blockquote>
+</blockquote>
+<p>
+
+</p><blockquote>
+Right-Right orientation (zig-zig)
+<p>
+</p><blockquote>
+<img src="./Trees_2_files/Splay-rotate-3.png">
+</blockquote>
+</blockquote>
+<p>
+
+</p><blockquote>
+Right-Left orientation (zig-zag)
+<p>
+</p><blockquote>
+<img src="./Trees_2_files/Splay-rotate-4.png">
+</blockquote>
+</blockquote>
+<p>
+
+
+
+</p><ul>
+<li>We continue to promote until we reach the root.
+</li><li>The "special case" is if our parent is the root.
+</li><li>If the parent is the root, simply perform a rotation to bring the node to the root.
+</li></ul>
+
+In the example below, we want to splay node <b>C</b> to the root.
+<p>
+Our orientation with our grandparent is left-right at first:
+</p><blockquote><pre><img src="./Trees_2_files/Splay-2.gif">
+</pre></blockquote>
+
+Now, our orientation with our grandparent is left-left:
+<blockquote><pre><img src="./Trees_2_files/Splay-3.gif">
+</pre></blockquote>
+
+The result of splaying <b>F</b> to the root:
+<blockquote><pre><img src="./Trees_2_files/Splay-4.gif">
+</pre></blockquote>
+
+Additional Notes:
+<ul>
+<li>Good <i>amortized</i> performance: The average cost is efficient.
+</li><li>Acts sort of like a built-in caching mechanism.
+</li><li>Works well with non-uniform access patterns over a small working set.
+</li><li>Simple to implement.
+</li></ul>
+
+<!--<a href="http://www.cs.technion.ac.il/~itai/ds2/framesplay/splay.html">Splay tree animation</a>
+<a href="http://techunix.technion.ac.il/~itai/">Splay tree animation 2</a>
+
+-->
+<a href="http://www.ibr.cs.tu-bs.de/courses/ss98/audii/applets/BST/SplayTree-Example.html">Splay tree animation</a><br>
+
+<p>
+
+
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<a name="EXPRESSIONTREES">
+</a></p><p class="SectionHeader"><a name="EXPRESSIONTREES">Expression Trees
+</a>
+
+</p>
+
+Expression trees are like binary trees, but they are not "sorted" in the usual way.
+<p>
+
+Given this expression:
+
+</p><blockquote><pre>(7 + 5) * (3 + 4) - (4 * (9 - 2))
+</pre></blockquote>
+
+The result after evaluation is 56. The tree that represents it looks like this:
+<p>
+</p><blockquote>
+<img src="./Trees_2_files/ExpressionTree-1.gif">
+</blockquote>
+<p>
+
+Evaluating the tree gives the same result. Evaluating an expression tree simply means reducing each subtree by
+post-order traversal. Why post-order?
+</p><p>
+
+</p><p>
+</p><blockquote>
+<img src="./Trees_2_files/ExpressionTree-2.gif">
+</blockquote>
+<p>
+
+
+</p><h2>Grammar</h2>
+
+A simple definition for the <i>grammar</i>, or language, that defines an expression looks something like this:
+
+<big>
+<pre class="sourcecode"><code>&lt;expression&gt; ::= &lt;term&gt; { &lt;addop&gt; &lt;term&gt; }
+&lt;term&gt;       ::= &lt;factor&gt; { &lt;mulop&gt; &lt;factor&gt; }
+&lt;factor&gt;     ::= <b>(</b> &lt;expression&gt; <b>)</b> | &lt;identifier&gt; | &lt;literal&gt;
+&lt;addop&gt;      ::= <b>+</b> | <b>-</b>
+&lt;mulop&gt;      ::= <b>*</b> | <b>/</b>
+&lt;identifier&gt; ::= <b>a</b> | <b>b</b> | <b>c</b> | ... | <b>z</b> | <b>A</b> | <b>B</b> | <b>C</b> | ... | <b>Z</b>
+&lt;literal&gt;    ::= <b>0</b> | <b>1</b> | <b>2</b> | ... | <b>9</b>
+</code></pre>
+</big>
+
+Note that the grammar is (indirectly) recursive. The vertical bars are read as "OR", and the curly braces means
+that the item inside can be repeated 0 or more times.
+<p>
+Our <i>"language"</i> consists of the following tokens:
+
+</p><blockquote><pre>Valid tokens: ()+-*/abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
+</pre></blockquote>
+
+Examples:
+<blockquote><pre> Valid expressions: A, B, 1, A + 2, A + B, A * (B), A * (B - 2), (1)
+Invalid constructs: AB, 3A, 123, A(3), A + (), A * -3
+</pre></blockquote>
+
+
+
+<p>
+
+Given any infix valid expression within the language, we can evaluate or reduce the expression in a two-step process:
+
+</p><ol>
+<li>Construct a parse tree from the infix expression.
+</li><li>Simplify the parse tree by evaluating sub-trees (sub-expressions).
+</li></ol>
+
+
+
+
+<h2>Step 1: Pseudocode for Parsing</h2>
+
+<blockquote><pre>&lt;expression&gt; ::= &lt;term&gt; { &lt;addop&gt; &lt;term&gt; }
+&lt;term&gt;       ::= &lt;factor&gt; { &lt;mulop&gt; &lt;factor&gt; }
+&lt;factor&gt;     ::= <b>(</b> &lt;expression&gt; <b>)</b> | &lt;identifier&gt; | &lt;literal&gt;
+</pre></blockquote>
+
+
+<pre class="sourcecode"><code>
+<b>MakeExpression(Tree)</b>
+ 1  Make a term, setting Tree to point to it
+
+ 2  while the next token is '+' or '-'
+ 3    Make an operator node, setting left child to Tree and right to NULL. (Tree points to new node)
+ 4    Get the next token.
+ 5    Make a term, setting the right child of Tree to point to it.
+ 6  end while
+<b>End MakeExpression</b>
+
+<b>MakeTerm(Tree)</b>
+ 7  Make a factor, setting Tree to point to it
+
+ 8  while the next token is '*' or '/'
+ 9    Make an operator node, setting left child to Tree and right to NULL. (Tree points to new node)
+10    Get the next token.
+11    Make a factor, setting the right child of Tree to point to it.
+12  end while
+<b>End MakeTerm</b>
+
+<b>MakeFactor(Tree)</b>
+13  if current token is '(', then
+14    Get the next token
+15    Make an expression, setting Tree to point to it
+16  else if current token is an IDENTIFIER
+17    Make an identifier node, set Tree to point to it, set left/right children to NULL.
+18  else if current token is a LITERAL
+19    Make a literal node, set Tree to point to it, set left/right children to NULL.
+20  end if
+
+21  Get the next token
+<b>End MakeFactor</b>
+
+
+<b>GetNextToken</b>
+  while whitespace
+    Increment CurrentPosition
+  end while
+
+  CurrentToken = Expression[CurrentPosition]
+
+  Increment CurrentPosition
+<b>End GetNextToken</b>
+</code></pre>
+
+<blockquote><pre>&lt;expression&gt; ::= &lt;term&gt; { &lt;addop&gt; &lt;term&gt; }
+&lt;term&gt;       ::= &lt;factor&gt; { &lt;mulop&gt; &lt;factor&gt; }
+&lt;factor&gt;     ::= <b>(</b> &lt;expression&gt; <b>)</b> | &lt;identifier&gt; | &lt;literal&gt;
+</pre></blockquote>
+
+
+<a href="https://azrael.digipen.edu/~mmead/www/Courses/CS280/PseudocodeForExprTrees.html#DEFINITIONS">Definitions</a>
+<p>
+<a href="https://azrael.digipen.edu/~mmead/www/Courses/CS280/CommonExprTree.cpp.html">Some implementations</a>
+
+</p><p>
+</p><hr width="90%">
+<p>
+
+</p><p>
+Diagrams for the expression: <tt>A + B</tt> (All addresses are arbitrary, but represent the order the nodes were created.)
+
+</p><ol>
+<li>Make an IDENTIFIER (EXPRESSION &#8594; TERM &#8594; FACTOR &#8594; IDENTIFIER) node and set <tt><b>Tree</b></tt> to point to this term.
+</li><li>Make an OPERATOR node, set left child to <tt><b>Tree</b></tt> and right child to NULL. (Tree now points to this new operator node)
+</li><li>Make an IDENTIFIER (EXPRESSION &#8594; TERM &#8594; FACTOR &#8594; IDENTIFIER) node and set right child of <tt><b>Tree</b></tt> to point to this term.
+</li></ol>
+
+<p>
+</p><blockquote>
+<table border="0" cellpadding="5" cellspacing="5">
+<tbody><tr>
+<th><tt><b>A</b></tt></th> <th width="70"></th> <th><tt><b>A + </b></tt></th> <th width="70"></th> <th><tt><b>A + B</b></tt></th>
+</tr>
+<tr>
+<td>
+<img src="./Trees_2_files/ExprTree-1.png">
+</td>
+<td></td>
+<td>
+<img src="./Trees_2_files/ExprTree-2.png">
+</td>
+<td></td>
+<td>
+<img src="./Trees_2_files/ExprTree-3.png">
+</td>
+</tr></tbody></table>
+<p>
+</p></blockquote>
+
+<p>
+Extending the expression to: <tt>A + B - 5</tt>
+</p><p>
+</p><ol>
+<li>Make an OPERATOR node, set left child to <tt><b>Tree</b></tt> (from above) and right child to NULL. (Tree now points to this new operator node)
+</li><li>Make a LITERAL (EXPRESSION &#8594; TERM &#8594; FACTOR &#8594; LITERAL) node and set right child of <tt><b>Tree</b></tt> to point to this term.
+</li></ol>
+
+<p>
+</p><blockquote>
+<table border="0" cellpadding="5" cellspacing="5">
+<tbody><tr>
+<th><tt><b>A + B - </b></tt></th> <th width="70"></th> <th><tt><b>A + B - 5</b></tt></th>
+</tr>
+<tr>
+<td>
+<img src="./Trees_2_files/ExprTree-4.png">
+</td>
+<td></td>
+<td>
+<img src="./Trees_2_files/ExprTree-5.png">
+</td>
+</tr></tbody></table>
+<p>
+</p></blockquote>
+
+<p>
+</p><hr width="90%">
+<p>
+
+</p><p>
+Diagrams for the expression: <tt>A + B * 5</tt>
+</p><p>
+
+<tt><b>A + B</b></tt> as before:
+</p><p>
+</p><blockquote>
+<img src="./Trees_2_files/ExprTree-3.png">
+</blockquote>
+<p>
+
+Adding: <tt><b> * 5</b></tt>
+
+</p><ol>
+<li>Make an OPERATOR node, set left child to <tt><b>Tree</b></tt> (from above, tree is the right pointer of '+') and right child to NULL. (Tree now points to this new operator node)
+</li><li>Make a LITERAL (TERM &#8594; FACTOR &#8594; LITERAL) node and set right child of <tt><b>Tree</b></tt> to point to this term.
+</li></ol>
+
+<p>
+</p><blockquote>
+<table border="0" cellpadding="5" cellspacing="5">
+<tbody><tr>
+<th><tt><b>A + B * </b></tt></th> <th width="70"></th> <th><tt><b>A + B * 5</b></tt></th>
+</tr>
+<tr>
+<td>
+<img src="./Trees_2_files/ExprTree-6.png">
+</td>
+<td></td>
+<td>
+<img src="./Trees_2_files/ExprTree-7.png">
+</td>
+</tr></tbody></table>
+<p>
+</p></blockquote>
+
+<p>
+</p><hr width="90%">
+<p>
+
+</p><h2>Step 2: Simplifying the Parse Tree</h2>
+
+Algorithm to recursively simplify a tree:
+
+<ol>
+<li>Recursively simplify left subtree
+</li><li>Recursively simplify right subtree
+</li><li>Simplfy the node (perform the arithmetic, no recursion)
+</li></ol>
+
+<p>
+Some simplification examples:
+
+</p><blockquote><pre>4 * (2 + 3) &#8594; 20      A * (2 + 3) &#8594; A * 5      A * (3 - 4 + 1) + B &#8594; B        A + 2 * 3 &#8594; A + 6
+</pre></blockquote>
+
+<p>
+
+Simplification Rules:
+</p><p>
+
+<table border="1" cellpadding="5" cellspacing="0">
+<tbody><tr><th>Condition</th><th>Action</th></tr>
+<tr valign="top">
+<td>
+Both children are LITERAL
+</td>
+
+<td>
+Evaluate the expression and promote the result to the node that contained the operator. 0 / 0 &#8594; (exception)
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+The left child is a LITERAL and the right child is an IDENTIFIER or OPERATOR (expression).
+</td>
+<td>
+If expression is one of these forms, it can be simplified and the result promoted:
+<pre>0 + E &#8594; E      1 * E &#8594; E
+0 * E &#8594; 0      0 / E &#8594; 0
+</pre>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+The right child is a LITERAL and the left child is an IDENTIFIER or OPERATOR (expression).
+</td>
+<td>
+If expression is one of these forms, it can be simplified and the result promoted:
+<pre>E + 0 &#8594; E      E - 0 &#8594; E
+E * 0 &#8594; 0      E * 1 &#8594; E
+E / 1 &#8594; E      E / 0 &#8594; (exception)
+</pre>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+Both children are IDENTIFIER.
+</td>
+<td>
+If expression is one of these forms, it can be simplified and the result promoted:
+<pre>I - I &#8594; 0      I / I &#8594; 1
+</pre>
+</td>
+</tr></tbody></table>
+
+</p><p>
+
+Example of the form: E - 0 &#8594; E
+</p><p>
+</p><blockquote>
+<table border="0" cellpadding="0" cellspacing="10"><tbody><tr align="center">
+<td><pre>a * b - 0 + 5 * 7</pre></td>
+<td width="30"><pre></pre></td>
+
+<td><pre>a * b + 35</pre></td>
+</tr>
+<tr>
+<td><img src="./Trees_2_files/Expression-1.png"></td>
+<td></td>
+<td><img src="./Trees_2_files/Expression-2.png"></td>
+</tr></tbody></table>
+</blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+
+
+<p>
+<a href="https://azrael.digipen.edu/~mmead/www/Courses/CS280/ExprTree.exe">Expression Tree Viewer</a>
+</p><p>
+
+
+
+</p><p class="technote">
+<b>Self-check</b> Build the parse tree for these expressions:
+<br><br>
+<table><tbody><tr><td>
+<blockquote><pre>A + B + C
+A + B * C
+A * B + C
+(A + B) * C
+A * (B + C)
+</pre></blockquote>
+</td></tr></tbody></table>
+Substitute integers for A, B, and C and then evaluate the tree using postfix traversal.
+</p><p>
+
+This is how compilers do <a href="https://en.wikipedia.org/wiki/Constant_folding">constant folding</a>.
+</p><p>
+Given this code (from the <a href="https://en.wikipedia.org/wiki/Constant_folding#The_optimizations_in_action">link above</a>):
+
+</p><blockquote><pre><b>int</b> main()
+{
+  <b>int</b> a = 30;
+  <b>int</b> b = 9 - (a / 5);
+  <b>int</b> c;
+
+  c = b * 4;
+  <b>if</b> (c &gt; 10) 
+  {
+     c = c - 10;
+  }
+
+  <b>return</b> c * (60 / a);
+}
+</pre></blockquote>
+
+Compiler-generated assembly code (GNU g++ 5.1):
+
+<blockquote>
+<table border="1" cellpadding="10" cellspacing="0">
+<tbody><tr><th>No optimization</th><th>Optimization -O</th></tr>
+<tr valign="top">
+<td>
+<pre>  .file "main.cpp"
+  .text
+  .globl  main
+  .type main, @function
+main:
+.LFB0:
+  .cfi_startproc
+  pushq %rbp
+  .cfi_def_cfa_offset 16
+  .cfi_offset 6, -16
+  movq  %rsp, %rbp
+  .cfi_def_cfa_register 6
+  movl  $30, -8(%rbp)
+  movl  -8(%rbp), %ecx
+  movl  $1717986919, %edx
+  movl  %ecx, %eax
+  imull %edx
+  sarl  %edx
+  movl  %ecx, %eax
+  sarl  $31, %eax
+  subl  %eax, %edx
+  movl  %edx, %eax
+  movl  $9, %edx
+  subl  %eax, %edx
+  movl  %edx, %eax
+  movl  %eax, -12(%rbp)
+  movl  -12(%rbp), %eax
+  sall  $2, %eax
+  movl  %eax, -4(%rbp)
+  cmpl  $10, -4(%rbp)
+  jle .L2
+  subl  $10, -4(%rbp)
+.L2:
+  movl  $60, %eax
+  cltd
+  idivl -8(%rbp)
+  imull -4(%rbp), %eax
+  popq  %rbp
+  .cfi_def_cfa 7, 8
+  ret
+  .cfi_endproc
+.LFE0:
+  .size main, .-main
+  .ident  "GCC: (Mead custom build) 5.1.0"
+  .section  .note.GNU-stack,"",@progbits
+</pre>
+</td>
+<td>
+<pre>  .file "main.cpp"
+  .text
+  .globl  main
+  .type main, @function
+main:
+.LFB0:
+  .cfi_startproc
+  movl  $4, %eax
+  ret
+  .cfi_endproc
+.LFE0:
+  .size main, .-main
+  .ident  "GCC: (Mead custom build) 5.1.0"
+  .section  .note.GNU-stack,"",@progbits
+</pre>
+</td></tr></tbody></table>
+</blockquote>
+<p>
+<br><br>
+
+
+<!-- ********************************************************** -->
+<!-- ********************************************************** -->
+</p><hr width="90%">
+
+<blockquote><pre></pre></blockquote>
+
+<!--
+<div class="hidden"><div class="hidden"><div class="hidden"><div class="hidden">
+-->
+
+
+</body></html>

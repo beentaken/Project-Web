@@ -1,0 +1,66 @@
+﻿Task List (To V2.0)
+
+Andrei
+Primary Task 1 – Finish Weapon System (DUE ALPHA)
+Complete whatever you need to complete in the weapon system that you started working on. Make sure the interface is well abstracted.
+Primary Task 2 – Implement Basic Weapon Spreads (DUE ALPHA)
+Use the weapon system you created to implement some basic spread weapons for Alpha presentation. Aim for completion of the following:
+                          ||
+Dual Forward Guns  Ex:  ^
+
+                       \|/
+3 – Spread         Ex:  ^
+5 – Spread (Similar to 3 – Spread)
+
+Secondary Task 1 – Implement Gameplay Music
+Create and integrate a track that we can play during the main gameplay of our game.
+
+
+
+Damien
+Primary Task 1 – Implement Level Generation System (DUE ALPHA)
+Complete system for randomly placing spawners/enemies based on the following factors.
+Current Difficulty (Implemented Later On)
+Current Progression
+The system will, for the moment,spawn enemies. However once spawners have been implemented, they will be placed instead.
+Secondary Task 1 -Implement Pickups System
+Implement various pick up items that will grant the player certain bonuses or advantages. The following pickups should exist at the time of the systems completion:
+Health
+Bomb/Death Head (Design Director Approval Needed)
+
+
+
+
+
+
+
+Sarah
+Primary Task 1 – Implement Enemy Spawners
+Notes: The spawners need to be objects that Damien can place in level generation. The object should have parameters like:
+Enemy Type Spawned
+Frequency & Frequency Counter
+To be clear the spawner object will have all of its parameters inside the GameInstance struct. 
+The things you need to implement then are the following:
+Set and Init functions for all spawner parameters
+Speak to tech director regarding this implementation
+Secondary Task 1 – Finish File IO System
+Complete implementation on the read and write system that we will need to complete high score functionality.
+
+
+
+
+Kacey
+Primary Task 1 – Win Screen
+Implement a game state to be displayed upon winning the game.
+The screen should invoke a feeling of accomplishment
+Primary Task 2 – Lose Screen
+Implement a game state to be displayed upon losing the game.
+The screen should encourage the player to keep trying. 
+Secondary Task 1 – Art Assets
+We need the following art assets as soon as we can get them
+Enemy Ship (Basic)
+Bullets Enemy/Player – Aim for circular shape
+Asteroids
+Finish UI Elements
+
+

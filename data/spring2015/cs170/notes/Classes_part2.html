@@ -1,0 +1,1820 @@
+
+<!-- saved from url=(0065)http://azrael.digipen.edu/~mmead/www/Courses/CS170/Classes-2.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./More Classes_files/new.css">
+<title>More Classes</title>
+</head>
+
+<body>  
+<center><h1>More Classes</h1></center>
+
+<!--
+<blockquote>
+<i>
+"The road to hell is paved with global variables"</i> -- Steve McConnell
+</blockquote>
+-->
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Overloading Background
+</p>
+
+Recall our discussion of overloaded functions:
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>int</b> cube(<b>int</b> n)
+{
+  <b>return</b> n * n * n;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>int</b> i = 8;
+<b>long</b> l = 50L;
+<b>float</b> f = 2.5F;
+<b>double</b> d = 3.14;
+
+  <font color="#003399"><i>// Works fine: 512</i></font>
+std::cout &lt;&lt; cube(i) &lt;&lt; std::endl;
+
+  <font color="#003399"><i>// May or may not work: 125000</i></font>
+std::cout &lt;&lt; cube(l) &lt;&lt; std::endl;
+
+  <font color="#003399"><i>// Not quite what we want: 8</i></font>
+std::cout &lt;&lt; cube(f) &lt;&lt; std::endl;
+
+  <font color="#003399"><i>// Not quite what we want: 27</i></font>
+std::cout &lt;&lt; cube(d) &lt;&lt; std::endl;
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+
+We solved this problem by using overloaded functions:
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>int</b> cube(<b>int</b> n)
+{
+  <b>return</b> n * n * n;
+}
+
+<b>float</b> cube(<b>float</b> n)
+{
+  <b>return</b> n * n * n;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>double</b> cube(<b>double</b> n)
+{
+  <b>return</b> n * n * n;
+}
+
+<b>long</b> cube(<b>long</b> n)
+{
+  <b>return</b> n * n * n;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+It will also work as expected without the user needing to chose the right function:
+
+<blockquote><pre>  <font color="#003399"><i>// Works fine, calls cube(<b>int</b>): 512</i></font>
+std::cout &lt;&lt; cube(i) &lt;&lt; std::endl;
+
+  <font color="#003399"><i>// Works fine, calls cube(<b>long</b>): 125000</i></font>
+std::cout &lt;&lt; cube(l) &lt;&lt; std::endl;
+
+  <font color="#003399"><i>// Works fine, calls cube(<b>float</b>): 15.625</i></font>
+std::cout &lt;&lt; cube(f) &lt;&lt; std::endl;
+
+  <font color="#003399"><i>// Works fine, calls cube(<b>double</b>): 30.9591</i></font>
+std::cout &lt;&lt; cube(d) &lt;&lt; std::endl;
+</pre></blockquote>
+
+What we did was to provide the compiler with additional ways in which a value could be cubed. 
+<p>
+We run into similar problems with operators. That is, operators may function
+differently when given operands of different types. For example:
+
+</p><blockquote><pre>3 + 4       ==&gt; evaluates to an <b>int</b>, 7
+3.1 + 4.1   ==&gt; evaluates to a <b>double</b>, 7.2
+2.4f + 5.1f ==&gt; evaluates to a <b>float</b>, 7.5
+3 + 4.1     ==&gt; evaluates to a <b>double</b>, 7.1
+</pre></blockquote>
+
+<p>
+How is this possible?
+</p><ul>
+<li>The machine instructions for adding integers are vastly different from the instructions for adding floating point values.
+</li><li>However, we are able to use the same operator for adding two <tt><b>int</b></tt> values that we use for adding two <tt><b>double</b></tt> values. 
+</li><li>This is because operators for the built-in types (<tt><b>int</b></tt>, <tt><b>long</b></tt>, <tt><b>float</b></tt>, etc.) are all <i>overloaded by the compiler</i>. 
+</li><li>If this functionality was not built-in to the compiler: 
+<ul>
+<li>could have used functional notation:
+<blockquote><pre><b>int</b> i = addInt(3, 4);          
+<b>double</b> d = addDouble(3.4, 4.1);   
+
+<b>int</b> ii = add(3, 4);          <font color="#003399"><i>// overload</i></font>
+<b>double</b> dd = add(3.4, 4.1);   <font color="#003399"><i>// overload</i></font>
+</pre></blockquote>
+
+</li><li>or, would need one operator for adding integers (the '+' operator), and another operator for adding two doubles, 
+(maybe the '@' operator), which is not used in C++.
+<blockquote><pre><b>int</b> i = 3 + 4;          <font color="#003399"><i>// adding integers, 7</i></font>
+<b>double</b> d = 3.4 @ 4.1;   <font color="#003399"><i>// adding doubles, 7.5</i></font>
+<b>double</b> dd = 3.4 + 4.1;  <font color="#003399"><i>// adding doubles, 7.0 (integer addition)</i></font>
+</pre></blockquote>
+</li></ul>
+</li></ul>
+
+<p>
+Other operators are also already overloaded for your enjoyment:
+
+</p><blockquote><pre><b>int</b> i = 10;      
+<b>int</b> *p = &amp;i;      <font color="#003399"><i>// * indicates p is a pointer, &amp; is taking an address</i></font>
+<b>int</b> &amp;r = i;       <font color="#003399"><i>// &amp; indicates r is a reference</i></font>
+<b>int</b> j = *p;       <font color="#003399"><i>// * is used to dereference p</i></font>
+<b>int</b> k = i * j;    <font color="#003399"><i>// * is used to multiply i and j</i></font>
+k = cube(4);      <font color="#003399"><i>// () are used to call function</i></font>
+k = j * (3 + 4);  <font color="#003399"><i>// () are used to group </i></font>
+</pre></blockquote>
+
+
+Since the compiler can deal with built-in types, it should be able to handle arrays of built-in types as well,
+don't you think? A lot of students new to C++ try to add two arrays as shown in the code snippet below. But this
+won't work. 
+
+<blockquote><pre><b>int</b> a1[5] = {1, 2, 3, 4, 5};
+<b>int</b> a2[5] = {10, 20, 30, 40, 50};
+
+  <font color="#003399"><i>// we want a3 to have {11, 22, 33, 44, 55} </i></font>
+<b>int</b> a3[5] = a1 + a2;  <font color="#003399"><i>// this won't compile</i></font>
+
+  <font color="#003399"><i>// add the elements one at a time</i></font>
+<b>for</b> (<b>int</b> i = 0; i &lt; 5; i++)
+  a3[i] = a1[i] + a2[i];  <font color="#003399"><i>// this is correct</i></font>
+</pre></blockquote>
+
+One explanation this fails is because a1 and a2 are addresses (pointers) and you can't add two pointers this way.   
+Another explanation is that the '+' operator is not overloaded to add two arrays like this. 
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Overloading Operators for User-Defined Types (Structs and Classes)
+</p>
+
+Suppose we have two StopWatch objects, and we want to make a third StopWatch object that represents
+the sum of the first two StopWatches:
+
+<blockquote><pre>StopWatch sw1(30); <font color="#003399"><i>// 30 seconds</i></font>
+StopWatch sw2(10); <font color="#003399"><i>// 10 seconds</i></font>
+
+  <font color="#003399"><i>// sw3 should be 40 seconds</i></font>
+  <font color="#003399"><i>//   but it is an error</i></font>
+StopWatch sw3 = sw1 + sw2;
+</pre></blockquote>
+
+The StopWatch class is a simple class that keeps track of how many seconds have elapsed. (The usefulness of the
+class is not important). We simply want a very simple class that can be used to demonstrate operator overloading.
+<p>
+Here's what the StopWatch class looks like:
+</p><p>
+	
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Class definition</th><th>Examples</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>class</b> StopWatch
+{
+  <b>public</b>:
+      <font color="#003399"><i>// Default constructor</i></font>
+    StopWatch();
+
+      <font color="#003399"><i>// Conversion constructor</i></font>
+    StopWatch(<b>int</b> seconds);
+
+      <font color="#003399"><i>// Non-default constructor</i></font>
+    StopWatch(<b>int</b> hours, 
+              <b>int</b> minutes, 
+              <b>int</b> seconds);
+
+    <b>void</b> Increment(<b>int</b> seconds = 1);
+    <b>void</b> Reset();
+    <b>int</b> GetSeconds() <b>const</b>;
+    <b>void</b> Display() <b>const</b>;
+
+  <b>private</b>:
+    <b>int</b> seconds_;
+};
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>StopWatch sw1;
+StopWatch sw2(625);
+StopWatch sw3(9, 30, 0);
+
+sw1.Display(); <font color="#003399"><i>// 00:00:00</i></font>
+sw2.Display(); <font color="#003399"><i>// 00:10:25</i></font>
+sw3.Display(); <font color="#003399"><i>// 09:30:00</i></font>
+
+sw1.Increment();  <font color="#003399"><i>// add 1 sec</i></font>
+sw1.Increment();  <font color="#003399"><i>// add 1 sec</i></font>
+sw1.Increment(5); <font color="#003399"><i>// add 5 secs</i></font>
+sw1.Display();    <font color="#003399"><i>// 00:00:07</i></font>
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS170/StopWatch-1.cpp.html">Implementation</a>
+
+</p><p>
+What is <tt><b>sizeof</b>(Stopwatch)</tt>?
+</p><p>
+	
+This code:
+</p><blockquote><pre>  <font color="#003399"><i>// Add two StopWatches</i></font>
+StopWatch sw3 = sw1 + sw2;
+</pre></blockquote>
+
+produces this error:
+<blockquote><pre>error: no match for 'operator+' in 'sw1 + sw2'
+</pre></blockquote>
+ 
+	
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+Notes:
+<ul>
+<li>The code above will not compile because the compiler has no idea how to "add" two StopWatch objects. 
+</li><li>The C-style way is to simply create a function to do the work:
+	
+<blockquote><pre>StopWatch AddStopWatch(<b>const</b> StopWatch&amp; sw1, <b>const</b> StopWatch&amp; sw2)
+{
+    <font color="#003399"><i>// Construct a new SW from two</i></font>
+  StopWatch sw(sw1.GetSeconds() + sw2.GetSeconds());
+
+    <font color="#003399"><i>// Return the result</i></font>
+  <b>return</b> sw;
+}
+</pre></blockquote>
+
+and call it:
+
+<blockquote><pre>StopWatch sw1(30); <font color="#003399"><i>// 30 seconds</i></font>
+StopWatch sw2(10); <font color="#003399"><i>// 10 seconds</i></font>
+
+  <font color="#003399"><i>// Add the two and assign to third</i></font>
+StopWatch sw3 = AddStopWatch(sw1, sw2);
+sw3.Display(); <font color="#003399"><i>// prints 00:00:40</i></font>
+</pre></blockquote>
+
+</li><li>This isn't all that bad for adding two objects, but it won't scale nicely:
+	
+<blockquote><pre>StopWatch sw1(30); <font color="#003399"><i>// 30 seconds</i></font>
+StopWatch sw2(10); <font color="#003399"><i>// 10 seconds</i></font>
+StopWatch sw3(60); <font color="#003399"><i>// 60 seconds</i></font>
+StopWatch sw4(20); <font color="#003399"><i>// 20 seconds</i></font>
+
+  <font color="#003399"><i>// We have to do this (and it will get worse with more)</i></font>
+StopWatch tempsw1 = AddStopWatch(sw1, sw2);
+StopWatch tempsw2 = AddStopWatch(tempsw1, sw3);
+StopWatch sw5 = AddStopWatch(tempsw2, sw4);
+sw5.Display(); <font color="#003399"><i>// 00:02:00</i></font>
+
+  <font color="#003399"><i>// We can "chain" the calls to save some typing:</i></font>
+StopWatch sw6 = AddStopWatch(AddStopWatch(AddStopWatch(sw1, sw2), sw3), sw4);
+sw6.Display(); <font color="#003399"><i>// 00:02:00</i></font>
+</pre></blockquote>
+
+</li><li>We really just want to be able to do this:	
+
+<blockquote><pre>  <font color="#003399"><i>// We'd like to do this</i></font>
+StopWatch sw5 = sw1 + sw2 + sw3 + sw4;
+</pre></blockquote>
+
+		
+</li><li>The solution is to "instruct" the compiler on how to add StopWatches by overloading the '+' operator.
+</li></ul>
+
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Overloading the binary <tt>+</tt> Operator
+</p>
+
+To overload the <tt>+</tt> operator (or most any operator for that matter), we use an <i>operator function</i>, which has the form:
+<blockquote><pre><i>return-type</i> <b>operator</b><i>op</i>(<i>argument-list</i>)
+</pre></blockquote>
+
+where:
+<ul>
+<li><i>return-type</i> is the type of the returned value, just as with other functions
+</li><li><tt><b>operator</b></tt> is a reserved word
+</li><li><i>op</i> is the operator to overload (<tt>+, -, *</tt>, etc.)
+</li><li><i>argument-list</i> is the list of arguments to the operator function
+</li></ul>
+For example:
+
+<blockquote><pre><b>operator</b>+(<i>argument-list</i>)
+<b>operator</b>-(<i>argument-list</i>)
+<b>operator</b>*(<i>argument-list</i>)</pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+We simply need to create a function called <tt>operator+</tt> that takes two StopWatch objects as parameters:
+
+<blockquote><pre>StopWatch <b>operator</b>+(<b>const</b> StopWatch&amp; lhs, <b>const</b> StopWatch&amp; rhs)
+{
+    <font color="#003399"><i>// lhs is <b>l</b>eft-<b>h</b>and <b>s</b>ide</i></font>
+    <font color="#003399"><i>// rhs is <b>r</b>ight-<b>h</b>and <b>s</b>ide</i></font>
+  StopWatch sw(lhs.GetSeconds() + rhs.GetSeconds());
+
+    <font color="#003399"><i>// Return the result</i></font>
+  <b>return</b> sw;
+}
+</pre></blockquote>
+
+This makes life much simpler for the users of the StopWatch class.
+<ul>
+<li>Notice that the code does exactly same thing as the <i>AddStopWatch</i> function we wrote. (Only the function name has changed, really.)
+</li><li>Now, when the compiler sees the <tt>+</tt> operator between two StopWatch objects, it knows what to do.
+</li><li>It calls the function and passes the two StopWatches as operands (left operand first, right operand second).
+</li><li>Notice that the function is just a "normal" global function.
+</li><li>Where does the function go? (Which source file?)
+</li></ul>
+
+Example usage:
+
+<blockquote><pre>StopWatch sw1(30); <font color="#003399"><i>// 30 seconds</i></font>
+StopWatch sw2(10); <font color="#003399"><i>// 10 seconds</i></font>
+StopWatch sw3(60); <font color="#003399"><i>// 60 seconds</i></font>
+StopWatch sw4(20); <font color="#003399"><i>// 20 seconds</i></font>
+
+StopWatch sw5 = sw1 + sw2;
+StopWatch sw6 = sw1 + sw2 + sw3 + sw4;
+
+sw5.Display(); <font color="#003399"><i>// 00:00:40</i></font>
+sw6.Display(); <font color="#003399"><i>// 00:02:00</i></font>
+
+  <font color="#003399"><i>// Functional notation</i></font>
+StopWatch sw7 = <b>operator</b>+(sw1, sw2);
+sw7.Display(); <font color="#003399"><i>// 00:00:40</i></font>
+</pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+In practice, the functional notation is seldom used. Essentially, overloading an operator means 
+writing a function that the compiler will call when it sees the operator being used with a non-built-in data type (struct/class).
+
+<p>
+Again, notice how similar the functional notation is:
+
+</p><blockquote><pre>StopWatch sw7 = <b>operator</b>+(sw1, sw2);
+StopWatch sw8 = AddStopWatch(sw1, sw2);
+</pre></blockquote>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Overloading More Operators in the StopWatch Class
+</p>
+
+While we're at it, we'll overload some more operators. First, the subtraction operator:
+
+<blockquote><pre>StopWatch <b>operator</b>-(<b>const</b> StopWatch&amp; lhs, <b>const</b> StopWatch&amp; rhs)
+{
+    <font color="#003399"><i>// Don't want to go negative</i></font>
+  <b>int</b> seconds = lhs.GetSeconds() - rhs.GetSeconds();
+  <b>if</b> (seconds &lt; 0)
+    seconds = 0;
+
+    <font color="#003399"><i>// Create a new one and return it</i></font>
+  StopWatch sw(seconds);
+  <b>return</b> sw;
+}
+</pre></blockquote>
+
+Test it:
+
+<blockquote><pre>StopWatch sw1(1, 30, 0); <font color="#003399"><i>// 01:30:00</i></font>
+StopWatch sw2(10, 0, 0); <font color="#003399"><i>// 10:00:00</i></font>
+
+  <font color="#003399"><i>// Subtract smaller from larger</i></font>
+StopWatch sw3 = sw2 - sw1;
+sw3.Display(); <font color="#003399"><i>// 00:08:30</i></font>
+
+  <font color="#003399"><i>// Subtract larger from smaller</i></font>
+sw3 = sw1 - sw2;
+sw3.Display(); <font color="#003399"><i>// 00:00:00</i></font>
+</pre></blockquote>
+
+Simple. In a nutshell, that's about it. (Like everything in C++, there are lots of little details involved.)
+<p>
+	
+</p><p>
+</p><hr width="90%">
+<p>
+		
+How about something like this:
+
+</p><blockquote><pre>  <font color="#003399"><i>// Double the time</i></font>
+StopWatch sw2 = sw1 * 2;
+</pre></blockquote>
+
+Of course, we'll get this:
+<blockquote><pre>error: no match for 'operator*' in 'sw1 * 2'
+</pre></blockquote>
+
+
+Fair enough. Another trivial function to implement:
+<blockquote><pre><font color="#003399"><i>// Multiply: StopWatch * int</i></font>
+StopWatch <b>operator</b>*(<b>const</b> StopWatch&amp; lhs, <b>int</b> rhs)
+{
+    <font color="#003399"><i>// Multiply a StopWatch and an integer</i></font>
+  StopWatch sw(lhs.GetSeconds() * rhs);
+
+    <font color="#003399"><i>// Return the result</i></font>
+  <b>return</b> sw;
+}
+</pre></blockquote>
+
+And the problem is solved. Or is it?
+
+<blockquote><pre>  <font color="#003399"><i>// Double the time?</i></font>
+StopWatch sw3 = 2 * sw1;
+</pre></blockquote>
+<br>
+
+Error message:
+<blockquote><pre>error: no match for 'operator*' in '2 * sw1'
+note: candidates are: StopWatch operator*(const StopWatch&amp;, int)
+</pre></blockquote>
+
+Another function:
+<blockquote><pre><font color="#003399"><i>// Multiply: int * StopWatch</i></font>
+StopWatch <b>operator</b>*(<b>int</b> lhs, <b>const</b> StopWatch&amp; rhs)
+{
+    <font color="#003399"><i>// Multiply an integer and a StopWatch</i></font>
+  StopWatch sw(lhs * rhs.GetSeconds());
+
+    <font color="#003399"><i>// Return the result</i></font>
+  <b>return</b> sw;
+}
+</pre></blockquote>
+
+A better solution:
+<blockquote><pre><font color="#003399"><i>// Multiply: int * StopWatch</i></font>
+StopWatch <b>operator</b>*(<b>int</b> lhs, <b>const</b> StopWatch&amp; rhs)
+{
+    <font color="#003399"><i>// Simply reverse the operands</i></font>
+  <b>return</b> rhs * lhs;
+}
+</pre></blockquote>
+
+<p>
+</p><hr width="90%">
+<p>
+
+How about adding an integer to a StopWatch:
+</p><p>
+	
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Current implementation</th><th>New expected behavior</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>StopWatch <b>operator</b>+(<b>const</b> StopWatch&amp; lhs, 
+                    <b>const</b> StopWatch&amp; rhs)
+{
+    <font color="#003399"><i>// lhs is a StopWatch</i></font>
+    <font color="#003399"><i>// rhs is a StopWatch</i></font>
+  StopWatch sw(lhs.GetSeconds() + rhs.GetSeconds());
+
+    <font color="#003399"><i>// Return the result</i></font>
+  <b>return</b> sw;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>StopWatch sw1(60); <font color="#003399"><i>// 00:01:00</i></font>
+
+  <font color="#003399"><i>// Add another minute?</i></font>
+StopWatch sw2 = sw1 + 60;
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+What will the compiler say about this?
+</p><p>
+	
+Remember these?
+
+</p><blockquote><pre>1.  3 + 4       ==&gt; evaluates to an <b>int</b>, 7
+2.  3.1 + 4.1   ==&gt; evaluates to a <b>double</b>, 7.2
+3.  2.4f + 5.1f ==&gt; evaluates to a <b>float</b>, 7.5
+4.  3 + 4.1     ==&gt; evaluates to a <b>double</b>, 7.1
+</pre></blockquote>
+
+All operands <i>must</i> be the same for this to work. The fourth one is really changed to this 
+(by your Friendly Neighborhood™ compiler):
+
+<blockquote><pre>(<b>double</b>)3 + 4.1
+</pre></blockquote>
+
+So the compiler will attempt to do this so it can use the available <tt><b>operator+</b></tt>:
+
+<blockquote><pre>StopWatch sw2 = sw1 + (StopWatch)60;
+</pre></blockquote>
+
+It's more obvious using a C++-style cast:
+<blockquote><pre>StopWatch sw2 = sw1 + (StopWatch)60; <font color="#003399"><i>// C-style cast</i></font>
+StopWatch sw2 = sw1 + StopWatch(60); <font color="#003399"><i>// C++-style cast</i></font>
+</pre></blockquote>
+
+
+<p class="technote">
+<b>Note:</b> Any constructor that takes a single argument is called a <i>conversion constructor</i> and it
+is called implicitly by the compiler when a conversion needs to be performed.
+</p>
+
+This conversion process is mentioned in the error message from Microsoft's compiler before we implemented <tt><b>operator+</b></tt>:
+<p>
+	
+g++ error:
+</p><blockquote><pre>error: no match for 'operator+' in 'sw1 + sw2'
+</pre></blockquote>
+
+MS error:
+<blockquote><pre>binary '+' : 'StopWatch' does not define this operator or a <font color="blue"><b>conversion</b></font> to 
+             a type acceptable to the predefined operator 
+</pre></blockquote>
+
+
+<b>Question:</b> Given these functions below:
+<blockquote><pre><font color="#003399"><i>// Multiply: StopWatch * int</i></font>
+StopWatch <b>operator</b>*(<b>const</b> StopWatch&amp; lhs, <b>int</b> rhs)
+{
+    <font color="#003399"><i>// Multiply a StopWatch and an integer</i></font>
+  StopWatch sw(lhs.GetSeconds() * rhs);
+
+    <font color="#003399"><i>// Return the result</i></font>
+  <b>return</b> sw;
+}
+
+<font color="#003399"><i>// Multiply: int * StopWatch</i></font>
+StopWatch <b>operator</b>*(<b>int</b> lhs, <b>const</b> StopWatch&amp; rhs)
+{
+    <font color="#003399"><i>// Simply reverse the operands</i></font>
+  <b>return</b> rhs * lhs;
+}
+</pre></blockquote>
+
+
+will the compiler accept the code below? (Why or why not?)
+
+<blockquote><pre>StopWatch sw1(60);
+StopWatch sw2(10);
+
+  <font color="#003399"><i>// Multiply two StopWatches</i></font>
+StopWatch sw3 = sw1 * sw2;
+</pre></blockquote>
+
+<!--
+No. You can't convert a StopWatch to an int. (Need operator int() for that)
+-->
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Overloaded Operators as Member Functions
+</p>
+
+Up to this point, all of our overloading was done with regular functions (not part of a class). We
+could do this because there was a <i>GetSeconds</i> public method:
+
+<blockquote><pre>StopWatch <b>operator</b>+(<b>const</b> StopWatch&amp; lhs, <b>const</b> StopWatch&amp; rhs)
+{
+    <font color="#003399"><i>// Calls public method</i></font>
+  StopWatch sw(lhs.GetSeconds() + rhs.GetSeconds());
+  <b>return</b> sw;
+}
+</pre></blockquote>
+
+If this method wasn't available, none of this would work. We would need to make member functions: (in <tt>StopWatch.h</tt>)
+<p>
+	
+</p><blockquote><pre><b>class</b> StopWatch
+{
+  <b>public</b>:
+      <font color="#003399"><i>// Public methods ...</i></font>
+
+      <font color="#003399"><i>// Overloaded operators</i></font>
+    StopWatch <b>operator</b>+(<b>const</b> StopWatch&amp; rhs) <b>const</b>;
+    StopWatch <b>operator</b>-(<b>const</b> StopWatch&amp; rhs) <b>const</b>;
+    StopWatch <b>operator</b>*(<b>int</b> rhs) <b>const</b>;
+
+  <b>private</b>:
+    <b>int</b> seconds_;
+};
+</pre></blockquote>
+
+There are two things that are different about the member functions compared to the global ones. What are they? (This is very important to realize)
+<p>
+
+
+Implementations: (in <tt>StopWatch.cpp</tt>)
+</p><blockquote><pre>StopWatch StopWatch::<b>operator</b>+(<b>const</b> StopWatch&amp; rhs) <b>const</b>
+{
+    <font color="#003399"><i>// Add seconds to <b>this</b> object's seconds</i></font>
+  StopWatch sw(seconds_ + rhs.seconds_);
+  <b>return</b> sw;
+}
+
+StopWatch StopWatch::<b>operator</b>-(<b>const</b> StopWatch&amp; rhs) <b>const</b>
+{
+    <font color="#003399"><i>// Subtract from <b>this</b> object's seconds (Maybe check for negative?)</i></font>
+  StopWatch sw(seconds_ - rhs.seconds_);
+  <b>return</b> sw;
+}
+
+StopWatch StopWatch::<b>operator</b>*(<b>int</b> rhs) <b>const</b>
+{
+    <font color="#003399"><i>// Multiply <b>this</b> object's seconds by rhs</i></font>
+  StopWatch sw(seconds_ * rhs);
+  <b>return</b> sw;
+}
+</pre></blockquote>
+
+All of this code works as before:
+<p>
+	
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>"Normal" use</th><th>Functional notation</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>void</b> f1()
+{
+  StopWatch sw1(30);
+  StopWatch sw2(10);
+
+  StopWatch sw3 = sw1 + sw2;
+  StopWatch sw4 = sw1 + 20;
+  StopWatch sw5 = sw1 - sw2;
+  StopWatch sw6 = sw1 - 20;
+  StopWatch sw7 = sw1 * 10;
+
+  sw3.Display(); <font color="#003399"><i>// 00:00:40;</i></font>
+  sw4.Display(); <font color="#003399"><i>// 00:00:50;</i></font>
+  sw5.Display(); <font color="#003399"><i>// 00:00:20;</i></font>
+  sw6.Display(); <font color="#003399"><i>// 00:00:10;</i></font>
+  sw7.Display(); <font color="#003399"><i>// 00:05:00;</i></font>
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>void</b> f2()
+{
+  StopWatch sw1(30);
+  StopWatch sw2(10);
+
+    <font color="#003399"><i>// Functional notation</i></font>
+  StopWatch sw3 = sw1.<b>operator</b>+(sw2);
+  sw3.Display(); <font color="#003399"><i>// 00:00:40</i></font>
+
+    <font color="#003399"><i>// Functional notation</i></font>
+  StopWatch sw4 = sw1.<b>operator</b>+(20);
+  sw4.Display(); <font color="#003399"><i>// 00:00:50</i></font>
+
+    <font color="#003399"><i>// Functional notation</i></font>
+  StopWatch sw7 = sw1.<b>operator</b>*(10);
+  sw5.Display(); <font color="#003399"><i>// 00:05:00</i></font>
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+What about this now?
+</p><blockquote><pre>StopWatch sw1(30);
+
+  <font color="#003399"><i>// What about this?</i></font>
+StopWatch sw2 = 2 + sw1;
+</pre></blockquote>
+
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Non-member functions</th><th>Member function</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>StopWatch <b>operator</b>+(<b>const</b> StopWatch&amp; lhs, 
+                    <b>const</b> StopWatch&amp; rhs)
+{
+  StopWatch sw(lhs.GetSeconds() + rhs.GetSeconds());
+  <b>return</b> sw;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>StopWatch StopWatch::<b>operator</b>+(<b>const</b> StopWatch&amp; rhs) <b>const</b>
+{
+    <font color="#003399"><i>// Add seconds to this object's seconds</i></font>
+  StopWatch sw(seconds_ + rhs.seconds_);
+  <b>return</b> sw;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+With the global function, the functional notation looks like this:
+<blockquote><pre>StopWatch sw2 = <b>operator</b>+(2, sw1); 
+</pre></blockquote>
+
+which converts to this:
+
+<blockquote><pre>StopWatch sw2 = <b>operator</b>+(StopWatch(2), sw1); 
+</pre></blockquote>
+
+But with built-in types, there are no member functions, so it can't even attempt this:
+<blockquote><pre>StopWatch sw2 = 2.<b>operator</b>+(sw1);
+</pre></blockquote>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Overloading <tt>operator&lt;&lt;</tt>
+</p>
+
+Although the <i>Display</i> method is nice, we'd like to output the C++ way:
+
+<blockquote><pre>StopWatch sw1(60);
+
+   <font color="#003399"><i>// Works just fine</i></font>
+sw1.Display();
+
+  <font color="#003399"><i>// But we'd like to do this</i></font>
+std::cout &lt;&lt; sw1;
+</pre></blockquote>
+
+<p>
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS170/error-missing-ostream.html">Error message</a> from that line above.
+</p><p>
+	
+Time for another overload: (This code is almost identical to the code in <i>Display</i>)
+
+</p><blockquote><pre>std::ostream&amp; <b>operator</b>&lt;&lt;(std::ostream&amp; os, <b>const</b> StopWatch&amp; sw)
+{
+    <font color="#003399"><i>// Get the seconds from the object</i></font>
+  <b>int</b> seconds_ = sw.GetSeconds();
+
+    <font color="#003399"><i>// Calculate hrs/mins/secs</i></font>
+  <b>int</b> hours, minutes, seconds;
+  hours = seconds_ / 3600;
+  minutes = (seconds_ - (hours * 3600)) / 60;
+  seconds = seconds_ % 60;
+
+    <font color="#003399"><i>// Print them</i></font>
+  os.fill(<font color="#9933CC">'0'</font>);
+  os &lt;&lt; std::setw(2) &lt;&lt; hours &lt;&lt; <font color="#9933CC">':'</font>;
+  os &lt;&lt; std::setw(2) &lt;&lt; minutes &lt;&lt; <font color="#9933CC">':'</font>;
+  os &lt;&lt; std::setw(2) &lt;&lt; seconds &lt;&lt; std::endl;
+
+    <font color="#003399"><i>// Must return the ref to ostream</i></font>
+  <b>return</b> os;
+}
+</pre></blockquote>
+
+These are the same now:
+<p>
+	
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>  <font color="#003399"><i>// "Infix" notation</i></font>
+std::cout &lt;&lt; sw1;
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>  <font color="#003399"><i>// Functional notation (global function)</i></font>
+<b>operator</b>&lt;&lt;(std::cout, sw1);
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+
+We can also support this:
+
+</p><blockquote><pre>StopWatch sw1(60);
+StopWatch sw2(100);
+StopWatch sw3(200);
+
+  <font color="#003399"><i>// Output:</i></font>
+  <font color="#003399"><i>//   00:01:00</i></font>
+  <font color="#003399"><i>//   00:01:40</i></font>
+  <font color="#003399"><i>//   00:03:20</i></font>
+std::cout &lt;&lt; sw1 &lt;&lt; sw2 &lt;&lt; sw3;
+</pre></blockquote>
+
+
+What if the <i>GetSeconds</i> method was removed (or made private)? Make the method a member function?
+<p>
+This is what the funtional notation looks like for a member function:
+</p><blockquote><pre>  <font color="#003399"><i>// Functional notation (member function)</i></font>
+std::cout.<b>operator</b>&lt;&lt;(sw1);
+</pre></blockquote>
+
+See the problem?
+<p>
+	
+We can't make it a member function of the <tt>StopWatch</tt> class. It would need to be a member of the <tt>ostream</tt> class.
+</p><p>
+	
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><p class="SectionHeader">The <tt>friend</tt> Keyword
+</p>
+	
+Since we can't make the output operator a member of the <tt>ostream</tt> class, we need a way
+to allow the overloaded output operator function to access private members of the <tt>StopWatch</tt> class. We do this by 
+making the overloaded output operator a <i><tt>friend</tt></i> of the <tt>StopWatch</tt> class:
+
+<blockquote><pre><b>class</b> StopWatch
+{
+  <b>public</b>:
+      <font color="#003399"><i>// Other public stuff ...</i></font>
+
+      <font color="#003399"><i>// Make this function a friend so it can access the private members of this class</i></font>
+    <b>friend</b> std::ostream&amp; <b>operator</b>&lt;&lt;(std::ostream&amp; os, <b>const</b> StopWatch&amp; rhs);
+
+  <b>private</b>:
+    <b>int</b> seconds_;
+};
+</pre></blockquote>
+
+Implementation
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Global overloaded operator (friend function)</th><th>Old member function</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>std::ostream&amp; <b>operator</b>&lt;&lt;(std::ostream&amp; os, <b>const</b> StopWatch&amp; sw)
+{
+  <b>int</b> hours, minutes, seconds;
+
+    <font color="#003399"><i>// A friend can access private members of sw</i></font>
+  hours = sw.seconds_ / 3600;
+  minutes = (sw.seconds_ - (hours * 3600)) / 60;
+  seconds = sw.seconds_ % 60;
+
+    <font color="#003399"><i>// Print them</i></font>
+  os.fill(<font color="#9933CC">'0'</font>);
+  os &lt;&lt; std::setw(2) &lt;&lt; hours &lt;&lt; <font color="#9933CC">':'</font>;
+  os &lt;&lt; std::setw(2) &lt;&lt; minutes &lt;&lt; <font color="#9933CC">':'</font>;
+  os &lt;&lt; std::setw(2) &lt;&lt; seconds &lt;&lt; std::endl;
+
+    <font color="#003399"><i>// Must return a reference to the ostream</i></font>
+  <b>return</b> os;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>void</b> StopWatch::Display() <b>const</b>
+{
+  <b>int</b> hours, minutes, seconds;
+
+    <font color="#003399"><i>// Can access private members of <b>this</b> object</i></font>
+  hours = seconds_ / 3600;
+  minutes = (seconds_ - (hours * 3600)) / 60;
+  seconds = seconds_ % 60;
+
+    <font color="#003399"><i>// Print them</i></font>
+  std::cout.fill(<font color="#9933CC">'0'</font>);
+  std::cout &lt;&lt; std::setw(2) &lt;&lt; hours &lt;&lt; <font color="#9933CC">':'</font>;
+  std::cout &lt;&lt; std::setw(2) &lt;&lt; minutes &lt;&lt; <font color="#9933CC">':'</font>;
+  std::cout &lt;&lt; std::setw(2) &lt;&lt; seconds &lt;&lt; std::endl;
+  
+  
+  
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+<p>
+
+
+Why do we return an <tt>ostream</tt> reference? To support this syntax:
+
+</p><blockquote><pre>int i, j, k;
+
+<font color="#003399"><i>// Set i, j, k</i></font>
+
+cout &lt;&lt; i &lt;&lt; j &lt;&lt; k &lt;&lt; endl;
+</pre></blockquote>
+
+The <tt>&lt;&lt;</tt> operator associates left to right. This is why <b>operator&lt;&lt;</b> must return an <tt>ostream</tt> object.
+The compiler really sees the above as:
+
+<blockquote><pre>int i, j, k;
+
+<font color="#003399"><i>// Set i, j, k</i></font>
+
+(((cout &lt;&lt; i) &lt;&lt; j) &lt;&lt; k) &lt;&lt; endl;
+((     cout   &lt;&lt; j) &lt;&lt; k) &lt;&lt; endl;
+(            cout   &lt;&lt; k) &lt;&lt; endl;
+                   cout   &lt;&lt; endl;      
+</pre></blockquote>
+
+
+
+
+
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+
+<p>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><p class="SectionHeader">Automatic Conversions and User-Defined Types
+</p>
+
+Recall that a single-argument constructor is called a <i>conversion constructor</i> because it
+"converts" its argument into an object of the class type. 
+<p>
+
+</p><blockquote><pre><b>void</b> f1()
+{
+  StopWatch sw1; <font color="#003399"><i>// Default constructor</i></font>
+
+  sw1 = 60; <font color="#003399"><i>// same as sw1 = (StopWatch)60;</i></font>
+            <font color="#003399"><i>// same as sw1 = StopWatch(60);</i></font>
+}
+</pre></blockquote>
+
+
+Another example:
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Function expects StopWatch</th><th>Call the function</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>void</b> fooSW(<b>const</b> StopWatch&amp; sw)
+{
+  <font color="#003399"><i>// Do something with sw</i></font>
+  sw.Display();
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>StopWatch sw1(60);
+<b>int</b> time = 90;
+
+  <font color="#003399"><i>// Pass StopWatch</i></font>
+fooSW(sw1);
+
+  <font color="#003399"><i>// Convert int to StopWatch</i></font>
+fooSW(time);
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+Both examples convert the integer to a StopWatch automatically and silently.
+However, the opposite isn't the same thing:
+<p>
+	
+</p><blockquote><pre><b>void</b> f1()
+{
+  StopWatch sw1;
+
+  <b>int</b> seconds1 = sw1;       <font color="#003399"><i>// Error, how do you convert StopWatch to int?</i></font>
+  <b>int</b> seconds2 = (<b>int</b>) sw1; <font color="#003399"><i>// Error, how do you convert StopWatch to int?</i></font>
+}
+</pre></blockquote>
+
+
+Microsoft:
+<blockquote><pre>'initializing' : cannot convert from 'StopWatch' to 'int'
+'type cast' : cannot convert from 'StopWatch' to 'int'
+</pre></blockquote>
+
+GNU:
+<blockquote><pre>error: cannot convert 'StopWatch' to 'int' in initialization
+error: 'class StopWatch' used where a 'int' was expected
+</pre></blockquote>
+
+<!-- 
+Borland:
+<blockquote><pre>
+Cannot convert 'StopWatch' to 'int' in function f1()
+Cannot cast from 'StopWatch' to 'int' in function f1()
+</pre></blockquote>
+-->
+
+<b>Q:</b> What to do?
+<br>
+<b>A:</b> Same as always, create <b>YAF</b>. (<b>Y</b>et <b>A</b>nother <b>F</b>unction)
+<p>
+We'll call the function <i>ToInt</i> because it will convert a <i>StopWatch</i> into an <i>int</i>:
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Declaration</th><th>Implementation</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>class</b> StopWatch
+{
+  <b>public</b>:
+      <font color="#003399"><i>// Other public methods ...</i></font>
+
+      <font color="#003399"><i>// Convert to int (explicit)</i></font>
+    <b>int</b> ToInt() <b>const</b>;
+
+  <b>private</b>:
+    <b>int</b> seconds_;
+};
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>int</b> StopWatch::ToInt() <b>const</b>
+{
+  <b>return</b> seconds_;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+Sample usage:
+</p><blockquote><pre><b>void</b> f2()
+{
+  StopWatch sw1(60);
+
+    <font color="#003399"><i>// Convert to an int <b>explicitly</b></i></font>
+  <b>int</b> seconds = sw1.ToInt();
+  std::cout &lt;&lt; seconds &lt;&lt; std::endl;
+}
+</pre></blockquote>
+
+
+If we want the compiler to perform the conversions (casts) <i>automatically</i>, then
+we have to give the function a special name. (Not unlike overloaded operator functions.)
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Declaration</th><th>Implementation</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>class</b> StopWatch
+{
+  <b>public</b>:
+      <font color="#003399"><i>// Other public methods</i></font>
+
+      <font color="#003399"><i>// Conversion function (implicit)</i></font>
+    <b>operator</b> <b>int</b>() <b>const</b>;
+
+  <b>private</b>:
+    <b>int</b> seconds_;
+};
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>StopWatch::<b>operator</b> <b>int</b>() <b>const</b>
+{
+  <b>return</b> seconds_;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+<p>
+	
+Sample usage:
+</p><blockquote><pre><b>void</b> f3()
+{
+  StopWatch sw1(60);
+
+    <font color="#003399"><i>// Convert to an int implicitly</i></font>
+  <b>int</b> seconds = sw1;
+  std::cout &lt;&lt; seconds &lt;&lt; std::endl;
+}
+</pre></blockquote>
+
+General form:
+<blockquote><pre><b>operator</b> <i>type</i><b>()</b>
+</pre></blockquote>
+
+<ul>
+<li>The conversion function must be a member function (not global)
+</li><li>There are no arguments. You may specify <b>void</b> for the arguments, but it's not required.
+</li><li>There is no return type and you cannot even specify <b>void</b> for the return type.
+</li></ul>
+
+You must be careful when allowing the compiler to perform automatic conversions for you. These
+conversions will take place <i>silently</i> and may lead to unintended behavoir. Here's an example
+from the textbook:
+<p>
+	
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>int</b> array[10];
+StopWatch temp1(60);
+
+<font color="#003399"><i>// Other code...</i></font>
+
+<b>int</b> temp2 = 0;
+
+<font color="#003399"><i>// Other code...</i></font>
+
+<b>int</b> value = array[temp1];
+std::cout &lt;&lt; value &lt;&lt; std::endl;
+
+<b>int</b> swval = temp1;
+std::cout &lt;&lt; swval &lt;&lt; std::endl;
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>Output:</b>
+2281060
+60
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+If we remove the implicit conversion function and only have the explicit one, this error
+would be detected by the compiler:
+
+</p><blockquote><pre>error: no match for 'operator[]' in 'array[temp1]'
+error: cannot convert `StopWatch' to `int' in initialization
+</pre></blockquote>
+
+We can still convert a <i>StopWatch</i> to an integer explicitly:
+<blockquote><pre><b>int</b> array[10];
+StopWatch temp1(60);
+
+<font color="#003399"><i>// Other code...</i></font>
+
+<b>int</b> temp2 = 0;
+
+<font color="#003399"><i>// Other code...</i></font>
+
+<b>int</b> value = array[temp2];  <font color="#003399"><i>// correct</i></font>
+std::cout &lt;&lt; value &lt;&lt; std::endl;
+
+<b>int</b> swval = temp1.ToInt(); <font color="#003399"><i>// explicit</i></font>
+std::cout &lt;&lt; swval &lt;&lt; std::endl;
+</pre></blockquote>
+
+
+We can also instruct the compiler not to automatically convert an integer to a StopWatch:
+
+
+<blockquote><pre><b>class</b> StopWatch
+{
+  <b>public</b>:
+      <font color="#003399"><i>// Constructors</i></font>
+    StopWatch();
+
+      <font color="#003399"><i>// Suppress automatic conversions</i></font>
+    <b>explicit</b> StopWatch(<b>int</b> seconds);
+
+    StopWatch(<b>int</b> hours, <b>int</b> minutes, <b>int</b> seconds);
+
+    <font color="#003399"><i>// Other public methods</i></font>
+
+  <b>private</b>:
+    <b>int</b> seconds_;
+};
+</pre></blockquote>
+
+<p>
+
+Given this function from before:
+
+</p><blockquote><pre><b>void</b> fooSW(<b>const</b> StopWatch&amp; sw)
+{
+  <font color="#003399"><i>// Do something with sw</i></font>
+  sw.Display();
+}
+</pre></blockquote>
+
+<p>	
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Illegal</th><th>Legal</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>int</b> time = 90;
+
+  <font color="#003399"><i>// Error: No implicit conversions</i></font>
+fooSW(time);
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>int</b> time = 90;
+
+  <font color="#003399"><i>// OK: Explicit conversion</i></font>
+fooSW(StopWatch(time));
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+</p><blockquote>
+<p class="technote">
+C++11 has added the ability to mark conversion functions <b><i>explicit</i></b> 
+(like conversion constructors). This means you can use the C++-style of explicit casting
+without having the problem of the compiler doing it unintentionally.
+</p>
+</blockquote>
+
+For example, the StopWatch class can make the conversion function explicit:
+
+<blockquote><pre>  <font color="#003399"><i>// Conversion function (explicit)</i></font>
+<b>explicit</b> <b>operator</b> <b>int</b>() <b>const</b>;
+</pre></blockquote>
+
+
+Sample usage:
+<blockquote><pre>StopWatch sw1(60);
+  
+<b>int</b> seconds = sw1;       <font color="#003399"><i>// Error: Can't convert to an int implicitly</i></font>
+<b>int</b> seconds = <b>int</b>(sw1); <font color="#003399"><i>// OK: Explicit conversion</i></font>
+
+</pre></blockquote>
+
+
+	
+<blockquote><pre></pre></blockquote>
+
+
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<!--
+
+more conversion constructor
+explicit keyword
+
+explicit conversion functions (e.g. ToDouble)
+implicit conversion functions (casting, e.g. double())
+
+
+-->
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Overloading Operators with Side-effects
+</p>
+
+Up to this point:
+<ul>
+<li>All of our operators created a new object.
+</li><li>This means that the functions returned the object by value.
+</li><li>The operands were not modified in anyway (which makes sense):
+	
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Using integers</th><th>Using StopWatches</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>void</b> f6()
+{
+  <b>int</b> a = 1;
+  <b>int</b> b = 2;
+  <b>int</b> c;
+    
+    <font color="#003399"><i>// New value stored in c.</i></font>
+    <font color="#003399"><i>// a and b are unchanged.</i></font>
+  c = a + b;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>void</b> f5()
+{
+  StopWatch sw1(30);
+  StopWatch sw2(60);
+  
+    <font color="#003399"><i>// New object is created</i></font>
+    <font color="#003399"><i>// sw1 and sw2 unchanged</i></font>
+  StopWatch sw3 = sw1 + sw2;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+</li><li>We would like to support <i>side-effect</i> operators like this:
+	
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Using integers</th><th>Using StopWatches</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>void</b> f7()
+{
+  <b>int</b> a = 5;
+  <b>int</b> b = 7;
+
+    <font color="#003399"><i>// a is changed</i></font>
+    <font color="#003399"><i>// b is unchanged</i></font>
+  a += b;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>void</b> f8()
+{
+  StopWatch sw1(30);
+  StopWatch sw2(60);
+  
+    <font color="#003399"><i>// sw1 is changed</i></font>
+    <font color="#003399"><i>// sw2 is unchanged</i></font>
+  sw1 += sw2;  
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+	
+
+</li></ul>
+
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Declarations</th><th>Implementations</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>class</b> StopWatch
+{
+  <b>public</b>:
+      <font color="#003399"><i>// Overload for: sw1 + sw2</i></font>
+    StopWatch <b>operator</b>+(<b>const</b> StopWatch&amp; rhs) <b>const</b>;
+
+      <font color="#003399"><i>// Overload for: sw1 += sw2</i></font>
+    StopWatch&amp; <b>operator</b>+=(<b>const</b> StopWatch&amp; rhs);
+
+      <font color="#003399"><i>// Other public methods ...</i></font>
+
+  <b>private</b>:
+    <b>int</b> seconds_;
+};
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>StopWatch StopWatch::<b>operator</b>+(<b>const</b> StopWatch&amp; rhs) <b>const</b>
+{
+    <font color="#003399"><i>// Create a new object from both operands</i></font>
+  StopWatch sw(seconds_ + rhs.seconds_);
+  <b>return</b> sw;
+}
+
+StopWatch&amp; StopWatch::<b>operator</b>+=(<b>const</b> StopWatch&amp; rhs)
+{
+    <font color="#003399"><i>// Modify this object directly</i></font>
+  seconds_ += rhs.seconds_;
+  <b>return</b> *<b>this</b>;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+
+Things to notice:
+<ul>
+<li>The method is not marked <b>const</b> because we are changing the object.
+</li><li>The return type is a reference because we are not creating a new object.
+</li><li>We return the reference so that we can support this valid syntax:
+<p>
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Using integers</th><th>Using StopWatches</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>void</b> f9()
+{
+  <b>int</b> a = 1;
+  <b>int</b> b = 2;
+  <b>int</b> c = 3;
+
+    <font color="#003399"><i>// Associates right to left</i></font>
+    <font color="#003399"><i>// Changes a and b</i></font>
+  a += b += c;
+
+  std::cout &lt;&lt; a &lt;&lt; std::endl; <font color="#003399"><i>// 6</i></font>
+  std::cout &lt;&lt; b &lt;&lt; std::endl; <font color="#003399"><i>// 5</i></font>
+  std::cout &lt;&lt; c &lt;&lt; std::endl; <font color="#003399"><i>// 3</i></font>
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>void</b> f10()
+{
+  StopWatch sw1(30);
+  StopWatch sw2(60);
+  StopWatch sw3(90);
+  
+    <font color="#003399"><i>// Associates right to left</i></font>
+    <font color="#003399"><i>// Changes sw1 and sw2</i></font>
+  sw1 += sw2 += sw3;
+
+  std::cout &lt;&lt; sw1; <font color="#003399"><i>// 00:03:00</i></font>
+  std::cout &lt;&lt; sw2; <font color="#003399"><i>// 00:02:30</i></font>
+  std::cout &lt;&lt; sw3; <font color="#003399"><i>// 00:01:30</i></font>
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+	
+</p></li><li>If the function returned <b>void</b>, this syntax would be illegal.
+</li><li>Since <tt><b>this</b></tt> is a <i>pointer</i> to the object, <tt><b>*this</b></tt> is
+	the object, and that's what we want to return a reference to.
+</li><li>We'll see this technique more.
+</li></ul>
+
+
+<p class="technote">
+<b>Challenge Question:</b> How will you overload the pre/post increment operators to support this code?
+</p>
+
+<blockquote><pre><b>void</b> foo()
+{
+  StopWatch sw1(60);
+
+    <font color="#003399"><i>// Pre increment </i></font>
+    <font color="#003399"><i>// afterwards sw2 == sw1</i></font>
+  StopWatch sw2 = ++sw1;
+  std::cout &lt;&lt; sw1; <font color="#003399"><i>// 00:01:01</i></font>
+  std::cout &lt;&lt; sw2; <font color="#003399"><i>// 00:01:01</i></font>
+
+    <font color="#003399"><i>// Post increment </i></font>
+    <font color="#003399"><i>// afterwards sw2 != sw1</i></font>
+  sw2 = sw1++;
+  std::cout &lt;&lt; sw1; <font color="#003399"><i>// 00:01:02</i></font>
+  std::cout &lt;&lt; sw2; <font color="#003399"><i>// 00:01:01</i></font>
+
+    <font color="#003399"><i>// Fails to compile. Same as this: ++(sw1++) </i></font>
+  sw2 = ++sw1++;
+
+    <font color="#003399"><i>// Pre and post increment </i></font>
+    <font color="#003399"><i>// afterwards sw2 != sw1</i></font>
+  sw2 = (++sw1)++;
+  std::cout &lt;&lt; sw1; <font color="#003399"><i>// 00:01:04</i></font>
+  std::cout &lt;&lt; sw2; <font color="#003399"><i>// 00:01:03</i></font>
+}
+</pre></blockquote>
+
+<a href="http://azrael.digipen.edu/~mmead/www/docs/OperatorPrecedence-CPP.html">Operator precedence chart for C++</a> will help you understand why one of the expressions fails to compile.
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Member, Friend, or Non-member?
+</p>
+
+
+In most cases, you have three choices when overloading operators: 1) member, 2) friend, 3) non-member/non-friend (global or in a namespace)
+<ol>
+<li>Implement the overloaded operator in the class (binary operators have will take one operand. The left operand is implicit via <b>this</b>)</li>
+<ul>
+  <li>Unary operators will not take any parameters.</li>
+</ul>
+
+<li>Declare a friend function to overload the operator and implement it outside of the class (binary operator will have two operands)
+	<ul>
+		<li>The friend function has access to the private members of the parameters
+	</li></ul>
+</li><li>Implement a non-member, non-friend function to overload the operator (binary operator will have two operands)
+	<ul>
+		<li>The function can only access the public methods of the class.
+	</li></ul>
+</li></ol>
+<!--
+The number of operands above assume the operator is a binary operator that requires two operands. 
+-->
+<p>
+</p><p>
+
+<b>Member function:</b>
+</p><blockquote><pre>StopWatch StopWatch::<b>operator</b>*(<b>int</b> factor) <b>const</b>
+{
+  StopWatch sum(seconds_ * factor);
+  <b>return</b> sum;
+}
+</pre></blockquote>
+
+
+<b>Friend function:</b>
+<blockquote><pre>StopWatch <b>operator</b>*(<b>int</b> factor, <b>const</b> StopWatch &amp;sw)
+{
+  StopWatch sum(sw.seconds_ * factor);
+  <b>return</b> sum;
+}
+</pre></blockquote>
+
+<b>Non-member, non-friend function</b>: (If there is a public gettor)
+<blockquote><pre>StopWatch <b>operator</b>*(<b>int</b> factor, <b>const</b> StopWatch &amp;sw)
+{
+  StopWatch sum(sw.GetSeconds() * factor);
+  <b>return</b> sum;
+}
+</pre></blockquote>
+
+To implement a non-member, non-friend function, we can actually take a "shortcut" and just 
+create a "regular" overloaded operator function in certain situations:
+<p>
+	
+<b>Non-member, non-friend function</b>: (If there is a member <tt>operator*</tt>)
+</p><blockquote><pre>StopWatch <b>operator</b>*(<b>int</b> factor, <b>const</b> StopWatch &amp;sw)
+{
+  <font color="#003399"><i>// the compiler sees it like this: sw.operator*(factor)</i></font>
+  <b>return</b> sw * factor; 
+}
+</pre></blockquote>
+
+<center>
+<blockquote>
+<p class="technote">
+<b>Study these four functions above and be sure you understand exactly how each one is different and why. Also make sure you know why some functions have 1 parameter and some have 2 parameters.</b>
+</p>
+</blockquote>
+</center>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Restrictions on Operator Overloading
+</p>
+
+<ol>
+<li>At least one operand must be a user-defined type. This means you can't overload the built-in types.
+
+<blockquote><pre><font color="#003399"><i>// Compiler error: Cannot overload built-in operators for int</i></font>
+<b>int</b> <b>operator</b>+(<b>int</b> left, <b>int</b> right);
+</pre></blockquote>
+
+</li><li>You can't violate the C++ syntax rules for the operator you wish to overload. This means that if you
+overload the modulus operator (%), you can't use it with just a single operand (modulus is a binary operator):
+<blockquote><pre><b>int</b> i;
+StopWatch sw;
+
+% i;  <font color="#003399"><i>// % requires 2 integer operands</i></font>
+% sw; <font color="#003399"><i>// if overloaded for StopWatch, % would require 2 operands</i></font></pre></blockquote>
+
+This also means that you can't change the precedence or associativity of an operator.
+<p>
+
+</p></li><li>You can't create new operator symbols. As mentioned above, the '@' character (at sign) isn't a C++ operator
+for the built-in types, so you can't define it for a user-defined type. Bummer.
+<p>
+	
+</p></li><li>You cannot overload the <a href="http://www.stroustrup.com/bs_faq2.html#overload-dot">following operators</a>:
+<blockquote><pre>::                   Scope resolution operator
+.*                   Pointer-to-member operator
+.                    Membership operator
+?:                   Conditional operator
+sizeof               The sizeof operator
+typeid               A RTTI operator
+const_cast           A type cast operator 
+dynamic_cast         A type cast operator
+reinterpret_cast     A type cast operator
+static_cast          A type cast operator
+</pre></blockquote>
+
+</li><li>Most operators can be overloaded using either member or non-member functions. The following 
+operators can <i>only</i> be overloaded with member functions.
+<blockquote><pre>=   Assignment operator  
+()  Function call operator
+[]  Subscripting operator
+-&gt;  Class member access by pointer operator
+</pre></blockquote>
+
+</li><li>That leaves these operators that can be overloaded:
+<blockquote><pre>+      -      *      /      %      ^      &amp;      |
+~=     !      =      &lt;      &gt;      +=     -=     *=
+/=     %=     ^=     &amp;=     |=     &lt;&lt;     &gt;&gt;     &gt;&gt;=
+&lt;&lt;=    ==     !=     &lt;=     &gt;=     &amp;&amp;     ||     ++
+--     ,      -&gt;*    -&gt;     ()     []     new    delete
+new []  delete []
+</pre></blockquote>
+</li></ol>
+
+<b>Notes:</b>
+<ul>
+	<li>A binary operator must be implemented either by a member function taking one parameter or by a non-member function taking two parameters.</li>
+	<ul>
+		<li>The exceptions are the 4 operators above that must be implemented as member functions.</li>
+	</ul>
+	<li>A unary operator (prefix) must be implemented either by a member function taking no parameters or by a non-member function taking one parameter</li>
+	<li>Remember that <b>friend</b> functions are non-member functions (so they can't be marked <b>const</b>).</li>
+</ul>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Member Initialization List
+</p>
+
+A simple Point class that uses the constructor to give values to the private data:
+<p>
+	
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Declaration</th><th>Implementation</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>class</b> Point
+{
+  <b>public</b>:
+    Point(<b>int</b> x = 0, <b>int</b> y = 0);
+
+  <b>private</b>:
+    <b>int</b> x_;
+    <b>int</b> y_;
+};
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>Point::Point(<b>int</b> x, <b>int</b> y)
+{
+  x_ = x;  <font color="#003399"><i>// assignment</i></font>
+  y_ = y;  <font color="#003399"><i>// assignment</i></font>
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+Constructors can use an <i>initializer list</i> to <b>initialize</b> data members:
+
+</p><blockquote><pre>Point::Point(<b>int</b> x, <b>int</b> y) : x_(x), y_(y)
+{
+}
+</pre></blockquote>
+
+The result for this example is the same as the first constructor above.
+<p>
+
+
+
+Look at the class below. What is wrong with the constructor? (The compiler will give errors.)
+</p><p>
+	
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Class definition</th><th>Constructor implementation</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>class</b> Foo
+{
+  <b>public</b>:
+    Foo(<b>int</b> x, <b>int</b> y, <b>int</b>&amp; z);
+
+  <b>private</b>:
+    <b>int</b> x_;
+    <b>const</b> <b>int</b> y_;
+    <b>int</b>&amp; z_;
+};
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>Foo::Foo(<b>int</b> x, <b>int</b> y, <b>int</b>&amp; z)
+{
+  x_ = x;  <font color="#003399"><i>// assignment</i></font>
+  y_ = y;  <font color="#003399"><i>// assignment</i></font>
+  z_ = z;  <font color="#003399"><i>// assignment</i></font>
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+Simple usage:
+</p><blockquote><pre><b>void</b> f20()
+{
+  Point pt;         <font color="#003399"><i>// 0,0,0</i></font>
+  
+  <b>int</b> a = 1, b = 2, c = 3;
+  Foo foo(a, b, c); <font color="#003399"><i>// 1,2,3</i></font>
+}
+</pre></blockquote>
+<br>
+<br>
+
+These are the error messages given:
+
+<blockquote><pre>error: uninitialized member 'Foo::y_' with 'const' type 'const int'
+error: uninitialized reference member 'Foo::z_'
+error: assignment of read-only data-member 'Foo::y_'
+</pre></blockquote>
+
+Constants and references <i>must</i> be initialized via the initializer list (otherwise, it's an assignment, which is illegal).
+
+<blockquote><pre>Foo::Foo(<b>int</b> x, <b>int</b> y, <b>int</b>&amp; z) : y_(y), z_(z)  <font color="#003399"><i>// initialization</i></font>
+{
+  x_ = x;  <font color="#003399"><i>// assignment</i></font>
+}
+</pre></blockquote>
+
+Some people prefer to initialize all members in the list:
+
+<blockquote><pre>Foo::Foo(<b>int</b> x, <b>int</b> y, <b>int</b>&amp; z) : y_(y), z_(z), x_(x)  <font color="#003399"><i>// initialization</i></font>
+{
+}
+</pre></blockquote>
+
+Note that g++ will give you a warning with the above code:
+
+<blockquote><pre>warning: `Foo::z_' will be initialized after
+warning:   `int Foo::x_'
+warning:   when initialized here
+</pre></blockquote>
+
+The proper way:
+
+<blockquote><pre>Foo::Foo(<b>int</b> x, <b>int</b> y, <b>int</b>&amp; z) : x_(x), y_(y), z_(z)
+{
+}
+</pre></blockquote>
+
+Notes:
+<ul>
+<li>The members are initialized <b>in the order they are declared</b> in the class. 
+</li><li>You can put members in the initializer list in any order, but it won't change the initialization order.
+</li><li>This can be a potential problem when one member relies on another:
+
+<blockquote><pre>Foo::Foo(<b>int</b> x, <b>int</b> y, <b>int</b>&amp; z) : x_(x), z_(z), y_(y * z_)
+{
+  std::cout &lt;&lt; x_ &lt;&lt; std::endl;
+  std::cout &lt;&lt; y_ &lt;&lt; std::endl;
+  std::cout &lt;&lt; z_ &lt;&lt; std::endl;
+}
+</pre></blockquote>
+
+Output:
+<blockquote><pre>1
+4561296
+3
+</pre></blockquote>
+</li><li>You <i>must</i> initialize constants and references in the initializer lists. Also, if you have constants or references in your class:
+	<ul>
+		<li>The compiler will not generate a default constructor for you.
+		</li><li>The compiler will not generate a default assignment operator for you. (We'll see this next.)
+		</li><li>However, you can create these yourself so that they "do the right thing."
+	</li></ul>
+</li></ul>
+
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+
+
+
+
+<blockquote><pre></pre></blockquote>
+
+
+
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<tt><b></b></tt>
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+
+</body></html>

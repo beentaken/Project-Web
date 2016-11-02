@@ -1,0 +1,25 @@
+Mon Nov  9 20:23:38 PST 2015
+====================================================
+Archive:  ../2015-11-09-20-23-38.zip
+  inflating: typescript              
+  inflating: matrix-thread.c         
+  inflating: main-thread.c           
+  inflating: matrix-thread.h         
+Checking content of 2015-11-09-20-23-38.zip
+main-thread.c found
+matrix-thread.c found
+matrix-thread.h found
+typescript found
+====================================================
+Mon Nov  9 20:23:38 PST 2015
+
+
+Archive:  ../2015-11-09-20-23-38.zip
+  inflating: main-thread.c           
+  inflating: matrix-thread.c         
+  inflating: matrix-thread.h         
+  inflating: typescript              
+======== COMPILE gcc0 ==============
+gcc -o threads-damien.baca.exe  main-thread.c matrix-thread.c -Werror -Wall -Wextra -ansi -pedantic -pthread -O
+=========RUN=================
+======END REPORT=============

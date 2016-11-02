@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="../../../D_style.css">
+<link rel="icon" href="./Independent_Notes_Directory_files/Logo.ico">
+</head>
+
+<body style="background-color: #1a1a1a">
+
+<div style="font-family:Helvetica; color:white;">
+
+<p class="heading"><b>C++14 :</b> Generic Lambda Functions</p>
+<pre class="SourceCode"><code>
+#include &lt;iostream&gt;
+#include &lt;algorithm&gt;
+#include &lt;vector&gt;
+
+<b>using</b> namespace std;
+<b>int</b> main()
+{	
+	  // Generic Lambda Display
+	<b>auto</b> display = [](<b>auto</b> x){std::cout << x << " ";};
+
+	  // Vector Decleration
+	vector&lt;<b>int</b>&gt; a = {1, 2, 3, 4, 5};
+	vector&lt;<b>float</b>&gt; b = {1.1f, 2.2f, 3.3f, 4.4f, 5.5f};
+	vector&lt;<b>const char*</b>&gt; c = {"The", "Cake", "Is", "A", "Lie"};
+
+	  // Display a &lt;int&gt;
+	for_each(begin(a), end(a), display);
+	cout << endl;
+
+	  // Display b &lt;float&gt;
+	for_each(begin(b), end(b), display);
+	cout << endl;
+
+	  // Sort c by the first letter of each word
+	sort(begin(c), end(c), [](<b>auto</b> x, auto y){if(x[0] < y[0])<b>return</b> true;<b>return</b> false;});
+	  // Display c &lt;const chat*&gt;
+	for_each(begin(c), end(c), display);
+	cout << endl;
+
+	<b>return</b> 0;
+}
+
+</code></pre>
+
+</pre>
+
+</div>
+</body>
+</html>

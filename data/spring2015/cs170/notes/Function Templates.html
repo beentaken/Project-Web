@@ -1,0 +1,1104 @@
+
+<!-- saved from url=(0073)http://azrael.digipen.edu/~mmead/www/Courses/CS170/FunctionTemplates.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./Function Templates_files/new.css">
+<title>Function Templates</title>
+</head>
+
+<body>  
+<center><h1>Function Templates</h1></center>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Overloaded Functions (review)
+</p>
+
+If we wanted a <b>cube(...)</b> function, this is how we would implement it using <b>overloaded</b> functions:
+<p>
+
+Overloaded functions:
+</p><p>
+	
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>int</b> cube(<b>int</b> val)
+{
+ <b>return</b> val * val * val;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>long</b> cube(<b>long</b> val)
+{
+ <b>return</b> val * val * val;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>float</b> cube(<b>float</b> val)
+{
+ <b>return</b> val * val * val;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>double</b> cube(<b>double</b> val)
+{
+ <b>return</b> val * val * val;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+
+Client usage:
+</p><p>
+
+</p><blockquote><pre><b>int</b> i = cube(2);           <font color="#003399"><i>// cube(int), i is 8</i></font>
+<b>long</b> l = cube(100L);       <font color="#003399"><i>// cube(long), l is 1000000L</i></font>
+<b>float</b> f = cube(2.5f);      <font color="#003399"><i>// cube(float), f is 15.625f</i></font>
+<b>double</b> d = cube(2.34e25);  <font color="#003399"><i>// cube(double), d is 1.2812904e+76</i></font>
+</pre></blockquote>
+
+
+Notes:
+
+<ul>
+<li>Because the compiler can distinguish among the various parameter types, it knows which function to call.
+</li><li>This makes it very convenient for the users: they just need to know about the <b>cube</b> function.
+</li><li>However, this is inconvenient on the programmer who must maintain many "similar" versions of the <b>cube</b> function.
+</li><li>It would be nice if we could specify one function that would be use for all different types.
+</li><li>Fundamentally, we want to <i>reuse the algorithm</i>.
+<ul>
+<li>Instead of <i>code re-use</i>, we'd like some form of <i>algorithm</i> re-use. (Apply the same algorithm to different types.)
+</li></ul>
+</li><li>We can do that and the solution is <i>function templates</i>.
+</li></ul>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Function Templates 
+</p>
+
+Introduction:
+
+<ul>
+<li>A function template is a generic way of describing a function.
+</li><li>You define a function in terms of a generic type instead of a specific type.
+</li><li>This kind of programming is often referred to as <i>generic programming</i>.
+</li><li>Templates are also called <i>parameterized types</i> because you "pass a parameter" to the template
+at compile time and the compiler generates the appropriate code.
+</li></ul>
+
+
+This is our new <b>cube</b> function using a template: (two new keywords are introduced here)
+
+<blockquote><pre><b><font color="blue">template</font></b> &lt;<b><font color="blue">typename</font></b> T&gt; T cube(T value)
+{
+  <b>return</b> value * value * value;
+}
+</pre></blockquote>
+
+<ul>
+<li>The keyword <b>template</b> indicates that the function is a <i>template</i> function.
+</li><li>In between the angle brackets <tt>&lt; &gt;</tt> we put in the "parameter" name using the <b>typename</b> keyword.
+</li><li>The rest of the function is the same except that the types that were specified before (<tt><b>int, float</b></tt>, etc.)
+are now replaced with the name of our parameter, in this case, T.
+</li><li>We can use any name we want as the name of our parameter, just as with ordinary parameters. 
+</li><li>The uppercase letter 'T' is a common name for the type name.
+</li><li>Also, the old-school keyword <b>class</b> can be used in place of the <b>typename</b> keyword. (It
+should be supported by all compilers for backward compatibility.) Note that not 
+all template types are classes.
+</li></ul>
+
+Often, the function template is written with the <b>template</b> and <b>typename</b> keywords on a separate line above so
+as to keep the function "clean" looking:
+
+<blockquote><pre><b>template</b> &lt;<b>typename</b> T&gt; 
+T cube(T value)
+{
+  <b>return</b> value * value * value;
+}
+</pre></blockquote>
+
+Other notes:
+<ul>
+<li>The template above does <i>not</i> generate any code in the program. (Kind of like how a <tt><b>struct</b></tt> or <tt><b>class</b></tt> definition doesn't)
+</li><li>Code is only generated when the <b>cube</b> function is <i>actually needed</i>. (Called from some code.)
+</li><li>This automatic code generation by the compiler is called <i>template instantiation</i>.
+</li><li>If we never call <b>cube(...)</b>, no code is generated for the function and the function doesn't exist in the executable program.
+</li><li>However, if we do this in our program:
+<blockquote><pre><b>int</b> i = cube(2);         
+</pre></blockquote>
+then code similar to this is generated for us:
+<blockquote><pre><b>int</b> cube(<b>int</b> value)
+{
+  <b>return</b> value * value * value;
+}
+</pre></blockquote>
+</li><li>If we do this in our program:
+<blockquote><pre><b>int</b> i = cube(2);         
+<b>long</b> l = cube(100L);     
+<b>float</b> f = cube(2.5f);    
+<b>double</b> d = cube(2.34e25);
+</pre></blockquote>
+then code similar to this is generated for us:
+
+<p>
+<table><tbody><tr><td>
+<blockquote><pre><b>int</b> cube(<b>int</b> value)
+{
+  <b>return</b> value * value * value;
+}
+
+<b>long</b> cube(<b>long</b> value)
+{
+  <b>return</b> value * value * value;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>float</b> cube(<b>float</b> value)
+{
+  <b>return</b> value * value * value;
+}
+
+<b>double</b> cube(<b>double</b> value)
+{
+  <b>return</b> value * value * value;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+</p></li></ul>
+Details:
+
+<ul>
+<li>A template is a way of describing to the compiler <i>how</i> to generate functions (if and when they
+are needed).
+
+</li><li>You need to make sure that the compiler knows about your template functions <i>before</i> you
+call them. Most compilers require you to define them before using them.
+
+</li><li>The resulting generated executable program is not any smaller using templated functions.
+</li><li>The compiler generates (expands) all of the functions and these will be placed into
+the program.
+</li><li>The compiler is just "writing" the overloaded functions for you, based on the "template"
+you've given it.
+</li><li>All of the work is done implicitly, and the generation of code by the compiler is
+known as <i>implicit instantiation</i>. (As opposed to <i>explicit</i> instantiation. More 
+on that later.)
+</li></ul>
+
+<!--
+This is very different from class templates where the user <i>must</i> specify the
+type of class to instantiate. We'll see that sometimes the compile can't deduce all of the types for
+a function template.
+-->
+<p>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><p class="SectionHeader">Automatic Type Deduction
+</p>
+
+Note that often the compiler can deduce the types of the arguments (and hence, the type of <b>T</b>) from
+the parameters. However, sometimes the compiler can't figure it out and generates an error (see below).
+<p>
+Let's modify the templated <b>cube</b> function to see what types are actually being passed in:
+
+</p><blockquote><pre><b>#include</b> &lt;typeinfo&gt;
+
+<b>template</b> &lt;<b>typename</b> T&gt; 
+T cube(T value)
+{
+  std::cout &lt;&lt; <font color="#9933CC">"cube&lt;"</font> &lt;&lt; <b>typeid</b>(T).name() &lt;&lt; <font color="#9933CC">"&gt;"</font> &lt;&lt; std::endl;
+  <b>return</b> value * value * value; 
+}
+</pre></blockquote>
+
+<a href="http://azrael.digipen.edu/~mmead/www/docs/OperatorPrecedence-CPP.html">Operator precedence chart for C++</a>
+<p>
+Sample code:
+
+</p><blockquote><pre><b>void</b> f2(<b>void</b>)
+{
+    <font color="#003399"><i>// Compiler deduction</i></font>
+              <font color="#003399"><i>//  Microsoft       Borland        GNU/Clang</i></font>
+  cube(2);    <font color="#003399"><i>// cube&lt;int&gt;      cube&lt;int&gt;      cube&lt;i&gt;</i></font>
+  cube(2.0f); <font color="#003399"><i>// cube&lt;float&gt;    cube&lt;float&gt;    cube&lt;f&gt;</i></font>
+  cube(2.0);  <font color="#003399"><i>// cube&lt;double&gt;   cube&lt;double&gt;   cube&lt;d&gt;</i></font>
+  cube(<font color="#9933CC">'A'</font>);  <font color="#003399"><i>// cube&lt;char&gt;     cube&lt;char&gt;     cube&lt;c&gt;</i></font>
+
+    <font color="#003399"><i>// Explicit call</i></font>
+                   <font color="#003399"><i>//  Microsoft       Borland        GNU/Clang</i></font>
+  cube&lt;<b>int</b>&gt;(2);    <font color="#003399"><i>// cube&lt;int&gt;      cube&lt;int&gt;      cube&lt;i&gt;</i></font>
+  cube&lt;<b>double</b>&gt;(2); <font color="#003399"><i>// cube&lt;double&gt;   cube&lt;double&gt;   cube&lt;d&gt;</i></font>
+  cube&lt;<b>int</b>&gt;(2.1);  <font color="#003399"><i>// cube&lt;int&gt;      cube&lt;int&gt;      cube&lt;i&gt;     (warning)</i></font>
+}
+</pre></blockquote>
+
+As you can see, the actual string that is printed out is dependent on the compiler.
+<p>
+Of course, you can always cast the parameter to force a particular call:
+
+</p><blockquote><pre>  <font color="#003399"><i>// Casting will force it as well</i></font>
+                              <font color="#003399"><i>//  Microsoft       Borland        GNU/Clang</i></font>
+cube(<b>static_cast</b>&lt;<b>int</b>&gt;(2));    <font color="#003399"><i>// cube&lt;int&gt;      cube&lt;int&gt;      cube&lt;i&gt;</i></font>
+cube(<b>static_cast</b>&lt;<b>double</b>&gt;(2)); <font color="#003399"><i>// cube&lt;double&gt;   cube&lt;double&gt;   cube&lt;d&gt;</i></font>
+cube(<b>static_cast</b>&lt;<b>int</b>&gt;(2.1));  <font color="#003399"><i>// cube&lt;int&gt;      cube&lt;int&gt;      cube&lt;i&gt;   (no warning)</i></font>
+</pre></blockquote>
+
+
+
+
+<blockquote><pre></pre></blockquote>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">User-Defined Types in Template Functions
+</p>
+
+
+Templates only provide some of the necessary functionality. 
+<p>
+</p><ul>
+<li>The idea behind a function template is that <i>any sensible</i> type should be able to be used.
+</li><li>The programmer still must ensure that the generated code is valid.
+</li><li>Most of the seemingly unintelligible errors generated from templates have nothing
+to do with the functions themselves.
+</li></ul>
+
+<p>
+Suppose we wanted to <b>cube</b> a StopWatch object:
+
+</p><blockquote><pre>StopWatch sw1(4);    <font color="#003399"><i>// Create a StopWatch set to 4 seconds</i></font>
+StopWatch sw2;       <font color="#003399"><i>// Create a StopWatch set to 0 seconds</i></font>
+sw2 = cube(sw1);     <font color="#003399"><i>// Cube the first StopWatch and assign to second</i></font>
+cout &lt;&lt; sw2 &lt;&lt; endl; <font color="#003399"><i>// ???</i></font>
+</pre></blockquote>
+
+Will this compile? If so, what will it print out? To understand what's going on, look at what the compiler
+is generating:
+
+<blockquote><pre>StopWatch cube(StopWatch value)
+{
+  <b>return</b> value * value * value;
+}
+</pre></blockquote>
+
+<br><br>
+Will this <b>cube</b> function compile? Why or why not? 
+<p>
+<br>
+The answer is: it depends.
+</p><p>
+<!--<a href="StopWatch-1.h.html">StopWatch-1.h</a><br>-->
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS170/StopWatch-1.cpp.html">StopWatch-1.cpp</a><br>
+</p><p>
+If there is no overloaded <tt><b>operator*</b></tt>, the compiler will generate an error message in the template function:
+
+</p><blockquote><pre><b>template</b> &lt;<b>typename</b> T&gt; 
+T cube(T value)
+{
+  <b>return</b> value * value * value; <font color="#003399"><i>// no match for 'operator*' in 'value * value'</i></font>
+}
+</pre></blockquote>
+
+We need to ensure that there is an overloaded * operator that takes a StopWatch on the left and right side of the operator:
+
+<blockquote><pre>StopWatch StopWatch::<b>operator</b>*(<b>const</b> StopWatch &amp;sw) <b>const</b>
+{
+  <b>return</b> StopWatch(seconds_ * sw.seconds_);
+}
+</pre></blockquote>
+
+Now, the following will compile:
+
+<blockquote><pre>StopWatch sw1(4);    <font color="#003399"><i>// Create a StopWatch set to 4 seconds</i></font>
+StopWatch sw2;       <font color="#003399"><i>// Create a StopWatch set to 0 seconds</i></font>
+sw2 = cube(sw1);     <font color="#003399"><i>// Cube the first StopWatch and assign to second</i></font>
+cout &lt;&lt; sw2 &lt;&lt; endl; <font color="#003399"><i>// Displays 00:01:04 (4 * 4 * 4 = 64 seconds)</i></font>
+</pre></blockquote>
+
+Things to realize:
+<ul>
+<li>There was nothing wrong with the function template for <b>cube</b>.
+</li><li>The problem was in how it was used.
+</li><li>It is up to the user of the functions to make sure that the objects they want to use support the required functionality.
+</li><li>About 90% of the time, this kind of problem is encountered when using templated functions.
+</li><li>If we add back the <tt><b>typeid</b></tt> to the <b>cube</b> function, we would see this:
+<blockquote><pre>                  <font color="#003399"><i>//     Microsoft               Borland             GNU/Clang</i></font>
+sw3 = cube(sw1);  <font color="#003399"><i>// cube&lt;class StopWatch&gt;   cube&lt;StopWatch&gt;   cube&lt;9StopWatch&gt;</i></font>
+</pre></blockquote>
+
+</li><li>It is common for templated library functions to document what operators and methods 
+  must be supported in order to use them.</li>
+	
+</ul>
+
+
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Multiple Template Parameters
+</p>
+
+
+Suppose we want a generic <i>Max</i> function:
+
+<blockquote><pre><b>template</b> &lt;<b>typename</b> T&gt;
+T Max(T a, T b)
+{
+  <b>return</b> a &gt; b ? a : b;
+}
+</pre></blockquote>
+
+The conditional operator is merely a conditional <i>expression</i> instead of a
+conditional <i>statement</i>. The above is very similar to this:
+<blockquote><pre><b>if</b> (a &gt; b)
+  <b>return</b> a;
+<b>else</b>
+  <b>return</b> b;
+</pre></blockquote>
+
+we try to use it like this:
+
+<blockquote><pre><b>int</b> i = Max(25, 10);      <font color="#003399"><i>// i = 25</i></font>
+<b>double</b> d = Max(2.5, 3.1); <font color="#003399"><i>// d = 3.1</i></font>
+<b>double</b> e = Max(2.5, 4);   <font color="#003399"><i>// error: no matching function for call to 'Max(double, int)'</i></font>
+</pre></blockquote>
+
+We need to specify the type of both parameters in order to mix types:
+<p>
+
+</p><blockquote><pre><b>template</b> &lt;<b>typename</b> T1, <b>typename</b> T2&gt;
+T1 Max(T1 a, T2 b)
+{
+  <b>return</b> a &gt; b ? a : b;
+}
+</pre></blockquote>
+
+This leads to:
+
+<blockquote><pre><b>double</b> d1 = Max(4.5, 3); <font color="#003399"><i>// d1 = 4.5 </i></font>
+<b>double</b> d2 = Max(3, 4.5); <font color="#003399"><i>// d2 = 4.0 ???  (warning: converting to 'int' from 'double')</i></font>
+</pre></blockquote>
+
+If we change the return type, it will work for the above problem:
+<p>
+
+</p><blockquote><pre><b>template</b> &lt;<b>typename</b> T1, <b>typename</b> T2&gt;
+<font color="blue"><b>T2</b></font> Max(T1 a, T2 b)
+{
+  <b>return</b> a &gt; b ? a : b;
+}
+</pre></blockquote>
+
+But now this is problematic:
+
+<blockquote><pre><b>int</b> i = Max(3, 4.5); <font color="#003399"><i>// i = 4 ???  (warning: converting to 'int' from 'double')</i></font>
+</pre></blockquote>
+
+Finally, add a third type:
+
+<blockquote><pre><b>template</b> &lt;<b>typename</b> T1, <b>typename</b> T2, <b>typename</b> T3&gt;
+T1 Max(T2 a, T3 b)
+{
+  <b>return</b> a &gt; b ? a : b;
+}
+</pre></blockquote>
+
+This leads to:
+
+<blockquote><pre><b>double</b> d1 = Max(3, 4.5); <font color="#003399"><i>// error: can't deduce template argument for 'T1' </i></font>
+Max(3, 4.5);             <font color="#003399"><i>// may be called this way as well (ignore return value) </i></font>
+</pre></blockquote>
+
+The errors are slightly different for each compiler:
+
+<blockquote><pre>GNU: no matching function for call to 'Max(int, double)'
+Clang: candidate template ignored: couldn't infer template argument 'T1'
+Borland: Could not find a match for 'Max<t1,t2,t3>(int,double)'
+Microsoft: error 'T1 Max(T2,T3)' : could not deduce template argument for 'T1' 	
+</t1,t2,t3></pre></blockquote>
+
+The simple fact is that the compiler <b>cannot deduce the return type of a function</b>. The user must specify it.
+<p>
+Various solutions:
+
+</p><blockquote><pre><b>double</b> d2 = Max&lt;<b>double</b>, <b>int</b>, <b>double</b>&gt;(3, 4.5); <font color="#003399"><i>// OK, all explicit</i></font>
+<b>double</b> d3 = Max&lt;<b>double</b>, <b>double</b>, <b>int</b>&gt;(4.5, 3); <font color="#003399"><i>// OK, all explicit</i></font>
+<b>double</b> d4 = Max&lt;<b>double</b>&gt;(3, 4.5); <font color="#003399"><i>              // Ok, first explicit, compiler deduces others</i></font>
+<b>double</b> d5 = Max&lt;<b>double</b>, <b>int</b>, <b>int</b>&gt;(4.5, 3);    <font color="#003399"><i>// OK, all explicit, but truncating (possible warning)</i></font>
+<b>double</b> d6 = Max&lt;<b>int</b>, <b>double</b>, <b>int</b>&gt;(4.5, 3);    <font color="#003399"><i>// OK, all explicit, but truncating (possible warning)</i></font>
+</pre></blockquote>
+
+Suppose I made this subtle change:
+
+<!-- The T1, T2, and T3 have been switched: no default params now -->
+
+<blockquote><pre><b>template</b> &lt;<b>typename</b> T1, <b>typename</b> T2, <b>typename</b> T3&gt;
+<font color="blue"><b>T3</b></font> Max(T1 a, T2 b)
+{
+  <b>return</b> a &gt; b ? a : b;
+}
+</pre></blockquote>
+
+How does that affect the code above? Other calls to <tt><b>Max</b></tt>?
+<p>
+
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><p class="SectionHeader">Explicit Template Specialization
+</p>
+
+
+Up until now, all of our templated functions have been generated from the template. (Which was
+the whole point.)
+<p>
+What if the code generated by the compiler didn't do what we expect? (It can and does happen.)
+</p><p>
+Let's create an example:
+
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>template</b> &lt;<b>typename</b> T&gt;
+<b>bool</b> equal(T a, T b)
+{
+  std::cout &lt;&lt; a &lt;&lt; <font color="#9933CC">" and "</font> &lt;&lt; b &lt;&lt; <font color="#9933CC">" are "</font>;
+
+  <b>if</b> (a == b)
+    std::cout &lt;&lt; <font color="#9933CC">"equal\n"</font>;
+  <b>else</b>
+    std::cout &lt;&lt; <font color="#9933CC">"not equal\n"</font>;
+
+  <b>return</b> a == b;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>void</b> f4(<b>void</b>)
+{
+  <b>int</b> a = 5, b = 5, c = 8;
+  <b>double</b> d1 = 3.14, d2 = 5.0;
+
+  equal(a, b);     <font color="#003399"><i>// 5 and 5 are equal</i></font>
+  equal(a, c);     <font color="#003399"><i>// 5 and 8 are not equal</i></font>
+  equal(a, c - 3); <font color="#003399"><i>// 5 and 5 are equal</i></font>
+  equal(d1, d2);   <font color="#003399"><i>// 3.14 and 5 are not equal</i></font>
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+So far, so good. The function is working as expected. This won't work, though:
+
+</p><blockquote><pre>equal(a, d2); <font color="#003399"><i>// g++ error: no matching function for call to 'equal(int&amp;, double&amp;)'</i></font>
+</pre></blockquote>
+
+But, we don't care about that. (How could we make this "work" if we did care?)
+<!--
+cast one of the parameters to the other's type
+use 2 template parameters
+force the type, e.g. equal<double>(a, d2) or equal<int>(a, d2). The second one will warn.
+-->
+
+<p>
+How about these:
+
+</p><blockquote><pre><b>const</b> <b>char</b> s1[] = <font color="#9933CC">"One"</font>;
+<b>const</b> <b>char</b> s2[] = <font color="#9933CC">"One"</font>;
+<b>const</b> <b>char</b> s3[] = <font color="#9933CC">"Two"</font>;
+
+equal(s1, s2);       <font color="#003399"><i>// One and One are not equal</i></font>
+equal(s1, s3);       <font color="#003399"><i>// One and Two are not equal</i></font>
+equal(s1, <font color="#9933CC">"One"</font>);    <font color="#003399"><i>// One and One are not equal</i></font>
+equal(s1, s1);       <font color="#003399"><i>// One and One are equal</i></font>
+equal(<font color="#9933CC">"One"</font>, <font color="#9933CC">"One"</font>); <font color="#003399"><i>// ???</i></font>
+</pre></blockquote>
+
+<!--
+By default, Borland creates two "One" strings, so it prints "not equal". The -d switches merges them:
+bcc32 -w -d main.cpp StopWatch.cpp  (now prints "equal")
+-->
+
+Why are we getting "odd" results?
+<p>
+	
+
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>Template</th><th>Expansion (artist's rendering)</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>template</b> &lt;<b>typename</b> T&gt;
+<b>bool</b> equal(T a, T b)
+{  
+    <font color="#003399"><i>// Compare the two</i></font>
+  <b>if</b> (a == b)
+
+    <font color="#003399"><i>// other stuff</i></font>
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>
+<b>bool</b> equal(<b>const char *</b> a, <b>const char *</b> b)
+{  
+    <font color="#003399"><i>// Compare the two</i></font>
+  <b>if</b> (a == b)
+
+    <font color="#003399"><i>// other stuff</i></font>
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+This just won't do, so we need to take matters into our own hands.
+</p><p>
+	
+
+</p><blockquote><pre></pre></blockquote>
+
+
+<ul>
+<li>If you create a version of the <b>equal</b> function "manually", the compiler will use it (if it can) before generating a template function.
+</li><li>This "manually" created version is an <i>explicit template specialization</i>.
+</li><li>The syntax is similar to a template function, but you preface the function with empty angle brackets instead:
+<blockquote><pre>	
+<b>template</b> &lt;&gt;
+<b>bool</b> equal&lt;<b>const</b> <b>char</b> *&gt;(<b>const</b> <b>char</b> *a, <b>const</b> <b>char</b> *b)
+{
+  std::cout &lt;&lt; a &lt;&lt; <font color="#9933CC">" and "</font> &lt;&lt; b &lt;&lt; <font color="#9933CC">" are "</font>;
+  <b>bool</b> same = !strcmp(a, b);
+
+  <b>if</b> (same)
+    std::cout &lt;&lt; <font color="#9933CC">"equal\n"</font>;
+  <b>else</b>
+    std::cout &lt;&lt; <font color="#9933CC">"not equal\n"</font>;
+
+  <b>return</b> same;
+}
+</pre></blockquote>
+</li></ul>
+
+Now this code will do what we expect:
+
+<blockquote><pre><b>const</b> <b>char</b> s1[] = <font color="#9933CC">"One"</font>;
+<b>const</b> <b>char</b> s2[] = <font color="#9933CC">"One"</font>;
+<b>const</b> <b>char</b> s3[] = <font color="#9933CC">"Two"</font>;
+
+  <font color="#003399"><i>// With specialization for equal</i></font>
+equal(s1, s2);    <font color="#003399"><i>// One and One are equal</i></font>
+equal(s1, s3);    <font color="#003399"><i>// One and Two are not equal</i></font>
+equal(s1, <font color="#9933CC">"One"</font>); <font color="#003399"><i>// One and One are equal</i></font>
+equal(s1, s1);    <font color="#003399"><i>// One and One are equal</i></font>
+</pre></blockquote>
+
+
+Note that the type is not strictly required in the second angle brackets, since the compiler can deduce the type from
+the parameters. This:
+
+<blockquote><pre><b>template</b> &lt;&gt;
+<b>bool</b> equal<font color="blue"><b>&lt;<b>const</b> <b>char</b> *&gt;</b></font>(<b>const</b> <b>char</b> *a, <b>const</b> <b>char</b> *b)
+</pre></blockquote>
+
+can be changed to this:
+
+<blockquote><pre><b>template</b> &lt;&gt;
+<b>bool</b> equal(<b>const</b> <b>char</b> *a, <b>const</b> <b>char</b> *b)
+</pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+
+<p>
+</p><hr width="90%">
+<p>
+
+</p><p>
+More details:
+</p><p>
+
+When the compiler must choose a function, the order of choice is: (from best to worst)
+</p><ol>
+<li>Regular functions
+</li><li>Explicit specializations
+</li><li>Template generated
+</li></ol>
+
+However, if you need to, you can always force the compiler to choose a particular function by 
+explicitly stating which function to use.
+<p>
+
+</p><pre class="sourcecode"><code>
+<font color="#003399"><i>// template function</i></font>
+<b>template</b> &lt;<b>typename</b> T&gt; 
+T cube(T value)
+{
+  std::cout &lt;&lt; <font color="#9933CC">"Cubing a "</font> &lt;&lt; <b>typeid</b>(T).name() &lt;&lt; <font color="#9933CC">" (template): "</font> &lt;&lt; value &lt;&lt; std::endl;
+  <b>return</b> value * value * value;
+}
+
+<font color="#003399"><i>// explicit specialization cube&lt;int&gt;</i></font>
+<b>template</b> &lt;&gt; 
+<b>int</b> cube&lt;<b>int</b>&gt;(<b>int</b> value)
+{
+  std::cout &lt;&lt; <font color="#9933CC">"Cubing an int (specialization): "</font> &lt;&lt; value &lt;&lt; std::endl;
+  <b>return</b> value * value * value;
+}
+
+<font color="#003399"><i>// regular function (non-template)</i></font>
+<b>int</b> cube(<b>int</b> value)
+{
+  std::cout &lt;&lt; <font color="#9933CC">"Cubing an int (regular): "</font> &lt;&lt; value &lt;&lt; std::endl;
+  <b>return</b> value * value * value;
+}
+
+<b>int</b> main(<b>void</b>)
+{
+  cube(5);            <font color="#003399"><i>// 1. regular</i></font>
+  cube&lt;<b>double</b>&gt;(10L); <font color="#003399"><i>// 2. template, first instantion</i></font>
+  cube(2.5F);         <font color="#003399"><i>// 3. template, first instantion</i></font>
+  cube&lt;<b>int</b>&gt;(2.5);    <font color="#003399"><i>// 4. specialization</i></font>
+  cube&lt;<b>char</b>&gt;(5);     <font color="#003399"><i>// 5. template, first instantion</i></font>
+  cube(<font color="#9933CC">'A'</font>);         <font color="#003399"><i>// 6. template, no instantion</i></font>
+  <b>return</b> 0;
+}
+</code></pre>
+
+<b>Output:</b> (from Borland's compiler)
+<blockquote><pre>Cubing an int (regular): 5
+Cubing a double (template): 10
+Cubing a float (template): 2.5
+Cubing an int (specialization): 2
+Cubing a char (template): ???
+Cubing a char (template): A
+</pre></blockquote>
+
+<p>
+Also note that you cannot create an explicit specialization for a function <i>after</i> an
+implicit instantiation for that same function has been generated. For example, if we had this
+code <i>before</i> the explicit specialization for the <tt>cube</tt> function taking an <tt><b>int</b></tt>:
+
+</p><blockquote><pre></pre></blockquote>
+
+<blockquote><pre><b>void</b> foo(<b>void</b>)
+{
+    <font color="#003399"><i>// implicitly instantiates cube for integers</i></font>
+  <b>int</b> i = cube&lt;<b>int</b>&gt;(25); 
+}
+</pre></blockquote>
+
+The explicit specialization following this will generate a compiler error along these lines:
+
+<blockquote><pre>specialization of T cube(T) [with T = int] after instantiation (GNU)
+Template instance 'int cube<int>(int)' is already instantiated (Borland)
+explicit specialization; 'T cube<int>(T)' has already been instantiated (Microsoft)
+</int></int></pre></blockquote>
+
+
+<p>
+</p><hr width="80%">
+<p>
+
+Another example revisited. Given the templated <i>Max</i> function below:
+
+</p><blockquote><pre><b>template</b> &lt;<b>typename</b> T&gt;
+T Max(T a, T b)
+{
+  <b>return</b> a &gt; b ? a : b;
+}
+</pre></blockquote>
+
+What is printed here?
+
+<blockquote><pre><b>int</b> main(<b>void</b>)
+{
+  cout &lt;&lt; Max(5, 2) &lt;&lt; endl;
+  cout &lt;&lt; Max(4.5, 3.14) &lt;&lt; endl;
+  cout &lt;&lt; Max(<font color="#9933CC">'A'</font>, <font color="#9933CC">'a'</font>) &lt;&lt; endl;
+  cout &lt;&lt; Max(<font color="#9933CC">"banana"</font>, <font color="#9933CC">"apple"</font>) &lt;&lt; endl;
+  <b>return</b> 0;
+}
+</pre></blockquote>
+
+<b>Output:</b>
+
+<blockquote><pre>5
+4.5
+a
+apple
+</pre></blockquote>
+
+The fix:
+
+<blockquote><pre><font color="#003399"><i>// Explicit specialization for <b>const char *</b></i></font>
+<font color="#003399"><i>// to sort lexicographically</i></font>
+<b>template</b> &lt;&gt; 
+<b>const</b> <b>char</b>* Max&lt;<b>const char *</b>&gt;(<b>const</b> <b>char</b> *a, <b>const</b> <b>char</b> *b)
+{
+  <b>return</b> strcmp(a, b) &gt;= 0 ? a : b;
+}
+</pre></blockquote>
+
+<tt><b></b></tt>
+<blockquote><pre></pre></blockquote>
+
+<tt><b></b></tt>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Overloaded Template Functions
+</p>
+
+Suppose we have this "universal" swap function:
+
+<!--
+<ul>
+<li>Just as with overloaded functions, the compiler has elaborate rules to determine which version of a function to call or to generate.
+<li>This process is called <i>overload resolution</i>.
+<li>If you create a version of the function "manually", the compiler will use it (if it can) before generating a template function.
+<li>This "manually" created version is <i>explicit template specialization</i>.
+<li>The syntax is similar to a regular function except you preface the function with empty angle brackets:
+-->
+
+
+<blockquote><pre><b>template</b> &lt;<b>typename</b> T&gt;
+<b>void</b> Swap(T &amp;a, T &amp;b)
+{
+  T temp = a;
+  a = b;
+  b = temp;
+}
+</pre></blockquote>
+
+and a trivial use case:
+
+<blockquote><pre><b>int</b> i = 10, j = 20;
+<b>double</b> d = 3.14, e = 2.71;
+
+Swap(i, j); <font color="#003399"><i>// i=20, j=10</i></font>
+Swap(d, e); <font color="#003399"><i>// d=2.71, e=3.14</i></font>
+</pre></blockquote>
+
+What is the result of this "Swap"? 
+<p>
+
+</p><blockquote><pre><b>int</b> a[] = {1, 3, 5, 7,  9, 11};
+<b>int</b> b[] = {2, 4, 6, 8, 10, 12};
+Swap(a, b); <font color="#003399"><i>// ???</i></font>
+</pre></blockquote>
+
+<ul>
+<li>Will this compile? 
+</li><li>If so, what is actually swapped?
+</li></ul>
+
+<p>
+To get an idea of what's going on, look at what the instantiated function might look like:
+</p><p>
+
+</p><blockquote><pre><b>void</b> Swap(<b>int</b> a[6], <b>int</b> b[6])
+{
+  <b>int</b> temp[6] = a; <font color="#003399"><i>// error: initializing an array with array</i></font>
+  a = b;           <font color="#003399"><i>// error: assigning an array</i></font>
+  b = temp;        <font color="#003399"><i>// error: assigning an array</i></font>
+}
+</pre></blockquote>
+
+This produces errors because <tt><b>T</b></tt> instantiates to <tt><b>int</b>[6]</tt>: 
+<p>
+<b>g++</b>:
+
+<!--
+driver.cpp: In function 'void Swap(T&, T&) [with T = int[6]]':
+driver.cpp:266:   instantiated from here
+driver.cpp:146: error: invalid initializer
+driver.cpp:147: error: ISO C++ forbids assignment of arrays
+driver.cpp:148: error: ISO C++ forbids assignment of arrays
+
+<b>Borland</b>:
+Error E2034 driver.cpp 146: Cannot convert 'int *' to 'int[6]' in function void Swap<int[6]>(int ( &)[6],int ( &)[6])
+Error E2277 driver.cpp 147: Lvalue required in function void Swap<int[6]>(int ( &)[6],int ( &)[6])
+Error E2277 driver.cpp 148: Lvalue required in function void Swap<int[6]>(int ( &)[6],int ( &)[6])
+-->
+
+</p><blockquote><pre>In instantiation of 'void Swap(T&amp;, T&amp;) [with T = int [6]]':
+   required from here
+error: array must be initialized with a brace-enclosed initializer
+   T temp = a;
+            ^
+error: invalid array assignment
+   a = b;
+     ^
+error: invalid array assignment
+   b = temp;
+     ^
+</pre></blockquote>
+
+<b>Microsoft</b>:
+<blockquote><pre>error C2075: 'temp' : array initialization needs curly braces
+  see reference to function template instantiation 'void Swap<int[6]>(T (&amp;),T (&amp;))' being compiled
+  with
+  [
+    T=int [6]
+  ]
+error C2106: '=' : left operand must be l-value
+error C2106: '=' : left operand must be l-value
+</int[6]></pre></blockquote>
+
+We need a function that can deal with arrays, so we overload the template:
+<p>
+
+<table><tbody><tr valign="top">
+<td>
+<blockquote><pre>  <font color="#003399"><i>// overloaded template function</i></font>
+<b>template</b> &lt;<b>typename</b> T&gt;
+<b>void</b> Swap(T *a, T *b, <b>int</b> size)
+{
+  <b>for</b> (<b>int</b> i = 0; i &lt; size; i++)
+  {
+    T temp = a[i];
+    a[i] = b[i];
+    b[i] = temp;
+  }
+}
+</pre></blockquote>
+</td>
+<td width="20"></td>
+<td>
+<blockquote><pre>  <font color="#003399"><i>// original template function</i></font>
+<b>template</b> &lt;<b>typename</b> T&gt;
+<b>void</b> Swap(T &amp;a, T &amp;b)
+{
+  T temp = a;
+  a = b;
+  b = temp;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+Reminder: This is overloading because the function name is the same, but the
+parameters are different. This enables the compiler to call the correct one.
+</p><p>
+Use:
+</p><p>
+
+</p><blockquote><pre><b>int</b> a[] = {1, 3, 5, 7,  9, 11};
+<b>int</b> b[] = {2, 4, 6, 8, 10, 12};
+<b>int</b> size = <b>sizeof</b>(a) / <b>sizeof</b>(*a);
+
+Swap(a, b, size); <font color="#003399"><i>// calls Swap(int *, int *, int) [with T = int]</i></font>
+
+Display(a, size); <font color="#003399"><i>// 2, 4, 6, 8, 10, 12</i></font>
+Display(b, size); <font color="#003399"><i>// 1, 3, 5, 7, 9, 11</i></font>
+</pre></blockquote>
+
+<ul>
+<!--
+<li>To overload, we changed the number of parameters.
+-->
+</ul>
+
+In this example above, to handle C++ arrays, we need to specify the size as the third parameter.
+<p>
+Of course, we could have leveraged the original <i>Swap</i> function:
+
+</p><blockquote><pre>  <font color="#003399"><i>// Using the original Swap function</i></font>
+<b>template</b> &lt;<b>typename</b> T&gt;
+<b>void</b> Swap(T *a, T *b, <b>int</b> size)
+{
+  <b>for</b> (<b>int</b> i = 0; i &lt; size; i++)
+    Swap(a[i], b[i]);
+}
+</pre></blockquote>
+
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Implicit vs. Explicit Instantiations
+</p>
+
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>main1.cpp</th><th>foobar1.cpp</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>int</b> foobar(<b>int</b> a);
+
+<b>int</b> main(<b>void</b>)
+{
+  <b>int</b> x = foobar(5);
+
+  <b>return</b> x;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>int</b> foobar(<b>int</b> a)
+{
+  <b>return</b> a;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+Compiling and linking commands:
+
+<blockquote><pre>g++ -c main1.cpp 
+g++ -c foobar1.cpp
+g++ main1.o foobar1.o
+</pre></blockquote>
+
+
+<p>
+</p><hr width="80%">
+<p>
+	
+</p><blockquote><pre></pre></blockquote>
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th>main2.cpp</th><th>foobar2.cpp</th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre><b>template</b> &lt;<b>typename</b> T&gt; T foobar(T a);
+
+<b>int</b> main(<b>void</b>)
+{
+  <b>int</b> x = foobar(5);
+
+  <b>return</b> x;
+}
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre><b>template</b> &lt;<b>typename</b> T&gt; 
+T foobar(T a)
+{
+  <b>return</b> a;
+}
+</pre></blockquote>
+</td>
+</tr></tbody></table>
+
+
+Compiling and linking commands:
+
+<blockquote><pre>g++ -c main2.cpp 
+g++ -c foobar2.cpp
+g++ main2.o foobar2.o
+</pre></blockquote>
+
+Message:
+
+<blockquote><pre>main2.o:main2.cpp:(.text+0x32): undefined reference to `int foobar<int>(int)'
+collect2: ld returned 1 exit status
+</int></pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+Force the compiler:
+
+<blockquote><pre><font color="#003399"><i>// explicit instantiation</i></font>
+<b>template</b> <b>int</b> foobar&lt;<b>int</b>&gt;(<b>int</b>);
+</pre></blockquote>
+
+
+
+
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+
+
+
+
+
+
+<blockquote><pre></pre></blockquote>
+
+
+<tt><b></b></tt>
+<tt><b></b></tt>
+<tt><b></b></tt>
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="0">
+<tbody><tr><th></th><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<tt><b></b></tt>
+
+<blockquote>
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+<td>
+<blockquote><pre></pre></blockquote>
+</td>
+</tr></tbody></table>
+</blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+
+</body></html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="../../../D_style.css">
+<link rel="icon" href="./Independent_Notes_Directory_files/Logo.ico">
+</head>
+<body>
+<div style="font-family:Helvetica; color:white;">
+<p class="section_heading"><b>XOR List - Memory Efficient Doubly Linked List</b> : xor_list.h</p>
+<pre class="SourceCode"><code>
+<b>template</b> &lt;<b>typename</b> T&gt; 
+<b>class</b> xor_list 
+{
+  <b>public:</b>
+    <b>class</b> xor_node 
+    {
+      <b>public:</b>
+        T* data_;
+        <b>xor_node*</b> ptx;
+    };
+         
+    xor_list();
+    ~xor_list();
+         
+    <b>int</b> push_front(T* data);
+    <b>int</b> push_back(T* data);
+    <b>int</b> pop_front();
+    <b>int</b> pop_back();
+    <b>int</b> insert(T* data, <b>int</b> pos);
+    <b>int</b> displayList(<b>const char*</b> msg);
+       
+  <b>private:</b>
+    <b>xor_node*</b> head_;
+    <b>xor_node*</b> tail_;
+    <b>int</b> size_;
+         
+    <b>xor_node*</b> XOR(<b>xor_node*</b> a, <b>xor_node*</b> b);
+    <b>xor_node*</b> makeNode(T* data);
+};
+
+#include <b>"xor_list.cpp"</b>
+
+</code></pre>
+</pre>
+
+</div>
+</body>
+</html>

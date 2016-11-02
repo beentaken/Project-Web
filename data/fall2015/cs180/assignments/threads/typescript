@@ -1,0 +1,321 @@
+Script started on Mon 09 Nov 2015 08:21:59 PM PST
+date
+uptime
+echo Damien Baca
+pwd
+whoami
+uname -a
+cat /proc/cpuinfo
+cat /proc/meminfo
+gcc -Wall -Wextra -ansi -pedantic -pthread main-thread.c matrix-thread.c -o matrix-threads
+./matrix-threads mat16.txt | tee output.txt
+diff --strip-trailing-cr output16.txt output.txt
+valgrind -q --leak-check=full --show-reachable=yes --trace-children=yes --tool=memcheck ./matrix-threads mat16.txt
+doxygen
+ls -al html/[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/data/cs180/assignmets/assignment_4 $[00m date
+Mon Nov  9 20:21:59 PST 2015
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/data/cs180/assignmets/assignment_4 $[00m uptime
+ 20:21:59 up  4:44,  2 users,  load average: 0.14, 0.26, 0.24
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/data/cs180/assignmets/assignment_4 $[00m echo Damien Baca
+Damien Baca
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/data/cs180/assignmets/assignment_4 $[00m pwd
+/home/tardis/data/cs180/assignmets/assignment_4
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/data/cs180/assignmets/assignment_4 $[00m whoami
+tardis
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/data/cs180/assignmets/assignment_4 $[00m uname -a
+Linux tardis-VirtualBox 3.13.0-24-generic #47-Ubuntu SMP Fri May 2 23:30:00 UTC 2014 x86_64 x86_64 x86_64 GNU/Linux
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/data/cs180/assignmets/assignment_4 $[00m cat /proc/cpuinfo
+processor	: 0
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 60
+model name	: Intel(R) Core(TM) i7-4800MQ CPU @ 2.70GHz
+stepping	: 3
+microcode	: 0x19
+cpu MHz		: 2693.764
+cache size	: 6144 KB
+physical id	: 0
+siblings	: 4
+core id		: 0
+cpu cores	: 4
+apicid		: 0
+initial apicid	: 0
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 13
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc pni pclmulqdq ssse3 cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx rdrand hypervisor lahf_lm abm
+bogomips	: 5387.52
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 39 bits physical, 48 bits virtual
+power management:
+
+processor	: 1
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 60
+model name	: Intel(R) Core(TM) i7-4800MQ CPU @ 2.70GHz
+stepping	: 3
+microcode	: 0x19
+cpu MHz		: 2693.764
+cache size	: 6144 KB
+physical id	: 0
+siblings	: 4
+core id		: 1
+cpu cores	: 4
+apicid		: 1
+initial apicid	: 1
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 13
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc pni pclmulqdq ssse3 cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx rdrand hypervisor lahf_lm abm
+bogomips	: 5387.52
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 39 bits physical, 48 bits virtual
+power management:
+
+processor	: 2
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 60
+model name	: Intel(R) Core(TM) i7-4800MQ CPU @ 2.70GHz
+stepping	: 3
+microcode	: 0x19
+cpu MHz		: 2693.764
+cache size	: 6144 KB
+physical id	: 0
+siblings	: 4
+core id		: 2
+cpu cores	: 4
+apicid		: 2
+initial apicid	: 2
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 13
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc pni pclmulqdq ssse3 cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx rdrand hypervisor lahf_lm abm
+bogomips	: 5387.52
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 39 bits physical, 48 bits virtual
+power management:
+
+processor	: 3
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 60
+model name	: Intel(R) Core(TM) i7-4800MQ CPU @ 2.70GHz
+stepping	: 3
+microcode	: 0x19
+cpu MHz		: 2693.764
+cache size	: 6144 KB
+physical id	: 0
+siblings	: 4
+core id		: 3
+cpu cores	: 4
+apicid		: 3
+initial apicid	: 3
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 13
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc pni pclmulqdq ssse3 cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx rdrand hypervisor lahf_lm abm
+bogomips	: 5387.52
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 39 bits physical, 48 bits virtual
+power management:
+
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/data/cs180/assignmets/assignment_4 $[00m cat /proc/meminfo
+MemTotal:        3081932 kB
+MemFree:          921148 kB
+Buffers:          111500 kB
+Cached:          1224352 kB
+SwapCached:            0 kB
+Active:          1123172 kB
+Inactive:         834788 kB
+Active(anon):     623084 kB
+Inactive(anon):    94312 kB
+Active(file):     500088 kB
+Inactive(file):   740476 kB
+Unevictable:          16 kB
+Mlocked:              16 kB
+SwapTotal:       3143676 kB
+SwapFree:        3143676 kB
+Dirty:               180 kB
+Writeback:             0 kB
+AnonPages:        622168 kB
+Mapped:           238616 kB
+Shmem:             95292 kB
+Slab:             141492 kB
+SReclaimable:     118904 kB
+SUnreclaim:        22588 kB
+KernelStack:        3248 kB
+PageTables:        23148 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:     4684640 kB
+Committed_AS:    2676780 kB
+VmallocTotal:   34359738367 kB
+VmallocUsed:       36524 kB
+VmallocChunk:   34359654952 kB
+HardwareCorrupted:     0 kB
+AnonHugePages:    200704 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+DirectMap4k:       49088 kB
+DirectMap2M:     3096576 kB
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/data/cs180/assignmets/assignment_4 $[00m gcc -Wall -Wextra -ansi -pedantic -pthread  main-thread.c matrix-thread.c -o matrix-threads
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/data/cs180/assignmets/assignment_4 $[00m ./matrix-threads mat16.txt | tee output.tx t
+      -1       4      -4       7      -1       1       6       1       6       7      10       5     -10      -7      -2      -9
+       8      -2       3       8       9       1       9      -3       6      -6      -6       9       5      -9      -4      -6
+      -9      -1      -9       8      -7      10       9      -5      -6      -4       7     -10      -1      -6       7      -4
+      -9      -1       6       1       2      -6      10      -1      10       0      -4       4      -1       8       8      -6
+      -2       3      -5      -3      -3      -3       2       4       4       9       1      -3      -8      -1       5      -1
+       4       0       8      -8       5      -5       4     -10       4       6      -7      -7       1       5      -3      -2
+      -6       5       2       4       7       5      10      -2      -5      -4      -7       4      -8      -1     -10      -4
+       6       2      -4      -3       2       7       8      -6     -10      10       9       4     -10      -8      -3      -9
+       0      -6      -2       3       1     -10      -2     -10       8       0       2       5      -7      -7       1      -6
+      -6      10      -3       3       1      -3      -7      -1      -8      -5       6       7     -10      10      -7      10
+       5       8       5       4      -1       5      -4       8      -9      -5      -3      -5       5       2       0       9
+      -2      -4       5       1       0       3       6       9       3      -1       7      -8      -5       1      -3       1
+      -5       2      -1       1      -6      -1       6       8      -6      -2       8      -8     -10       9      -8      -3
+       2       1       4     -10     -10      -6       4      -4      -2      -4     -10       7      -9       6       6       8
+      -9      -4      -4       8      -3      -8      -3       9      -7       9     -10       4      -4      -1      -2      -7
+      10       2       2      -7      -2       5      -6      -2       7      -1       0       8      -1      -6       1       0
+
+     -56      71     129     207     288     -37      35     -26      14     -83     -62      63      71      20     -82      42
+    -288     -84     -40     172      94     -14     375      48     274     124     220    -207    -218     -55     -33    -340
+     -51      29     265     -12     239    -129     -63      32     -77     -22    -509     -16     337     256    -111      26
+    -295    -133     -80     106     -80    -138     131     -35    -122     -85    -189      48    -212       3      35     -45
+      44      50     -40      85     131     -71    -180     -74    -118      -6     -87     280     -20     -69    -108      56
+    -163      54    -222      91    -134     -39     -51    -106      -7    -140      54      56    -146     -29      23      83
+      -5     -40     121     -98     209      98     277    -173     199     -62    -147     -78     121     -18      49     -30
+     -39     243     113     160     265     107     -39     122     -97     -51     -54     -88     132     124    -208     206
+    -195    -105     -49     188       6    -121    -211     167     148     -57      54     -50     131       4     118      76
+     387     -22     254    -231      -4     128     -21      23     211    -186    -216     129     294     -65     232     248
+     166      18       2     -71     -23     156     248    -102      53     102      31      68      -8    -134      43    -229
+      67     107     -28     -52      30     128      53    -230    -163      30     -44      27     -25    -102      54     -24
+     219     131     133    -143      87     177      61    -209    -191    -154    -236     155     175     -18      71     181
+      51    -162     -49      22     -57     123     -61     -26      33     -87     -91     169      46    -257     -11     -16
+    -159     -17     -32     -76      49      -8      -7      20    -128       6     125      87     -31     206      23      87
+      73     -95     -46     136      34      -3     -26      -5     151      98     223    -107     -15    -204     -69    -130
+
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/data/cs180/assignmets/assignment_4 $[00m diff --strip-trailing-cr output16.txt outp ut.txt
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/data/cs180/assignmets/assignment_4 $[00m valgrind -q --leak-check=full --show-reach able=yes --trace-children=yes --tool=memcheck ./matrix-threads mat16.txt
+      -1       4      -4       7      -1       1       6       1       6       7      10       5     -10      -7      -2      -9
+       8      -2       3       8       9       1       9      -3       6      -6      -6       9       5      -9      -4      -6
+      -9      -1      -9       8      -7      10       9      -5      -6      -4       7     -10      -1      -6       7      -4
+      -9      -1       6       1       2      -6      10      -1      10       0      -4       4      -1       8       8      -6
+      -2       3      -5      -3      -3      -3       2       4       4       9       1      -3      -8      -1       5      -1
+       4       0       8      -8       5      -5       4     -10       4       6      -7      -7       1       5      -3      -2
+      -6       5       2       4       7       5      10      -2      -5      -4      -7       4      -8      -1     -10      -4
+       6       2      -4      -3       2       7       8      -6     -10      10       9       4     -10      -8      -3      -9
+       0      -6      -2       3       1     -10      -2     -10       8       0       2       5      -7      -7       1      -6
+      -6      10      -3       3       1      -3      -7      -1      -8      -5       6       7     -10      10      -7      10
+       5       8       5       4      -1       5      -4       8      -9      -5      -3      -5       5       2       0       9
+      -2      -4       5       1       0       3       6       9       3      -1       7      -8      -5       1      -3       1
+      -5       2      -1       1      -6      -1       6       8      -6      -2       8      -8     -10       9      -8      -3
+       2       1       4     -10     -10      -6       4      -4      -2      -4     -10       7      -9       6       6       8
+      -9      -4      -4       8      -3      -8      -3       9      -7       9     -10       4      -4      -1      -2      -7
+      10       2       2      -7      -2       5      -6      -2       7      -1       0       8      -1      -6       1       0
+
+     -56      71     129     207     288     -37      35     -26      14     -83     -62      63      71      20     -82      42
+    -288     -84     -40     172      94     -14     375      48     274     124     220    -207    -218     -55     -33    -340
+     -51      29     265     -12     239    -129     -63      32     -77     -22    -509     -16     337     256    -111      26
+    -295    -133     -80     106     -80    -138     131     -35    -122     -85    -189      48    -212       3      35     -45
+      44      50     -40      85     131     -71    -180     -74    -118      -6     -87     280     -20     -69    -108      56
+    -163      54    -222      91    -134     -39     -51    -106      -7    -140      54      56    -146     -29      23      83
+      -5     -40     121     -98     209      98     277    -173     199     -62    -147     -78     121     -18      49     -30
+     -39     243     113     160     265     107     -39     122     -97     -51     -54     -88     132     124    -208     206
+    -195    -105     -49     188       6    -121    -211     167     148     -57      54     -50     131       4     118      76
+     387     -22     254    -231      -4     128     -21      23     211    -186    -216     129     294     -65     232     248
+     166      18       2     -71     -23     156     248    -102      53     102      31      68      -8    -134      43    -229
+      67     107     -28     -52      30     128      53    -230    -163      30     -44      27     -25    -102      54     -24
+     219     131     133    -143      87     177      61    -209    -191    -154    -236     155     175     -18      71     181
+      51    -162     -49      22     -57     123     -61     -26      33     -87     -91     169      46    -257     -11     -16
+    -159     -17     -32     -76      49      -8      -7      20    -128       6     125      87     -31     206      23      87
+      73     -95     -46     136      34      -3     -26      -5     151      98     223    -107     -15    -204     -69    -130
+
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/data/cs180/assignmets/assignment_4 $[00m doxygen
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/data/cs180/assignmets/assignment_4 $[00m ls -al html/
+total 656
+drwxr-xr-x 2 tardis tardis   4096 Nov  9 20:21 [0m[01;34m.[0m
+drwxr-xr-x 3 tardis tardis   4096 Nov  9 20:21 [01;34m..[0m
+-rw-r--r-- 1 tardis tardis   2983 Nov  9 20:21 annotated.html
+-rw-r--r-- 1 tardis tardis     91 Nov  9 20:21 annotated.js
+-rw-r--r-- 1 tardis tardis    676 Nov  9 20:21 [01;35mbc_s.png[0m
+-rw-r--r-- 1 tardis tardis    147 Nov  9 20:21 [01;35mbdwn.png[0m
+-rw-r--r-- 1 tardis tardis  12330 Nov  9 19:46 child-matrix_8c.html
+-rw-r--r-- 1 tardis tardis    105 Nov  9 19:46 child-matrix_8c.js
+-rw-r--r-- 1 tardis tardis  15430 Nov  9 19:46 child-matrix_8c_source.html
+-rw-r--r-- 1 tardis tardis   3139 Nov  9 20:21 classes.html
+-rw-r--r-- 1 tardis tardis    132 Nov  9 20:21 [01;35mclosed.png[0m
+-rw-r--r-- 1 tardis tardis  23935 Nov  9 20:21 doxygen.css
+-rw-r--r-- 1 tardis tardis   3779 Nov  9 20:21 [01;35mdoxygen.png[0m
+-rw-r--r-- 1 tardis tardis   3265 Nov  9 20:21 dynsections.js
+-rw-r--r-- 1 tardis tardis   3645 Nov  9 20:21 files.html
+-rw-r--r-- 1 tardis tardis    225 Nov  9 20:21 files.js
+-rw-r--r-- 1 tardis tardis     86 Nov  9 20:21 [01;35mftv2blank.png[0m
+-rw-r--r-- 1 tardis tardis    453 Nov  9 20:21 [01;35mftv2cl.png[0m
+-rw-r--r-- 1 tardis tardis    746 Nov  9 20:21 [01;35mftv2doc.png[0m
+-rw-r--r-- 1 tardis tardis    616 Nov  9 20:21 [01;35mftv2folderclosed.png[0m
+-rw-r--r-- 1 tardis tardis    597 Nov  9 20:21 [01;35mftv2folderopen.png[0m
+-rw-r--r-- 1 tardis tardis     86 Nov  9 20:21 [01;35mftv2lastnode.png[0m
+-rw-r--r-- 1 tardis tardis    746 Nov  9 20:21 [01;35mftv2link.png[0m
+-rw-r--r-- 1 tardis tardis    246 Nov  9 20:21 [01;35mftv2mlastnode.png[0m
+-rw-r--r-- 1 tardis tardis    246 Nov  9 20:21 [01;35mftv2mnode.png[0m
+-rw-r--r-- 1 tardis tardis    403 Nov  9 20:21 [01;35mftv2mo.png[0m
+-rw-r--r-- 1 tardis tardis     86 Nov  9 20:21 [01;35mftv2node.png[0m
+-rw-r--r-- 1 tardis tardis    388 Nov  9 20:21 [01;35mftv2ns.png[0m
+-rw-r--r-- 1 tardis tardis    229 Nov  9 20:21 [01;35mftv2plastnode.png[0m
+-rw-r--r-- 1 tardis tardis    229 Nov  9 20:21 [01;35mftv2pnode.png[0m
+-rw-r--r-- 1 tardis tardis    314 Nov  9 20:21 [01;35mftv2splitbar.png[0m
+-rw-r--r-- 1 tardis tardis     86 Nov  9 20:21 [01;35mftv2vertline.png[0m
+-rw-r--r-- 1 tardis tardis   3456 Nov  9 20:21 functions.html
+-rw-r--r-- 1 tardis tardis   3373 Nov  9 20:21 functions_vars.html
+-rw-r--r-- 1 tardis tardis   2771 Nov  9 19:46 globals_defs.html
+-rw-r--r-- 1 tardis tardis   3218 Nov  9 20:21 globals_func.html
+-rw-r--r-- 1 tardis tardis   3310 Nov  9 20:21 globals.html
+-rw-r--r-- 1 tardis tardis   2160 Nov  9 20:21 index.html
+-rw-r--r-- 1 tardis tardis 146351 Nov  9 20:21 jquery.js
+-rw-r--r-- 1 tardis tardis  36363 Nov  9 20:21 main-thread_8c.html
+-rw-r--r-- 1 tardis tardis    275 Nov  9 20:21 main-thread_8c.js
+-rw-r--r-- 1 tardis tardis  32204 Nov  9 20:21 main-thread_8c_source.html
+-rw-r--r-- 1 tardis tardis  15176 Nov  9 20:21 matrix-thread_8c.html
+-rw-r--r-- 1 tardis tardis    113 Nov  9 20:21 matrix-thread_8c.js
+-rw-r--r-- 1 tardis tardis  16045 Nov  9 20:21 matrix-thread_8c_source.html
+-rw-r--r-- 1 tardis tardis  15668 Nov  9 20:21 matrix-thread_8h.html
+-rw-r--r-- 1 tardis tardis    185 Nov  9 20:21 matrix-thread_8h.js
+-rw-r--r-- 1 tardis tardis  10888 Nov  9 20:21 matrix-thread_8h_source.html
+-rw-r--r-- 1 tardis tardis    153 Nov  9 20:21 [01;35mnav_f.png[0m
+-rw-r--r-- 1 tardis tardis     95 Nov  9 20:21 [01;35mnav_g.png[0m
+-rw-r--r-- 1 tardis tardis     98 Nov  9 20:21 [01;35mnav_h.png[0m
+-rw-r--r-- 1 tardis tardis   2036 Nov  9 20:21 navtree.css
+-rw-r--r-- 1 tardis tardis   1227 Nov  9 20:21 navtreeindex0.js
+-rw-r--r-- 1 tardis tardis  15436 Nov  9 20:21 navtree.js
+-rw-r--r-- 1 tardis tardis    123 Nov  9 20:21 [01;35mopen.png[0m
+-rw-r--r-- 1 tardis tardis  38270 Nov  9 19:46 parent-matrix_8c.html
+-rw-r--r-- 1 tardis tardis    372 Nov  9 19:46 parent-matrix_8c.js
+-rw-r--r-- 1 tardis tardis  35145 Nov  9 19:46 parent-matrix_8c_source.html
+-rw-r--r-- 1 tardis tardis   2800 Nov  9 20:21 resize.js
+-rw-r--r-- 1 tardis tardis   9767 Nov  9 20:21 structdata__struct.html
+-rw-r--r-- 1 tardis tardis    553 Nov  9 20:21 structdata__struct.js
+-rw-r--r-- 1 tardis tardis   4141 Nov  9 20:21 structdata__struct-members.html
+-rw-r--r-- 1 tardis tardis    853 Nov  9 20:21 [01;35msync_off.png[0m
+-rw-r--r-- 1 tardis tardis    845 Nov  9 20:21 [01;35msync_on.png[0m
+-rw-r--r-- 1 tardis tardis    142 Nov  9 20:21 [01;35mtab_a.png[0m
+-rw-r--r-- 1 tardis tardis    169 Nov  9 20:21 [01;35mtab_b.png[0m
+-rw-r--r-- 1 tardis tardis    177 Nov  9 20:21 [01;35mtab_h.png[0m
+-rw-r--r-- 1 tardis tardis   1163 Nov  9 20:21 tabs.css
+-rw-r--r-- 1 tardis tardis    184 Nov  9 20:21 [01;35mtab_s.png[0m
+[01;32mtardis@tardis-VirtualBox[01;34m /home/tardis/data/cs180/assignmets/assignment_4 $[00m exit
+
+Script done on Mon 09 Nov 2015 08:22:18 PM PST

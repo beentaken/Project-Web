@@ -1,0 +1,523 @@
+
+<!-- saved from url=(0064)http://azrael.digipen.edu/~mmead/www/Courses/CS280/BTrees-1.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./BTrees_files/new.css">
+<title>CS 280 - BTrees</title>
+</head>
+
+<body>  
+<center><h1>B-Trees</h1></center>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Internal vs. External Searching</p>
+
+<ul>
+<li>With in-memory data structures, the physical location in memory was a constant.
+</li><li>What happens if the data structure is too large to fit into memory? Need to use <i>external</i> memory. 
+  (e.g. hard disk)
+<!--<li>Working with <i>very</i> slow memory (hard disk, hence the notion of external searching).-->
+</li><li>What is the definition of <i>large</i>?
+</li><li>Essentially two types of memory in a computer 
+<ol>
+<li><b><i>Internal</i></b> or <b><i>primary</i></b> storage: Fast, expensive, small amounts. Internal to the CPU. (Main memory)
+</li><li><b><i>External</i></b> or <b><i>secondary</i></b> storage: Slow, cheap, vast amounts. External to the CPU. (Hard disk)
+</li></ol>
+
+<p>
+Simple diagram of a <a href="http://www.faqs.org/docs/linux_admin/x1001.html">hard disk</a>.
+</p><p>
+
+</p></li><li>Main factors distinguishing slow/fast storage (disk/memory): Speed and Cost
+<ul>
+<li>Cost today: RAM is about $4 per GB, Disk storage is about $0.04 per GB, and NAND SSD is about $0.30 per GB. (Fall 2015) 
+<!--  
+<li>Cost today: RAM is about $10 per GB, Disk storage is about $0.04 per GB. (11/18/2014) (NAND SSD $0.40 per GB)
+<li>Cost today: RAM is about $10 per GB, Disk storage is about $0.050 per GB. (11/12/2013) (NAND SSD $0.73 per GB, 256 GB)
+<li>Cost today: RAM is about $8.50 per GB, Disk storage is about $0.050 per GB. (7/9/2013) (NAND SSD $0.78 per GB, 256 GB)
+<li>Cost today: RAM is about $6 per GB, Disk storage is about $0.055 per GB. (4/2/2013) (NAND SSD $0.55 per GB, 256 GB)
+<li>Cost today: RAM is about $ 7 per GB, Disk storage is about $0.060 per GB. (4/4/2012) (NAND SSD $1.20 per GB, 256 GB)
+<li>Cost today: RAM is about $15 per GB, Disk storage is about $0.045 per GB. (4/11/2011) (NAND SSD $2.00 per GB)
+<li>Cost today: RAM is about $15 per GB, Disk storage is about $0.060 per GB. (12/7/2010) (NAND SSD $1.40 per GB)
+<li>Cost today: RAM is about $30 per GB, Disk storage is about $0.060 per GB. (7/20/2010)
+<li>Cost today: RAM is about $30 per GB, Disk storage is about $0.090 per GB. (4/20/2010)
+<li>Cost today: RAM is about $22 per GB, Disk storage is about $0.100 per GB. (12/3/2009)
+<li>Cost today: RAM is about $16 per GB, Disk storage is about $0.120 per GB. (11/25/2008)
+<li>Cost today: RAM is about $21 per GB, Disk storage is about $0.160 per GB. (7/9/2008)
+<li>Cost today: RAM is about $20 per GB, Disk storage is about $0.200 per GB. (4/3/2008)
+<li>Cost today: RAM is about $70 per GB, Disk storage is about $0.200 per GB. (11/29/2007)
+-->
+</li></ul>
+<!--
+<li>Cost today: RAM is about $0.08 per MB, Disk storage is about $0.0004 per MB.
+-->
+</li><li>Speed today: RAM is measured in ns (nanoseconds, a billionth of a sec), and hard disks are measured
+in ms (milliseconds, a thousandth of a second). RAM access time is about 10 ns and hard disk access time
+is about 10 ms. (Plus other factors, too). 
+</li><li>On average, it takes about 10 ms to access one byte from a hard disk.
+<ul>
+<li>This includes <i>seek time</i>, <i>latency</i>, and <i>transfer rate</i>.
+</li><li>Note that it takes about the same amount of time to access an entire sector (e.g. 512 bytes or more)
+</li><li>This will have a direct effect on the data structures.
+</li></ul>
+</li><li>On average, it takes about 1 microsecond (millionth of a second) to access a byte from main memory.
+</li><li>All things considered, hard disks are about 10,000 times slower than RAM. 
+</li><li>Rotational velocity affects the times as well. (3600 rpm, 5400 rpm, 7200 rpm, 10K rpm, 15K rpm)
+	<!--
+	<a href="http://www.pcaviator.com/megascenery/forums/index.php?showtopic=892&hl=">Defrag discussion</a>
+	-->
+</li><li>SSDs are faster than spinning hard disks, but still extremely slow compared to RAM access.</li>
+<li>This means that data structures and algorithms that work fine for data in RAM won't work very well
+for data on a disk.
+<!--
+<li>More information on <a href="http://www.answers.com/topic/hard-disk">hard drive technologies</a>.
+-->
+</li></ul>
+
+Consider these algorithms for data structures stored on a hard disk:
+<ul>
+<li>Searching an unsorted array with 1,000,000 elements
+</li><li>Searching a sorted array with 1,000,000 elements
+</li><li>Inserting into a sorted array.
+</li><li>Searching a balanced tree with 1,000,000 nodes
+<!--<li>Searching a hash table with a load factor of 85% using linear probing. (Probes: 3.83 for hit, 22.72 for a miss)-->
+</li><li>Sorting an array with 1,000,000 elements. (Using a <i>O(n lg n)</i> sort) 
+<!-- assume 10 ms to access records it will take 40 ms to 
+  read 2 records (20 ms)
+  compare them (0 ms, a few microsecs, but negligible here)
+  write them (20 ms)
+  This gives us 40 ms X 21 million (n lg n is 21 million because 2^20 = 1048576)
+-->
+</li></ul>
+
+Final considerations:
+<ul>
+<li>Programs designed for reading/writing data structures from/to external storage can bypass I/O overhead. 
+(i.e read sectors instead of files)
+</li><li>All computations <i>must</i> be done in primary memory. (May further be required to be on the CPU itself.)
+That's just the way computers work. Disks are for storage only. 
+</li><li>Must be able to fit some portion of the data into main memory for the algorithm to work.
+<!--
+<li><a href="http://en.wikipedia.org/wiki/Hard_disk">More hard disk information</a>
+-->
+</li></ul>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Introduction to B-Trees</p>
+
+Suppose we have 20 data elements (keyed from 1 to 20) and we want to store them in a tree so we can minimize the search time (read: minimize the height).
+<p>
+Storing the data in a balanced binary tree: (Height: 4)
+</p><p>
+</p><blockquote>
+<img src="./BTrees_files/BTrees-AsBinary.gif"><br>
+</blockquote>
+<br>
+
+<p>
+Storing the data in a 2-3 tree: (Height: 2)
+</p><p>
+</p><blockquote>
+<img src="./BTrees_files/BTrees-As23.gif"><br>
+</blockquote>
+<br>
+
+<p>
+Storing the data in a 2-3-4-5 tree: (Height: 1)
+</p><p>
+</p><blockquote>
+<img src="./BTrees_files/BTrees-As2345.gif"><br>
+</blockquote>
+<br>
+
+<p>
+Storing the data in a tree that can have more than 20 children per node: (Height: 0)
+</p><p>
+</p><blockquote>
+<img src="./BTrees_files/BTrees-As234to21.gif"><br>
+</blockquote>
+<br>
+
+Observations:
+<p>
+	
+</p><ul>
+<li>As the number of children per node increases (or keys per node increases), the height decreases.
+</li><li>This results in faster traversals (depending on traversal speeds), or larger trees with smaller height.
+</li><li>The maximum number of children per node is called the <i>branching factor</i> (or <i>fanout</i>) of the tree. BSTs have a branching factor of 2. (2-3-4 trees have branching factor of 4)
+</li><li>Maximizing the branching factor is the key (no pun intended) to the efficiency of B-Trees.
+</li><li>We've actually just traded one search mechanism for another. 
+	<ul>
+		<li>In a binary tree, we spend a lot of time following left and right child pointers.</li>
+		<li>In an n-ary tree (like the trees above), we spend a lot of time finding keys in the nodes.</li>
+    <li>This is exactly how the BList worked.</li>
+
+	</ul>
+</li></ul>
+
+For a balanced binary tree, the height, <i>h</i> was based on the number of nodes/elements: (1 element per node)
+
+<!--
+<blockquote>
+<i>h &le; log<sub>2</sub>(N + 1) - 1</i>
+</blockquote>
+-->
+
+<blockquote>
+<i>h = floor(log<sub>2</sub>(N))</i>
+</blockquote>
+
+
+So, a full and complete balanced binary tree with 31 nodes/elements will have a height of 4:
+<p>
+</p><blockquote>
+<img src="./BTrees_files/BTree-31-keys.png">
+</blockquote>
+<p>
+In a balanced n-ary tree, the height is also based on the number of elements: (more than 1 element per node)
+
+</p><blockquote>
+<i>h = floor(log<sub>bf</sub>(N))</i> where <i>bf</i> is the branching factor. (Note this is the minimum height)
+</blockquote>
+
+So, a balanced 2-3-4 tree with 15 elements will have a height of 1. The same tree with 16 elements will
+have a height of 2.
+<p>
+</p><blockquote>
+<img src="./BTrees_files/BTrees-As234.gif">
+</blockquote>
+<p>	
+<br>
+</p><p>
+<table border="0" cellpadding="5" cellspacing="5">
+<tbody><tr><th>Same data in a balanced binary tree (height is 3):</th><th>Showing the "4-nodes", if
+this was a red-black tree:</th></tr>
+<tr>
+<td>
+<blockquote>
+<img src="./BTrees_files/BinaryTree-15-keys.png">
+</blockquote>
+</td>
+<td>
+<blockquote>
+<img src="./BTrees_files/BinaryTree-15-keys-annotated.png">
+</blockquote>
+</td>
+</tr></tbody></table>
+</p>
+
+		
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">B-Tree Details</p>
+
+		
+<blockquote>
+</blockquote>
+
+<ul>
+<li>Named by Bayer and McCreight who studied them in 1972.
+</li><li>Used primarily for <i>external searching</i>.
+</li><li>Based on multi-way trees (2-3, 2-3-4, etc.)
+</li><li>Each node in a B-Tree of order <i>M</i> has between M and M/2 children, except the root. 
+	<ul>
+		<li>All nodes, except the root, are at least half full.</li>
+    <li>The BList shows <a href="http://azrael.digipen.edu/~mmead/www/Courses/2015/fall/cs280/project2/blist-benchmarks.html">this</a>.</li>
+	</ul>
+</li><li>A BST has a branching factor of 2 (which is also the base of the <i>lg</i> used in complexity computations).
+</li><li>A B-Tree's height grows logarithmically with the number of nodes it contains. (The base of <i>lg</i> is the branching factor).
+</li></ul>
+
+Discussion of other <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS280/Trees-2.html">Trees</a>
+<p>
+
+More Details about B-Trees:
+</p><ul>
+<li>All leaf nodes are at the same level. (Like 2-3-4 trees)
+</li><li>An internal node with <i>N</i> children has <i>N - 1</i> keys.
+</li><li>Typically, an internal node has an array of keys (N - 1) and an array of pointers (N).
+</li><li>The structure of a leaf node may be different than an internal node.
+</li><li>The nodes are <i>page-based</i> for optimal performance (determined by the hardware, e.g. hard drive sector/cluster size), which means
+the number of keys/children in a node is directly related to the size of a page on disk. (Disk pages are similar
+to memory pages used by a memory manager.)
+</li></ul>
+
+<!--
+<a href="11special.pdf">Diagrams and notes</a> from Robert Sedgewick.
+-->
+<p>
+
+Below is a diagram of a B-tree of height 2 containing over one billion keys. Each internal node and leaf contains 1000 keys. 
+There are 1001 nodes at depth 1 and over one million nodes at depth 2. There are over 1 billion keys at level 2.
+Shown inside each node is the number of keys in the node.
+</p><p>
+</p><blockquote><pre><img width="600" height="200" src="./BTrees_files/B-Tree1001-1.gif"><br><font size="-6">© 2001 Cormen et al.</font>
+</pre></blockquote>
+
+Suppose the entire tree fit into memory. What can you say about the algorithm used
+to find a particular value? What if we had a balanced BST instead? What about the performance?
+<!--
+The complexity must also consider the time to search through the keys in the nodes. Even though 
+the height is very small, most of the work is spent searching the nodes using a binary search.
+The array is going to be contiguous, so we would get good cache coherency. Not so with a 
+binary tree where nodes are much more spread out. A mem manager might help a bit.
+
+Of course, reading the block from the disk will far outweigh the time searching 
+in the node.
+-->
+<p>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+</p><p class="SectionHeader">Implementing B-Trees</p>
+
+
+When storing the data in the node, a node may contain:
+<ul>
+<li>The number of keys in the node
+</li><li>A <i>sorted</i> array of keys
+</li><li>A boolean flag indicating if the node is a leaf or not (may be implicit based on depth of the node)
+</li><li>An array of pointers to children (the keys separate the ranges of the children)
+<!--
+<li>The pointers are undefined if the node is a leaf 
+-->
+</li><li>A variation of the B-Tree is the B<sup>+</sup>-Tree, which stores the data outside of the node.
+This maximizes the branching factor because more pointers (therefore, more children) can be stored in a single node.
+<!--
+Since we're just storing pointers, we can fit more "data" into a page
+-->
+</li></ul>
+
+Number of Keys and Children
+<ul>
+<li>There is a lower and upper bound on the number of keys a node can contain.
+</li><li>The minimum number of children a node can contain is the <i>minimum degree</i> of the tree.
+</li><li>The minimum degree of a tree is denoted as <i>t</i>, and <i>t &#8805; 2</i>
+<!--
+<li>The maximum number of children, then, is <i>2t</i>.
+<li>Therefore, a node has at least <i>t - 1</i> keys and at most <i>2t - 1</i> keys (full).
+-->
+</li><li>A 2-3-4 tree has minimum degree <i>t = 2</i>. Most B-Trees have a (relatively) large value of <i>t</i>.
+	
+</li><li>The general formula for the height (maximum) of a balanced tree replaces 2 with the minimum degree, <i>t</i>:
+	
+<!--
+<blockquote>
+<i>h &le; log<sub>t</sub>(N + 1) - 1</i>
+</blockquote>
+-->
+
+<blockquote>
+<i>h &#8804; floor(log<sub>t</sub>(N))</i>
+</blockquote>
+
+This leads to:
+
+<blockquote>
+<i>floor(log<sub>bf</sub>(N)) &#8804; h &#8804; floor(log<sub>t</sub>(N))</i>
+</blockquote>
+
+</li><li>Reminder: <i>bf</i> is the <i>branching factor</i>, which is the maxiumum number of children.</li>
+	
+<li>A variation of the B-Tree is the B<sup>*</sup>-Tree, which requires each node to be 2/3 full instead of half full.
+<!--
+Split when 2 nodes are full. (Split 2 nodes into 3 nodes).
+-->
+
+</li></ul>
+
+
+
+<blockquote><pre><b>struct</b> Data1
+{
+  <b>int</b> Key;  <font color="#003399"><i>// 4 bytes</i></font>
+  <b>int</b> Foo;  <font color="#003399"><i>// 4 bytes</i></font>
+  <b>int</b> Bar;  <font color="#003399"><i>// 4 bytes</i></font>
+};
+
+<b>struct</b> BTreeNode
+{
+  <b>int</b> NumKeys;                        <font color="#003399"><i>// num keys in this node</i></font>
+  Data1 Keys[MAX_KEYS];               <font color="#003399"><i>// key is in a struct</i></font>
+  BTreeNode *Children[MAX_CHILDREN];  <font color="#003399"><i>// "pointers" to children</i></font>
+                                      <font color="#003399"><i>// MAX_CHILDREN == MAX_KEYS + 1</i></font>
+};
+</pre></blockquote>
+
+Given a PAGE SIZE of 4096 bytes, this would yield:
+<ul>
+<li>Max keys: 255
+</li><li>Max children (Max keys + 1, branching factor, order): 256 
+</li><li>Min children (minimum degree, <i>t</i>): 128
+</li><li>Min keys (Min children - 1): 127
+</li></ul>
+
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS280/BTrees-PageSize-1.html">Diagrams</a>
+<p>
+
+Suppose this was our data: (52 bytes)
+
+</p><blockquote><pre><b>struct</b> Data2
+{
+  <b>int</b> Key;       <font color="#003399"><i>//  4 bytes</i></font>
+  <b>int</b> Foo;       <font color="#003399"><i>//  4 bytes</i></font>
+  <b>int</b> Bar;       <font color="#003399"><i>//  4 bytes</i></font>
+  <b>char</b> Name[20]; <font color="#003399"><i>// 20 bytes</i></font>
+  <b>double</b> This;   <font color="#003399"><i>//  8 bytes</i></font>
+  <b>double</b> That;   <font color="#003399"><i>//  8 bytes</i></font>
+  <b>float</b> Other;   <font color="#003399"><i>//  4 bytes</i></font>
+};
+</pre></blockquote>
+
+Given the same PAGE SIZE of 4096 bytes, this would yield:
+<ul>
+<li>Max keys: 73  (4088 / 56)
+</li><li>Max children (Max keys + 1, branching factor, order): 74
+</li><li>Min children (minimum degree, <i>t</i>): 37
+</li><li>Min keys (Min children - 1): 36
+</li></ul>
+
+What about this data:
+
+<blockquote><pre><b>struct</b> Data3
+{
+  <b>int</b> Key;  <font color="#003399"><i>// 4 bytes</i></font>
+  <b>int</b> Data; <font color="#003399"><i>// 4 bytes</i></font>
+};
+</pre></blockquote>
+
+Given the same PAGE SIZE of 4096 bytes, this would yield:
+<ul>
+<li>Max keys: 340 (4088 / 12)
+</li><li>Max children (Max keys + 1, branching factor, order): 341
+</li><li>Min children (minimum degree, <i>t</i>): 170
+</li><li>Min keys (Min children - 1): 169
+</li></ul>
+
+
+<!--
+Max keys = 340
+Max children = 341
+Min keys = 170
+Min children = 171
+-->
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">Operations with B-Trees</p>
+
+<ul>
+<li>Operations have to account for disk access.
+</li><li>Data may not be in memory, so must be retrieved from disk (algorithms only run in memory/CPU).
+</li><li>Typically, some kind of <i>manager</i> handles the disk access (read a node, write a node).
+</li><li>Disk access is transparent to the client (via an API).
+</li><li>Remember, the children <i>pointers</i> in a node are pointers to disk blocks.
+</li><li>B-Trees facilitate <i>key-range</i> searches. (This is what databases are good at.)
+  For example:
+  <ul>
+    <li>Find all data with keys: <i>100 &#8804; key &#8804; 200</i>.</li>
+    <li>Find all students with a GPA between 3.1 and 3.8.</li>
+  </ul>
+</li></ul>
+
+<b>Inserting a key/data value</b>
+
+<ul>
+<li>Similar to 2-3-4 trees; insert at the appropriate leaf.
+</li><li>Need to insert key/data into sorted array. Complexity? (This is CPU complexity)
+</li><li>If leaf is full, need to split:
+<ul>
+<li>Middle key goes to parent
+</li><li>Remaining keys get split into 2 nodes 
+</li></ul>
+</li><li>Like 2-3-4 trees, we can split full nodes on the way down during insert operation. 
+Advantage of splitting on the way down?
+</li><li>Splitting the root causes the height to grow by 1.
+</li></ul>
+
+<b>Deleting a key/data value</b>
+
+<ul>
+<li>Delete from a leaf, decrement the count (NumKeys)
+</li><li>Can be complicated if a node ends up having less than the minimum number of keys.
+</li><li>Need to "adjust" the tree to satisfy B-Tree requirement.
+</li><li>We can "borrow" from a neighboring node, but what if neighbor can't spare any? 
+  (Works like deletion in a 2-3-4 tree, merge nodes)
+</li><li>Can allow nodes to become "underfull". In practice, this is generally acceptable.</li>
+<ul>
+  <li>May "fix" the tree offline.</li>
+</ul>
+<li>Another scheme may just mark the data as deleted (<i>lazy delete</i>) instead of using costly merges.</li>
+<ul>
+  <li>Eventually a new tree will be constructed (offline) when the performance decreases due
+  to many marked items.</li>
+  <li>We saw this scheme with open-addressed hash tables. The marked slots were removed the 
+    next time we grew the table.</li>
+</ul>
+</ul>
+
+<!-- ************************************************************************************************ -->
+<!-- ************************************************************************************************ -->
+<p class="SectionHeader">B<sup>+</sup> Trees</p>
+
+<ul>
+<li>All data is stored outside of the nodes.</li>
+<li>Branching factor is maximized</li>
+<li>Used quite often in practice</li>
+<li>Allows for multiple representations (sortings) on the same data. Each B<sup>+</sup> tree has the
+same pointers to the actual data.</li>
+<ul>
+  <li>This is a huge win and keeps the data normalized.</li>
+  <li>This could be done with binary search trees or other node-base containers.</li>
+</ul>
+</ul>
+
+
+<!--
+<p>
+<a href="http://www.linuxgazette.com/issue55/florido.html">Implementing a filesystem</a> using B<sup>+</sup>-Trees
+<p>
+-->
+
+The size of <tt>DATA</tt> below is 1344. With 4096 byte pages, we would only get 3 structs per page.
+<p>
+
+</p><blockquote><pre><b>struct</b> DATA
+{
+  <b>int</b> ID; <font color="#003399"><i>// the key</i></font>
+  <b>char</b> Name[32];    
+  <b>struct</b> 
+  {
+    <b>double</b> x;
+    <b>double</b> y;
+    <b>double</b> z;
+  } Position;
+  <b>double</b> NFA[128];
+  <b>int</b> DFA[64];
+};
+</pre></blockquote>
+
+<a href="http://azrael.digipen.edu/~mmead/www/Courses/CS280/BTrees-Sample.html">A good candidate</a> for a B<sup>+</sup> tree implementation.
+<p>
+
+<a href="http://en.wikipedia.org/wiki/NTFS">NTFS</a>, 
+<a href="http://en.wikipedia.org/wiki/JFS_(file_system)">JFS</a>, 
+<a href="http://en.wikipedia.org/wiki/XFS">XFS</a>,
+<a href="http://en.wikipedia.org/wiki/ReiserFS">ReiserFS</a>, and
+<a href="http://en.wikipedia.org/wiki/Btrfs">Btrfs</a>
+are implemented using B+Trees. Also, Microsoft's SQL Server and Oracle's
+database systems support B+Trees.
+
+</p><p>
+
+<!-- ********************************************************** -->
+<!-- ********************************************************** -->
+</p><hr width="90%">
+
+<blockquote><pre></pre></blockquote>
+
+</body></html>

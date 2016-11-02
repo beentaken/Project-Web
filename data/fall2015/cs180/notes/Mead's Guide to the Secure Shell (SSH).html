@@ -1,0 +1,1697 @@
+
+<!-- saved from url=(0059)http://azrael.digipen.edu/~mmead/www/Courses/CS180/ssh.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="stylesheet" type="text/css" href="./Mead's Guide to the Secure Shell (SSH)_files/new.css">
+<link rel="stylesheet" type="text/css" href="./Mead's Guide to the Secure Shell (SSH)_files/styles.css">
+
+<title>Mead's Guide to the Secure Shell (SSH)</title>
+
+</head>
+
+<body>  
+
+<center><h1>
+Mead's Guide to the Secure Shell (SSH)
+</h1></center>
+
+<!--
+Ctrl .         href
+Crlt+Shift+M   wiki-ize
+-->
+<!--
+Core Information:
+<p>
+<ul>
+<li><a href="#INTRO">Introduction</a></li>
+<li><a href="#INSTALL">Installation</a></li>
+<li><a href="#CLIENT">Using the SSH Client</a></li>
+<li><a href="#SERVER">Configuring the Server</a></li>
+<li><a href="#TUNNELING">Tunneling</a></li>
+<li><a href="#KEYS">Seting Up SSH Keys</a></li>
+</ul>
+<p>
+Miscellaneous:
+<p>
+<ul>
+<li><a href="#HOSTS">Using a hosts file</a></li>
+<li><a href="#TCPWRAPPERS">TCP Wrappers</a></li>
+<li><a href="#REMOTECMD">Running a Remote Command</a></li>
+<li><a href="#WARNING">WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!</a></li>
+<li><a href="#SSHFS">Mounting Remote System OVER SSH (SSHFS)</a></li>
+<li><a href="#LINKS">Links</a></li>
+</ul>
+-->
+
+<table border="0" cellspacing="5" cellpadding="5">
+<tbody><tr align="left"><th>Core Information</th><th></th><th>Miscellaneous</th></tr>
+<tr valign="top">
+
+<td>
+<ol>
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/ssh.html#INTRO">Introduction</a></li>
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/ssh.html#INSTALL">Installation</a></li>
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/ssh.html#CLIENT">Using the SSH Client</a></li>
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/ssh.html#SERVER">Configuring the Server</a></li>
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/ssh.html#TUNNELING">Tunneling</a></li>
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/ssh.html#KEYS">Setting Up SSH Keys</a></li>
+</ol>
+</td>
+
+<td width="10"></td>
+
+<td>
+<ol>
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/ssh.html#HOSTS">Using a hosts file</a></li>
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/ssh.html#TCPWRAPPERS">TCP Wrappers</a></li>
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/ssh.html#REMOTECMD">Running a Remote Command</a></li>
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/ssh.html#WARNING">WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!</a></li>
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/ssh.html#SSHFS">Mounting Remote System Over SSH (SSHFS)</a></li>
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/ssh.html#SCP">Copying files between computers (scp)</a></li>
+<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/ssh.html#LINKS">Links</a></li>
+</ol>
+</td></tr></tbody></table>
+
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<a name="INTRO"></a>
+<p class="sectionheader">
+Introduction
+</p>
+Because networks are ubiquitous (local-area networks, the Internet, etc.), it makes sense that
+we would want to access one computer (remote) from another (local). There are many ways to 
+accomplish this, but the defacto standard for years has been through the secure shell, or SSH
+protocol.
+<p>
+Before SSH, a program called <tt>telnet</tt> was used. It was simple and popular, but it had 
+no security. SSH is similar to <tt>telnet</tt>, but with added security, as well as other features:
+</p><ul>
+	<li>Encryption - All data exchanged between the computers is encrypted. (<tt>telnet</tt> sent
+		and received <i>plaintext</i>).</li>
+	<li>Authentication - SSH verifies that the remote computer really is the computer that you
+		want to connect to.</li>
+	<li>Tunneling - The ability to use an intermediary (public) computer to access a remote
+		(possibly, private) computer.</li>
+	<li>X11 Forwarding- The ability to run graphical user interface (GUI) programs over the
+		text-based interface.</li>
+	<li>Executing a command on the remote computer.</li>
+	<li>Secure file transfers.</li>
+	<li>Other stuff - Mostly related to security.</li>
+</ul>
+SSH provides everything that <tt>telnet</tt> provided, with many more features available. SSH
+is available everywhere and on almost every device, making <tt>telnet</tt> unnecessary. You
+should avoid using <tt>telnet</tt>, especially over the Internet.
+
+<p class="info">
+<tt>telnet</tt> still has its uses (debugging network applications for one), but because of 
+it's lack of security, it shouldn't be used for day-to-day computer access over the Internet.
+</p>
+
+<p>
+There are two parts to SSH: the <i>client</i> and the <i>server</i>.
+</p><ul>
+	<li>The server runs on the remote computer that you want to connect to.</li>
+	<li>The client runs on the local computer that you are presumably sitting in front of
+		(although it can also be remote with respect to your location).</li>
+</ul>
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<a name="INSTALL"></a>
+<p class="sectionheader">
+Installing the SSH Client and SSH Server
+</p>
+
+The version of SSH that many Linux distributions use is <a href="http://www.openssh.com/">OpenSSH</a>. 
+<p>
+
+<b>Installing the Client</b>
+</p><p>
+Chances are, the SSH client is already installed on your computer. In the case that it isn't, it's a simple
+matter of installing it:
+
+</p><blockquote><pre>sudo apt-get install openssh-client
+</pre></blockquote>
+
+<p></p><hr width="90%"><p>
+
+<a name="INSTALL_SERVER">
+<b>Installing the Server</b>
+</a>
+</p><p>
+If you don't ever plan on connecting to your computer from another computer, then you don't have to install
+the SSH server. The client is all you need to connect to other computers. However, if you are planning on
+connecting to your computer remotely (from other computers on the network or Internet), then you will need
+to install an SSH server.
+</p><p>
+If you type this at a terminal prompt:
+</p><blockquote><pre>ssh localhost
+</pre></blockquote>
+
+and you see this:
+
+<blockquote><pre>ssh: connect to host localhost port 22: Connection refused
+</pre></blockquote>
+
+it's likely that you don't have an SSH server installed. Installing the server is straight-forward 
+and is installed like any other software:
+
+<blockquote><pre>sudo apt-get install openssh-server
+</pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+<!--
+You will see something like this (depending on your version and package manager):
+
+<p class="console"><font color="yellow">mmead@nadia</font><font color="purple"> ~ $ </font><b>sudo apt-get install openssh-server</b>
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+The following extra packages will be installed:
+  ncurses-term ssh-import-id
+Suggested packages:
+  rssh molly-guard openssh-blacklist openssh-blacklist-extra monkeysphere
+The following NEW packages will be installed:
+  ncurses-term openssh-server ssh-import-id
+0 upgraded, 3 newly installed, 0 to remove and 3 not upgraded.
+Need to get 771 kB of archives.
+After this operation, 3,056 kB of additional disk space will be used.
+Do you want to continue [Y/n]? 
+Get:1 http://archive.ubuntu.com/ubuntu/ quantal/main ncurses-term all 5.9-10ubuntu1 [424 kB]
+Get:2 http://archive.ubuntu.com/ubuntu/ quantal/main openssh-server amd64 1:6.0p1-3ubuntu1 [340 kB]
+Get:3 http://archive.ubuntu.com/ubuntu/ quantal/main ssh-import-id all 2.12-0ubuntu1 [6,424 B]
+Fetched 771 kB in 3s (236 kB/s)     
+Preconfiguring packages ...
+Selecting previously unselected package ncurses-term.
+(Reading database ... 219023 files and directories currently installed.)
+Unpacking ncurses-term (from .../ncurses-term_5.9-10ubuntu1_all.deb) ...
+Selecting previously unselected package openssh-server.
+Unpacking openssh-server (from .../openssh-server_1%3a6.0p1-3ubuntu1_amd64.deb) ...
+Selecting previously unselected package ssh-import-id.
+Unpacking ssh-import-id (from .../ssh-import-id_2.12-0ubuntu1_all.deb) ...
+Processing triggers for man-db ...
+Processing triggers for ureadahead ...
+Processing triggers for ufw ...
+Setting up ncurses-term (5.9-10ubuntu1) ...
+Setting up openssh-server (1:6.0p1-3ubuntu1) ...
+Creating SSH2 RSA key; this may take some time ...
+Creating SSH2 DSA key; this may take some time ...
+Creating SSH2 ECDSA key; this may take some time ...
+ssh start/running, process 4755
+Setting up ssh-import-id (2.12-0ubuntu1) ...
+Processing triggers for ureadahead ...
+Processing triggers for ufw ...
+<font color="yellow">mmead@nadia</font><font color="purple"> ~ $</font>
+</p>
+-->
+
+To test your server after installation:
+<blockquote><pre>ssh localhost
+</pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+You will probably see something like this:
+
+<!-- The fingerprint has been modified for this page. It is not the real one. -->
+
+<p class="console"><font color="yellow">mmead@nadia</font><font color="purple"> ~ $ </font><b>ssh localhost</b>
+The authenticity of host 'localhost (127.0.0.1)' can't be established.
+ECDSA key fingerprint is 0d:d5:fb:64:4a:8e:e5:38:1c:59:30:c1:9c:c3:39:cf.
+Are you sure you want to continue connecting (yes/no)? <b>yes</b>
+Warning: Permanently added 'localhost' (ECDSA) to the list of known hosts.
+mmead@localhost's password: <font color="white"><b>(not shown)</b></font>
+Welcome to Linux Mint 14 Nadia (GNU/Linux 3.5.0-17-generic x86_64)
+
+Welcome to Linux Mint
+ * Documentation:  http://www.linuxmint.com
+<font color="yellow">mmead@nadia</font><font color="purple"> ~ $ </font>
+</p>
+
+<p class="info">
+The first time that you connect to a computer via SSH, you will be asked to verify the authenticity. If you're sure
+that the computer you're connecting to is really the one you want to connect to, type <b>yes</b> at the prompt. 
+(In this example, it is the local machine, so we are sure.) We'll discuss the details about this later.
+</p>
+
+
+If you see something like the above, then the SSH client and server have been installed and are
+functioning properly. 
+<p>
+To logout of the SSH session that you've just created, simply type <tt>exit</tt>
+at the prompt and the session will be closed.
+</p><p>
+</p><p class="console"><font color="yellow">mmead@nadia</font><font color="purple"> ~ $ </font><b>exit</b>
+logout
+Connection to localhost closed.
+<font color="yellow">mmead@nadia</font><font color="purple"> ~ $ </font>
+</p>
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<a name="CLIENT"></a>
+<p class="sectionheader">
+Using the SSH Client
+</p>
+Now that you have an SSH client installed and ready to go, let's connect to some computers.
+<p>
+In order for you to connect to a remote computer, the following conditions must be met
+on the remote computer:
+</p><ol>
+	<li>The computer must be running an SSH server (obviously) and be configured to allow access.</li>
+	<li>You must have a login account on the computer. Just because a computer on the network
+		is running an SSH server does not automatically give you (or anyone else) access to it.</li>
+	<li>The remote computer must be <i>reachable</i> from your local computer. In other words, it 
+		must be on a network (or the Internet) that you have access to and must not be blocked by
+		a firewall or other means that may restrict access.</li>
+</ol>
+
+We'll assume that the above criteria has been met.
+<p>
+SSH has many options, and we'll just look at a few. The simplest form of the command is
+</p><blockquote><pre>ssh <i>host</i>
+</pre></blockquote>
+
+where <tt>host</tt> is the name (or IP address) of the computer you want to connect to. In this
+example, I'm connecting to another Linux computer (sabrina) on my internal network:
+<p>
+
+<!-- The fingerprint has been modified for this page. It is not the real one. -->
+
+</p><p class="console"><font color="yellow">mmead@nadia</font><font color="purple"> ~ $ </font><b>ssh sabrina</b>
+The authenticity of host 'sabrina (192.168.1.17)' can't be established.
+RSA key fingerprint is a3:36:3b:08:c1:f6:53:1f:cd:86:7a:80:8a:fd:26:ab.
+Are you sure you want to continue connecting (yes/no)? <b>yes</b>
+Warning: Permanently added 'sabrina' (RSA) to the list of known hosts.
+mmead@sabrina's password: <font color="white"><b>(not shown)</b></font>
+Last login: Sat Jan 19 15:05:38 2013 from olga
+Logged in at sabrina.
+
+
+<font color="yellow">mmead@sabrina:~&gt;</font>
+</p>
+
+<p class="info">
+If your username on the remote computer is the same as your username on the local computer, you don't 
+have to specify it when you use the SSH client. However, if the usernames are different on the two 
+computers, you must specify it. This is why I try to have the same username on all computers.
+</p>
+
+
+<b>Specifying the username</b>
+<p>
+You can use the <tt>-l</tt> (lowercase '<tt>L</tt>') option with your username:
+</p><blockquote><pre>ssh -l <i>username</i> <i>host</i>
+</pre></blockquote>
+
+or provide your username with the <tt>@</tt> symbol prepended to the host name (somewhat like an email address):
+<blockquote><pre>ssh <i>username@host</i>
+</pre></blockquote>
+
+Example, logging into sabrina as chico. (Yeah, it's been a while!)
+<p class="console"><font color="yellow">mmead@nadia</font><font color="purple"> ~ $ </font><b>ssh chico@sabrina</b>
+chico@sabrina's password: <font color="white"><b>(not shown)</b></font>
+Last login: Thu Dec 27 12:19:02 2007 from athena
+Logged in at sabrina.
+
+
+<font color="yellow">chico@sabrina:~&gt;</font>
+</p>
+
+<b>Connecting to a different port</b>
+<p>
+If the SSH server is running on a different port than the standard (port 22), you must specify this when
+connecting:
+</p><blockquote><pre>ssh -p <i>port</i> <i>host</i>
+</pre></blockquote>
+
+Assuming that the SSH server is running on port 12345 instead of (or in addition to) port 22:
+<p class="console"><font color="yellow">mmead@nadia</font><font color="purple"> ~ $ </font><b>ssh -l chico -p 12345 sabrina</b>
+chico@sabrina's password: <font color="white"><b>(not shown)</b></font>
+Last login: Sat Jan 19 15:20:22 2013 from olga
+Logged in at sabrina.
+
+
+<font color="yellow">chico@sabrina:~&gt;</font>
+</p>
+
+You can jump from computer to computer using SSH. From the SSH session above on sabrina (on my local network), I can login to another
+computer on the network (olga) and then jump to another one out on the Internet (jason.intel.com):
+
+<p class="console"><font color="yellow">chico@sabrina:~&gt; </font><b>ssh -l mmead olga</b>
+mmead@olga's password: <font color="white"><b>(not shown)</b></font>
+Welcome to Linux Mint 13 Maya (GNU/Linux 3.2.0-23-generic x86_64)
+
+Welcome to Linux Mint
+ * Documentation:  http://www.linuxmint.com
+
+75 packages can be updated.
+0 updates are security updates.
+
+*** /dev/md2 will be checked for errors at next reboot ***
+*** /dev/md3 will be checked for errors at next reboot ***
+*** /dev/sdb1 will be checked for errors at next reboot ***
+*** /dev/sda1 will be checked for errors at next reboot ***
+
+Last login: Thu Jan 17 10:20:01 2013 from www4.gmail.net
+<font color="yellow">mmead@olga:/home/mmead&gt;</font> <b>ssh jason.intel.com</b>
+mmead@jason.intel.com password: <font color="white"><b>(not shown)</b></font>
+Linux jason 2.6.31-22-server #73-Ubuntu SMP Fri Feb 11 20:20:46 UTC 2011 x86_64
+
+To access official Ubuntu documentation, please visit:
+http://help.ubuntu.com/
+
+  System information as of Sat Jan 19 15:30:43 PST 2013
+
+  System load:  0.08              Processes:           86
+  Usage of /:   52.0% of 4.65GB   Users logged in:     1
+  Memory usage: 12%               IP address for eth0: 214.114.42.67
+  Swap usage:   1%                IP address for eth1: 10.1.21.67
+
+  Graph this data and manage this system at https://landscape.canonical.com/
+
+Last login: Sun Jan 13 11:12:14 2013 from c-37-13-214-17.sea.wa.pps.net
+mmead@jason:~ 
+</p>
+
+To return to a previous computer, just type <tt>exit</tt> at the prompt:
+
+<p class="console">mmead@jason:~ <b>exit</b>
+logout
+Connection to jason.intel.com closed.
+<font color="yellow">mmead@olga:/home/mmead&gt;</font><b>exit</b>
+logout
+Connection to olga closed.
+<font color="yellow">chico@sabrina:~&gt;</font> <b>exit</b>
+logout
+Connection to sabrina closed.
+<font color="yellow">mmead@nadia</font> ~ $ 
+</p>
+
+Now I'm back at the original computer (nadia) on my local network. 
+
+<p class="info">
+In case you were wondering why the default
+prompt in the terminal window includes the username and host name (e.g. <b>chico@sabrina</b>), it's to
+help the user identify who she is logged in as and on what computer. With the ease that SSH allows one to
+connect to other computers, sometimes you can get confused as to who you are logged in as or on
+which computer.
+</p>
+On some computers, I use a different color for the prompt, which helps me recognize at a glance
+where I am. For example:
+
+<p class="console"><font color="yellow">mmead@olga:/&gt;</font>
+<font color="cyan">mmead@athena:/home/mmead&gt;</font>
+<font color="beige">mmead@jessica:~&gt;</font>
+<font color="blueviolet">mmead@lisa ~ $</font>
+</p>
+
+Information about configuring the SSH client is <a href="http://linux.die.net/man/5/ssh_config">here</a>.
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<a name="SERVER"></a>
+<p class="sectionheader">
+Configuring the Server
+</p>
+
+The default configuration for the server will usually work right out-of-the-box. However, you may
+want to enable/disable some settings to make it a little more secure. The configuration file for
+the server is generally found here: 
+
+<blockquote><pre>/etc/ssh/sshd_config
+</pre></blockquote>
+
+You have to use <tt>sudo</tt> when you edit the file. The file is a simple text file (like almost
+all configuration files on Unix) so it is easy to modify. Most of the settings require a simple
+<tt><b>yes</b></tt> or <tt><b>no</b></tt> following it. For example, if you want the ability to
+run graphical programs (GUIs), you need to enable that like this:
+
+<blockquote><pre>X11Forwarding yes
+</pre></blockquote>
+
+These are some of the simpler and more useful settings to modify:
+
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="10">
+<tbody><tr><th>Setting</th><th>Description</th><th>Example</th></tr>
+<tr valign="top">
+
+<td>
+<pre>Port</pre></td>
+<td>
+Specifies the port number that the server listens on. The default is 22. 
+Multiple options of this type are permitted (i.e. the server can listen on multiple ports.)
+There is one <tt>Port</tt> command for each port as the example shows.
+</td>
+<td>
+<pre>Port 22<br>Port 12345</pre>
+</td>
+</tr>
+
+
+<tr valign="top">
+<td>
+<pre>PermitRootLogin</pre></td>
+<td>
+Specifies whether root can log in using ssh. The default is <tt>yes</tt>.
+</td>
+<td>
+<pre>PermitRootLogin no</pre>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<pre>MaxStartups</pre></td>
+<td>
+Specifies the maximum number of concurrent unauthenticated connections to the server. 
+Additional connections will be dropped until authentication succeeds or the LoginGraceTime 
+expires for a connection. The default is 10.	
+</td>
+<td>
+<pre>MaxStartups 2</pre>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<pre>Protocol</pre></td>
+<td>
+Specifies the protocol versions the server supports. The possible values are <tt>1</tt> and <tt>2</tt>.
+Multiple versions must be comma-separated.  The default is <tt>2</tt>.
+</td>
+<td>
+<pre>Protocol 2</pre>
+</td>
+</tr>
+
+<tr valign="top">
+<td>
+<pre>AllowUsers</pre></td>
+<td>
+This keyword can be followed by a list of user name patterns, separated by spaces. 
+If specified, login is allowed only for user names that match one of the patterns. 
+Only user names are valid; a numerical user ID is not recognized. By default, 
+login is allowed for all users.	
+</td>
+<td>
+<pre>AllowUsers jdoe billy einstein</pre>
+</td>
+</tr>
+</tbody></table>
+</blockquote>
+
+The <tt>man</tt> page for the configuration file gives you more details about each setting. Just
+type:
+
+<blockquote><pre>man sshd_config 
+</pre></blockquote>
+
+in a console to read about them. Other useful settings:
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+
+<blockquote>
+<table border="1" cellspacing="0" cellpadding="10">
+<tbody><tr><th>Setting</th><th>Description</th><th>Example</th></tr>
+<tr valign="top">
+
+<td>
+<pre>X11Forwarding</pre></td>
+<td>
+Allows the client to run GUI programs over SSH. The client
+must connect to the server using the <tt>-X</tt> option. The default
+is <tt>no</tt>. Enabling this may potentially be a security risk, so
+you wouldn't want to do this on a production server. However, most
+"production servers" don't have any graphical environment, so this
+is pointless on those servers. Also, running GUI programs over the
+Internet can be painfully slow, therefore, this option is generally
+used on private secured LANs where the bandwidth is sufficient.
+<p>
+<b>From the man page:</b>
+<br>
+X11 forwarding should be enabled with caution.  Users with the ability to bypass file permissions
+on the remote host (for the user's X authorization database) can access the local X11 display through
+the forwarded connection.  An attacker may then be able to perform activities such as keystroke monitoring.
+</p><p>
+For this reason, X11 forwarding is subjected to X11 SECURITY extension restrictions by default.  Please refer to the ssh -Y option and the ForwardX11Trusted directive in ssh_config(5) for more information.
+
+</p></td>
+<td>
+<pre>X11Forwarding yes</pre>
+</td>
+</tr>
+</tbody></table>
+</blockquote>
+
+More information about the server configuration file is <a href="http://linux.die.net/man/5/sshd_config">here</a>.
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<a name="TUNNELING"></a>
+
+<p class="sectionheader">
+Tunneling
+</p>
+
+There are several reasons why one might want to setup an SSH tunnel, and one reason is to access
+a computer that is not accessible from your client. 
+<p>
+A typical scenario is that you have several
+computers on your local area network, but only one of them (a public computer) has a connection 
+to an outside network (e.g. the Internet). With SSH tunneling, you could setup a "connection" 
+from the Internet to a private computer (not on the Internet) via the public computer that is
+connected to the Internet.
+</p><p>
+Another scenario is that you have several computers that are behind a firewall. For security 
+reasons, only one of the computers allows incoming SSH connections. (It's easier to secure one
+computer than many computers.) All of the computers behind the firewall can access the Internet
+for outgoing connections, but not for incoming connections.
+</p><p>
+This is the scenario:
+</p><ul>
+	<li>You have a laptop computer (<tt><b>maya</b></tt>) that you take with you when you leave your home.</li>
+	<li>You have two computers at home that are behind a firewall to prevent incoming connections:</li>
+	<ol>
+		<li><tt><b>veronica</b></tt> - The computer that allows incoming SSH connections that we will tunnel through.</li>
+		<li><tt><b>sabrina</b></tt> - The private computer that we want to connect to from <tt>maya</tt> (laptop).</li>
+	</ol>
+</ul>
+
+Notes about this:
+<ul>
+	<li>We don't need tunneling to connect to <tt>sabrina</tt>.</li>
+	<li>We can simply use SSH to connect to <tt>veronica</tt> and then SSH from <tt>veronica</tt> to <tt>sabrina</tt>.</li>
+	<li>Sometimes, this is just fine. However, there are times when having a more direct connection is desirable.</li>
+	<li>Of course, you must have an SSH server running on both <tt>veronica</tt> and <tt>sabrina</tt>.</li>
+</ul>
+
+Let's assume that the domain is <tt>foo.com</tt>, so <tt>veronica</tt> will be <tt>veronica.foo.com</tt>. If you don't have proper
+domain names for your computer, you can use the IP address instead.
+<p>
+Assuming that the client is our laptop, <tt>maya</tt>. The command is simple, you just need the
+<tt>-L</tt> option like so:
+
+</p><blockquote><pre>ssh -L 9999:sabrina:22 veronica.foo.com
+</pre></blockquote>
+
+and results in this:
+<ul>
+	<li>Using SSH, we connect <tt>maya</tt> to <tt>veronica.foo.com</tt> as normal.</li>
+	<li>The <tt>-L</tt> option causes port 9999 on the local computer (maya) to be
+		connected to port 22 on <tt>sabrina</tt>.</li>
+	<li>This command assumes that <tt>veronica.foo.com</tt> knows the IP address of <tt>sabrina</tt>. (It does)</li>
+	<li>You can use any available port above 1023 on the client. The choice of 9999 in this example is arbitrary.</li>
+	<li>You can visualize it something like this:
+
+<p>
+<blockquotex>
+<img src="./Mead's Guide to the Secure Shell (SSH)_files/ssh-tunneling-1.png">
+</blockquotex></p></li>
+<p>
+	</p><li>Of course, physically the tunnel is still going over the Internet, through the firewall, into <tt>veronica</tt>, out
+		through the switch, and then into <tt>sabrina</tt>. You can logically think that the two computers are
+		directly connected, though.</li>
+
+</ul>
+
+As a deeper example, assume that SSH was running on port 25000 on <tt>veronica</tt> and port 35000 on <tt>sabrina</tt>, the
+		command would look like this:
+<blockquote><pre>ssh -p 25000 -L 9999:sabrina:35000 veronica.foo.com
+</pre></blockquote>
+
+
+The general form of the option is:
+
+<blockquote><pre>-L [bind_address:]port:host:hostport
+</pre></blockquote>
+
+where:
+<ul>
+	<li>bind-address - Local computer address. (Leave empty. See below for explanation.)</li>
+	<li>port - The port on the local computer to connect from.</li>
+	<li>host - The remote computer you're tunneling to.</li>
+	<li>hostport - The port on the remote computer to tunnel to.</li>
+</ul>
+
+
+<!--
+-->
+The <tt>-L</tt> option from the SSH man page:
+<p class="technote">
+Specifies that the given port on the local (client) host is to be forwarded to the given host
+and port on the remote side. This works by allocating a socket to listen to port on the local 
+side, optionally bound to the specified bind_address.  Whenever a connection is made to this port, 
+the connection is forwarded over the secure channel, and a connection is made to host port 
+hostport from the remote machine.  Port forwardings can also be specified in the configuration 
+file.  IPv6 addresses can be specified by enclosing the address in square brackets. 
+Only the superuser can forward privileged ports.  By default, the local port is bound in
+accordance with the GatewayPorts setting.  However, an explicit bind_address may be used to bind 
+the connection to a specific address.  The bind_address of "localhost" indicates that the 
+listening port be bound for local use only, while an empty address or '*' indicates that the 
+port should be available from all interfaces.
+</p>
+
+That's all there is to it! Of course, the next question is, how do I access <tt>sabrina</tt> from <tt>maya</tt> now?
+Simple, since <tt>maya:9999</tt> is connected (tunneled) to <tt>sabrina:22</tt>, you just specify the port
+when using SSH from <tt>maya</tt>:
+
+<blockquote><pre>ssh -p 9999 localhost
+</pre></blockquote>
+
+This command tells SSH to connect to port 9999 on the local computer (<tt>localhost</tt>). Since there is
+a tunnel from <tt>localhost:9999</tt> to <tt>sabrina:22</tt>, this essentially connects you to <tt>sabrina</tt>. 
+<p>
+Also realize that the <tt>-L</tt> option for tunneling doesn't actually do any SSH login
+from <tt>maya</tt> to <tt>sabrina</tt>. It simply creates the tunnel. After that, it's up to you to make
+use of the tunnel, which normally means you would connect to localhost on that tunneled
+port like the command above shows.
+</p><p>
+Additional notes:
+</p><ul>
+	<li>Creating the tunnel causes one SSH connection to be established. In the example, this
+		connection was to <tt>veronica</tt>.</li>
+	<li>A second connection is then required to connect to <tt>sabrina</tt> through the tunnel.</li>
+	<li>If you close the first connection (by logging out from the remote SSH server), the
+		console will hang. This is because the connection is still in use by the tunnel.</li>
+	<li>If you kill the first connection (Ctrl-C or other method), then both connections
+		are lost.</li>
+	<li>You are not limited to tunneling only to SSH servers. You can create a tunnel to
+		a web server. For example, if <tt>sabrina</tt> was running a web server on port 8000 (private, 
+		perhaps behind a firewall), you could do this:
+<blockquote><pre>ssh -L 9998:sabrina:8000 veronica.foo.com
+</pre></blockquote>
+Now, just point a browser at <tt>http://localhost:9998/</tt> and you'll see the main page
+from <tt>sabrina</tt> displayed.
+	</li><li>The choice of port 9998 above is also arbitrary, but shown because port 9999 may still be
+	connected to <tt>sabrina:22</tt>. If a port is already in use, you have to choose another.
+</li></ul>
+
+<blockquote><pre></pre></blockquote>
+
+
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<a name="KEYS"></a>
+
+<p class="sectionheader">
+SSH Keys
+</p>
+Up until now, every time we want to connect to an SSH server, we have to type in a password.
+There are two problems with this:
+<ol>
+	<li>You have to send your password to the server, which means it may be possible to
+		intercept it and try to crack it.</li>
+	<li>You must be present (interacting) when a connection is made. Although that sounds
+		obvious, it means that you can't automate tasks or make connections in a script
+		or other unattended situation. A major drawback.</li>
+</ol>
+
+<blockquote>
+<p class="info">
+The technical details behind SSH keys is a very big topic based on 
+<span id="wpurl"><a class="wplabel">public-key cryptography</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Public-key_cryptography">public-key cryptography</a>
+and 
+<span id="wpurl"><a class="wplabel">challenge-response authentication</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Challenge-response_authentication">challenge-response authentication</a>
+and is outside the scope of this short tutorial. I am just going to give you the basics so        
+you can get up and running with them. I encourage interested students to read about these
+topics to get a full understanding of the techniques.
+</p>
+</blockquote>
+
+In short:
+<ul>
+	<li>An SSH key is made up of a pair of keys.</li>
+	<li>One is a private key and the other is a public key.</li>
+	<li>Only you should have access to the private key.</li>
+	<li>The servers you want to connect with will have access to your public key.</li>
+	<li>When you try to connect, the server sends a message that is encoded with your public key.</li>
+	<li>The only way to decode this message is with the corresponding private key (which only you have).</li>
+</ul>
+
+<p>
+<b>Generating the keys</b>
+</p><p>
+
+The first thing that needs to be done is to generate this public/private key pair. You do that with 
+a program called <a href="http://linux.die.net/man/1/ssh-keygen">ssh-keygen</a>.
+
+
+</p><p class="console"><font color="yellow">mmead@nadia</font><font color="purple"> ~ $ </font><b>ssh-keygen -t dsa</b>
+Generating public/private dsa key pair.
+Enter file in which to save the key (/home/mmead/.ssh/id_dsa): <font color="white"><b>[Press enter]</b></font>
+Enter passphrase (empty for no passphrase): <font color="white"><b>[Press enter]</b></font>
+Enter same passphrase again: <font color="white"><b>[Press enter]</b></font>
+Your identification has been saved in /home/mmead/.ssh/id_dsa.
+Your public key has been saved in /home/mmead/.ssh/id_dsa.pub.
+The key fingerprint is:
+3d:4a:07:29:26:4d:0a:a4:db:ac:9c:c6:06:f7:51:25 mmead@nadia
+The key's randomart image is:
++--[ DSA 1024]----+
+| .o   E .        |
+| . . + o .       |
+|.   o = o        |
+| +   + . o       |
+|o + .   S +      |
+|+o.. . . o .     |
+|.*  .   .        |
+|o                |
+|                 |
++-----------------+
+<font color="yellow">mmead@nadia</font><font color="purple"> ~ $ </font>
+</p>
+
+Notes about the key generation:
+<ul>
+	<li><tt>-t dsa</tt> - Specifies the type of key to create. The possible values are 
+		<b>rsa1</b> for protocol version 1, <b>dsa</b>, <b>ecdsa</b>, or <b>rsa</b> for protocol version 2.</li>
+	<li>The default location for the keys is the hidden directory <tt>.ssh/</tt> in your home
+		directory with the private key named <tt>id_dsa</tt> and the public key named
+		<tt>id_dsa.pub</tt> You should use these defaults.</li>
+	<li>The passphrase is left empty. There are pros and cons to this. The main pro,
+		and one of the reasons for using keys, is so we don't have to type anything
+		interactively when the connection is made.</li>
+	<li>The main drawback, though, that if somone gets your private key, they will be able to impersonate
+		you on any system. This is why you <b>MUST</b> protect the private key.</li>
+	<li>If you think that someone has obtained your private key, you must re-generate
+		another public/private key pair and update all of the systems that have the
+		old public key installed.</li>
+	<li>If you never plan on automated or unattended logins to a server, you should provide a 
+		passphrase that must be typed when you connect.</li>
+	<li>Detailed information on the random art image via <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/HashVisualization.pdf">
+		hash visualization</a>.
+</li></ul>
+
+<blockquote><pre></pre></blockquote>
+
+The private key in <tt>id_dsa</tt>:  
+<blockquote><pre>-----BEGIN DSA PRIVATE KEY-----
+MIIBuwIBAAKBgQCmSEqipvaW4LdPTw0nQ88+1afEZ+7jSrhLL48naC8zzj9NQGus
+QFITWtcbt+6M2MOs6DZlkMYuHsXTE60BwIO/Uy3slozx2ngBh4nyVnYJF2ALubT5
+DqQ8Oc0xJVGYCOQb+tEua1+3s5gahZ70IQHpF5D5LP9ubaA/RGJLWM075wIVAIVQ
+/ZjgwLrhUW/hOteA+BHIfxM1AoGBAIU4IvsHOZ/zDBj8/gLYVFYzPLLTYm/C2BeI
+V4JvMAygJ3WmqwHBmVF90wa784g4rqEhOF2weBpW4s+v1GViFyn2YsusZHiRLKOZ
+owxaZougVWMFoPpIdqW0Rf32DKea94FOqGhO96ROr5DHtT7BhXk9XrTTQyEctOtH
+W4nVtVZdAoGAYK7sx0T9p3c9FjCHgHTVkC7THvXeROCS0NPBYpq/wUFh+0r0SqQx
+IlTJ3PPHNtCV9q/cNuJ1n1ki1MAHKbwxrbp6Bb3s76cTEGu0TeSccRpD+nB8aSWX
+RGSzU0AXGNKAFC/1u0k0BoLIjsaJA0zcDa/SKmNkqwl7yXGgEfdaN6gCFDCuTLFc
+WPbji5D1YSkJby76Z/3p
+-----END DSA PRIVATE KEY-----
+</pre></blockquote>
+
+The public key in <tt>id_dsa.pub</tt>:
+<blockquote><pre>ssh-dss AAAAB3NzaC1kc3MAAACBAKZISqKm9pbgt09PDSdDzz7Vp8Rn7uNKuEsvjydoLzPOP01Aa6x
+AUhNa1xu37ozYw6zoNmWQxi4exdMTrQHAg79TLeyWjPHaeAGHifJWdgkXYAu5tPkOpDw5zTElUZgI5B
+v60S5rX7ezmBqFnvQhAekXkPks/25toD9EYktYzTvnAAAAFQCFUP2Y4MC64VFv4TrXgPgRyH8TNQAAA
+IEAhTgi+wc5n/MMGPz+AthUVjM8stNib8LYF4hXgm8wDKAndaarAcGZUX3TBrvziDiuoSE4XbB4Glbi
+z6/UZWIXKfZiy6xkeJEso5mjDFpmi6BVYwWg+kh2pbRF/fYMp5r3gU6oaE73pE6vkMe1PsGFeT1etNN
+DIRy060dbidW1Vl0AAACAYK7sx0T9p3c9FjCHgHTVkC7THvXeROCS0NPBYpq/wUFh+0r0SqQxIlTJ3P
+PHNtCV9q/cNuJ1n1ki1MAHKbwxrbp6Bb3s76cTEGu0TeSccRpD+nB8aSWXRGSzU0AXGNKAFC/1u0k0B
+oLIjsaJA0zcDa/SKmNkqwl7yXGgEfdaN6g= user@athena
+</pre></blockquote>
+
+The private key spans multiple lines in the file.
+The public key, though, is not broken into mulitple lines like this, but is one single 
+line in the file. I wrapped the line so it would fit on the web page without having
+to scroll horizontally.
+Also, you would <b>NEVER</b> display your private key like this, but
+this is just a sample that I generated, not a "real" one! Each time you run the
+<tt>ssh-keygen</tt> program, a unique set of keys are generated.
+
+<p>
+<b>Installing the public key</b>
+</p><p>
+
+Now that you have your keys, you need to install the public key onto the servers
+that you want to access remotely. Once installed, you no longer are required to
+type in a password to connect from you local machine. This is done with another
+program called <tt>ssh-copy-id</tt> and it works like this:
+
+</p><blockquote><pre>ssh-copy-id -i ~/.ssh/id_dsa.pub username@remote-server.net
+</pre></blockquote>
+
+The output from the above command:
+
+<blockquote><pre>Now try logging into the machine, with "ssh 'remote-server.net'", and check in:
+
+  ~/.ssh/authorized_keys
+
+to make sure we haven't added extra keys that you weren't expecting.
+</pre></blockquote>
+
+All this command really does is to append the public key to the end of a file
+named <tt>authorized_keys</tt> (or <tt>authorized_keys2</tt>) in your <tt>.ssh/</tt>
+directory on the remote computer.
+<p>
+
+And that's it. You can now connect to the remote SSH server without having to 
+type in a password.
+</p><p>
+
+Notes:
+</p><ul>
+	<li>Be sure you are copying the public key, not the private key!</li>
+	<li>Obviously, you must already have an SSH account on the remote computer to do this.</li>
+	<li>This is the simplest way to get your public keys installed on a remote computer.</li>
+	<li>If you need to specify the port that SSH is listening on when copying the keys,
+		do something like this (the quotes are important):
+<blockquote><pre>ssh-copy-id "user@host -p 12345"
+</pre></blockquote></li>
+	<li>The "manual" method is to copy the public key to the remote computer 
+		(any way you want, <tt>scp</tt>, <tt>rsync</tt>, etc.)
+		and then to manually add the key to the end of the <tt>authorized_keys</tt> file:
+		(assuming the file is in your home directory and you are logged in there)
+<blockquote><pre>cat id_dsa.pub &gt;&gt; .ssh/authorized_keys
+</pre></blockquote></li>
+	<li>Note that you will have to install the public key onto every computer that you want
+		to access without a password.</li>
+	<li>If, for some reason, the <tt>authorized_keys</tt> key file is missing, unreadable,
+		or doesn't have the correct public key in it,
+		the SSH server will fallback to asking for your password.</li>
+	<li>If you are the admin of the server, you can disable passwords altogether and 
+		require users to use keys. Set these fields to <b><tt>no</tt></b> in <tt>/etc/ssh/sshd_config</tt>:
+<blockquote><pre>PasswordAuthentication no
+ChallengeResponseAuthentication no		
+</pre></blockquote></li>
+ 	<li>Please read up on the advantages and disadvantages of using SSH keys with RSA, DSA, and ECDSA
+ 		encryption methods as well as using an empty passphrase.
+ 		<a href="http://security.stackexchange.com/questions/23383/ssh-key-type-rsa-dsa-ecdsa-are-there-easy-answers-for-which-to-choose-when">here</a>,
+ 		<a href="http://security.stackexchange.com/questions/5096/rsa-vs-dsa-for-ssh-authentication-keys">here</a>, and
+ 		<a href="https://wiki.archlinux.org/index.php/SSH_Keys">here</a>.
+ 	</li>
+
+</ul>
+
+
+
+<blockquote><pre></pre></blockquote>
+  
+<blockquote><pre></pre></blockquote>
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<p class="sectionheader">
+Miscellaneous
+</p>
+
+
+<!--
+*********************************************************
+*********************************************************
+-->
+<a name="HOSTS"></a>
+<b>Using a <tt>hosts</tt> file.</b>
+<p>
+
+In the examples above, I used computer names (e.g. sabrina) instead of its IP address
+(192.168.6.123). Humans are not really good at memorizing lots of numbers like this
+so we give an IP address an <i>alias</i>. 
+</p><ul>
+	<li>Out on the Internet, there are servers called Domain Name Servers (DNS), 
+		which map IP addresses to names.</li>
+	<li>Do you know what the IP address is for www.yahoo.com? Most people don't know and don't care.</li>
+	<li>For a local area network (LAN) we can store these mappings in a file called <tt>hosts</tt>.</li>
+	<li>On a Unix-based system, this file is <tt>/etc/hosts</tt>.</li>
+	<li>Like all good Unix-based configuration files, it's a simple text file.</li>
+	<li>The format is:
+<blockquote><pre>IP Address        Hostname             Aliases
+</pre></blockquote></li>
+	<li>An example <tt>hosts</tt> file:
+<blockquote><pre>127.0.0.1         localhost             maria
+210.154.66.1      mail.foo.com          mail
+210.154.66.2      www.foo.com           www
+192.168.6.123     sabrina
+192.168.6.124     athena
+207.45.188.34     jason.intel.com       jason
+207.45.188.77     home.terabyte.com     home
+</pre></blockquote></li>
+
+<li>Generally speaking, I don't like to put the fully qualified domain name (FQDN) in the hosts
+file, just the aliases:
+
+<blockquote><pre>127.0.0.1         localhost             maria
+210.154.66.1      mail
+210.154.66.2      www
+192.168.6.123     sabrina
+192.168.6.124     athena
+207.45.188.34     jason
+207.45.188.77     home
+</pre></blockquote></li>
+
+These aliases are just a shortened version, which makes for less typing for computers
+that I access on a regular basis.
+</ul>
+
+Another nice benefit of having a hosts file is that the bash shell can do auto-completion
+as you type. For example, given the <tt>hosts</tt> file above, I just type the SSH command, 
+a space, <tt>at</tt>, and the tab key like this:
+
+<blockquote><pre>ssh at&lt;TAB&gt;
+</pre></blockquote>
+
+and it will fill in the rest:
+
+<blockquote><pre>ssh athena
+</pre></blockquote>
+
+Pretty sweet! 
+<p>
+More information is <a href="http://www.faqs.org/docs/securing/chap9sec95.html">here</a>. 
+(Side note: I've never had to restart the network after modifying the <tt>/etc/hosts</tt> file.)
+Hosts files are not unique to Unix-like operating systems. They are used on 
+<span id="wpurl"><a class="wplabel">other operating system</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Hosts_(file)">other operating system</a>
+as well.
+
+
+</p><p>
+</p><hr width="95%">
+<p>
+
+<!--
+*********************************************************
+*********************************************************
+-->
+<a name="TCPWRAPPERS"></a>
+<b>TCP wrappers</b>
+</p><p>
+
+TCP wrappers is the name given to the technique by which you can allow or deny specific
+computers from accessing your servers. By using TCP wrappers, you can allow access from
+only a few computers while denying access from every other computer (in the world!) 
+Essentially, 
+</p><ul>
+	<li>Access is controlled by two simple text files which contain access rules.</li>
+	<li><tt>hosts.allow</tt> is a file that contains a list of computers that are allowed
+		to connect.</li>
+	<li><tt>hosts.deny</tt> is a file that contains a list of computers that are not
+		allowed (denied) to connect.</li>
+	<li>These files are in the <tt>/etc</tt> directory.</li>
+</ul>
+
+Without going into all of the details about how 
+TCP wrappers work, I'm going to show you some examples. 
+<p>
+When a computer attempts to connect to the server, the two files are consulted. First, the
+<tt>hosts.allow</tt> file is checked, and if nothing is found, the <tt>hosts.deny</tt>
+file is checked. If nothing is found there, the computer is allowed to continue with
+the connection.
+</p><p>
+
+The simplest way to use these files is to deny every computer access in the <tt>hosts.deny</tt>
+file, and then selectively add computers to the <tt>hosts.allow</tt> file. The basic syntax
+of the files is:
+
+</p><blockquote><pre>services : clients
+</pre></blockquote>
+
+where <b>services</b> are programs (servers/daemons) that are listening for incoming connections
+and <b>clients</b> are the names or IP addresses of computers. (Note this is just a basic
+introduction to using these files. Consult the man pages for all of the details about 
+the full syntax of the files.)
+
+<blockquote><pre></pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+
+
+Here's an example for adding a little more security to our SSH server:
+<ol>
+	<li>In <tt>hosts.deny</tt> we simply have one line:
+<blockquote><pre>sshd : ALL
+</pre></blockquote>
+which means that all computers are denied access to our SSH server (<tt>sshd</tt>).	
+ALL is a wildcard that means, well, all computers.</li>
+<p>
+</p><li>In <tt>hosts.allow</tt> we have this one line:
+<blockquote><pre>sshd : veronica.foo.com
+</pre></blockquote>
+which means that only <tt>veronica.foo.com</tt> can access the SSH server. Any other
+computer will be denied access. The other computers won't even get the chance to
+type in a username and password because they are denied any contact with the SSH server at all.
+</li></ol>
+
+And that's it! Those two simple lines of text have just severely restricted access
+to the SSH server. Of course, that may be <i>too</i> restrictive if you need to allow
+other computers to access the SSH server. You can just add more computers to the list
+and they will be granted access. Here's a more real-world <tt>hosts.allow</tt> file:
+
+<blockquote><pre># Allow all computers on the LAN access (192.168.1.1 through 192.168.1.254)
+sshd : 192.168.1.*
+
+# Allow access from a few "friendly" computers
+sshd : sirius.usc.edu
+sshd : jason.intel.com
+sshd : home.terabyte.com
+
+# Servers that I use a lot from my ISPs
+sshd : server1.myisp.net
+sshd : 67.103.44.161
+</pre></blockquote>
+
+Of course, I could have put all of these on one line:
+
+<blockquote><pre>sshd : 192.168.1.*, sirius.usc.edu, jason.intel.com, home.terabyte.com, server.myisp.net
+</pre></blockquote>
+
+But that makes it difficult to read. I prefer to put them on separate lines, grouping
+related computers together. I also like to put a comment before the rule, especially
+if I use an IP address because there is no name associated.
+<p>
+To really lock down your server, put this in <tt>hosts.deny</tt>:
+
+</p><blockquote><pre>ALL : ALL
+</pre></blockquote>
+
+This will deny ALL computers access to ALL services. Your server is now useless as no one 
+will be able to connect! Of course, then you must allow clients in <tt>hosts.allow</tt>:
+
+<blockquote><pre>sshd    : 192.168.1.*
+sshd    : .usc.edu
+telnetd : lisa.foo.com
+httpd   : ALL
+ftpd    : 192.168.1.*, 192.168.2.*
+</pre></blockquote>
+
+This means for:
+<ul>
+	<li><b><tt>sshd</tt></b> - Only computers on the local network and computers from <tt>usc.edu</tt>
+		are allowed to access the SSH server.</li>
+	<li><b><tt>telnetd</tt></b> - Only <tt>lisa.foo.com</tt> can access the telnet server.</li>
+	<li><b><tt>httpd</tt></b> - All computers can access the web server.</li>
+	<li><b><tt>ftpd</tt></b> - Only computers on either the local network or the 192.168.2 network
+		can access the FTP server.</li>
+</ul>
+
+This is just a very brief overview of how to use TCP wrappers to allow or deny access to
+your servers. There are several other features that you can use, if necessary. Consult
+the man pages (<tt><b>man 5 hosts_access</b></tt>) or read more about
+<a href="http://linux.die.net/man/5/hosts_access">hosts_access</a> and
+<a href="http://linux.die.net/man/5/hosts_options">hosts_options</a>.
+
+<p>
+</p><hr width="95%">
+<p>
+
+<!--
+*********************************************************
+*********************************************************
+-->
+<a name="REMOTECMD"></a>
+<b>Running a command remotely</b>
+</p><p>
+Sometimes, you just want to run a command on the remote computer and you don't need a login to a shell.
+For example, you just want to find out some information about the computer such as how long it's been
+running, how many users are logged in, and the current load on the machine. There is a command 
+called <tt>uptime</tt> and it generates all of this information.
+</p><p>
+</p><ol>
+	<li>You could connect to the remote computer using SSH, and after you have 
+	logged in, you can run the <tt>uptime</tt> command. Then, you would simply type
+	<tt>exit</tt> to disconnect from the remote computer.
+	</li><li>Or, you could do all of that in one command:
+<blockquote><pre>ssh veronica uptime
+</pre></blockquote>
+
+This will log you in, run the uptime command (sending the output back to your console),
+and then log you out. Nice!
+</li></ol>
+
+The reason this works is because the SSH client accepts a command as the last string:
+
+<blockquote><pre>ssh --help
+usage: ssh [-1246AaCfgKkMNnqsTtVvXxYy] [-b bind_address] [-c cipher_spec]
+           [-D [bind_address:]port] [-e escape_char] [-F configfile]
+           [-I pkcs11] [-i identity_file]
+           [-L [bind_address:]port:host:hostport]
+           [-l login_name] [-m mac_spec] [-O ctl_cmd] [-o option] [-p port]
+           [-R [bind_address:]port:host:hostport] [-S ctl_path]
+           [-W host:port] [-w local_tun[:remote_tun]]
+           [user@]hostname <font color="blue"><b>[command]</b></font>
+</pre></blockquote>
+
+Checking how much disk space is used/available on all of the storage devices
+using the <tt>df</tt> command:
+
+<blockquote><pre><b>ssh venus.foobar.com df -h</b>
+</pre></blockquote>
+Output:
+<blockquote><pre>Filesystem            Size  Used Avail Use% Mounted on
+/dev/sda1             4.7G  3.6G  911M  80% /
+udev                  261M  120K  261M   1% /dev
+none                  261M     0  261M   0% /dev/shm
+none                  261M   68K  261M   1% /var/run
+none                  261M     0  261M   0% /var/lock
+none                  261M     0  261M   0% /lib/init/rw
+mfs-data:1272          15T  707G   14T   5% /srv/mnt/www
+mfs-data:1272          20T  5.4T   14T  29% /srv/mnt/videos
+mfs-data:1272          19T  5.0T   14T  27% /srv/mnt/arch
+mfs-data:1272          17T  2.7T   14T  17% /srv/mnt/files
+</pre></blockquote>
+
+Multiple commands separated by semicolons and enclosed in quotes:
+
+
+<blockquote><pre><b>ssh veronica "uptime ; df -h ; w"</b>
+</pre></blockquote>
+Output:
+<blockquote><pre><font color="blue"> 09:48:17 up 36 days, 19:20, 16 users,  load average: 0.68, 0.67, 0.60</font>
+<font color="red">Filesystem      Size  Used Avail Use% Mounted on
+/dev/sda1        39G  7.5G   30G  21% /
+udev            7.8G   68K  7.8G   1% /dev
+tmpfs           3.1G  1.2M  3.1G   1% /run
+none            5.0M     0  5.0M   0% /run/lock
+none            7.8G  2.0M  7.8G   1% /run/shm
+/dev/sda6       500G   61G  414G  13% /data
+/dev/sda5        98G   16G   77G  18% /home</font>
+<font color="grey"> 09:48:17 up 36 days, 19:20, 16 users,  load average: 0.68, 0.67, 0.60
+USER     TTY      FROM              LOGIN@   IDLE   JCPU   PCPU WHAT
+mmead    pts/0    :0               17Mar13  3days  0.24s  0.24s /bin/bash
+mmead    pts/1    :0               17Mar13  3days  0.38s  0.38s /bin/bash
+mmead    pts/2    :0               17Mar13  3days  1.09s  0.20s /bin/bash
+mmead    pts/3    :0               17Mar13  9days  0.00s 22:32  kdeinit4: kded4
+mmead    pts/4    olga             17Mar13  2days  0.74s  0.74s -bash
+mmead    pts/6    :0               Sat15    3days  0.73s  0.18s /bin/bash
+mmead    pts/5    olga             Sat14    3days  0.30s  0.30s -bash
+mmead    pts/7    olga             15Mar13  2days  0.74s  0.74s -bash
+mmead    pts/8    olga             15Mar13  2days  1.54s  0.02s sshd: mmead [pr
+mmead    pts/9    sabrina          16Mar13  3days  0.71s  0.02s sshd: mmead [pr
+mmead    pts/11   :0               Sat16    2days  0.39s  0.39s /bin/bash
+mmead    pts/12   sabrina          Sat16    3days  0.19s  0.19s -bash
+mmead    pts/13   sabrina          Sat16    3days  0.46s  0.02s sshd: mmead [pr
+mmead    pts/14   :0               Sun07    2days  0.55s  0.55s /bin/bash
+mmead    pts/15   :0               Sun07    2days  1.04s  1.04s /bin/bash
+mmead    pts/18   olga             Tue15    2:26m  0.23s  0.23s -bash</font>
+</pre></blockquote>
+
+I added the color so you could see which output belongs with which of the 3 commands.
+
+<p>
+</p><hr width="95%">
+<p>
+
+<!--
+*********************************************************
+*********************************************************
+-->
+<a name="WARNING"></a>
+<b>WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!</b>
+</p><p>
+
+If you attempt to connect to an SSH server and you see this scary message:
+
+</p><blockquote><pre>@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
+Someone could be eavesdropping on you right now (man-in-the-middle attack)!
+It is also possible that a host key has just been changed.
+The fingerprint for the RSA key sent by the remote host is
+e6:36:3b:07:c1:f6:13:0f:ce:86:aa:82:8a:da:56:b6.
+Please contact your system administrator.
+Add correct host key in /home/user/.ssh/known_hosts to get rid of this message.
+Offending ECDSA key in /home/user/.ssh/known_hosts:47
+  remove with: ssh-keygen -f "/home/user/.ssh/known_hosts" -R www.server.com
+RSA host key for www.server.com has changed and you have requested strict checking.
+Host key verification failed.
+</pre></blockquote>
+
+it means something has changed since you've last connected. Things that could be happening:
+<ol>
+	<li>You've regenerated your SSH keys and haven't updated the server.</li>
+	<li>The OS on the server has been reinstalled.</li>
+	<li>The IP address on the server has changed.</li>
+	<li>Possibly something else has changed.</li>
+	<li>SOMEONE IS DOING SOMETHING NASTY! Someone could be eavesdropping on you right now (man-in-the-middle attack)!
+		
+
+	</li>
+</ol>
+
+Although the last item is unlikely to be the issue, (I said <i>unlikely</i> not <i>impossible</i>),
+you still need to be aware of it. If one of the other items has happened, then that
+is likely the culprit. (I said <i>likely</i>, not <i>definitely</i>.) 
+<p>
+If you recall the message we received when we <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/ssh.html#INSTALL_SERVER">first connected</a> to our server, 
+we got a message from the SSH client asking if we are sure that the computer we're connecting to
+is the correct one:
+
+</p><blockquote><pre>The authenticity of host 'localhost (127.0.0.1)' can't be established.
+ECDSA key fingerprint is 0d:d5:fb:64:4a:8e:e5:38:1c:59:30:c1:9c:c3:39:cf.
+Are you sure you want to continue connecting (yes/no)? <b>yes</b>
+Warning: Permanently added 'localhost' (ECDSA) to the list of known hosts.
+</pre></blockquote>
+
+I replied <b>yes</b> and the client said it had added the server to the list
+of known hosts. That file is actually called <tt>known_hosts</tt> and it's in
+your <tt>.ssh/</tt> subdirectory in your home directory. Each time you connect
+to a known server (one you've added to the <tt>known_hosts</tt> file), the SSH
+client checks the corresponding signature in the <tt>known_hosts</tt> file to
+verify that you are really connecting to the server you think you are. If the
+signatures don't match, you will see that message.
+<p>
+
+If you're sure that no one is trying to intercept your connection, then you can
+update the <tt>known_hosts</tt> file. The solution is also mentioned in the scary message:
+
+</p><blockquote><pre>Offending ECDSA key in /home/user/.ssh/known_hosts:47
+  remove with: ssh-keygen -f "/home/user/.ssh/known_hosts" -R www.server.com
+</pre></blockquote>
+
+This is saying that line 47 in file <tt>/home/user/.ssh/known_hosts</tt> is in
+conflict. You need to delete that line. You can simply open it up in a text editor,
+go to line 47, delete the line, and then save the file. (You own this file, so you
+don't need to use <b>sudo</b> to edit the file.) Or, you can have the <tt>ssh-keygen</tt>
+program do it for you by using the command suggested by the SSH client:
+
+<blockquote><pre>ssh-keygen -f "/home/user/.ssh/known_hosts" -R www.server.com
+</pre></blockquote>
+
+I always edit the text file myself, but you can choose your preference. After the line has
+been removed from the file, re-issue the SSH command. You will be prompted again to accept the 
+connection just as if it were the first time you've connected to that server. Accepting
+the connection will update the <tt>known_hosts</tt> file with the updated information.
+
+You can change the way the SSH client warns about this by modifying the <tt>StrictHostKeyChecking</tt>
+setting in the configuration file for the client (<tt>/etc/ssh/ssh_config</tt> or <tt>~/.ssh/config</tt>).
+From the man page for <tt>ssh_config</tt>
+
+<blockquote>
+<p class="technote">
+<b>StrictHostKeyChecking</b><br>
+If this flag is set to "yes", ssh(1) will never automatically add host keys to the ~/.ssh/known_hosts file, and refuses to connect to hosts whose host key has changed.  This provides maximum protection against trojan
+horse attacks, though it can be annoying when the /etc/ssh/ssh_known_hosts file is poorly maintained or when connections to new hosts are frequently made.  This option forces the user to manually add all new hosts.  If
+this flag is set to "no", ssh will automatically add new host keys to the user known hosts files.  If this flag is set to "ask", new host keys will be added to the user known host files only after the user has 
+confirmed that is what they really want to do, and ssh will refuse to connect to hosts whose host key has changed.  The host keys of known hosts will be verified automatically in all cases.  The argument must be "yes",
+"no", or "ask".  The default is "ask".
+</p>
+</blockquote>
+
+<p>
+</p><hr width="95%">
+<p>
+
+<!--
+*********************************************************
+*********************************************************
+-->
+<a name="SSHFS"></a>
+<b>Mounting Remote File Systems over SSH (<span id="wpurl"><a class="wplabel">SSHFS</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/SSHFS">SSHFS</a>)</b>
+</p><p>
+
+This is the <b>S</b>ecure <b>SH</b>ell <b>F</b>ile <b>S</b>ystem or <b>SSH</b> <b>F</b>ile <b>S</b>ystem.
+This will allow you to mount a remote directory via SSH, which means that all traffic between the local
+computer and the host computer is encrypted. This is a really cool way of accessing your files remotely.
+</p><p>
+On a Debian-based system, install it as such:
+
+</p><blockquote><pre>sudo apt-get install sshfs
+</pre></blockquote>
+
+Note: Depending on what is already installed, you may also need to install <tt>fuse</tt> (File system in userspace). 
+<p>
+Now you're ready to mount remote file systems over SSH. The only requirement to use SSHFS is that you 
+must have an account on the remote system. This is not unlike SSH. 
+</p><p>
+In this example, assume that
+</p><ul>
+	<li>the remote computer is <tt>sabrina.foo.com</tt>,</li>
+	<li>your login on the remote computer is <tt>einstein</tt>,</li>
+	<li>your home directory on the remote computer is <tt>/home/einstein</tt>,</li>	
+	<li>your home directory on the local computer is <tt>/home/alfred</tt>.</li>
+</ul>
+
+We want to mount our home directory from <tt>sabrina.foo.com</tt> on a directory within our home on the
+local computer. First, in our home directory of <tt>/home/alfred</tt> we make a directory as the mount
+point:
+
+<blockquote><pre>mkdir /home/alfred/sabrina
+</pre></blockquote>
+
+I tend to name the directories with the name of the remote computer. This makes it easy to remember where
+everything is mounted. Now, to mount the directory using SSHFS, simply do this:
+
+<blockquote><pre>sshfs einstein@sabrina.foo.com: /home/alfred/sabrina
+</pre></blockquote>
+
+If this is the first time you've ever used SSH with the remote computer, you will see something like this:
+
+<p class="console"><font color="yellow">mmead@nadia</font><font color="purple"> ~ $ </font><b>sshfs einstein@sabrina.foo.com: /home/alfred/sabrina</b>
+The authenticity of host 'sabrina.foo.com (208.51.122.118)' can't be established.
+ECDSA key fingerprint is 2d:d5:fc:64:45:8f:e5:33:1c:59:30:c1:9c:c3:55:cd.
+Are you sure you want to continue connecting (yes/no)? <b>yes</b>
+Warning: Permanently added 'localhost' (ECDSA) to the list of known hosts.
+mmead@localhost's password: <font color="white"><b>(not shown)</b></font>
+</p>
+
+The is the same warning we received when we connected to a remote computer for the first time. Because the
+connection (mount) is using SSH, all of the security of SSH is in use as well. 
+<p>
+After typing your password, your home directory on the remote computer will be mounted on 
+</p><blockquote><pre>/home/alfred/sabrina
+</pre></blockquote>
+
+You can now access all of your files from <tt>sabrina.foo.com</tt> by accessing <tt>/home/alfred/sabrina</tt>.
+You can use the command line or any GUI programs you wish.
+
+<p>
+To unmount the remote directory, use this command:
+
+</p><blockquote><pre>fusermount -u /home/alfred/sabrina
+</pre></blockquote>
+
+Now the remote computer is no longer mounted. 
+<p>
+Notes:
+</p><ul>
+	<li>SSHFS accepts many command-line options that you may want to check out. For example, if the SSH
+		server on the remote computer was running on port 12345 instead of port 22, you would do this:
+<blockquote><pre>sshfs einstein@sabrina.foo.com: /home/alfred/sabrina -p 12345
+</pre></blockquote></li>
+	<li>By seting up SSH keys (as described above), you don't have to type your password when mounting.
+		This will make mounting much simpler and can even be done using a script or automatically when
+		you login to the local computer.</li>
+	<li>As with SSH, all traffic between the local computer and remote computer is encrypted.</li>
+	<li>If you are the admin on the local computer, you can configure the system to do this when the
+	  computer boots up so it will always be mounted. You need to modify <tt>/etc/fstab</tt> by adding a line
+	  something like this (all on one line, though):
+<blockquote><pre>sshfs#einstein@sabrina.foo.com: /home/alfred/sabrina fuse defaults,user,
+uid=einstein,gid=einstein,allow_other,IdentityFile=/home/alfred/.ssh/id_dsa 0 0	
+</pre></blockquote>
+	  You'll also need to setup SSH keys to do this so you don't have to type in a password. Consult the
+	  <a href="http://linux.die.net/man/1/sshfs">SSHFS man page</a> for an explanation of the options.
+	</li>
+	<li>If you find that the <tt>fstab</tt> line above isn't working correctly (causing an error message at boot), 
+		you can modify it to this (note the addition of <tt><b>noauto</b></tt>):
+<blockquote><pre>sshfs#einstein@sabrina.foo.com: /home/alfred/sabrina fuse defaults,user,<b>noauto</b>,
+uid=einstein,gid=einstein,allow_other,IdentityFile=/home/alfred/.ssh/id_dsa 0 0	
+</pre></blockquote>
+and add this line to <tt>/etc/rc.local</tt>:
+<blockquote><pre>mount /home/alfred/sabrina
+</pre></blockquote>
+This will prevent the directory from being mounted automatically from <tt>/etc/fstab</tt> but will instead
+mount the directory just before the login screen is displayed. Sometimes there are problems mounting remote
+directories automatically at boot.
+</li>
+	<li>Some documentation says that you must be in the <tt>fuse</tt> group to run SSHFS, but I think that 
+		you only need that if your going to setup the <tt>fstab</tt> line above because SSHFS needs to
+		read <tt>/etc/fuse.conf</tt>. </li>
+	<li>Just like SSH, SSHFS has a <a href="http://linux.die.net/man/1/sshfs">ton of options</a> so you'll need to read up on it if you want to 
+		have a more custom setup. I've just shown the basics.</li>
+</ul>
+
+<blockquote><pre></pre></blockquote>
+
+<blockquote><pre></pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<a name="SCP"></a>
+<p class="sectionheader">
+Secure Copy (scp)
+</p>
+The most popular task that we perform with networked computers is copying files
+between them. Copying a file from one directory to another directory on the same computer
+is trivial, and we use the <a href="http://man7.org/linux/man-pages/man1/cp.1.html">cp</a>
+command:
+<p>
+</p><blockquote><pre>cp source destination
+</pre></blockquote>
+For example:
+
+<blockquote><pre>cp /home/fred/foo.txt /home/fred/backups
+</pre></blockquote>
+The command above copies the file <tt>foo.txt</tt> (that is in the directory <tt>/home/fred</tt>)
+to the directory <tt>/home/fred/backups</tt>. If we wanted to change the name during the copy,
+we would provide it with the directory:
+
+<blockquote><pre>cp /home/fred/foo.txt /home/fred/backups/bar.txt
+</pre></blockquote>
+
+The command above copies the file to the same location as before, but this time it gives the
+file a different name (<tt>bar.txt</tt>).
+<p>
+As one would expect with Linux (or any Unix-based OS), copying files between computers is
+equally trivial. Instead of using the <tt>cp</tt> command, you would use the 
+<a href="http://man7.org/linux/man-pages/man1/scp.1.html">scp</a>
+(<b>s</b>ecure <b>c</b>o<b>p</b>y) command. The main difference between the two copy commands
+is that <tt>scp</tt> requires the name of the remote computer that you are copying to/from.
+</p><p>
+In the example below, I am going to copy a file named <tt>file.dat</tt> that is in my home 
+directory on <i>olga</i> to another computer on my local network. This is a long listing 
+of <tt>file.dat</tt>:
+
+</p><blockquote><pre>mmead@olga:/home/mmead&gt;ls -l file.dat
+-rw------- 1 mmead mmead 106,881,024 Mar 19  2014 file.dat
+</pre></blockquote>
+
+We can see that the file is a little over 106 megabytes in size. I'm going to copy it to a
+directory named <tt>/home/mmead/storage</tt> on <i>veronica</i>.
+
+<blockquote><pre>mmead@olga:/home/mmead&gt;scp file.dat veronica:/home/mmead/storage
+file.dat                        100%  102MB  51.0MB/s   00:02
+</pre></blockquote>
+
+Yes, it is that simple! The output shows how long it took (2 seconds) and the speed of the
+transfer (51 megabytes per second). Although you can't tell from the output, the progress
+of the transfer was being updated every 1 second until it completed. This is nice and gives
+you some feedback on how long the copy is going to take.
+<p>
+
+OK, so what does this have to do with SSH?
+
+</p><blockquote>
+<p class="technote">
+As the name implies, this is a <i>secure</i> copy operation. 
+The data that is copied is encrypted while it is being transfered over the
+network. This means that the remote computer must be running an SSH server. Also, you must
+have access to that computer (i.e. you need an account on the remote system). 
+</p>
+</blockquote>
+
+<tt>scp</tt> is using SSH behind-the-scenes to help it accomplish its tasks. In the examples 
+above, since my login on both computers is the same, I don't need to specify that when I 
+use the command. Just like the <tt>ssh</tt> command, I can supply additional information, 
+if necessary. A more verbose command to copy the files would look like this:
+
+<blockquote><pre>scp file.dat mmead@veronica:/home/mmead/storage
+</pre></blockquote>
+
+In the above command, I explicity prefaced the computer name with my login and the @ (at sign)
+character. All of these commands do the same thing:
+
+<blockquote><pre>scp file.dat mmead@veronica:/home/mmead/storage
+scp file.dat veronica:/home/mmead/storage
+scp file.dat veronica:~/storage
+</pre></blockquote>
+
+<blockquote>
+<p class="technote">
+Remember, the ~ (tilde) character is shorthand for the user's home directory (e.g. /home/mmead).
+</p>
+</blockquote>
+
+If I simply wanted to copy the file to my home directory on <i>veronica</i>, I could shorten the
+command to this:
+
+<blockquote><pre>scp file.dat mmead@veronica:
+</pre></blockquote>
+
+or, even shorter (since my login is the same on both computers):
+
+<blockquote><pre>scp file.dat veronica:
+</pre></blockquote>
+
+If you don't specify a directory, your home directory is implied. Notice the : (colon) at the end.
+It is very important! Without it, <tt>scp</tt> would simply make a copy of <i>file.dat</i> in
+the current local directory and name it <i>mmead@veronica</i> or <i>veronica</i> (which is certainly not
+what you want!)
+<p>
+The examples above copied a file from my local computer to a remote computer. We can do it the
+other way, as well. This example copies from the remote computer to my local computer:
+
+</p><blockquote><pre>scp veronica:/home/mmead/storage/file.dat .
+</pre></blockquote>
+
+<blockquote>
+<p class="technote">
+Remember that the . (period) at the end means "the current directory". 
+</p>
+</blockquote>
+
+You can even copy a file from two computers that are both remote. I have another computer on my local
+network named <i>nina</i>. This command below will copy a file named <i>main.c</i> from my home 
+directory on <i>veronica</i> to my home directory on <i>nina</i>. I am currently logged in 
+on <i>olga</i>:
+
+<blockquote><pre>scp veronica:main.c nina:
+</pre></blockquote>
+
+Pretty sweet! As long as you have accounts on the remote computers, you can copy files between them.
+Here's a longer command:
+
+<blockquote><pre>scp mmead@dit1234.digipen.edu:/home/mmead/tools/compile.txt mmead@fred.psu.edu:/home/mmead/storage/comp.txt
+</pre></blockquote>
+
+Here's what's going on:
+<ul>
+	<li>The file to copy is <i>compile.txt</i></li>
+	<li>It's in the directory <i>/home/mmead/tools</i></li>
+	<li>It's on the computer <i>dit1234.digipen.edu</i></li>
+	<li>I'm accessing <i>dit1234.digipen.edu</i> with my username <i>mmead</i></li>
+	<p>
+	</p><li>The destination directory is <i>/home/mmead/storage</i></li>
+	<li>It's on the computer named <i>fred.psu.edu</i></li>
+	<li>The file is being renamed to <i>comp.txt</i></li>
+	<li>I'm accessing <i>fred.psu.edu</i> also with the user name <i>mmead</i></li>
+</ul>
+
+You may have noticed that, in all of the output shown, I was never asked for a password. Why not?
+That's because I'm using SSH keys as <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/ssh.html#KEYS">described above</a>. Since I'm using
+keys, I don't have to provide my password. If you're not using SSH keys (and you really don't
+have to), then you will be prompted for your password for each computer you're accessing.
+<p>
+<b>Other points:</b>
+</p><p>
+</p><ul>
+	<li>Just like with SSH, there are many command line options that will affect the behavior.</li>
+	<li>For example, if the SSH server on the remote computer is running on another port but 22, 
+		you can specify that.</li>
+	<li>Many of the same options that are available to the <tt>ssh</tt> program are also available for
+		<tt>scp</tt> as well.</li>
+	<li>Consult the <a href="http://man7.org/linux/man-pages/man1/scp.1.html">man pages</a> to
+		see all of the options available.</li>
+</ul>
+
+
+
+<blockquote><pre></pre></blockquote>
+
+
+<blockquote><pre></pre></blockquote>
+
+<!--
+*****************************************************************************************
+*****************************************************************************************
+*****************************************************************************************
+-->
+<a name="LINKS"></a>
+<p class="sectionheader">
+Links
+</p>
+<ul>
+	<li><a href="https://wiki.archlinux.org/index.php/SSH_Keys">SSH Keys</a> on ArchLinux wiki. The best place to start.</li>
+	<li><a href="http://www.openssh.org/manual.html">OpenSSH Manual Pages</a> This is the place to start 
+		for more information.</li>
+	<li><a href="http://linux.die.net/man/1/ssh">ssh</a> - The SSH client</li>
+	<li><a href="http://linux.die.net/man/8/sshd">sshd</a> - The SSH server</li>
+	<li><a href="http://linux.die.net/man/1/ssh-copy-id">ssh-copy-id</a> - Simple tool to install the public key on a remote server.</li>
+	<li><a href="http://linux.die.net/man/1/ssh-keygen">ssh-keygen</a> - Generates public/private key pairs.</li>
+	<li><a href="http://linux.die.net/man/1/ssh-agent">ssh-agent</a> - Manages your passphrases if you choose not to use an empty one.
+			See also <a href="http://linux.die.net/man/1/ssh-add">ssh-add</a>.</li>
+	<li><span id="wpurl"><a class="wplabel">public-key cryptography</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Public-key_cryptography">Public-key cryptography</a>
+		- Lots of details on how it works. Plenty of links on this page to keep you busy for months.</li>
+	<li><span id="wpurl"><a class="wplabel">challenge-response authentication</a></span><a class="wplink" href="http://en.wikipedia.org/wiki/Challenge%C3%A2%E2%82%AC%E2%80%9Cresponse_authentication">challenge-response authentication</a>
+		- Lots of details on how it works.</li>
+
+	<li><a href="http://linux.die.net/man/5/hosts_access">hosts_access</a> for using TCP wrappers.</li>
+	<li><a href="http://linux.die.net/man/5/hosts_options">hosts_options</a> for using TCP wrappers.</li>
+	<li><a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/openssl-speed.txt">openssl speed</a> results from <a href="http://azrael.digipen.edu/~mmead/www/Courses/CS180/computer-specs.html">olga</a>. Run this command on your system (<tt>openssl speed</tt>) to see how the different encryption methods perform.</li>
+	<li><a href="http://linux.die.net/man/5/ssh_config">Client configuration</a> - Information about the client configuration file <tt>ssh_config</tt>.
+	</li><li><a href="http://linux.die.net/man/5/sshd_config">Server configuration</a> - Information about the server configuration file <tt>sshd_config</tt>.
+</li></ul>
+<br><br>
+
+
+
+<!-- 
+
+<blockquote><pre>
+</pre></blockquote>
+  
+<blockquote><pre>
+</pre></blockquote>
+
+<blockquote><pre>
+</pre></blockquote>
+
+<blockquote>
+<table border=0 cellspacing=5 cellpadding=0>
+<tr><th></th><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>
+</pre></blockquote>
+</td>
+</tr></table>
+</blockquote>
+
+<tt><b></b></tt>
+
+<blockquote>
+<table border=0 cellspacing=5 cellpadding=5>
+<tr><th></th><th></th></tr>
+<tr valign="top">
+<td>
+<blockquote><pre>
+</pre></blockquote>
+</td>
+<td>
+<blockquote><pre>
+</pre></blockquote>
+</td>
+</tr></table>
+</blockquote>
+
+<blockquote><pre>
+</pre></blockquote>
+
+<blockquote><pre>
+</pre></blockquote>
+
+<blockquote><pre>
+</pre></blockquote>
+-->
+</body></html>

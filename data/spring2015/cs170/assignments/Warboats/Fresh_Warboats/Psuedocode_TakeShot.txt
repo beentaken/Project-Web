@@ -1,0 +1,33 @@
+
+BEGIN FUNCTION
+
+  IF the shot is out of the ocean (grid) THEN
+    Return Illegal shot result
+  END
+
+  Read value at position of shot from grid
+
+  IF value is OK THEN
+    Increment misses
+    Set position to Blownup
+    Return Miss shot result
+  END
+
+  IF value is a Duplicate THEN
+    Increment duplicates
+    Return Duplicate shot result
+  END
+
+  Increment hits for this boat
+  Update position to boat hit
+
+  IF number of hits for this boat is >= BOAT_LENGTH THEN
+    Increment sunk
+    return Sunk shot result
+  END
+
+  Return Hit shot result
+
+END FUNCTION
+
+
