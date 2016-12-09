@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8'?>
+<package xmlns="http://www.idpf.org/2007/opf" unique-identifier="uuid_id" version="2.0">
+    <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
+        <dc:identifier opf:scheme="calibre" id="calibre_id">3</dc:identifier>
+        <dc:identifier opf:scheme="uuid" id="uuid_id">b8808a8c-a285-4283-961b-01ad33b95c7e</dc:identifier>
+        <dc:title>Bash Pocket Reference</dc:title>
+        <dc:creator opf:file-as="Robbins, Arnold" opf:role="aut">Arnold Robbins</dc:creator>
+        <dc:contributor opf:file-as="calibre" opf:role="bkp">calibre (2.73.0) [https://calibre-ebook.com]</dc:contributor>
+        <dc:date>2016-03-02T07:00:00+00:00</dc:date>
+        <dc:description>It's simple: if you want to interact deeply with Mac OS X, Linux, and other Unix-like systems, you need to know how to work with the Bash shell. This concise little book puts all of the essential information about Bash right at your fingertips. Updated for Bash version 4.4, this pocket reference has the answers to these and other problems in a format that makes browsing quick and easy.</dc:description>
+        <dc:publisher>O'Reilly Media, Inc.</dc:publisher>
+        <dc:language>eng</dc:language>
+        <meta content="{&quot;Arnold Robbins&quot;: &quot;&quot;}" name="calibre:author_link_map"/>
+        <meta content="2016-12-02T04:58:41.920251+00:00" name="calibre:timestamp"/>
+        <meta content="Bash Pocket Reference" name="calibre:title_sort"/>
+    </metadata>
+    <guide>
+        <reference href="cover.jpg" title="Cover" type="cover"/>
+    </guide>
+</package>

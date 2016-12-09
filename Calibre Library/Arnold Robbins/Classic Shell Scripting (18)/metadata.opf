@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<package xmlns="http://www.idpf.org/2007/opf" unique-identifier="uuid_id" version="2.0">
+    <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
+        <dc:identifier opf:scheme="calibre" id="calibre_id">18</dc:identifier>
+        <dc:identifier opf:scheme="uuid" id="uuid_id">99b8dda5-102b-4ca1-bb70-3348dc4d1472</dc:identifier>
+        <dc:title>Classic Shell Scripting</dc:title>
+        <dc:creator opf:file-as="Robbins, Arnold &amp; Beebe, Nelson H. F." opf:role="aut">Arnold Robbins</dc:creator>
+        <dc:creator opf:file-as="Robbins, Arnold &amp; Beebe, Nelson H. F." opf:role="aut">Nelson H. F. Beebe</dc:creator>
+        <dc:contributor opf:file-as="calibre" opf:role="bkp">calibre (2.73.0) [https://calibre-ebook.com]</dc:contributor>
+        <dc:date>2008-12-17T07:00:00+00:00</dc:date>
+        <dc:description>&lt;p&gt;An essential skill for Unix users and system administrators, shell scripts let you easily crunch data and automate repetitive tasks, offering a way to quickly harness the full power of any Unix system. This book provides the tips, tricks, and organized knowledge you need to create excellent scripts, as well as warnings of the traps that can turn your best efforts into bad shell scripts. &lt;/p&gt;</dc:description>
+        <dc:publisher>O’Reilly Media</dc:publisher>
+        <dc:language>eng</dc:language>
+        <dc:subject>COMPUTERS / Operating Systems / UNIX</dc:subject>
+        <meta content="{&quot;Arnold Robbins&quot;: &quot;&quot;, &quot;Nelson H. F. Beebe&quot;: &quot;&quot;}" name="calibre:author_link_map"/>
+        <meta content="2016-12-02T05:02:04.632521+00:00" name="calibre:timestamp"/>
+        <meta content="Classic Shell Scripting" name="calibre:title_sort"/>
+    </metadata>
+    <guide>
+        <reference href="cover.jpg" title="Cover" type="cover"/>
+    </guide>
+</package>

@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8'?>
+<package xmlns="http://www.idpf.org/2007/opf" unique-identifier="uuid_id" version="2.0">
+    <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
+        <dc:identifier opf:scheme="calibre" id="calibre_id">11</dc:identifier>
+        <dc:identifier opf:scheme="uuid" id="uuid_id">69922840-e955-4968-a9da-5b740fa1651b</dc:identifier>
+        <dc:title>Linux Pocket Guide, 3E</dc:title>
+        <dc:creator opf:file-as="Barrett, Daniel J." opf:role="aut">Daniel J. Barrett</dc:creator>
+        <dc:contributor opf:file-as="calibre" opf:role="bkp">calibre (2.73.0) [https://calibre-ebook.com]</dc:contributor>
+        <dc:date>2016-06-13T06:00:00+00:00</dc:date>
+        <dc:description>If you use Linux in your day-to-day work, this popular pocket guide is the perfect on-the-job reference. The third edition features new commands for processing image files and audio files, running and killing programs, reading and modifying the system clipboard, and manipulating PDF files, as well as other commands requested by readers. You’ll also find powerful command-line idioms you might not be familiar with, such as process substitution and piping into bash. Linux Pocket Guide provides an organized learning path to help you gain mastery of the most useful and important commands.</dc:description>
+        <dc:publisher>O'Reilly Media, Inc.</dc:publisher>
+        <dc:language>eng</dc:language>
+        <meta content="{&quot;Daniel J. Barrett&quot;: &quot;&quot;}" name="calibre:author_link_map"/>
+        <meta content="2016-12-02T05:01:05.806835+00:00" name="calibre:timestamp"/>
+        <meta content="Linux Pocket Guide, 3E" name="calibre:title_sort"/>
+    </metadata>
+    <guide>
+        <reference href="cover.jpg" title="Cover" type="cover"/>
+    </guide>
+</package>

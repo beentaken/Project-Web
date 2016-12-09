@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<package xmlns="http://www.idpf.org/2007/opf" unique-identifier="uuid_id" version="2.0">
+    <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
+        <dc:identifier opf:scheme="calibre" id="calibre_id">10</dc:identifier>
+        <dc:identifier opf:scheme="uuid" id="uuid_id">3de3f423-5982-4739-a745-0c075340409f</dc:identifier>
+        <dc:title>Network Troubleshooting Tools</dc:title>
+        <dc:creator opf:file-as="Sloan, Joseph D" opf:role="aut">Joseph D Sloan</dc:creator>
+        <dc:contributor opf:file-as="calibre" opf:role="bkp">calibre (2.73.0) [https://calibre-ebook.com]</dc:contributor>
+        <dc:date>2009-02-09T07:00:00+00:00</dc:date>
+        <dc:description>&lt;p&gt;&lt;i&gt;Network Troubleshooting Tools&lt;/i&gt; helps you sort through the thousands of tools that have been developed for debugging TCP/IP networks and choose the ones that are best for your needs. It also shows you how to approach network troubleshooting using these tools, how to document your network so you know how it behaves under normal conditions, and how to think about problems when they arise so you can solve them more effectively.&lt;/p&gt;</dc:description>
+        <dc:publisher>O’Reilly Media</dc:publisher>
+        <dc:language>eng</dc:language>
+        <dc:subject>COMPUTERS / Networking / General</dc:subject>
+        <meta content="{&quot;Joseph D Sloan&quot;: &quot;&quot;}" name="calibre:author_link_map"/>
+        <meta content="2016-12-02T05:00:59.236033+00:00" name="calibre:timestamp"/>
+        <meta content="Network Troubleshooting Tools" name="calibre:title_sort"/>
+    </metadata>
+    <guide>
+        <reference href="cover.jpg" title="Cover" type="cover"/>
+    </guide>
+</package>

@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<package xmlns="http://www.idpf.org/2007/opf" unique-identifier="uuid_id" version="2.0">
+    <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
+        <dc:identifier opf:scheme="calibre" id="calibre_id">4</dc:identifier>
+        <dc:identifier opf:scheme="uuid" id="uuid_id">96a57c27-6ebf-4bcd-ad03-896d2e27d823</dc:identifier>
+        <dc:title>sed &amp; awk, 2nd Edition</dc:title>
+        <dc:creator opf:file-as="Dougherty, Dale &amp; Robbins, Arnold" opf:role="aut">Dale Dougherty</dc:creator>
+        <dc:creator opf:file-as="Dougherty, Dale &amp; Robbins, Arnold" opf:role="aut">Arnold Robbins</dc:creator>
+        <dc:contributor opf:file-as="calibre" opf:role="bkp">calibre (2.73.0) [https://calibre-ebook.com]</dc:contributor>
+        <dc:date>2010-11-19T07:00:00+00:00</dc:date>
+        <dc:description>&lt;p&gt;&lt;i&gt;sed &amp;amp; awk&lt;/i&gt; describes two text manipulation programs that are mainstays of the UNIX programmer’s toolbox. This edition covers the &lt;i&gt;sed&lt;/i&gt; and &lt;i&gt;awk&lt;/i&gt; programs as they are mandated by the POSIX standard and includes discussion of the GNU versions of these programs.&lt;/p&gt;</dc:description>
+        <dc:language>eng</dc:language>
+        <dc:subject>COMPUTERS / Operating Systems / UNIX</dc:subject>
+        <meta content="{&quot;Dale Dougherty&quot;: &quot;&quot;, &quot;Arnold Robbins&quot;: &quot;&quot;}" name="calibre:author_link_map"/>
+        <meta content="2016-12-02T05:00:02.100381+00:00" name="calibre:timestamp"/>
+        <meta content="sed &amp; awk, 2nd Edition" name="calibre:title_sort"/>
+    </metadata>
+    <guide>
+        <reference href="cover.jpg" title="Cover" type="cover"/>
+    </guide>
+</package>

@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='utf-8'?>
+<package xmlns="http://www.idpf.org/2007/opf" unique-identifier="uuid_id" version="2.0">
+    <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
+        <dc:identifier opf:scheme="calibre" id="calibre_id">6</dc:identifier>
+        <dc:identifier opf:scheme="uuid" id="uuid_id">1cac80f2-53cb-4b88-9206-c0418ef18766</dc:identifier>
+        <dc:title>bash Cookbook</dc:title>
+        <dc:creator opf:file-as="Carl Albing, JP Vossen &amp; Newham, Cameron" opf:role="aut">Carl Albing, JP Vossen</dc:creator>
+        <dc:creator opf:file-as="Carl Albing, JP Vossen &amp; Newham, Cameron" opf:role="aut">Cameron Newham</dc:creator>
+        <dc:contributor opf:file-as="calibre" opf:role="bkp">calibre (2.73.0) [https://calibre-ebook.com]</dc:contributor>
+        <dc:date>2008-12-17T07:00:00+00:00</dc:date>
+        <dc:description>&lt;p&gt;&lt;i&gt;bash Cookbook&lt;/i&gt; teaches shell scripting the way Unix masters practice the craft. It presents a variety of recipes and tricks for all levels of shell programmers so that anyone can become a proficient user of the most common Unix shell -- the &lt;em&gt;bash&lt;/em&gt; shell -- and &lt;em&gt;cygwin&lt;/em&gt; or other popular Unix emulation packages. Packed full of useful scripts, along with examples that explain how to create better scripts, this new Cookbook gives professionals and power users everything they need to automate routine tasks and enable them to truly manage their systems -- rather than have their systems manage them.&lt;/p&gt;</dc:description>
+        <dc:publisher>O’Reilly Media</dc:publisher>
+        <dc:identifier opf:scheme="ISBN">9780596158477</dc:identifier>
+        <dc:language>eng</dc:language>
+        <dc:subject>COMPUTERS / Operating Systems / UNIX</dc:subject>
+        <meta content="{&quot;Cameron Newham&quot;: &quot;&quot;, &quot;Carl Albing, JP Vossen&quot;: &quot;&quot;}" name="calibre:author_link_map"/>
+        <meta content="2016-12-02T05:00:16.675515+00:00" name="calibre:timestamp"/>
+        <meta content="bash Cookbook" name="calibre:title_sort"/>
+    </metadata>
+    <guide>
+        <reference href="cover.jpg" title="Cover" type="cover"/>
+    </guide>
+</package>

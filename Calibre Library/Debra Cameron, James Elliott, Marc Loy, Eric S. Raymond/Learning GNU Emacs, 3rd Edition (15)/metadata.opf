@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<package xmlns="http://www.idpf.org/2007/opf" unique-identifier="uuid_id" version="2.0">
+    <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
+        <dc:identifier opf:scheme="calibre" id="calibre_id">15</dc:identifier>
+        <dc:identifier opf:scheme="uuid" id="uuid_id">87cef3e0-f629-4786-8f0b-9251bbe69add</dc:identifier>
+        <dc:title>Learning GNU Emacs, 3rd Edition</dc:title>
+        <dc:creator opf:file-as="Debra Cameron, James Elliott, Marc Loy, Eric S. Raymond &amp; Rosenblatt, Bill" opf:role="aut">Debra Cameron, James Elliott, Marc Loy, Eric S. Raymond</dc:creator>
+        <dc:creator opf:file-as="Debra Cameron, James Elliott, Marc Loy, Eric S. Raymond &amp; Rosenblatt, Bill" opf:role="aut">Bill Rosenblatt</dc:creator>
+        <dc:contributor opf:file-as="calibre" opf:role="bkp">calibre (2.73.0) [https://calibre-ebook.com]</dc:contributor>
+        <dc:date>2009-02-09T07:00:00+00:00</dc:date>
+        <dc:description>&lt;p&gt;The third edition of &lt;i&gt;Learning GNU Emacs&lt;/i&gt; describes Emacs 21.3 from the ground up, including new user interface features such as an icon-based toolbar and an interactive interface to Emacs customization. A new chapter details how to install and run Emacs on Mac OS X, Windows, and Linux, including tips for using Emacs effectively on those platforms. &lt;/p&gt;</dc:description>
+        <dc:publisher>O’Reilly Media</dc:publisher>
+        <dc:language>eng</dc:language>
+        <dc:subject>COMPUTERS / General</dc:subject>
+        <meta content="{&quot;Bill Rosenblatt&quot;: &quot;&quot;, &quot;Debra Cameron, James Elliott, Marc Loy, Eric S. Raymond&quot;: &quot;&quot;}" name="calibre:author_link_map"/>
+        <meta content="2016-12-02T05:01:37.276527+00:00" name="calibre:timestamp"/>
+        <meta content="Learning GNU Emacs, 3rd Edition" name="calibre:title_sort"/>
+    </metadata>
+    <guide>
+        <reference href="cover.jpg" title="Cover" type="cover"/>
+    </guide>
+</package>

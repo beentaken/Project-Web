@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<package xmlns="http://www.idpf.org/2007/opf" unique-identifier="uuid_id" version="2.0">
+    <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
+        <dc:identifier opf:scheme="calibre" id="calibre_id">17</dc:identifier>
+        <dc:identifier opf:scheme="uuid" id="uuid_id">8476d21a-284e-4775-9a92-50a57e3cb70d</dc:identifier>
+        <dc:title>DNS and BIND, 5th Edition</dc:title>
+        <dc:creator opf:file-as="Liu, Cricket &amp; Albitz, Paul" opf:role="aut">Cricket Liu</dc:creator>
+        <dc:creator opf:file-as="Liu, Cricket &amp; Albitz, Paul" opf:role="aut">Paul Albitz</dc:creator>
+        <dc:contributor opf:file-as="calibre" opf:role="bkp">calibre (2.73.0) [https://calibre-ebook.com]</dc:contributor>
+        <dc:date>2009-02-09T07:00:00+00:00</dc:date>
+        <dc:description>&lt;p&gt;The fifth edition covers BIND 9.3.2, the most recent release of the BIND 9 series, as well as BIND 8.4.7. BIND 9.3.2 contains further improvements in security and IPv6 support, and important new features such as internationalized domain names, ENUM (electronic numbering), and SPF (the Sender Policy Framework). Whether you’re an administrator involved with DNS on a daily basis or a user who wants to be more informed about the Internet and how it works, you’ll find that this book is essential reading.&lt;/p&gt;</dc:description>
+        <dc:publisher>O’Reilly Media</dc:publisher>
+        <dc:language>eng</dc:language>
+        <dc:subject>COMPUTERS / Networking / General</dc:subject>
+        <meta content="{&quot;Cricket Liu&quot;: &quot;&quot;, &quot;Paul Albitz&quot;: &quot;&quot;}" name="calibre:author_link_map"/>
+        <meta content="2016-12-02T05:01:56.902689+00:00" name="calibre:timestamp"/>
+        <meta content="DNS and BIND, 5th Edition" name="calibre:title_sort"/>
+    </metadata>
+    <guide>
+        <reference href="cover.jpg" title="Cover" type="cover"/>
+    </guide>
+</package>

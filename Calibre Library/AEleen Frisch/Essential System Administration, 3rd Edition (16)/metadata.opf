@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<package xmlns="http://www.idpf.org/2007/opf" unique-identifier="uuid_id" version="2.0">
+    <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
+        <dc:identifier opf:scheme="calibre" id="calibre_id">16</dc:identifier>
+        <dc:identifier opf:scheme="uuid" id="uuid_id">6940da3c-fe90-4aa6-bbbb-eb390408f678</dc:identifier>
+        <dc:title>Essential System Administration, 3rd Edition</dc:title>
+        <dc:creator opf:file-as="Frisch, Æleen" opf:role="aut">Æleen Frisch</dc:creator>
+        <dc:contributor opf:file-as="calibre" opf:role="bkp">calibre (2.73.0) [https://calibre-ebook.com]</dc:contributor>
+        <dc:date>2009-02-09T07:00:00+00:00</dc:date>
+        <dc:description>&lt;p&gt;Whether you use a standalone Unix system, routinely provide administrative support for a larger shared system, or just want an understanding of basic administrative functions, &lt;i&gt;Essential System Administration&lt;/i&gt; is for you. This comprehensive and invaluable book combines the author’s years of practical experience with technical expertise to help you manage Unix systems as productively and painlessly as possible. &lt;/p&gt;</dc:description>
+        <dc:publisher>O’Reilly Media</dc:publisher>
+        <dc:language>eng</dc:language>
+        <dc:subject>COMPUTERS / Operating Systems / UNIX</dc:subject>
+        <meta content="{&quot;Æleen Frisch&quot;: &quot;&quot;}" name="calibre:author_link_map"/>
+        <meta content="2016-12-02T05:01:46.565278+00:00" name="calibre:timestamp"/>
+        <meta content="Essential System Administration, 3rd Edition" name="calibre:title_sort"/>
+    </metadata>
+    <guide>
+        <reference href="cover.jpg" title="Cover" type="cover"/>
+    </guide>
+</package>

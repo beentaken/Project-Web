@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<package xmlns="http://www.idpf.org/2007/opf" unique-identifier="uuid_id" version="2.0">
+    <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
+        <dc:identifier opf:scheme="calibre" id="calibre_id">7</dc:identifier>
+        <dc:identifier opf:scheme="uuid" id="uuid_id">ebf7443d-d134-4eb3-bda0-b233bdc03d2a</dc:identifier>
+        <dc:title>Unix in a Nutshell, 4th Edition</dc:title>
+        <dc:creator opf:file-as="Robbins, Arnold" opf:role="aut">Arnold Robbins</dc:creator>
+        <dc:contributor opf:file-as="calibre" opf:role="bkp">calibre (2.73.0) [https://calibre-ebook.com]</dc:contributor>
+        <dc:date>2009-06-30T06:00:00+00:00</dc:date>
+        <dc:description>&lt;p&gt;This quick reference has been reworked to present you with the current state of Unix. Featuring chapter overviews, in-depth command coverage, and specific examples, it's the perfect supplement for Unix users and programmers. New topics include package management programs, source code management systems, and the Solaris 10, GNU/Linux, and Mac OS X systems.&lt;/p&gt;</dc:description>
+        <dc:publisher>O'Reilly Media</dc:publisher>
+        <dc:language>eng</dc:language>
+        <dc:subject>COMPUTERS / Operating Systems / UNIX</dc:subject>
+        <meta content="{&quot;Arnold Robbins&quot;: &quot;&quot;}" name="calibre:author_link_map"/>
+        <meta content="2016-12-02T05:00:25.104846+00:00" name="calibre:timestamp"/>
+        <meta content="Unix in a Nutshell, 4th Edition" name="calibre:title_sort"/>
+    </metadata>
+    <guide>
+        <reference href="cover.jpg" title="Cover" type="cover"/>
+    </guide>
+</package>

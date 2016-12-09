@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<package xmlns="http://www.idpf.org/2007/opf" unique-identifier="uuid_id" version="2.0">
+    <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
+        <dc:identifier opf:scheme="calibre" id="calibre_id">5</dc:identifier>
+        <dc:identifier opf:scheme="uuid" id="uuid_id">7ccc80e7-6993-4832-936d-6a9ee7f84397</dc:identifier>
+        <dc:title>lex &amp; yacc, 2nd Edition</dc:title>
+        <dc:creator opf:file-as="Doug Brown, John Levine &amp; Mason, Tony" opf:role="aut">Doug Brown, John Levine</dc:creator>
+        <dc:creator opf:file-as="Doug Brown, John Levine &amp; Mason, Tony" opf:role="aut">Tony Mason</dc:creator>
+        <dc:contributor opf:file-as="calibre" opf:role="bkp">calibre (2.73.0) [https://calibre-ebook.com]</dc:contributor>
+        <dc:date>2012-10-18T06:00:00+00:00</dc:date>
+        <dc:description>&lt;p&gt;Shows programmers how to use two Unix utilities, &lt;i&gt;lex&lt;/i&gt; and &lt;i&gt;yacc,&lt;/i&gt; in program development. You’ll find tutorial sections for novice users, reference sections for advanced users, and a detailed index. Major MS-DOS and Unix versions of &lt;i&gt;lex&lt;/i&gt; and &lt;i&gt;yacc&lt;/i&gt; are explored in depth. Also covers Bison and Flex.&lt;/p&gt;</dc:description>
+        <dc:language>eng</dc:language>
+        <dc:subject>COMPUTERS / Operating Systems / UNIX</dc:subject>
+        <meta content="{&quot;Doug Brown, John Levine&quot;: &quot;&quot;, &quot;Tony Mason&quot;: &quot;&quot;}" name="calibre:author_link_map"/>
+        <meta content="2016-12-02T05:00:09.054294+00:00" name="calibre:timestamp"/>
+        <meta content="lex &amp; yacc, 2nd Edition" name="calibre:title_sort"/>
+    </metadata>
+    <guide>
+        <reference href="cover.jpg" title="Cover" type="cover"/>
+    </guide>
+</package>

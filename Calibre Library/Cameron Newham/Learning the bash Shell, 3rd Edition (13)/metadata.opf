@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<package xmlns="http://www.idpf.org/2007/opf" unique-identifier="uuid_id" version="2.0">
+    <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
+        <dc:identifier opf:scheme="calibre" id="calibre_id">13</dc:identifier>
+        <dc:identifier opf:scheme="uuid" id="uuid_id">98d62dac-5dc8-4a9e-824c-682828c11a2b</dc:identifier>
+        <dc:title>Learning the bash Shell, 3rd Edition</dc:title>
+        <dc:creator opf:file-as="Newham, Cameron" opf:role="aut">Cameron Newham</dc:creator>
+        <dc:contributor opf:file-as="calibre" opf:role="bkp">calibre (2.73.0) [https://calibre-ebook.com]</dc:contributor>
+        <dc:date>2009-02-09T07:00:00+00:00</dc:date>
+        <dc:description>&lt;p&gt;This refreshed edition serves as the most valuable guide yet to the bash shell. It’s full of practical examples of shell commands and programs guaranteed to make everyday use of Linux that much easier. Includes information on key bindings, command line editing and processing, integrated programming features, signal handling, and much more! &lt;/p&gt;</dc:description>
+        <dc:publisher>O’Reilly Media</dc:publisher>
+        <dc:language>eng</dc:language>
+        <dc:subject>COMPUTERS / Operating Systems / UNIX</dc:subject>
+        <meta content="{&quot;Cameron Newham&quot;: &quot;&quot;}" name="calibre:author_link_map"/>
+        <meta content="2016-12-02T05:01:21.583743+00:00" name="calibre:timestamp"/>
+        <meta content="Learning the bash Shell, 3rd Edition" name="calibre:title_sort"/>
+    </metadata>
+    <guide>
+        <reference href="cover.jpg" title="Cover" type="cover"/>
+    </guide>
+</package>

@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='utf-8'?>
+<package xmlns="http://www.idpf.org/2007/opf" unique-identifier="uuid_id" version="2.0">
+    <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
+        <dc:identifier opf:scheme="calibre" id="calibre_id">12</dc:identifier>
+        <dc:identifier opf:scheme="uuid" id="uuid_id">efa8ab0e-807b-4bc1-adf8-2abab79a928f</dc:identifier>
+        <dc:title>Learning the vi and Vim Editors</dc:title>
+        <dc:creator opf:file-as="Arnold Robbins, Elbert Hannah &amp; Lamb, Linda" opf:role="aut">Arnold Robbins, Elbert Hannah</dc:creator>
+        <dc:creator opf:file-as="Arnold Robbins, Elbert Hannah &amp; Lamb, Linda" opf:role="aut">Linda Lamb</dc:creator>
+        <dc:contributor opf:file-as="calibre" opf:role="bkp">calibre (2.73.0) [https://calibre-ebook.com]</dc:contributor>
+        <dc:date>2009-06-30T06:00:00+00:00</dc:date>
+        <dc:description>&lt;p&gt;The standard guide for &lt;em&gt;vi&lt;/em&gt; since 1986, this book has been expanded to include detailed information on &lt;em&gt;vim&lt;/em&gt;, the leading &lt;em&gt;vi&lt;/em&gt; clone that includes extra features for both beginners and power users. You learn text editing basics and advanced tools for both editors, such as writing macros and scripts to extend the editor, power tools for programmers, multi-window editing -- all in the easy-to-follow style that has made this book a classic.&lt;/p&gt;</dc:description>
+        <dc:publisher>O’Reilly Media</dc:publisher>
+        <dc:identifier opf:scheme="ISBN">9780596159351</dc:identifier>
+        <dc:language>eng</dc:language>
+        <dc:subject>COMPUTERS / Operating Systems / UNIX</dc:subject>
+        <meta content="{&quot;Arnold Robbins, Elbert Hannah&quot;: &quot;&quot;, &quot;Linda Lamb&quot;: &quot;&quot;}" name="calibre:author_link_map"/>
+        <meta content="2016-12-02T05:01:13.828382+00:00" name="calibre:timestamp"/>
+        <meta content="Learning the vi and Vim Editors" name="calibre:title_sort"/>
+    </metadata>
+    <guide>
+        <reference href="cover.jpg" title="Cover" type="cover"/>
+    </guide>
+</package>

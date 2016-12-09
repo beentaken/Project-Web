@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8'?>
+<package xmlns="http://www.idpf.org/2007/opf" unique-identifier="uuid_id" version="2.0">
+    <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
+        <dc:identifier opf:scheme="calibre" id="calibre_id">9</dc:identifier>
+        <dc:identifier opf:scheme="uuid" id="uuid_id">f8b4ce23-16ec-4eb7-a4a9-a3af0dc0b595</dc:identifier>
+        <dc:title>TCP/IP Network Administration, 3rd Edition</dc:title>
+        <dc:creator opf:file-as="Hunt, Craig" opf:role="aut">Craig Hunt</dc:creator>
+        <dc:contributor opf:file-as="calibre" opf:role="bkp">calibre (2.73.0) [https://calibre-ebook.com]</dc:contributor>
+        <dc:date>2010-03-25T06:00:00+00:00</dc:date>
+        <dc:description>&lt;p&gt;This complete hands-on guide to setting up and running a TCP/IP network starts with the fundamentals: what protocols do and how they work, how addresses and routing are used, and how to set up your network connection. The book also covers advanced routing protocols and provides tutorials on configuring important network services. The expanded third edition includes sections on Samba, Apache web server, network security, and much more.&lt;/p&gt;</dc:description>
+        <dc:language>eng</dc:language>
+        <dc:subject>COMPUTERS / Networking / Network Protocols</dc:subject>
+        <meta content="{&quot;Craig Hunt&quot;: &quot;&quot;}" name="calibre:author_link_map"/>
+        <meta content="2016-12-02T05:00:51.680472+00:00" name="calibre:timestamp"/>
+        <meta content="TCP/IP Network Administration, 3rd Edition" name="calibre:title_sort"/>
+    </metadata>
+    <guide>
+        <reference href="cover.jpg" title="Cover" type="cover"/>
+    </guide>
+</package>
